@@ -64,12 +64,20 @@ export default {
 					ring: 'hsl(var(--sidebar-ring))'
 				},
 				dashboard: {
-					primary: '#0EA5E9',
-					secondary: '#0284C7',
-					accent: '#38BDF8',
+					primary: '#c01c1c',
+					secondary: '#a51919',
+					accent: '#d63031',
 					muted: '#F1F5F9',
 					border: '#E2E8F0',
 					heading: '#1E293B'
+				},
+				nxt: {
+					red: '#c01c1c',
+					darkRed: '#a51919',
+					lightRed: '#d63031',
+					gray: '#333333',
+					darkGray: '#1a1a1a',
+					lightGray: '#f5f5f5'
 				}
 			},
 			borderRadius: {

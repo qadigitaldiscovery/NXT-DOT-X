@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { LogIn } from 'lucide-react';
 
 const Landing = () => {
   const [username, setUsername] = React.useState('');
@@ -45,26 +46,25 @@ const Landing = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col">
-      {/* Hero section */}
-      <header className="bg-gradient-to-r from-dashboard-secondary to-dashboard-primary text-white">
-        <div className="container mx-auto px-4 py-16">
+    <div className="min-h-screen flex flex-col bg-white">
+      {/* Hero section with red background */}
+      <header className="bg-[#c01c1c] text-white">
+        <div className="container mx-auto px-4 py-8">
           <nav className="flex justify-between items-center mb-16">
-            <div className="flex items-center gap-2">
-              <div className="h-8 w-8 rounded-full bg-white flex items-center justify-center">
-                <span className="text-dashboard-primary font-bold">NX</span>
-              </div>
-              <span className="text-xl font-bold">NXT LEVEL TECH</span>
+            <div className="flex items-center">
+              {/* NXT LEVEL TECH logo */}
+              <img 
+                src="/lovable-uploads/f39ef88d-7664-4c92-8f4a-44368177dfde.png" 
+                alt="NXT LEVEL TECH" 
+                className="h-10 mr-4" 
+              />
             </div>
           </nav>
           
-          <div className="flex flex-col md:flex-row items-center">
+          <div className="flex flex-col md:flex-row items-center py-12">
             <div className="md:w-1/2 mb-8 md:mb-0 md:pr-8">
-              <h1 className="text-4xl md:text-5xl font-bold mb-6">DOT-X Management Platform</h1>
-              <p className="text-xl mb-8">Access all prototype builds and tools from one centralized dashboard.</p>
-              <a href="#login" className="inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-dashboard-primary bg-white hover:bg-gray-100 md:py-4 md:text-lg md:px-8">
-                Get Started
-              </a>
+              <h1 className="text-4xl md:text-5xl font-bold mb-6">MANAGEMENT PLATFORM</h1>
+              <p className="text-xl mb-8">Access all tools and features from one centralized dashboard.</p>
             </div>
             <div className="md:w-1/2">
               <Card className="border-0 shadow-xl" id="login">
@@ -96,7 +96,8 @@ const Landing = () => {
                         required
                       />
                     </div>
-                    <Button type="submit" className="w-full" disabled={isLoading}>
+                    <Button type="submit" className="w-full bg-[#c01c1c] hover:bg-[#a51919]" disabled={isLoading}>
+                      <LogIn className="w-4 h-4 mr-2" />
                       {isLoading ? 'Signing in...' : 'Sign In'}
                     </Button>
                     <p className="text-sm text-center text-muted-foreground">
@@ -110,36 +111,16 @@ const Landing = () => {
         </div>
       </header>
 
-      {/* Features section */}
-      <section className="py-16 bg-gray-50">
-        <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold mb-12 text-center text-dashboard-heading">Platform Features</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="bg-white p-6 rounded-lg shadow">
-              <h3 className="text-xl font-bold mb-4 text-dashboard-heading">Cost Management</h3>
-              <p className="text-muted-foreground">Track supplier costs and analyze trends to optimize your spending and improve margins.</p>
-            </div>
-            <div className="bg-white p-6 rounded-lg shadow">
-              <h3 className="text-xl font-bold mb-4 text-dashboard-heading">Competitor Analysis</h3>
-              <p className="text-muted-foreground">Monitor competitor pricing and strategies to stay competitive in your market.</p>
-            </div>
-            <div className="bg-white p-6 rounded-lg shadow">
-              <h3 className="text-xl font-bold mb-4 text-dashboard-heading">Prototype Navigation</h3>
-              <p className="text-muted-foreground">Access all prototype builds from a single, unified interface for seamless testing and comparison.</p>
-            </div>
-          </div>
-        </div>
-      </section>
-      
-      <footer className="bg-gray-800 text-white py-8">
+      <footer className="bg-gray-900 text-white py-6 mt-auto">
         <div className="container mx-auto px-4">
           <div className="flex flex-col md:flex-row justify-between items-center">
-            <div className="mb-4 md:mb-0">
+            <div className="mb-4 md:mb-0 flex items-center">
+              <img 
+                src="/lovable-uploads/f39ef88d-7664-4c92-8f4a-44368177dfde.png" 
+                alt="NXT LEVEL TECH" 
+                className="h-8 mr-3" 
+              />
               <p>© 2025 NXT LEVEL TECH. All rights reserved.</p>
-            </div>
-            <div className="flex space-x-4">
-              <a href="#" className="hover:underline">Privacy Policy</a>
-              <a href="#" className="hover:underline">Terms of Service</a>
             </div>
           </div>
         </div>
