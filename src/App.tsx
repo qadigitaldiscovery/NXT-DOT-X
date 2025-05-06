@@ -40,7 +40,8 @@ const App = () => {
         <Sonner />
         <BrowserRouter>
           <Routes>
-            {/* Landing Page (Login) */}
+            {/* Landing Page (Login) - now set as the root path */}
+            <Route index element={<Landing />} />
             <Route path="/landing" element={<Landing />} />
             
             {/* Prototype Selector */}
@@ -67,7 +68,6 @@ const App = () => {
             } />
             
             {/* Legacy Beta 1 routes - redirect to new structure */}
-            <Route path="/" element={<Navigate to="/beta1" replace />} />
             <Route path="/supplier-costing" element={
               <ProtectedRoute>
                 <Beta1Layout>
@@ -148,11 +148,6 @@ const App = () => {
                   <Beta3Settings />
                 </Beta3Layout>
               </ProtectedRoute>
-            } />
-            
-            {/* Empty path index redirect based on auth status */}
-            <Route index element={
-              isAuthenticated ? <Navigate to="/beta1" replace /> : <Navigate to="/landing" replace />
             } />
             
             {/* 404 Page */}
