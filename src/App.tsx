@@ -21,6 +21,9 @@ import { Beta2Layout } from "./components/layout/Beta2Layout";
 import Beta2Dashboard from "./pages/Beta2Dashboard";
 import Beta2Analytics from "./pages/Beta2Analytics";
 import Beta2Settings from "./pages/Beta2Settings";
+import { Beta3Layout } from "./components/layout/Beta3Layout";
+import Beta3Dashboard from "./pages/Beta3Dashboard";
+import Beta3Settings from "./pages/Beta3Settings";
 
 const queryClient = new QueryClient();
 
@@ -128,6 +131,22 @@ const App = () => {
                 <Beta2Layout>
                   <Beta2Settings />
                 </Beta2Layout>
+              </ProtectedRoute>
+            } />
+            
+            {/* Beta 3 Dashboard routes */}
+            <Route path="/beta3" element={
+              <ProtectedRoute>
+                <Beta3Layout>
+                  <Beta3Dashboard />
+                </Beta3Layout>
+              </ProtectedRoute>
+            } />
+            <Route path="/beta3/settings" element={
+              <ProtectedRoute>
+                <Beta3Layout>
+                  <Beta3Settings />
+                </Beta3Layout>
               </ProtectedRoute>
             } />
             

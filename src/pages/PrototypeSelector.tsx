@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -38,6 +39,13 @@ const PrototypeSelector = () => {
       description: "Loyalty program management platform",
       path: "/beta2",
       icon: <Gift className="h-12 w-12 text-green-600" />
+    },
+    {
+      id: "beta3",
+      name: "Beta 3",
+      description: "Future prototype in development",
+      path: "/beta3",
+      icon: <ArrowDownUp className="h-12 w-12 text-purple-600" />
     }
   ];
 
@@ -91,20 +99,6 @@ const PrototypeSelector = () => {
               </CardFooter>
             </Card>
           ))}
-
-          {/* Example placeholder for future prototype */}
-          <Card className="border-dashed border-2 bg-muted/50">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-muted-foreground">Beta 3</CardTitle>
-              <CardDescription>Future prototype (coming soon)</CardDescription>
-            </CardHeader>
-            <CardContent className="flex justify-center py-6">
-              <ArrowDownUp className="h-12 w-12 text-muted-foreground/50" />
-            </CardContent>
-            <CardFooter>
-              <Button variant="outline" className="w-full" disabled>Coming Soon</Button>
-            </CardFooter>
-          </Card>
         </div>
       </main>
       
