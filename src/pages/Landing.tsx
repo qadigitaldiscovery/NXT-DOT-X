@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -20,6 +21,7 @@ const Landing = () => {
       navigate('/prototypes');
     }
   }, [navigate]);
+  
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
@@ -42,9 +44,24 @@ const Landing = () => {
       setIsLoading(false);
     }
   };
-  return <div className="min-h-screen flex flex-col bg-[#c01c1c]">
-      {/* Hero section with red background */}
-      <header className="text-white flex-1 bg-zinc-700">
+
+  return (
+    <div className="min-h-screen flex flex-col relative">
+      {/* Background image with overlay */}
+      <div 
+        className="absolute inset-0 z-0" 
+        style={{
+          backgroundImage: `url('/lovable-uploads/1d1d5f91-49b0-479f-bffe-41a4438de356.png')`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat'
+        }}
+      >
+        <div className="absolute inset-0 bg-black/50"></div>
+      </div>
+      
+      {/* Content with z-index to appear above the background */}
+      <header className="relative z-10 text-white flex-1">
         <div className="container mx-auto px-4 py-8">
           <nav className="flex justify-between items-center mb-8 bg-transparent">
             <div className="flex flex-col">
@@ -61,26 +78,42 @@ const Landing = () => {
           {/* Center the login form */}
           <div className="flex justify-center items-center py-10">
             <div className="w-full max-w-md">
-              <Card className="border-0 shadow-xl" id="login">
+              <Card className="border-0 shadow-xl backdrop-blur-sm bg-black/50" id="login">
                 <CardHeader>
-                  <CardTitle className="text-2xl">Sign in to your account</CardTitle>
-                  <CardDescription>Enter your credentials to access the platform</CardDescription>
+                  <CardTitle className="text-2xl text-white">Sign in to your account</CardTitle>
+                  <CardDescription className="text-gray-300">Enter your credentials to access the platform</CardDescription>
                 </CardHeader>
                 <CardContent>
                   <form onSubmit={handleLogin} className="space-y-4">
                     <div className="space-y-2">
-                      <Label htmlFor="username">Username</Label>
-                      <Input id="username" type="text" placeholder="admin" value={username} onChange={e => setUsername(e.target.value)} required />
+                      <Label htmlFor="username" className="text-white">Username</Label>
+                      <Input 
+                        id="username" 
+                        type="text" 
+                        placeholder="admin" 
+                        value={username} 
+                        onChange={e => setUsername(e.target.value)} 
+                        required 
+                        className="bg-black/30 text-white border-gray-600 focus:border-[#c01c1c]"
+                      />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="password">Password</Label>
-                      <Input id="password" type="password" placeholder="••••••••" value={password} onChange={e => setPassword(e.target.value)} required />
+                      <Label htmlFor="password" className="text-white">Password</Label>
+                      <Input 
+                        id="password" 
+                        type="password" 
+                        placeholder="••••••••" 
+                        value={password} 
+                        onChange={e => setPassword(e.target.value)} 
+                        required 
+                        className="bg-black/30 text-white border-gray-600 focus:border-[#c01c1c]"
+                      />
                     </div>
                     <Button type="submit" className="w-full bg-[#c01c1c] hover:bg-[#a51919]" disabled={isLoading}>
                       <LogIn className="w-4 h-4 mr-2" />
                       {isLoading ? 'Signing in...' : 'Sign In'}
                     </Button>
-                    <p className="text-sm text-center text-muted-foreground">
+                    <p className="text-sm text-center text-gray-300">
                       Demo credentials: username: admin, password: admin1
                     </p>
                   </form>
@@ -91,7 +124,7 @@ const Landing = () => {
         </div>
       </header>
 
-      <footer className="text-white py-4 bg-zinc-950">
+      <footer className="relative z-10 text-white py-4 bg-black/80">
         <div className="container mx-auto px-4">
           <div className="flex justify-between items-center">
             <div>
@@ -103,7 +136,8 @@ const Landing = () => {
           </div>
         </div>
       </footer>
-    </div>;
+    </div>
+  );
 };
 
 export default Landing;
