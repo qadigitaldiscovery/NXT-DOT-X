@@ -38,14 +38,13 @@ interface NavCategory {
   items: NavItem[];
 }
 
-// Organize nav items into categories
+// Top level nav items (not in categories)
+const topLevelNavItems: NavItem[] = [
+  { label: 'Dashboard', icon: Home, path: '/' }
+];
+
+// Organize remaining nav items into categories
 const navCategories: NavCategory[] = [
-  { 
-    name: "Overview",
-    items: [
-      { label: 'Dashboard', icon: Home, path: '/' }
-    ]
-  },
   {
     name: "Cost Management",
     items: [
@@ -70,7 +69,7 @@ const navCategories: NavCategory[] = [
 
 export const Sidebar = ({ open, onToggle }: SidebarProps) => {
   const isMobile = useIsMobile();
-  const [openCategories, setOpenCategories] = React.useState<string[]>(["Overview"]);
+  const [openCategories, setOpenCategories] = React.useState<string[]>(["Cost Management"]);
 
   const handleCategoryToggle = (category: string) => {
     setOpenCategories(prev => 
@@ -124,6 +123,27 @@ export const Sidebar = ({ open, onToggle }: SidebarProps) => {
           "flex-1 py-4 px-2 overflow-y-auto scrollbar-hide",
           !open && "md:hidden"
         )}>
+          {/* Top level navigation items */}
+          <ul className="space-y-1 mb-4">
+            {topLevelNavItems.map((item) => (
+              <li key={item.path}>
+                <NavLink
+                  to={item.path}
+                  className={({ isActive }) => cn(
+                    "flex items-center gap-3 px-4 py-3 rounded-md transition-colors",
+                    isActive 
+                      ? "bg-sidebar-primary text-white" 
+                      : "text-sidebar-foreground hover:bg-sidebar-accent"
+                  )}
+                >
+                  <item.icon className="h-5 w-5" />
+                  <span>{item.label}</span>
+                </NavLink>
+              </li>
+            ))}
+          </ul>
+          
+          {/* Categorized navigation items */}
           <Accordion 
             type="multiple" 
             value={openCategories}
@@ -171,6 +191,24 @@ export const Sidebar = ({ open, onToggle }: SidebarProps) => {
           "hidden md:flex flex-col items-center py-4 space-y-6",
           open && "md:hidden"
         )}>
+          {/* Top level nav items first */}
+          {topLevelNavItems.map(item => (
+            <NavLink
+              key={item.path}
+              to={item.path}
+              className={({ isActive }) => cn(
+                "w-10 h-10 flex items-center justify-center rounded-md",
+                isActive 
+                  ? "bg-sidebar-primary text-white" 
+                  : "text-sidebar-foreground hover:bg-sidebar-accent"
+              )}
+              title={item.label}
+            >
+              <item.icon className="h-5 w-5" />
+            </NavLink>
+          ))}
+          
+          {/* Then all the category items flattened */}
           {navCategories.flatMap(category => 
             category.items.map(item => (
               <NavLink
