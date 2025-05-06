@@ -1,11 +1,9 @@
-
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { toast } from 'sonner';
 import { FileUp, BarChart3, Gift, ArrowDownUp, LogOut } from 'lucide-react';
-
 const PrototypeSelector = () => {
   const navigate = useNavigate();
 
@@ -17,7 +15,6 @@ const PrototypeSelector = () => {
       toast.error('Please sign in to access this page');
     }
   }, [navigate]);
-  
   const handleLogout = () => {
     localStorage.removeItem('isAuthenticated');
     toast.success('Logged out successfully');
@@ -30,7 +27,7 @@ const PrototypeSelector = () => {
     name: "Data Management",
     description: "Dashboard with supplier costing and analysis",
     path: "/beta1",
-    icon: <BarChart3 className="h-12 w-12 text-white" />
+    icon: <BarChart3 className="h-12 w-12 text-white bg-inherit" />
   }, {
     id: "beta2",
     name: "Loyalty Program",
@@ -44,7 +41,6 @@ const PrototypeSelector = () => {
     path: "/beta3",
     icon: <ArrowDownUp className="h-12 w-12 text-white" />
   }];
-  
   const handlePrototypeClick = (prototypeId: string, path: string) => {
     console.log(`Selected module: ${prototypeId}`);
     navigate(path, {
@@ -54,17 +50,12 @@ const PrototypeSelector = () => {
       toast.success(`Welcome to ${prototypeId} dashboard`);
     }, 500);
   };
-  
   return <div className="min-h-screen bg-white">
-      <header className="bg-[#c01c1c] text-white shadow-sm">
+      <header className="text-white shadow-sm bg-gray-700">
         <div className="container mx-auto flex justify-between items-center h-16 px-4">
           <div className="flex items-center">
-            <img 
-              src="/lovable-uploads/f39ef88d-7664-4c92-8f4a-44368177dfde.png" 
-              alt="NXT LEVEL TECH" 
-              className="h-8 mr-3" 
-            />
-            <span className="text-xl font-bold">MANAGEMENT PLATFORM</span>
+            
+            <span className="text-xl font-bold">NXT DOT-X BUSINESS MANAGEMENT PLATFORM</span>
           </div>
           <Button variant="ghost" onClick={handleLogout} className="flex items-center gap-2 text-white hover:bg-[#a51919]">
             <LogOut className="h-4 w-4" />
@@ -83,7 +74,7 @@ const PrototypeSelector = () => {
                 <CardDescription>{prototype.description}</CardDescription>
               </CardHeader>
               <CardContent className="flex justify-center py-6">
-                <div className="p-4 rounded-full bg-[#c01c1c]">
+                <div className="p-4 rounded-full bg-zinc-600">
                   {prototype.icon}
                 </div>
               </CardContent>
@@ -99,16 +90,11 @@ const PrototypeSelector = () => {
       <footer className="border-t border-border bg-gray-900 text-white mt-auto py-4">
         <div className="container mx-auto px-4 flex justify-between items-center">
           <div className="flex items-center">
-            <img 
-              src="/lovable-uploads/f39ef88d-7664-4c92-8f4a-44368177dfde.png" 
-              alt="NXT LEVEL TECH" 
-              className="h-6 mr-3" 
-            />
+            <img src="/lovable-uploads/f39ef88d-7664-4c92-8f4a-44368177dfde.png" alt="NXT LEVEL TECH" className="h-6 mr-3" />
             <span className="text-sm">© 2025 All rights reserved</span>
           </div>
         </div>
       </footer>
     </div>;
 };
-
 export default PrototypeSelector;
