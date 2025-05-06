@@ -16,6 +16,10 @@ import Landing from "./pages/Landing";
 import PrototypeSelector from "./pages/PrototypeSelector";
 import { DashboardLayout } from "./components/layout/DashboardLayout";
 import ProtectedRoute from "./components/ProtectedRoute";
+import { Beta2Layout } from "./components/layout/Beta2Layout";
+import Beta2Dashboard from "./pages/Beta2Dashboard";
+import Beta2Analytics from "./pages/Beta2Analytics";
+import Beta2Settings from "./pages/Beta2Settings";
 
 const queryClient = new QueryClient();
 
@@ -42,7 +46,7 @@ const App = () => {
               </ProtectedRoute>
             } />
             
-            {/* Dashboard - main route (explicitly defined first) */}
+            {/* Beta 1 Dashboard - main route (explicitly defined first) */}
             <Route path="/" element={
               <ProtectedRoute>
                 <DashboardLayout>
@@ -92,6 +96,29 @@ const App = () => {
                 <DashboardLayout>
                   <Settings />
                 </DashboardLayout>
+              </ProtectedRoute>
+            } />
+            
+            {/* Beta 2 Dashboard routes */}
+            <Route path="/beta2" element={
+              <ProtectedRoute>
+                <Beta2Layout>
+                  <Beta2Dashboard />
+                </Beta2Layout>
+              </ProtectedRoute>
+            } />
+            <Route path="/beta2/analytics" element={
+              <ProtectedRoute>
+                <Beta2Layout>
+                  <Beta2Analytics />
+                </Beta2Layout>
+              </ProtectedRoute>
+            } />
+            <Route path="/beta2/settings" element={
+              <ProtectedRoute>
+                <Beta2Layout>
+                  <Beta2Settings />
+                </Beta2Layout>
               </ProtectedRoute>
             } />
             

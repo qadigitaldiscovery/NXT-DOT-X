@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -32,20 +33,27 @@ const PrototypeSelector = () => {
       path: "/",
       icon: <BarChart3 className="h-12 w-12 text-dashboard-primary" />
     },
-    // Additional prototypes can be added here
+    {
+      id: "beta2",
+      name: "Beta 2",
+      description: "New enhanced pricing analytics dashboard",
+      path: "/beta2",
+      icon: <LineChart className="h-12 w-12 text-dashboard-primary" />
+    }
   ];
 
   const handlePrototypeClick = (prototypeId: string, path: string) => {
     console.log(`Selected prototype: ${prototypeId}`);
     
-    // Simplified approach - no localStorage flag, direct navigation
     if (prototypeId === "beta1") {
-      console.log("Navigating directly to dashboard");
-      
-      // Simple direct navigation
       navigate('/', { replace: true });
       
-      // Show feedback toast after navigation
+      setTimeout(() => {
+        toast.success(`Welcome to ${prototypeId} dashboard`);
+      }, 500);
+    } else if (prototypeId === "beta2") {
+      navigate(path, { replace: true });
+      
       setTimeout(() => {
         toast.success(`Welcome to ${prototypeId} dashboard`);
       }, 500);
@@ -95,20 +103,7 @@ const PrototypeSelector = () => {
             </Card>
           ))}
 
-          {/* Example placeholders for future prototypes */}
-          <Card className="border-dashed border-2 bg-muted/50">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-muted-foreground">Beta 2</CardTitle>
-              <CardDescription>Future prototype (coming soon)</CardDescription>
-            </CardHeader>
-            <CardContent className="flex justify-center py-6">
-              <LineChart className="h-12 w-12 text-muted-foreground/50" />
-            </CardContent>
-            <CardFooter>
-              <Button variant="outline" className="w-full" disabled>Coming Soon</Button>
-            </CardFooter>
-          </Card>
-          
+          {/* Example placeholder for future prototype */}
           <Card className="border-dashed border-2 bg-muted/50">
             <CardHeader className="pb-2">
               <CardTitle className="text-muted-foreground">Beta 3</CardTitle>

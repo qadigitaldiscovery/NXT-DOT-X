@@ -1,0 +1,131 @@
+
+import React from 'react';
+import { Navbar } from './Navbar';
+import { useIsMobile } from '@/hooks/use-mobile';
+import { Button } from '@/components/ui/button';
+import { Menu, Home, BarChart3, Settings, ChevronLeft, ChevronRight } from 'lucide-react';
+import { NavLink } from 'react-router-dom';
+
+interface Beta2LayoutProps {
+  children: React.ReactNode;
+}
+
+export const Beta2Layout = ({ children }: Beta2LayoutProps) => {
+  const [sidebarOpen, setSidebarOpen] = React.useState(false);
+  const isMobile = useIsMobile();
+
+  React.useEffect(() => {
+    // Close sidebar by default on mobile
+    if (!isMobile) {
+      setSidebarOpen(true);
+    }
+  }, [isMobile]);
+
+  const toggleSidebar = () => {
+    setSidebarOpen(!sidebarOpen);
+  };
+
+  return (
+    <div className="flex h-screen bg-slate-100 overflow-hidden">
+      {/* Sidebar */}
+      <div 
+        className={`fixed inset-y-0 left-0 z-40 h-full bg-white shadow-lg transform transition-all duration-300 ease-in-out ${
+          sidebarOpen ? 'translate-x-0 w-64' : '-translate-x-full w-0 md:w-16 md:translate-x-0'
+        }`}
+      >
+        {/* Sidebar header */}
+        <div className="flex items-center justify-between h-16 px-4 border-b">
+          <div className={`flex items-center space-x-2 ${!sidebarOpen && 'md:hidden'}`}>
+            <div className="h-8 w-8 rounded-full bg-purple-600 flex items-center justify-center">
+              <span className="text-white font-bold">B2</span>
+            </div>
+            <h1 className="font-bold text-xl">Beta 2</h1>
+          </div>
+          {sidebarOpen && (
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              className="md:hidden" 
+              onClick={toggleSidebar}
+            >
+              <ChevronLeft className="h-4 w-4" />
+            </Button>
+          )}
+        </div>
+        
+        {/* Sidebar content */}
+        <nav className="p-4">
+          <div className={`space-y-2 ${!sidebarOpen && 'md:flex md:flex-col md:items-center'}`}>
+            <NavLink
+              to="/beta2"
+              className={({ isActive }) => 
+                `flex items-center gap-3 px-3 py-2 rounded-md transition-colors ${
+                  isActive 
+                    ? 'bg-purple-100 text-purple-700' 
+                    : 'text-gray-700 hover:bg-gray-100'
+                } ${!sidebarOpen && 'md:justify-center md:px-2'}`
+              }
+            >
+              <Home className="h-5 w-5" />
+              {sidebarOpen && <span>Dashboard</span>}
+            </NavLink>
+            
+            <NavLink
+              to="/beta2/analytics"
+              className={({ isActive }) => 
+                `flex items-center gap-3 px-3 py-2 rounded-md transition-colors ${
+                  isActive 
+                    ? 'bg-purple-100 text-purple-700' 
+                    : 'text-gray-700 hover:bg-gray-100'
+                } ${!sidebarOpen && 'md:justify-center md:px-2'}`
+              }
+            >
+              <BarChart3 className="h-5 w-5" />
+              {sidebarOpen && <span>Analytics</span>}
+            </NavLink>
+            
+            <NavLink
+              to="/beta2/settings"
+              className={({ isActive }) => 
+                `flex items-center gap-3 px-3 py-2 rounded-md transition-colors ${
+                  isActive 
+                    ? 'bg-purple-100 text-purple-700' 
+                    : 'text-gray-700 hover:bg-gray-100'
+                } ${!sidebarOpen && 'md:justify-center md:px-2'}`
+              }
+            >
+              <Settings className="h-5 w-5" />
+              {sidebarOpen && <span>Settings</span>}
+            </NavLink>
+          </div>
+        </nav>
+      </div>
+      
+      {/* Main content */}
+      <div className="flex flex-col flex-1 overflow-hidden">
+        {/* Navbar */}
+        <header className="h-16 bg-white border-b flex items-center px-4 shadow-sm">
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            onClick={toggleSidebar}
+            className="mr-4"
+          >
+            {sidebarOpen ? 
+              <ChevronLeft className="h-5 w-5" /> : 
+              <Menu className="h-5 w-5" />
+            }
+          </Button>
+          <h1 className="text-xl font-bold">Beta 2 Dashboard</h1>
+        </header>
+        
+        {/* Main content area */}
+        <main className="flex-1 overflow-y-auto p-6">
+          <div className="max-w-7xl mx-auto">
+            {children}
+          </div>
+        </main>
+      </div>
+    </div>
+  );
+};
