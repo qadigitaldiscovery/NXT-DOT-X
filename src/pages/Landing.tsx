@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -56,7 +55,8 @@ const Landing = () => {
           
           <div className="flex flex-col md:flex-row items-center py-12">
             <div className="md:w-1/2 mb-8 md:mb-0 md:pr-8">
-              <h1 className="text-4xl md:text-5xl font-bold mb-6">MANAGEMENT PLATFORM</h1>
+              <h1 className="text-4xl font-bold mb-6 md:text-5xl">DOT-X 
+BUSINESS MANAGEMENT PLATFORM</h1>
               <p className="text-xl mb-8">Access all tools and features from one centralized dashboard.</p>
             </div>
             <div className="md:w-1/2">
