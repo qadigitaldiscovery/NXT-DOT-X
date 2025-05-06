@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { 
   ChevronLeft, 
   ChevronRight, 
+  ChevronDown,
   Home, 
   BarChart3, 
   FileUp, 
@@ -15,6 +16,13 @@ import {
 } from 'lucide-react';
 import { NavLink } from 'react-router-dom';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { 
+  Accordion, 
+  AccordionContent, 
+  AccordionItem, 
+  AccordionTrigger 
+} from '@/components/ui/accordion';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 
 interface SidebarProps {
   open: boolean;
@@ -27,17 +35,52 @@ interface NavItem {
   path: string;
 }
 
-const navItems: NavItem[] = [
-  { label: 'Dashboard', icon: Home, path: '/' },
-  { label: 'Supplier Costing', icon: FileUp, path: '/supplier-costing' },
-  { label: 'Cost Analysis', icon: BarChart3, path: '/cost-analysis' },
-  { label: 'Competitor Pricing', icon: LineChart, path: '/competitor-pricing' },
-  { label: 'Price Management', icon: ArrowDownUp, path: '/price-management' },
-  { label: 'Export Data', icon: FileDown, path: '/export-data' },
+interface NavCategory {
+  name: string;
+  items: NavItem[];
+}
+
+// Organize nav items into categories
+const navCategories: NavCategory[] = [
+  { 
+    name: "Overview",
+    items: [
+      { label: 'Dashboard', icon: Home, path: '/' }
+    ]
+  },
+  {
+    name: "Cost Management",
+    items: [
+      { label: 'Supplier Costing', icon: FileUp, path: '/supplier-costing' },
+      { label: 'Cost Analysis', icon: BarChart3, path: '/cost-analysis' }
+    ]
+  },
+  {
+    name: "Pricing",
+    items: [
+      { label: 'Competitor Pricing', icon: LineChart, path: '/competitor-pricing' },
+      { label: 'Price Management', icon: ArrowDownUp, path: '/price-management' }
+    ]
+  },
+  {
+    name: "Data",
+    items: [
+      { label: 'Export Data', icon: FileDown, path: '/export-data' }
+    ]
+  }
 ];
 
 export const Sidebar = ({ open, onToggle }: SidebarProps) => {
   const isMobile = useIsMobile();
+  const [openCategories, setOpenCategories] = React.useState<string[]>(["Overview"]);
+
+  const handleCategoryToggle = (category: string) => {
+    setOpenCategories(prev => 
+      prev.includes(category) 
+        ? prev.filter(cat => cat !== category) 
+        : [...prev, category]
+    );
+  };
 
   return (
     <>
@@ -78,24 +121,46 @@ export const Sidebar = ({ open, onToggle }: SidebarProps) => {
         </div>
 
         <nav className="flex-1 py-4 px-2 overflow-y-auto scrollbar-hide">
-          <ul className="space-y-1">
-            {navItems.map((item) => (
-              <li key={item.path}>
-                <NavLink
-                  to={item.path}
-                  className={({ isActive }) => cn(
-                    "flex items-center gap-3 px-4 py-3 rounded-md transition-colors",
-                    isActive 
-                      ? "bg-sidebar-primary text-white" 
-                      : "text-sidebar-foreground hover:bg-sidebar-accent"
-                  )}
+          <Accordion 
+            type="multiple" 
+            value={openCategories}
+            className="space-y-1"
+          >
+            {navCategories.map((category) => (
+              <AccordionItem 
+                key={category.name} 
+                value={category.name}
+                className="border-none"
+              >
+                <AccordionTrigger 
+                  className="py-2 px-3 rounded-md hover:bg-sidebar-accent hover:no-underline text-sidebar-foreground"
+                  onClick={() => handleCategoryToggle(category.name)}
                 >
-                  <item.icon className="h-5 w-5" />
-                  <span>{item.label}</span>
-                </NavLink>
-              </li>
+                  <span className="text-sm font-medium">{category.name}</span>
+                </AccordionTrigger>
+                <AccordionContent className="pb-0 pt-1">
+                  <ul className="space-y-1 pl-2">
+                    {category.items.map((item) => (
+                      <li key={item.path}>
+                        <NavLink
+                          to={item.path}
+                          className={({ isActive }) => cn(
+                            "flex items-center gap-3 px-4 py-3 rounded-md transition-colors",
+                            isActive 
+                              ? "bg-sidebar-primary text-white" 
+                              : "text-sidebar-foreground hover:bg-sidebar-accent"
+                          )}
+                        >
+                          <item.icon className="h-5 w-5" />
+                          <span>{item.label}</span>
+                        </NavLink>
+                      </li>
+                    ))}
+                  </ul>
+                </AccordionContent>
+              </AccordionItem>
             ))}
-          </ul>
+          </Accordion>
         </nav>
 
         <div className="p-4 border-t border-sidebar-border">
