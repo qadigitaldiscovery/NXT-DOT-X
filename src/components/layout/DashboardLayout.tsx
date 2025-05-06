@@ -1,7 +1,11 @@
 
 import React from 'react';
 import { Navbar } from './Navbar';
-import { Sidebar } from './sidebar';
+import { 
+  Sidebar,
+  SidebarProvider,
+  SidebarInset
+} from '@/components/ui/sidebar';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { cn } from '@/lib/utils';
 
@@ -27,24 +31,20 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   };
 
   return (
-    <div className="flex h-screen overflow-hidden bg-background">
-      <Sidebar open={sidebarOpen} onToggle={toggleSidebar} />
-      <div 
-        className={cn(
-          "flex-1 flex flex-col overflow-hidden transition-all duration-300",
-          isMobile && sidebarOpen ? "ml-0" : !isMobile && sidebarOpen ? "md:ml-64" : "md:ml-16"
-        )}
-      >
-        <Navbar onMenuClick={toggleSidebar} />
-        <main 
-          className={cn(
-            "flex-1 overflow-y-auto p-4 md:p-6 transition-all duration-200",
-            isMobile && sidebarOpen && "opacity-50"
-          )}
-        >
-          {children}
-        </main>
+    <SidebarProvider defaultOpen={sidebarOpen} onOpenChange={setSidebarOpen}>
+      <div className="flex h-screen overflow-hidden bg-background">
+        <Sidebar 
+          collapsible={isMobile ? "offcanvas" : "icon"} 
+          side="left"
+          variant="sidebar"
+        />
+        <SidebarInset className="flex flex-col overflow-hidden">
+          <Navbar onMenuClick={toggleSidebar} />
+          <main className="flex-1 overflow-y-auto p-4 md:p-6">
+            {children}
+          </main>
+        </SidebarInset>
       </div>
-    </div>
+    </SidebarProvider>
   );
 };
