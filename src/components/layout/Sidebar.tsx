@@ -5,7 +5,6 @@ import { Button } from '@/components/ui/button';
 import { 
   ChevronLeft, 
   ChevronRight, 
-  ChevronDown,
   Home, 
   BarChart3, 
   FileUp, 
@@ -22,7 +21,6 @@ import {
   AccordionItem, 
   AccordionTrigger 
 } from '@/components/ui/accordion';
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 
 interface SidebarProps {
   open: boolean;
@@ -186,8 +184,9 @@ export const Sidebar = ({ open, onToggle }: SidebarProps) => {
           size="icon"
           onClick={onToggle}
           className={cn(
-            "fixed bottom-4 left-64 z-30 rounded-full shadow-md transition-transform duration-300",
-            !open && "left-4 transform rotate-180"
+            "fixed bottom-4 z-30 rounded-full shadow-md transition-all duration-300",
+            open ? "left-64" : "left-4",
+            open ? "transform rotate-0" : "transform rotate-180"
           )}
         >
           {open ? <ChevronLeft className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
