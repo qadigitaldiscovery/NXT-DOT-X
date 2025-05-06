@@ -6,6 +6,7 @@ import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { LogIn } from 'lucide-react';
+
 const Landing = () => {
   const [username, setUsername] = React.useState('');
   const [password, setPassword] = React.useState('');
@@ -92,14 +93,17 @@ const Landing = () => {
 
       <footer className="text-white py-4 bg-zinc-950">
         <div className="container mx-auto px-4">
-          <div className="flex flex-col md:flex-row justify-end items-center">
-            <div className="flex items-center">
+          <div className="flex justify-between items-center">
+            <div>
+              <img src="/lovable-uploads/f39ef88d-7664-4c92-8f4a-44368177dfde.png" alt="NXT LEVEL TECH" className="h-8" />
+            </div>
+            <div>
               <p className="text-right">© 2025 NXT LEVEL TECH. All rights reserved.</p>
-              <img src="/lovable-uploads/f39ef88d-7664-4c92-8f4a-44368177dfde.png" alt="NXT LEVEL TECH" className="h-8 ml-3" />
             </div>
           </div>
         </div>
       </footer>
     </div>;
 };
+
 export default Landing;
