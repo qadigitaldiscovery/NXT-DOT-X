@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -41,14 +42,14 @@ const PrototypeSelector = () => {
     if (prototypeId === "beta1") {
       console.log("Setting prototype flag and navigating to dashboard");
       
-      // Set flag in localStorage - this is used by ProtectedRoute to show welcome toast
-      localStorage.setItem('selectedPrototype', prototypeId);
+      // Set flag in localStorage with timestamp to ensure it's unique
+      localStorage.setItem('selectedPrototype', `${prototypeId}_${Date.now()}`);
       
       // Show feedback toast
       toast.success(`Launching ${prototypeId} dashboard`);
       
-      // Use direct navigation to avoid React Router issues
-      window.location.href = path;
+      // Navigate to the dashboard with replace=true to prevent back button issues
+      navigate(path, { replace: true });
     } else {
       navigate(path);
     }
