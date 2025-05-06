@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -92,8 +93,8 @@ export const Sidebar = ({ open, onToggle }: SidebarProps) => {
       {/* Sidebar */}
       <aside 
         className={cn(
-          "fixed top-0 left-0 bottom-0 w-64 bg-sidebar z-30 shadow-lg flex flex-col transition-transform duration-300 ease-in-out",
-          open ? "translate-x-0" : "-translate-x-full",
+          "fixed md:sticky top-0 left-0 h-screen w-64 bg-sidebar z-30 shadow-lg flex flex-col transition-all duration-300 ease-in-out",
+          !open && "-translate-x-full md:translate-x-0 md:w-0"
         )}
       >
         <div className="flex items-center justify-between p-4 border-b border-sidebar-border">
@@ -185,6 +186,7 @@ export const Sidebar = ({ open, onToggle }: SidebarProps) => {
           open 
             ? "left-60 bottom-4 transition-all duration-300" 
             : "left-4 bottom-4 transition-all duration-300",
+          "md:hidden"
         )}
       >
         {open ? <ChevronLeft className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
