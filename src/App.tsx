@@ -25,6 +25,14 @@ import { Beta3Layout } from "./components/layout/Beta3Layout";
 import Beta3Dashboard from "./pages/Beta3Dashboard";
 import Beta3Settings from "./pages/Beta3Settings";
 
+// Import our new supplier costing pages
+import SuppliersPage from "./pages/SuppliersPage";
+import NewSupplierPage from "./pages/NewSupplierPage";
+import EditSupplierPage from "./pages/EditSupplierPage";
+import SupplierCostsPage from "./pages/SupplierCostsPage";
+import UploadsPage from "./pages/UploadsPage";
+import NewUploadPage from "./pages/NewUploadPage";
+
 const queryClient = new QueryClient();
 
 const App = () => {
@@ -63,6 +71,50 @@ const App = () => {
               <ProtectedRoute>
                 <Beta1Layout>
                   <Beta1Settings />
+                </Beta1Layout>
+              </ProtectedRoute>
+            } />
+
+            {/* New Supplier Costing Module routes */}
+            <Route path="/beta1/suppliers" element={
+              <ProtectedRoute>
+                <Beta1Layout>
+                  <SuppliersPage />
+                </Beta1Layout>
+              </ProtectedRoute>
+            } />
+            <Route path="/beta1/suppliers/new" element={
+              <ProtectedRoute>
+                <Beta1Layout>
+                  <NewSupplierPage />
+                </Beta1Layout>
+              </ProtectedRoute>
+            } />
+            <Route path="/beta1/suppliers/:id" element={
+              <ProtectedRoute>
+                <Beta1Layout>
+                  <EditSupplierPage />
+                </Beta1Layout>
+              </ProtectedRoute>
+            } />
+            <Route path="/beta1/suppliers/:id/costs" element={
+              <ProtectedRoute>
+                <Beta1Layout>
+                  <SupplierCostsPage />
+                </Beta1Layout>
+              </ProtectedRoute>
+            } />
+            <Route path="/beta1/uploads" element={
+              <ProtectedRoute>
+                <Beta1Layout>
+                  <UploadsPage />
+                </Beta1Layout>
+              </ProtectedRoute>
+            } />
+            <Route path="/beta1/uploads/new" element={
+              <ProtectedRoute>
+                <Beta1Layout>
+                  <NewUploadPage />
                 </Beta1Layout>
               </ProtectedRoute>
             } />
