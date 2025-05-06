@@ -10,8 +10,17 @@ interface DashboardLayoutProps {
 }
 
 export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
-  const [sidebarOpen, setSidebarOpen] = React.useState(false);
+  const [sidebarOpen, setSidebarOpen] = React.useState(true);
   const isMobile = useIsMobile();
+
+  React.useEffect(() => {
+    // Close sidebar by default on mobile
+    if (isMobile) {
+      setSidebarOpen(false);
+    } else {
+      setSidebarOpen(true);
+    }
+  }, [isMobile]);
 
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
@@ -19,8 +28,12 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
 
   return (
     <div className="flex h-screen bg-background">
-      <Sidebar open={sidebarOpen || !isMobile} onToggle={toggleSidebar} />
-      <div className="flex-1 flex flex-col overflow-hidden">
+      <Sidebar open={sidebarOpen} onToggle={toggleSidebar} />
+      <div className={cn(
+        "flex-1 flex flex-col overflow-hidden transition-all duration-300",
+        !sidebarOpen && "ml-0",
+        sidebarOpen && !isMobile && "md:ml-0"
+      )}>
         <Navbar onMenuClick={toggleSidebar} />
         <main className={cn(
           "flex-1 overflow-y-auto p-4 md:p-6 transition-all duration-200",
