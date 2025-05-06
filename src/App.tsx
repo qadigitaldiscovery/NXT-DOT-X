@@ -87,11 +87,11 @@ const App = () => (
             </ProtectedRoute>
           } />
           
-          {/* Redirect root to prototypes if authenticated, otherwise to landing */}
+          {/* Root redirect - send to prototypes page when logged in */}
           <Route index element={
-            <ProtectedRoute>
-              <Navigate to="/prototypes" replace />
-            </ProtectedRoute>
+            localStorage.getItem('isAuthenticated') === 'true' ? 
+            <Navigate to="/prototypes" replace /> : 
+            <Navigate to="/landing" replace />
           } />
           
           {/* 404 Page */}

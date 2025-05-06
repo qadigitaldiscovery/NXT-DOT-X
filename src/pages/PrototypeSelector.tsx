@@ -38,9 +38,14 @@ const PrototypeSelector = () => {
 
   const handlePrototypeClick = (prototypeId: string, path: string) => {
     console.log(`Launching prototype: ${prototypeId}, path: ${path}`);
-    // Set a flag to indicate this is a direct navigation from prototype selector
-    localStorage.setItem('directPrototypeNavigation', 'true');
-    navigate(path);
+    
+    // Use a different approach - directly navigate without any state flags
+    if (prototypeId === "beta1") {
+      console.log("Navigating directly to dashboard");
+      navigate("/");
+    } else {
+      navigate(path);
+    }
   };
 
   return (
