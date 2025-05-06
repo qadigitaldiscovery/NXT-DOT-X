@@ -39,7 +39,7 @@ const App = () => {
               </ProtectedRoute>
             } />
             
-            {/* Dashboard and its sub-routes */}
+            {/* Dashboard - main route */}
             <Route path="/" element={
               <ProtectedRoute>
                 <DashboardLayout>
@@ -92,9 +92,9 @@ const App = () => {
               </ProtectedRoute>
             } />
             
-            {/* Root redirect - direct to prototypes selector when authenticated, otherwise landing */}
+            {/* Root redirect based on auth status */}
             <Route index element={
-              isAuthenticated ? <Navigate to="/prototypes" replace /> : <Navigate to="/landing" replace />
+              isAuthenticated ? <Navigate to="/" replace /> : <Navigate to="/landing" replace />
             } />
             
             {/* 404 Page */}

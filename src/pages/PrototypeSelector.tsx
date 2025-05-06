@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -39,20 +38,17 @@ const PrototypeSelector = () => {
   const handlePrototypeClick = (prototypeId: string, path: string) => {
     console.log(`Selected prototype: ${prototypeId}`);
     
+    // Simplified approach - no localStorage flag, direct navigation
     if (prototypeId === "beta1") {
-      console.log("Setting prototype flag and navigating to dashboard");
+      console.log("Navigating directly to dashboard");
       
-      // Create unique flag with timestamp and set in localStorage
-      const timestamp = Date.now();
-      const flag = `${prototypeId}_${timestamp}`;
-      localStorage.setItem('selectedPrototype', flag);
+      // Simple direct navigation
+      navigate('/', { replace: true });
       
-      // Show feedback toast
-      toast.success(`Launching ${prototypeId} dashboard`);
-
-      // Use direct window location for navigation to force a full page reload
-      // This avoids React Router's partial updates which might be causing the loop
-      window.location.href = path;
+      // Show feedback toast after navigation
+      setTimeout(() => {
+        toast.success(`Welcome to ${prototypeId} dashboard`);
+      }, 500);
     } else {
       navigate(path);
     }
