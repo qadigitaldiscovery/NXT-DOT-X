@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -30,7 +29,7 @@ const PrototypeSelector = () => {
       id: "beta1",
       name: "Beta 1",
       description: "Current dashboard with supplier costing, analysis, and more",
-      path: "/",
+      path: "/beta1",
       icon: <BarChart3 className="h-12 w-12 text-dashboard-primary" />
     },
     {
@@ -45,21 +44,11 @@ const PrototypeSelector = () => {
   const handlePrototypeClick = (prototypeId: string, path: string) => {
     console.log(`Selected prototype: ${prototypeId}`);
     
-    if (prototypeId === "beta1") {
-      navigate('/', { replace: true });
-      
-      setTimeout(() => {
-        toast.success(`Welcome to ${prototypeId} dashboard`);
-      }, 500);
-    } else if (prototypeId === "beta2") {
-      navigate(path, { replace: true });
-      
-      setTimeout(() => {
-        toast.success(`Welcome to ${prototypeId} dashboard`);
-      }, 500);
-    } else {
-      navigate(path);
-    }
+    navigate(path, { replace: true });
+    
+    setTimeout(() => {
+      toast.success(`Welcome to ${prototypeId} dashboard`);
+    }, 500);
   };
 
   return (

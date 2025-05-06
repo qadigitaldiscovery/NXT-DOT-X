@@ -4,7 +4,6 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import Dashboard from "./pages/Dashboard";
 import SupplierCosting from "./pages/SupplierCosting";
 import CostAnalysis from "./pages/CostAnalysis";
 import CompetitorPricing from "./pages/CompetitorPricing";
@@ -14,8 +13,10 @@ import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
 import Landing from "./pages/Landing";
 import PrototypeSelector from "./pages/PrototypeSelector";
-import { DashboardLayout } from "./components/layout/DashboardLayout";
 import ProtectedRoute from "./components/ProtectedRoute";
+import { Beta1Layout } from "./components/layout/Beta1Layout";
+import Beta1Dashboard from "./pages/Beta1Dashboard";
+import Beta1Settings from "./pages/Beta1Settings";
 import { Beta2Layout } from "./components/layout/Beta2Layout";
 import Beta2Dashboard from "./pages/Beta2Dashboard";
 import Beta2Analytics from "./pages/Beta2Analytics";
@@ -46,56 +47,64 @@ const App = () => {
               </ProtectedRoute>
             } />
             
-            {/* Beta 1 Dashboard - main route (explicitly defined first) */}
-            <Route path="/" element={
+            {/* Beta 1 Dashboard routes */}
+            <Route path="/beta1" element={
               <ProtectedRoute>
-                <DashboardLayout>
-                  <Dashboard />
-                </DashboardLayout>
+                <Beta1Layout>
+                  <Beta1Dashboard />
+                </Beta1Layout>
+              </ProtectedRoute>
+            } />
+            <Route path="/beta1/settings" element={
+              <ProtectedRoute>
+                <Beta1Layout>
+                  <Beta1Settings />
+                </Beta1Layout>
               </ProtectedRoute>
             } />
             
-            {/* Other dashboard routes */}
+            {/* Legacy Beta 1 routes - redirect to new structure */}
+            <Route path="/" element={<Navigate to="/beta1" replace />} />
             <Route path="/supplier-costing" element={
               <ProtectedRoute>
-                <DashboardLayout>
+                <Beta1Layout>
                   <SupplierCosting />
-                </DashboardLayout>
+                </Beta1Layout>
               </ProtectedRoute>
             } />
             <Route path="/cost-analysis" element={
               <ProtectedRoute>
-                <DashboardLayout>
+                <Beta1Layout>
                   <CostAnalysis />
-                </DashboardLayout>
+                </Beta1Layout>
               </ProtectedRoute>
             } />
             <Route path="/competitor-pricing" element={
               <ProtectedRoute>
-                <DashboardLayout>
+                <Beta1Layout>
                   <CompetitorPricing />
-                </DashboardLayout>
+                </Beta1Layout>
               </ProtectedRoute>
             } />
             <Route path="/price-management" element={
               <ProtectedRoute>
-                <DashboardLayout>
+                <Beta1Layout>
                   <PriceManagement />
-                </DashboardLayout>
+                </Beta1Layout>
               </ProtectedRoute>
             } />
             <Route path="/export-data" element={
               <ProtectedRoute>
-                <DashboardLayout>
+                <Beta1Layout>
                   <ExportData />
-                </DashboardLayout>
+                </Beta1Layout>
               </ProtectedRoute>
             } />
             <Route path="/settings" element={
               <ProtectedRoute>
-                <DashboardLayout>
+                <Beta1Layout>
                   <Settings />
-                </DashboardLayout>
+                </Beta1Layout>
               </ProtectedRoute>
             } />
             
@@ -124,7 +133,7 @@ const App = () => {
             
             {/* Empty path index redirect based on auth status */}
             <Route index element={
-              isAuthenticated ? <Navigate to="/" replace /> : <Navigate to="/landing" replace />
+              isAuthenticated ? <Navigate to="/beta1" replace /> : <Navigate to="/landing" replace />
             } />
             
             {/* 404 Page */}
