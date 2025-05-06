@@ -39,14 +39,16 @@ const PrototypeSelector = () => {
   const handlePrototypeClick = (prototypeId: string, path: string) => {
     console.log(`Selected prototype: ${prototypeId}`);
     
-    // Direct navigation approach without any flags or redirects
+    // Force a hard redirect to the dashboard route
     if (prototypeId === "beta1") {
-      // Clear any potential lingering navigation flags
-      localStorage.removeItem('fromPrototypeSelector');
-      console.log("Direct navigation to dashboard");
+      // Set a flag to indicate we're coming from the prototype selector
+      localStorage.setItem('selectedPrototype', 'beta1');
       
-      // Use direct window.location navigation to force a complete refresh
-      window.location.href = '/';
+      // Navigate to the dashboard with replace:true to prevent back navigation issues
+      navigate('/', { replace: true });
+      
+      // Show a toast notification for feedback
+      toast.success(`Launching ${prototypeId} dashboard`);
     } else {
       navigate(path);
     }
