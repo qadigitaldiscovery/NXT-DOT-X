@@ -45,15 +45,15 @@ const Landing = () => {
     }
   };
 
-  return <div className="min-h-screen flex flex-col bg-white">
+  return <div className="min-h-screen flex flex-col bg-[#c01c1c]">
       {/* Hero section with red background */}
-      <header className="bg-[#c01c1c] text-white">
+      <header className="bg-[#c01c1c] text-white flex-1">
         <div className="container mx-auto px-4 py-8">
           <nav className="flex justify-between items-center mb-8">
             <div className="flex flex-col">
               {/* NXT DOT-X title and subtitle with improved styling */}
-              <h1 className="text-3xl font-bold tracking-wider">NXT DOT-X</h1>
-              <p className="text-sm font-medium tracking-wide mt-1 text-white/80">BUSINESS MANAGEMENT PLATFORM</p>
+              <h1 className="text-4xl font-bold tracking-wider">NXT DOT-X</h1>
+              <p className="text-sm font-medium tracking-wide mt-1 text-white/90">BUSINESS MANAGEMENT PLATFORM</p>
             </div>
             <div className="flex items-center">
               {/* NXT LEVEL TECH logo */}
@@ -94,7 +94,7 @@ const Landing = () => {
         </div>
       </header>
 
-      <footer className="bg-gray-900 text-white py-4 mt-auto">
+      <footer className="bg-gray-900 text-white py-4">
         <div className="container mx-auto px-4">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <div className="flex items-center">
