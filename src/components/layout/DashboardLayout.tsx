@@ -1,7 +1,7 @@
 
 import React from 'react';
-import { Sidebar } from './Sidebar';
 import { Navbar } from './Navbar';
+import { Sidebar } from './sidebar';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { cn } from '@/lib/utils';
 
