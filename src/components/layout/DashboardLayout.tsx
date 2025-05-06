@@ -27,11 +27,11 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   };
 
   return (
-    <div className="flex h-screen bg-background">
+    <div className="flex h-screen overflow-hidden bg-background">
       <Sidebar open={sidebarOpen} onToggle={toggleSidebar} />
       <div className={cn(
         "flex-1 flex flex-col overflow-hidden transition-all duration-300",
-        sidebarOpen && !isMobile ? "md:ml-0" : "ml-0"
+        sidebarOpen && !isMobile ? "ml-0" : "ml-0"
       )}>
         <Navbar onMenuClick={toggleSidebar} />
         <main className={cn(

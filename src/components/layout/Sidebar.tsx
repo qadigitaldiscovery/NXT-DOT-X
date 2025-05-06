@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -91,11 +90,10 @@ export const Sidebar = ({ open, onToggle }: SidebarProps) => {
       )}
 
       {/* Sidebar */}
-      <div 
+      <aside 
         className={cn(
-          "fixed top-0 left-0 bottom-0 w-64 bg-sidebar z-30 shadow-lg flex flex-col transition-transform duration-300",
+          "fixed top-0 left-0 bottom-0 w-64 bg-sidebar z-30 shadow-lg flex flex-col transition-transform duration-300 ease-in-out",
           open ? "translate-x-0" : "-translate-x-full",
-          "md:relative md:translate-x-0"
         )}
       >
         <div className="flex items-center justify-between p-4 border-b border-sidebar-border">
@@ -175,23 +173,22 @@ export const Sidebar = ({ open, onToggle }: SidebarProps) => {
             <span>Settings</span>
           </NavLink>
         </div>
-      </div>
+      </aside>
 
-      {/* Sidebar toggle button for desktop */}
-      {!isMobile && (
-        <Button
-          variant="outline"
-          size="icon"
-          onClick={onToggle}
-          className={cn(
-            "fixed bottom-4 z-30 rounded-full shadow-md transition-all duration-300",
-            open ? "left-64" : "left-4",
-            open ? "transform rotate-0" : "transform rotate-180"
-          )}
-        >
-          {open ? <ChevronLeft className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
-        </Button>
-      )}
+      {/* Toggle button - visible on all screen sizes */}
+      <Button
+        variant="outline"
+        size="icon"
+        onClick={onToggle}
+        className={cn(
+          "fixed z-40 rounded-full shadow-md bg-white",
+          open 
+            ? "left-60 bottom-4 transition-all duration-300" 
+            : "left-4 bottom-4 transition-all duration-300",
+        )}
+      >
+        {open ? <ChevronLeft className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
+      </Button>
     </>
   );
 };
