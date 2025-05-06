@@ -95,7 +95,7 @@ const Landing = () => {
           <div className="flex flex-col md:flex-row justify-between items-center">
             <div className="flex items-center">
               <img src="/lovable-uploads/f39ef88d-7664-4c92-8f4a-44368177dfde.png" alt="NXT LEVEL TECH" className="h-8 mr-3" />
-              <p>© 2025 NXT LEVEL TECH. All rights reserved.</p>
+              <p className="right side\n">© 2025 NXT LEVEL TECH. All rights reserved.</p>
             </div>
           </div>
         </div>
