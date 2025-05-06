@@ -14,7 +14,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
   const isAuthenticated = localStorage.getItem('isAuthenticated') === 'true';
   
   useEffect(() => {
-    // Check if coming from prototype selector (only for dashboard route)
+    // Only handle selected prototype when on dashboard route
     if (isAuthenticated && location.pathname === '/') {
       const selectedPrototype = localStorage.getItem('selectedPrototype');
       
@@ -40,7 +40,6 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
     return <Navigate to="/landing" replace={true} />;
   }
 
-  // Special case: if we're at root and we just navigated from prototype selector, render the component
   return <>{children}</>;
 };
 

@@ -48,8 +48,8 @@ const PrototypeSelector = () => {
       // Show feedback toast
       toast.success(`Launching ${prototypeId} dashboard`);
       
-      // Navigate to the dashboard with replace=true to prevent back button issues
-      navigate(path, { replace: true });
+      // Force direct navigation to avoid any React Router issues
+      window.location.href = path;
     } else {
       navigate(path);
     }

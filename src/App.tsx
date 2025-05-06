@@ -39,7 +39,7 @@ const App = () => {
               </ProtectedRoute>
             } />
             
-            {/* Dashboard Routes */}
+            {/* Main Dashboard Route - Must be protected */}
             <Route path="/" element={
               <ProtectedRoute>
                 <DashboardLayout>
