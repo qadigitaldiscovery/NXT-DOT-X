@@ -38,6 +38,8 @@ const PrototypeSelector = () => {
 
   const handlePrototypeClick = (prototypeId: string, path: string) => {
     console.log(`Launching prototype: ${prototypeId}, path: ${path}`);
+    // Set a flag to indicate this is a direct navigation from prototype selector
+    localStorage.setItem('directPrototypeNavigation', 'true');
     navigate(path);
   };
 

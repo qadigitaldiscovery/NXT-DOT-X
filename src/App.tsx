@@ -87,8 +87,12 @@ const App = () => (
             </ProtectedRoute>
           } />
           
-          {/* Redirect root to landing if not authenticated */}
-          <Route index element={<Navigate to="/landing" replace />} />
+          {/* Redirect root to prototypes if authenticated, otherwise to landing */}
+          <Route index element={
+            <ProtectedRoute>
+              <Navigate to="/prototypes" replace />
+            </ProtectedRoute>
+          } />
           
           {/* 404 Page */}
           <Route path="*" element={<NotFound />} />
