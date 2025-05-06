@@ -29,15 +29,19 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   return (
     <div className="flex h-screen overflow-hidden bg-background">
       <Sidebar open={sidebarOpen} onToggle={toggleSidebar} />
-      <div className={cn(
-        "flex-1 flex flex-col overflow-hidden transition-all duration-300",
-        sidebarOpen && !isMobile ? "md:ml-64" : sidebarOpen && isMobile ? "ml-0" : "md:ml-16"
-      )}>
+      <div 
+        className={cn(
+          "flex-1 flex flex-col overflow-hidden transition-all duration-300",
+          isMobile && sidebarOpen ? "ml-0" : !isMobile && sidebarOpen ? "md:ml-64" : "md:ml-16"
+        )}
+      >
         <Navbar onMenuClick={toggleSidebar} />
-        <main className={cn(
-          "flex-1 overflow-y-auto p-4 md:p-6 transition-all duration-200",
-          isMobile && sidebarOpen && "opacity-50"
-        )}>
+        <main 
+          className={cn(
+            "flex-1 overflow-y-auto p-4 md:p-6 transition-all duration-200",
+            isMobile && sidebarOpen && "opacity-50"
+          )}
+        >
           {children}
         </main>
       </div>

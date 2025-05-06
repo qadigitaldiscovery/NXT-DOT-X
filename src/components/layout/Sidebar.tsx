@@ -92,11 +92,16 @@ export const Sidebar = ({ open, onToggle }: SidebarProps) => {
       {/* Sidebar */}
       <aside 
         className={cn(
-          "fixed md:sticky top-0 left-0 h-screen w-64 bg-sidebar z-30 shadow-lg flex flex-col transition-all duration-300 ease-in-out",
-          !open && "-translate-x-full md:translate-x-0 md:w-16"
+          "fixed md:sticky top-0 left-0 h-screen bg-sidebar z-30 shadow-lg flex flex-col transition-all duration-300 ease-in-out",
+          open && !isMobile ? "w-64" : open && isMobile ? "w-64" : "w-0 md:w-16",
+          isMobile && !open && "-translate-x-full",
+          isMobile && open && "translate-x-0"
         )}
       >
-        <div className="flex items-center justify-between p-4 border-b border-sidebar-border">
+        <div className={cn(
+          "flex items-center justify-between p-4 border-b border-sidebar-border",
+          !open && "md:justify-center"
+        )}>
           <div className={cn(
             "flex items-center space-x-2",
             !open && "md:hidden"
@@ -119,6 +124,7 @@ export const Sidebar = ({ open, onToggle }: SidebarProps) => {
           )}
         </div>
 
+        {/* Full sidebar navigation - visible when open */}
         <nav className={cn(
           "flex-1 py-4 px-2 overflow-y-auto scrollbar-hide",
           !open && "md:hidden"
@@ -273,10 +279,7 @@ export const Sidebar = ({ open, onToggle }: SidebarProps) => {
         onClick={onToggle}
         className={cn(
           "fixed z-40 rounded-full shadow-md bg-white",
-          open 
-            ? "left-60 bottom-4 transition-all duration-300" 
-            : "left-4 bottom-4 transition-all duration-300",
-          isMobile ? "" : "md:left-auto md:right-4"
+          isMobile ? "left-4 bottom-4" : open ? "left-60 bottom-4" : "left-16 bottom-4",
         )}
       >
         {open ? <ChevronLeft className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
