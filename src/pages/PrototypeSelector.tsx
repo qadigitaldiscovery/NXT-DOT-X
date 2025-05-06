@@ -13,7 +13,7 @@ const PrototypeSelector = () => {
   React.useEffect(() => {
     const isAuthenticated = localStorage.getItem('isAuthenticated') === 'true';
     if (!isAuthenticated) {
-      navigate('/');
+      navigate('/landing');
       toast.error('Please sign in to access this page');
     }
   }, [navigate]);
@@ -21,7 +21,7 @@ const PrototypeSelector = () => {
   const handleLogout = () => {
     localStorage.removeItem('isAuthenticated');
     toast.success('Logged out successfully');
-    navigate('/');
+    navigate('/landing');
   };
 
   // Prototype data
@@ -35,6 +35,11 @@ const PrototypeSelector = () => {
     },
     // Additional prototypes can be added here
   ];
+
+  const handlePrototypeClick = (prototypeId: string, path: string) => {
+    console.log(`Launching prototype: ${prototypeId}, path: ${path}`);
+    navigate(path);
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -69,14 +74,7 @@ const PrototypeSelector = () => {
               <CardFooter>
                 <Button 
                   className="w-full" 
-                  onClick={() => {
-                    // We're treating Beta 1 as a special case since it's the current dashboard
-                    if (prototype.id === "beta1") {
-                      navigate('/');
-                    } else {
-                      navigate(prototype.path);
-                    }
-                  }}
+                  onClick={() => handlePrototypeClick(prototype.id, prototype.path)}
                 >
                   Launch Prototype
                 </Button>

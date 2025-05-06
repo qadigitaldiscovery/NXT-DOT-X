@@ -7,10 +7,15 @@ interface ProtectedRouteProps {
 }
 
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
-  const isAuthenticated = localStorage.getItem('isAuthenticated') === 'true';
+  // Check for both isLoggedIn and isAuthenticated keys for backward compatibility
+  const isAuthenticated = localStorage.getItem('isAuthenticated') === 'true' || 
+                          localStorage.getItem('isLoggedIn') === 'true';
 
+  console.log("Protected route check - Auth status:", isAuthenticated);
+  
   if (!isAuthenticated) {
-    return <Navigate to="/" />;
+    console.log("Not authenticated, redirecting to landing");
+    return <Navigate to="/landing" />;
   }
 
   return <>{children}</>;
