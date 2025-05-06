@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -33,7 +34,6 @@ const navItems: NavItem[] = [
   { label: 'Competitor Pricing', icon: LineChart, path: '/competitor-pricing' },
   { label: 'Price Management', icon: ArrowDownUp, path: '/price-management' },
   { label: 'Export Data', icon: FileDown, path: '/export-data' },
-  { label: 'Settings', icon: Settings, path: '/settings' },
 ];
 
 export const Sidebar = ({ open, onToggle }: SidebarProps) => {
@@ -99,14 +99,18 @@ export const Sidebar = ({ open, onToggle }: SidebarProps) => {
         </nav>
 
         <div className="p-4 border-t border-sidebar-border">
-          <Button 
-            variant="outline" 
-            size="sm" 
-            className="w-full bg-sidebar-accent text-sidebar-foreground border-sidebar-border hover:bg-sidebar-primary hover:text-white"
-            onClick={() => window.location.href = '/settings'}
+          <NavLink
+            to="/settings"
+            className={({ isActive }) => cn(
+              "flex items-center justify-center gap-2 w-full px-4 py-2 rounded-md transition-colors",
+              isActive 
+                ? "bg-sidebar-primary text-white" 
+                : "bg-sidebar-accent text-sidebar-foreground border-sidebar-border hover:bg-sidebar-primary hover:text-white"
+            )}
           >
-            Settings
-          </Button>
+            <Settings className="h-5 w-5" />
+            <span>Settings</span>
+          </NavLink>
         </div>
       </div>
 
