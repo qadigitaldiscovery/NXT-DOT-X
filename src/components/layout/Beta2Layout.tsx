@@ -1,9 +1,8 @@
 
 import React from 'react';
-import { Navbar } from './Navbar';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { Button } from '@/components/ui/button';
-import { Menu, Home, BarChart3, Settings, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Menu, Home, BarChart3, Settings, Gift, Users, Award, ChevronLeft, ChevronRight } from 'lucide-react';
 import { NavLink } from 'react-router-dom';
 
 interface Beta2LayoutProps {
@@ -36,10 +35,10 @@ export const Beta2Layout = ({ children }: Beta2LayoutProps) => {
         {/* Sidebar header */}
         <div className="flex items-center justify-between h-16 px-4 border-b">
           <div className={`flex items-center space-x-2 ${!sidebarOpen && 'md:hidden'}`}>
-            <div className="h-8 w-8 rounded-full bg-purple-600 flex items-center justify-center">
-              <span className="text-white font-bold">B2</span>
+            <div className="h-8 w-8 rounded-full bg-green-600 flex items-center justify-center">
+              <span className="text-white font-bold">LP</span>
             </div>
-            <h1 className="font-bold text-xl">Beta 2</h1>
+            <h1 className="font-bold text-xl">Loyalty Pro</h1>
           </div>
           {sidebarOpen && (
             <Button 
@@ -61,7 +60,7 @@ export const Beta2Layout = ({ children }: Beta2LayoutProps) => {
               className={({ isActive }) => 
                 `flex items-center gap-3 px-3 py-2 rounded-md transition-colors ${
                   isActive 
-                    ? 'bg-purple-100 text-purple-700' 
+                    ? 'bg-green-100 text-green-700' 
                     : 'text-gray-700 hover:bg-gray-100'
                 } ${!sidebarOpen && 'md:justify-center md:px-2'}`
               }
@@ -71,11 +70,39 @@ export const Beta2Layout = ({ children }: Beta2LayoutProps) => {
             </NavLink>
             
             <NavLink
+              to="/beta2/members"
+              className={({ isActive }) => 
+                `flex items-center gap-3 px-3 py-2 rounded-md transition-colors ${
+                  isActive 
+                    ? 'bg-green-100 text-green-700' 
+                    : 'text-gray-700 hover:bg-gray-100'
+                } ${!sidebarOpen && 'md:justify-center md:px-2'}`
+              }
+            >
+              <Users className="h-5 w-5" />
+              {sidebarOpen && <span>Members</span>}
+            </NavLink>
+            
+            <NavLink
+              to="/beta2/rewards"
+              className={({ isActive }) => 
+                `flex items-center gap-3 px-3 py-2 rounded-md transition-colors ${
+                  isActive 
+                    ? 'bg-green-100 text-green-700' 
+                    : 'text-gray-700 hover:bg-gray-100'
+                } ${!sidebarOpen && 'md:justify-center md:px-2'}`
+              }
+            >
+              <Gift className="h-5 w-5" />
+              {sidebarOpen && <span>Rewards</span>}
+            </NavLink>
+            
+            <NavLink
               to="/beta2/analytics"
               className={({ isActive }) => 
                 `flex items-center gap-3 px-3 py-2 rounded-md transition-colors ${
                   isActive 
-                    ? 'bg-purple-100 text-purple-700' 
+                    ? 'bg-green-100 text-green-700' 
                     : 'text-gray-700 hover:bg-gray-100'
                 } ${!sidebarOpen && 'md:justify-center md:px-2'}`
               }
@@ -89,7 +116,7 @@ export const Beta2Layout = ({ children }: Beta2LayoutProps) => {
               className={({ isActive }) => 
                 `flex items-center gap-3 px-3 py-2 rounded-md transition-colors ${
                   isActive 
-                    ? 'bg-purple-100 text-purple-700' 
+                    ? 'bg-green-100 text-green-700' 
                     : 'text-gray-700 hover:bg-gray-100'
                 } ${!sidebarOpen && 'md:justify-center md:px-2'}`
               }
@@ -116,7 +143,7 @@ export const Beta2Layout = ({ children }: Beta2LayoutProps) => {
               <Menu className="h-5 w-5" />
             }
           </Button>
-          <h1 className="text-xl font-bold">Beta 2 Dashboard</h1>
+          <h1 className="text-xl font-bold">Loyalty Program Manager</h1>
         </header>
         
         {/* Main content area */}

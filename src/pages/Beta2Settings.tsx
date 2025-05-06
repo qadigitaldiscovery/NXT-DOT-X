@@ -19,7 +19,7 @@ const Beta2Settings = () => {
     // Simulate API call
     setTimeout(() => {
       setSaving(false);
-      toast.success('Settings saved successfully');
+      toast.success('Program settings saved successfully');
     }, 800);
   };
   
@@ -27,8 +27,8 @@ const Beta2Settings = () => {
     <div className="space-y-6">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Settings</h1>
-          <p className="text-muted-foreground">Configure your Beta 2 dashboard preferences.</p>
+          <h1 className="text-3xl font-bold tracking-tight">Program Settings</h1>
+          <p className="text-muted-foreground">Configure your loyalty program settings.</p>
         </div>
         
         <div className="flex items-center gap-2">
@@ -41,39 +41,30 @@ const Beta2Settings = () => {
       <div className="grid gap-6 md:grid-cols-2">
         <Card>
           <CardHeader>
-            <CardTitle>General Settings</CardTitle>
-            <CardDescription>Configure basic dashboard preferences</CardDescription>
+            <CardTitle>Program Details</CardTitle>
+            <CardDescription>Basic configuration for your loyalty program</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="display-name">Display Name</Label>
-              <Input id="display-name" defaultValue="Beta 2 Dashboard" />
+              <Label htmlFor="program-name">Program Name</Label>
+              <Input id="program-name" defaultValue="Premium Rewards Club" />
             </div>
             
             <div className="space-y-2">
-              <Label htmlFor="currency">Display Currency</Label>
-              <Select defaultValue="usd">
-                <SelectTrigger>
-                  <SelectValue placeholder="Select currency" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="usd">USD ($)</SelectItem>
-                  <SelectItem value="eur">EUR (€)</SelectItem>
-                  <SelectItem value="gbp">GBP (£)</SelectItem>
-                </SelectContent>
-              </Select>
+              <Label htmlFor="point-name">Point Name</Label>
+              <Input id="point-name" defaultValue="Stars" />
             </div>
             
             <div className="space-y-2">
-              <Label htmlFor="timezone">Timezone</Label>
-              <Select defaultValue="utc">
+              <Label htmlFor="conversion-rate">Points Conversion Rate</Label>
+              <Select defaultValue="10">
                 <SelectTrigger>
-                  <SelectValue placeholder="Select timezone" />
+                  <SelectValue placeholder="Select rate" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="utc">UTC</SelectItem>
-                  <SelectItem value="est">Eastern Time (ET)</SelectItem>
-                  <SelectItem value="pst">Pacific Time (PT)</SelectItem>
+                  <SelectItem value="5">$1 = 5 points</SelectItem>
+                  <SelectItem value="10">$1 = 10 points</SelectItem>
+                  <SelectItem value="20">$1 = 20 points</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -82,38 +73,38 @@ const Beta2Settings = () => {
         
         <Card>
           <CardHeader>
-            <CardTitle>Notifications</CardTitle>
-            <CardDescription>Manage your notification preferences</CardDescription>
+            <CardTitle>Member Communications</CardTitle>
+            <CardDescription>Configure member notifications and emails</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="flex items-center justify-between">
               <div>
-                <Label htmlFor="price-alerts">Price Alerts</Label>
+                <Label htmlFor="welcome-email">Welcome Email</Label>
                 <p className="text-sm text-muted-foreground">
-                  Notify when competitor prices change
+                  Send welcome email to new members
                 </p>
               </div>
-              <Switch id="price-alerts" defaultChecked />
+              <Switch id="welcome-email" defaultChecked />
             </div>
             
             <div className="flex items-center justify-between">
               <div>
-                <Label htmlFor="market-reports">Market Reports</Label>
+                <Label htmlFor="points-update">Points Updates</Label>
                 <p className="text-sm text-muted-foreground">
-                  Weekly market analysis reports
+                  Notify members when points balance changes
                 </p>
               </div>
-              <Switch id="market-reports" defaultChecked />
+              <Switch id="points-update" defaultChecked />
             </div>
             
             <div className="flex items-center justify-between">
               <div>
-                <Label htmlFor="system-alerts">System Alerts</Label>
+                <Label htmlFor="reward-expiry">Reward Expiry Notifications</Label>
                 <p className="text-sm text-muted-foreground">
-                  System maintenance and updates
+                  Alert members before rewards expire
                 </p>
               </div>
-              <Switch id="system-alerts" defaultChecked />
+              <Switch id="reward-expiry" defaultChecked />
             </div>
           </CardContent>
         </Card>
@@ -121,37 +112,36 @@ const Beta2Settings = () => {
       
       <Card>
         <CardHeader>
-          <CardTitle>Data Preferences</CardTitle>
-          <CardDescription>Configure how data is displayed throughout the dashboard</CardDescription>
+          <CardTitle>Tier Configuration</CardTitle>
+          <CardDescription>Configure membership tiers and benefits</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid gap-4 md:grid-cols-2">
             <div className="space-y-2">
-              <Label htmlFor="default-view">Default View</Label>
-              <Select defaultValue="daily">
+              <Label htmlFor="tier-system">Tier System</Label>
+              <Select defaultValue="points-based">
                 <SelectTrigger>
-                  <SelectValue placeholder="Select default view" />
+                  <SelectValue placeholder="Select tier system" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="daily">Daily</SelectItem>
-                  <SelectItem value="weekly">Weekly</SelectItem>
-                  <SelectItem value="monthly">Monthly</SelectItem>
-                  <SelectItem value="quarterly">Quarterly</SelectItem>
-                  <SelectItem value="yearly">Yearly</SelectItem>
+                  <SelectItem value="points-based">Points Based</SelectItem>
+                  <SelectItem value="visit-based">Visit Based</SelectItem>
+                  <SelectItem value="spend-based">Spend Based</SelectItem>
                 </SelectContent>
               </Select>
             </div>
             
             <div className="space-y-2">
-              <Label htmlFor="comparison-periods">Comparison Periods</Label>
-              <Select defaultValue="previous-period">
+              <Label htmlFor="tier-reset">Tier Reset Period</Label>
+              <Select defaultValue="annual">
                 <SelectTrigger>
-                  <SelectValue placeholder="Select comparison period" />
+                  <SelectValue placeholder="Select reset period" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="previous-period">Previous Period</SelectItem>
-                  <SelectItem value="same-period-last-year">Same Period Last Year</SelectItem>
-                  <SelectItem value="custom">Custom</SelectItem>
+                  <SelectItem value="never">Never</SelectItem>
+                  <SelectItem value="monthly">Monthly</SelectItem>
+                  <SelectItem value="quarterly">Quarterly</SelectItem>
+                  <SelectItem value="annual">Annual</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -159,22 +149,22 @@ const Beta2Settings = () => {
           
           <div className="flex items-center justify-between">
             <div>
-              <Label htmlFor="show-forecasts">Show Forecasts</Label>
+              <Label htmlFor="birthday-bonus">Birthday Bonus</Label>
               <p className="text-sm text-muted-foreground">
-                Display predictive forecasts on charts
+                Offer bonus points on member birthdays
               </p>
             </div>
-            <Switch id="show-forecasts" defaultChecked />
+            <Switch id="birthday-bonus" defaultChecked />
           </div>
           
           <div className="flex items-center justify-between">
             <div>
-              <Label htmlFor="dark-mode">Dark Mode Charts</Label>
+              <Label htmlFor="referral-bonus">Referral Bonus</Label>
               <p className="text-sm text-muted-foreground">
-                Use dark theme for all charts
+                Reward members for successful referrals
               </p>
             </div>
-            <Switch id="dark-mode" />
+            <Switch id="referral-bonus" defaultChecked />
           </div>
         </CardContent>
         <CardFooter className="flex justify-end gap-2">

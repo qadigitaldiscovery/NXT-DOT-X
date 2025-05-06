@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { toast } from 'sonner';
-import { FileUp, BarChart3, LineChart, ArrowDownUp, LogOut } from 'lucide-react';
+import { FileUp, BarChart3, Gift, ArrowDownUp, LogOut } from 'lucide-react';
 
 const PrototypeSelector = () => {
   const navigate = useNavigate();
@@ -28,16 +28,16 @@ const PrototypeSelector = () => {
     {
       id: "beta1",
       name: "Beta 1",
-      description: "Current dashboard with supplier costing, analysis, and more",
+      description: "Data management dashboard with supplier costing and analysis",
       path: "/beta1",
       icon: <BarChart3 className="h-12 w-12 text-dashboard-primary" />
     },
     {
       id: "beta2",
       name: "Beta 2",
-      description: "New enhanced pricing analytics dashboard",
+      description: "Loyalty program management platform",
       path: "/beta2",
-      icon: <LineChart className="h-12 w-12 text-dashboard-primary" />
+      icon: <Gift className="h-12 w-12 text-green-600" />
     }
   ];
 
