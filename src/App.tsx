@@ -10,6 +10,7 @@ import CostAnalysis from "./pages/CostAnalysis";
 import CompetitorPricing from "./pages/CompetitorPricing";
 import PriceManagement from "./pages/PriceManagement";
 import ExportData from "./pages/ExportData";
+import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
 import { DashboardLayout } from "./components/layout/DashboardLayout";
 
@@ -50,6 +51,11 @@ const App = () => (
           <Route path="/export-data" element={
             <DashboardLayout>
               <ExportData />
+            </DashboardLayout>
+          } />
+          <Route path="/settings" element={
+            <DashboardLayout>
+              <Settings />
             </DashboardLayout>
           } />
           <Route path="*" element={<NotFound />} />

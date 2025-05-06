@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -10,7 +9,8 @@ import {
   FileUp, 
   LineChart, 
   ArrowDownUp, 
-  FileDown
+  FileDown,
+  Settings
 } from 'lucide-react';
 import { NavLink } from 'react-router-dom';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -33,6 +33,7 @@ const navItems: NavItem[] = [
   { label: 'Competitor Pricing', icon: LineChart, path: '/competitor-pricing' },
   { label: 'Price Management', icon: ArrowDownUp, path: '/price-management' },
   { label: 'Export Data', icon: FileDown, path: '/export-data' },
+  { label: 'Settings', icon: Settings, path: '/settings' },
 ];
 
 export const Sidebar = ({ open, onToggle }: SidebarProps) => {
@@ -102,6 +103,7 @@ export const Sidebar = ({ open, onToggle }: SidebarProps) => {
             variant="outline" 
             size="sm" 
             className="w-full bg-sidebar-accent text-sidebar-foreground border-sidebar-border hover:bg-sidebar-primary hover:text-white"
+            onClick={() => window.location.href = '/settings'}
           >
             Settings
           </Button>
