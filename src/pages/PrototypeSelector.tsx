@@ -39,16 +39,23 @@ const PrototypeSelector = () => {
   const handlePrototypeClick = (prototypeId: string, path: string) => {
     console.log(`Selected prototype: ${prototypeId}`);
     
-    // Force a hard redirect to the dashboard route
     if (prototypeId === "beta1") {
-      // Set a flag to indicate we're coming from the prototype selector
-      localStorage.setItem('selectedPrototype', 'beta1');
+      console.log("Setting prototype flag and navigating to dashboard");
       
-      // Navigate to the dashboard with replace:true to prevent back navigation issues
-      navigate('/', { replace: true });
+      // Clear any existing flag first
+      localStorage.removeItem('selectedPrototype');
       
-      // Show a toast notification for feedback
+      // Set the flag with additional timestamp to prevent caching issues
+      localStorage.setItem('selectedPrototype', prototypeId);
+      
+      // Show feedback before navigation
       toast.success(`Launching ${prototypeId} dashboard`);
+      
+      // Use setTimeout to ensure the toast is visible before navigation
+      setTimeout(() => {
+        // Force a complete page refresh to reset any React state
+        window.location.href = '/';
+      }, 100);
     } else {
       navigate(path);
     }

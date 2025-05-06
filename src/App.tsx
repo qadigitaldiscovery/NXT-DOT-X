@@ -33,7 +33,7 @@ const App = () => {
             {/* Landing Page (Login) */}
             <Route path="/landing" element={<Landing />} />
             
-            {/* Prototype Selector */}
+            {/* Prototype Selector - This should be the main authenticated entry point */}
             <Route path="/prototypes" element={
               <ProtectedRoute>
                 <PrototypeSelector />

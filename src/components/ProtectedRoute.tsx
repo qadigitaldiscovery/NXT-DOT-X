@@ -1,6 +1,7 @@
 
 import React, { useEffect } from 'react';
 import { Navigate, useLocation, useNavigate } from 'react-router-dom';
+import { toast } from 'sonner';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -18,8 +19,12 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
 
   useEffect(() => {
     // If we're coming from prototype selector and this is the dashboard route
-    if (selectedPrototype === 'beta1' && location.pathname === '/') {
-      console.log("Accessing dashboard from prototype selector");
+    if (selectedPrototype && location.pathname === '/') {
+      console.log(`Accessing dashboard from prototype selector: ${selectedPrototype}`);
+      
+      // Show welcome toast
+      toast.success(`Welcome to ${selectedPrototype} dashboard`);
+      
       // Clear the flag now that we've handled it
       localStorage.removeItem('selectedPrototype');
     }
