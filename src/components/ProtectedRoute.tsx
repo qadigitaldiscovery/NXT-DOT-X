@@ -1,6 +1,6 @@
 
 import React, { useEffect } from 'react';
-import { Navigate, useLocation, useNavigate } from 'react-router-dom';
+import { Navigate, useLocation } from 'react-router-dom';
 import { toast } from 'sonner';
 
 interface ProtectedRouteProps {
@@ -9,7 +9,6 @@ interface ProtectedRouteProps {
 
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
   const location = useLocation();
-  const navigate = useNavigate();
   
   // Check authentication status
   const isAuthenticated = localStorage.getItem('isAuthenticated') === 'true';
