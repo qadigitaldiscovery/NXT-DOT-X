@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -22,6 +23,8 @@ const App = () => {
   // Determine authentication status once during rendering
   const isAuthenticated = localStorage.getItem('isAuthenticated') === 'true';
   
+  console.log("App rendering, auth status:", isAuthenticated);
+  
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
@@ -39,7 +42,7 @@ const App = () => {
               </ProtectedRoute>
             } />
             
-            {/* Dashboard - main route */}
+            {/* Dashboard - main route (explicitly defined first) */}
             <Route path="/" element={
               <ProtectedRoute>
                 <DashboardLayout>
@@ -92,7 +95,7 @@ const App = () => {
               </ProtectedRoute>
             } />
             
-            {/* Root redirect based on auth status */}
+            {/* Empty path index redirect based on auth status */}
             <Route index element={
               isAuthenticated ? <Navigate to="/" replace /> : <Navigate to="/landing" replace />
             } />

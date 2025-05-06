@@ -36,6 +36,9 @@ const recentUpdates = [
 const Dashboard = () => {
   const navigate = useNavigate();
   
+  // Log to help with debugging
+  console.log("Dashboard component rendering");
+  
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
