@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -44,6 +43,8 @@ const App = () => (
               </DashboardLayout>
             </ProtectedRoute>
           } />
+          
+          {/* Other dashboard routes */}
           <Route path="/supplier-costing" element={
             <ProtectedRoute>
               <DashboardLayout>
@@ -87,11 +88,9 @@ const App = () => (
             </ProtectedRoute>
           } />
           
-          {/* Root redirect - send to prototypes page when logged in */}
+          {/* Root redirect - direct to proper page based on auth status */}
           <Route index element={
-            localStorage.getItem('isAuthenticated') === 'true' ? 
-            <Navigate to="/prototypes" replace /> : 
-            <Navigate to="/landing" replace />
+            <Navigate to={localStorage.getItem('isAuthenticated') === 'true' ? "/prototypes" : "/landing"} replace />
           } />
           
           {/* 404 Page */}

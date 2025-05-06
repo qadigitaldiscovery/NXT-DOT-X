@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 
 interface ProtectedRouteProps {
@@ -16,6 +16,16 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
   console.log("Protected route check - Auth status:", isAuthenticated);
   console.log("Current path:", location.pathname);
   
+  // Check if we're coming from prototype selector (for debugging)
+  useEffect(() => {
+    const fromPrototypeSelector = localStorage.getItem('fromPrototypeSelector');
+    if (fromPrototypeSelector) {
+      console.log("Navigation from prototype selector detected, timestamp:", fromPrototypeSelector);
+      // Clear the flag after we've used it for debugging
+      localStorage.removeItem('fromPrototypeSelector');
+    }
+  }, []);
+
   if (!isAuthenticated) {
     console.log("Not authenticated, redirecting to landing");
     return <Navigate to="/landing" />;

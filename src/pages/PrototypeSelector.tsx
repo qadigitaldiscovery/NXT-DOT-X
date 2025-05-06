@@ -37,14 +37,16 @@ const PrototypeSelector = () => {
   ];
 
   const handlePrototypeClick = (prototypeId: string, path: string) => {
-    console.log(`Launching prototype: ${prototypeId}, path: ${path}`);
+    console.log(`Selected prototype: ${prototypeId}`);
     
-    // Use a different approach - directly navigate without any state flags
+    // Force navigation to dashboard with a timestamp to avoid caching issues
     if (prototypeId === "beta1") {
-      console.log("Navigating directly to dashboard");
-      navigate("/");
+      // Set a distinct flag in localStorage to indicate we're coming from prototype selector
+      localStorage.setItem('fromPrototypeSelector', Date.now().toString());
+      console.log("Navigating to dashboard...");
+      navigate('/', { replace: true });
     } else {
-      navigate(path);
+      navigate(path, { replace: true });
     }
   };
 
