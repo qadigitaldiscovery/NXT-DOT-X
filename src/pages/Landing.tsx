@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -6,6 +7,7 @@ import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { LogIn } from 'lucide-react';
+
 const Landing = () => {
   const [username, setUsername] = React.useState('');
   const [password, setPassword] = React.useState('');
@@ -19,6 +21,7 @@ const Landing = () => {
       navigate('/prototypes');
     }
   }, [navigate]);
+
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
@@ -41,12 +44,16 @@ const Landing = () => {
       setIsLoading(false);
     }
   };
+
   return <div className="min-h-screen flex flex-col bg-white">
       {/* Hero section with red background */}
       <header className="bg-[#c01c1c] text-white">
         <div className="container mx-auto px-4 py-8 bg-zinc-700">
           <nav className="flex justify-between items-center mb-16">
-            <div></div>
+            <div>
+              {/* NXT DOT-X title moved to left */}
+              <h1 className="text-2xl font-bold">NXT DOT-X BUSINESS MANAGEMENT PLATFORM</h1>
+            </div>
             <div className="flex items-center">
               {/* NXT LEVEL TECH logo */}
               <img src="/lovable-uploads/f39ef88d-7664-4c92-8f4a-44368177dfde.png" alt="NXT LEVEL TECH" className="h-10" />
@@ -55,8 +62,7 @@ const Landing = () => {
           
           <div className="flex flex-col md:flex-row items-center py-12">
             <div className="md:w-1/2 mb-8 md:mb-0 md:pr-8">
-              <h1 className="text-4xl font-bold mb-6 md:text-5xl">NXT DOT-X  BUSINESS MANAGEMENT PLATFORM</h1>
-              <p className="text-xl mb-8">Access all tools and features from one centralized dashboard.</p>
+              {/* Removed the descriptive text that was here */}
             </div>
             <div className="md:w-1/2">
               <Card className="border-0 shadow-xl" id="login">
@@ -101,4 +107,5 @@ const Landing = () => {
       </footer>
     </div>;
 };
+
 export default Landing;
