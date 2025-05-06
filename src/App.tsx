@@ -18,87 +18,92 @@ import ProtectedRoute from "./components/ProtectedRoute";
 
 const queryClient = new QueryClient();
 
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <Routes>
-          {/* Landing Page (Login) */}
-          <Route path="/landing" element={<Landing />} />
-          
-          {/* Prototype Selector */}
-          <Route path="/prototypes" element={
-            <ProtectedRoute>
-              <PrototypeSelector />
-            </ProtectedRoute>
-          } />
-          
-          {/* Beta 1 Dashboard Routes */}
-          <Route path="/" element={
-            <ProtectedRoute>
-              <DashboardLayout>
-                <Dashboard />
-              </DashboardLayout>
-            </ProtectedRoute>
-          } />
-          
-          {/* Other dashboard routes */}
-          <Route path="/supplier-costing" element={
-            <ProtectedRoute>
-              <DashboardLayout>
-                <SupplierCosting />
-              </DashboardLayout>
-            </ProtectedRoute>
-          } />
-          <Route path="/cost-analysis" element={
-            <ProtectedRoute>
-              <DashboardLayout>
-                <CostAnalysis />
-              </DashboardLayout>
-            </ProtectedRoute>
-          } />
-          <Route path="/competitor-pricing" element={
-            <ProtectedRoute>
-              <DashboardLayout>
-                <CompetitorPricing />
-              </DashboardLayout>
-            </ProtectedRoute>
-          } />
-          <Route path="/price-management" element={
-            <ProtectedRoute>
-              <DashboardLayout>
-                <PriceManagement />
-              </DashboardLayout>
-            </ProtectedRoute>
-          } />
-          <Route path="/export-data" element={
-            <ProtectedRoute>
-              <DashboardLayout>
-                <ExportData />
-              </DashboardLayout>
-            </ProtectedRoute>
-          } />
-          <Route path="/settings" element={
-            <ProtectedRoute>
-              <DashboardLayout>
-                <Settings />
-              </DashboardLayout>
-            </ProtectedRoute>
-          } />
-          
-          {/* Root redirect - direct to proper page based on auth status */}
-          <Route index element={
-            <Navigate to={localStorage.getItem('isAuthenticated') === 'true' ? "/prototypes" : "/landing"} replace />
-          } />
-          
-          {/* 404 Page */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </BrowserRouter>
-    </TooltipProvider>
-  </QueryClientProvider>
-);
+const App = () => {
+  // Determine authentication status once during rendering
+  const isAuthenticated = localStorage.getItem('isAuthenticated') === 'true';
+  
+  return (
+    <QueryClientProvider client={queryClient}>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
+          <Routes>
+            {/* Landing Page (Login) */}
+            <Route path="/landing" element={<Landing />} />
+            
+            {/* Prototype Selector */}
+            <Route path="/prototypes" element={
+              <ProtectedRoute>
+                <PrototypeSelector />
+              </ProtectedRoute>
+            } />
+            
+            {/* Beta 1 Dashboard Routes */}
+            <Route path="/" element={
+              <ProtectedRoute>
+                <DashboardLayout>
+                  <Dashboard />
+                </DashboardLayout>
+              </ProtectedRoute>
+            } />
+            
+            {/* Other dashboard routes */}
+            <Route path="/supplier-costing" element={
+              <ProtectedRoute>
+                <DashboardLayout>
+                  <SupplierCosting />
+                </DashboardLayout>
+              </ProtectedRoute>
+            } />
+            <Route path="/cost-analysis" element={
+              <ProtectedRoute>
+                <DashboardLayout>
+                  <CostAnalysis />
+                </DashboardLayout>
+              </ProtectedRoute>
+            } />
+            <Route path="/competitor-pricing" element={
+              <ProtectedRoute>
+                <DashboardLayout>
+                  <CompetitorPricing />
+                </DashboardLayout>
+              </ProtectedRoute>
+            } />
+            <Route path="/price-management" element={
+              <ProtectedRoute>
+                <DashboardLayout>
+                  <PriceManagement />
+                </DashboardLayout>
+              </ProtectedRoute>
+            } />
+            <Route path="/export-data" element={
+              <ProtectedRoute>
+                <DashboardLayout>
+                  <ExportData />
+                </DashboardLayout>
+              </ProtectedRoute>
+            } />
+            <Route path="/settings" element={
+              <ProtectedRoute>
+                <DashboardLayout>
+                  <Settings />
+                </DashboardLayout>
+              </ProtectedRoute>
+            } />
+            
+            {/* Root redirect - direct to proper page based on auth status */}
+            <Route index element={
+              isAuthenticated ? <Navigate to="/prototypes" replace /> : <Navigate to="/landing" replace />
+            } />
+            
+            {/* 404 Page */}
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </BrowserRouter>
+      </TooltipProvider>
+    </QueryClientProvider>
+  );
+};
 
 export default App;
