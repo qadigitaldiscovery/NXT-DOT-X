@@ -1,6 +1,7 @@
+
 import * as React from "react"
 import { useIsMobile } from "@/hooks/use-mobile"
-import { SidebarContext, SidebarProviderProps, SidebarState } from "./types"
+import type { SidebarContext, SidebarProviderProps, SidebarState } from "./types"
 import { cn } from "@/lib/utils"
 
 const SIDEBAR_COOKIE_NAME = "sidebar:state"
