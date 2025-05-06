@@ -94,15 +94,18 @@ export const Sidebar = ({ open, onToggle }: SidebarProps) => {
       <aside 
         className={cn(
           "fixed md:sticky top-0 left-0 h-screen w-64 bg-sidebar z-30 shadow-lg flex flex-col transition-all duration-300 ease-in-out",
-          !open && "-translate-x-full md:translate-x-0 md:w-0"
+          !open && "-translate-x-full md:translate-x-0 md:w-16"
         )}
       >
         <div className="flex items-center justify-between p-4 border-b border-sidebar-border">
-          <div className="flex items-center space-x-2">
+          <div className={cn(
+            "flex items-center space-x-2",
+            !open && "md:hidden"
+          )}>
             <div className="h-8 w-8 rounded-full bg-sidebar-primary flex items-center justify-center">
               <span className="text-white font-bold">NX</span>
             </div>
-            <h1 className="text-lg font-bold text-white">NXT LEVEL TECH</h1>
+            <h1 className="text-lg font-bold text-white truncate">NXT LEVEL TECH</h1>
           </div>
           
           {isMobile && (
@@ -117,7 +120,10 @@ export const Sidebar = ({ open, onToggle }: SidebarProps) => {
           )}
         </div>
 
-        <nav className="flex-1 py-4 px-2 overflow-y-auto scrollbar-hide">
+        <nav className={cn(
+          "flex-1 py-4 px-2 overflow-y-auto scrollbar-hide",
+          !open && "md:hidden"
+        )}>
           <Accordion 
             type="multiple" 
             value={openCategories}
@@ -160,7 +166,34 @@ export const Sidebar = ({ open, onToggle }: SidebarProps) => {
           </Accordion>
         </nav>
 
-        <div className="p-4 border-t border-sidebar-border">
+        {/* Icons only sidebar for collapsed state on desktop */}
+        <div className={cn(
+          "hidden md:flex flex-col items-center py-4 space-y-6",
+          open && "md:hidden"
+        )}>
+          {navCategories.flatMap(category => 
+            category.items.map(item => (
+              <NavLink
+                key={item.path}
+                to={item.path}
+                className={({ isActive }) => cn(
+                  "w-10 h-10 flex items-center justify-center rounded-md",
+                  isActive 
+                    ? "bg-sidebar-primary text-white" 
+                    : "text-sidebar-foreground hover:bg-sidebar-accent"
+                )}
+                title={item.label}
+              >
+                <item.icon className="h-5 w-5" />
+              </NavLink>
+            ))
+          )}
+        </div>
+
+        <div className={cn(
+          "p-4 border-t border-sidebar-border",
+          !open && "md:hidden"
+        )}>
           <NavLink
             to="/settings"
             className={({ isActive }) => cn(
@@ -172,6 +205,25 @@ export const Sidebar = ({ open, onToggle }: SidebarProps) => {
           >
             <Settings className="h-5 w-5" />
             <span>Settings</span>
+          </NavLink>
+        </div>
+        
+        {/* Settings icon for collapsed state */}
+        <div className={cn(
+          "hidden md:flex justify-center p-4 border-t border-sidebar-border",
+          open && "md:hidden"
+        )}>
+          <NavLink
+            to="/settings"
+            className={({ isActive }) => cn(
+              "w-10 h-10 flex items-center justify-center rounded-md",
+              isActive 
+                ? "bg-sidebar-primary text-white" 
+                : "text-sidebar-foreground hover:bg-sidebar-accent"
+            )}
+            title="Settings"
+          >
+            <Settings className="h-5 w-5" />
           </NavLink>
         </div>
       </aside>
@@ -186,7 +238,7 @@ export const Sidebar = ({ open, onToggle }: SidebarProps) => {
           open 
             ? "left-60 bottom-4 transition-all duration-300" 
             : "left-4 bottom-4 transition-all duration-300",
-          "md:hidden"
+          isMobile ? "" : "md:left-auto md:right-4"
         )}
       >
         {open ? <ChevronLeft className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
