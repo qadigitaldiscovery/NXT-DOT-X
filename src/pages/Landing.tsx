@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -7,7 +6,6 @@ import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { LogIn } from 'lucide-react';
-
 const Landing = () => {
   const [username, setUsername] = React.useState('');
   const [password, setPassword] = React.useState('');
@@ -21,7 +19,6 @@ const Landing = () => {
       navigate('/prototypes');
     }
   }, [navigate]);
-
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
@@ -44,16 +41,15 @@ const Landing = () => {
       setIsLoading(false);
     }
   };
-
   return <div className="min-h-screen flex flex-col bg-[#c01c1c]">
       {/* Hero section with red background */}
-      <header className="bg-[#c01c1c] text-white flex-1">
+      <header className="text-white flex-1 bg-zinc-700">
         <div className="container mx-auto px-4 py-8">
-          <nav className="flex justify-between items-center mb-8">
+          <nav className="flex justify-between items-center mb-8 bg-transparent">
             <div className="flex flex-col">
               {/* NXT DOT-X title and subtitle with improved styling */}
-              <h1 className="text-4xl font-bold tracking-wider">NXT DOT-X</h1>
-              <p className="text-sm font-medium tracking-wide mt-1 text-white/90">BUSINESS MANAGEMENT PLATFORM</p>
+              <h1 className="font-bold tracking-wider text-7xl">NXT DOT-X</h1>
+              <p className="font-medium tracking-wide mt-1 text-white/90 text-xl">BUSINESS MANAGEMENT PLATFORM</p>
             </div>
             <div className="flex items-center">
               {/* NXT LEVEL TECH logo */}
@@ -94,7 +90,7 @@ const Landing = () => {
         </div>
       </header>
 
-      <footer className="bg-gray-900 text-white py-4">
+      <footer className="text-white py-4 bg-zinc-950">
         <div className="container mx-auto px-4">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <div className="flex items-center">
@@ -106,5 +102,4 @@ const Landing = () => {
       </footer>
     </div>;
 };
-
 export default Landing;
