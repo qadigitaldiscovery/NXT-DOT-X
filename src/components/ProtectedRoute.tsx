@@ -10,23 +10,23 @@ interface ProtectedRouteProps {
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
   const location = useLocation();
   
-  // Check authentication status
+  // Check authentication status once
   const isAuthenticated = localStorage.getItem('isAuthenticated') === 'true';
   
   useEffect(() => {
-    // Only handle selected prototype when on dashboard route
+    // Only handle selected prototype when on dashboard route (/)
     if (isAuthenticated && location.pathname === '/') {
       const selectedPrototype = localStorage.getItem('selectedPrototype');
       
       if (selectedPrototype) {
         // Extract base prototype name before timestamp
         const prototypeName = selectedPrototype.split('_')[0];
-        console.log(`Accessing dashboard from prototype selector: ${prototypeName}`);
+        console.log(`Accessing dashboard with prototype: ${prototypeName}`);
         
         // Show welcome toast
         toast.success(`Welcome to ${prototypeName} dashboard`);
         
-        // Clear the flag now that we've handled it
+        // Clear the flag to prevent future redirects
         localStorage.removeItem('selectedPrototype');
       }
     }

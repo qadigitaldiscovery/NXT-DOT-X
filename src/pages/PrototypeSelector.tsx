@@ -42,13 +42,16 @@ const PrototypeSelector = () => {
     if (prototypeId === "beta1") {
       console.log("Setting prototype flag and navigating to dashboard");
       
-      // Set flag in localStorage with timestamp to ensure it's unique
-      localStorage.setItem('selectedPrototype', `${prototypeId}_${Date.now()}`);
+      // Create unique flag with timestamp and set in localStorage
+      const timestamp = Date.now();
+      const flag = `${prototypeId}_${timestamp}`;
+      localStorage.setItem('selectedPrototype', flag);
       
       // Show feedback toast
       toast.success(`Launching ${prototypeId} dashboard`);
-      
-      // Force direct navigation to avoid any React Router issues
+
+      // Use direct window location for navigation to force a full page reload
+      // This avoids React Router's partial updates which might be causing the loop
       window.location.href = path;
     } else {
       navigate(path);
