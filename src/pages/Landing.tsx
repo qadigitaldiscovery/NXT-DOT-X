@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -46,9 +47,10 @@ const Landing = () => {
       <header className="bg-[#c01c1c] text-white">
         <div className="container mx-auto px-4 py-8 bg-zinc-700">
           <nav className="flex justify-between items-center mb-16">
+            <div></div>
             <div className="flex items-center">
               {/* NXT LEVEL TECH logo */}
-              <img src="/lovable-uploads/f39ef88d-7664-4c92-8f4a-44368177dfde.png" alt="NXT LEVEL TECH" className="h-10 mr-4" />
+              <img src="/lovable-uploads/f39ef88d-7664-4c92-8f4a-44368177dfde.png" alt="NXT LEVEL TECH" className="h-10" />
             </div>
           </nav>
           
