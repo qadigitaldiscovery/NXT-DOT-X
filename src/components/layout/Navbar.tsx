@@ -1,8 +1,9 @@
 
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { MenuIcon, BellIcon, UserCircle } from 'lucide-react';
+import { MenuIcon, BellIcon, UserCircle, Home } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { useNavigate } from 'react-router-dom';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -18,6 +19,12 @@ interface NavbarProps {
 
 export const Navbar = ({ onMenuClick }: NavbarProps) => {
   const isMobile = useIsMobile();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    localStorage.removeItem('isAuthenticated');
+    navigate('/landing');
+  };
 
   return (
     <header className="bg-white border-b border-gray-200 sticky top-0 z-10">
@@ -28,10 +35,19 @@ export const Navbar = ({ onMenuClick }: NavbarProps) => {
               <MenuIcon className="h-5 w-5" />
             </Button>
           )}
-          <div className="ml-4">
+          <div className="ml-4 flex items-center gap-2">
             <h2 className="font-semibold text-lg text-dashboard-heading">
-              DOT-X Data Management Platform
+              Beta 1 - DOT-X Data Management Platform
             </h2>
+            <Button 
+              variant="ghost" 
+              size="sm"
+              className="flex items-center gap-1 text-muted-foreground"
+              onClick={() => navigate('/prototypes')}
+            >
+              <Home className="h-4 w-4" />
+              All Prototypes
+            </Button>
           </div>
         </div>
 
@@ -47,12 +63,12 @@ export const Navbar = ({ onMenuClick }: NavbarProps) => {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-56">
-              <DropdownMenuLabel>My Account</DropdownMenuLabel>
+              <DropdownMenuLabel>Admin Account</DropdownMenuLabel>
               <DropdownMenuSeparator />
               <DropdownMenuItem>Profile</DropdownMenuItem>
               <DropdownMenuItem>Settings</DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem>Log out</DropdownMenuItem>
+              <DropdownMenuItem onClick={handleLogout}>Log out</DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
