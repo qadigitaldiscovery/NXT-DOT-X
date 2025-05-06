@@ -2,6 +2,7 @@
 import React from 'react';
 import { Outlet } from 'react-router-dom';
 import { DashboardLayout } from './DashboardLayout';
+import { ArrowDownUp, Settings } from 'lucide-react';
 
 export const Beta3Layout = ({ children }: { children: React.ReactNode }) => {
   return (

@@ -6,9 +6,15 @@ import { useIsMobile } from '@/hooks/use-mobile';
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
+  title?: string;
+  navItems?: Array<{
+    title: string;
+    href: string;
+    icon: string;
+  }>;
 }
 
-export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
+export const DashboardLayout = ({ children, title = "Dashboard", navItems = [] }: DashboardLayoutProps) => {
   const [sidebarOpen, setSidebarOpen] = React.useState(true);
   const isMobile = useIsMobile();
 
