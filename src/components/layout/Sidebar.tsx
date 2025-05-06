@@ -59,9 +59,9 @@ export const Sidebar = ({ open, onToggle }: SidebarProps) => {
         <div className="flex items-center justify-between p-4 border-b border-sidebar-border">
           <div className="flex items-center space-x-2">
             <div className="h-8 w-8 rounded-full bg-sidebar-primary flex items-center justify-center">
-              <span className="text-white font-bold">AV</span>
+              <span className="text-white font-bold">NX</span>
             </div>
-            <h1 className="text-lg font-bold text-white">AV Insights</h1>
+            <h1 className="text-lg font-bold text-white">NXT LEVEL TECH</h1>
           </div>
           
           {isMobile && (

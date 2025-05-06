@@ -30,7 +30,7 @@ export const Navbar = ({ onMenuClick }: NavbarProps) => {
           )}
           <div className="ml-4">
             <h2 className="font-semibold text-lg text-dashboard-heading">
-              AV Management Dashboard
+              DOT-X Data Management Platform
             </h2>
           </div>
         </div>
