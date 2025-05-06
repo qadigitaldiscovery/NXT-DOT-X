@@ -23,7 +23,7 @@ export const Navbar = ({
               <MenuIcon className="h-5 w-5" />
             </Button>}
           <div className="ml-4 flex items-center gap-2">
-            <h2 className="text-lg text-dashboard-heading font-extrabold">DOT-X  |  DATA MANAGEMENT MODULE </h2>
+            <h2 className="text-dashboard-heading font-extrabold text-4xl px-0 mx-px">DATA MANAGEMENT MODULE </h2>
             
           </div>
         </div>
