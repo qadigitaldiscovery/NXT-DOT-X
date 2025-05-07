@@ -2,8 +2,9 @@
 import React from 'react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { Button } from '@/components/ui/button';
-import { Menu, Home, BarChart3, Settings, Gift, Users, Award, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Menu, Home, BarChart3, Settings, Gift, Users, ChevronLeft, ChevronRight } from 'lucide-react';
 import { NavLink } from 'react-router-dom';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 
 interface Beta2LayoutProps {
   children: React.ReactNode;
@@ -65,8 +66,19 @@ export const Beta2Layout = ({ children }: Beta2LayoutProps) => {
                 } ${!sidebarOpen && 'md:justify-center md:px-2'}`
               }
             >
-              <Home className="h-5 w-5" />
-              {sidebarOpen && <span>Dashboard</span>}
+              {!sidebarOpen ? (
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Home className="h-5 w-5" />
+                  </TooltipTrigger>
+                  <TooltipContent>Dashboard</TooltipContent>
+                </Tooltip>
+              ) : (
+                <>
+                  <Home className="h-5 w-5" />
+                  <span>Dashboard</span>
+                </>
+              )}
             </NavLink>
             
             <NavLink
@@ -79,8 +91,19 @@ export const Beta2Layout = ({ children }: Beta2LayoutProps) => {
                 } ${!sidebarOpen && 'md:justify-center md:px-2'}`
               }
             >
-              <Users className="h-5 w-5" />
-              {sidebarOpen && <span>Members</span>}
+              {!sidebarOpen ? (
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Users className="h-5 w-5" />
+                  </TooltipTrigger>
+                  <TooltipContent>Members</TooltipContent>
+                </Tooltip>
+              ) : (
+                <>
+                  <Users className="h-5 w-5" />
+                  <span>Members</span>
+                </>
+              )}
             </NavLink>
             
             <NavLink
@@ -93,8 +116,19 @@ export const Beta2Layout = ({ children }: Beta2LayoutProps) => {
                 } ${!sidebarOpen && 'md:justify-center md:px-2'}`
               }
             >
-              <Gift className="h-5 w-5" />
-              {sidebarOpen && <span>Rewards</span>}
+              {!sidebarOpen ? (
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Gift className="h-5 w-5" />
+                  </TooltipTrigger>
+                  <TooltipContent>Rewards</TooltipContent>
+                </Tooltip>
+              ) : (
+                <>
+                  <Gift className="h-5 w-5" />
+                  <span>Rewards</span>
+                </>
+              )}
             </NavLink>
             
             <NavLink
@@ -107,8 +141,19 @@ export const Beta2Layout = ({ children }: Beta2LayoutProps) => {
                 } ${!sidebarOpen && 'md:justify-center md:px-2'}`
               }
             >
-              <BarChart3 className="h-5 w-5" />
-              {sidebarOpen && <span>Analytics</span>}
+              {!sidebarOpen ? (
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <BarChart3 className="h-5 w-5" />
+                  </TooltipTrigger>
+                  <TooltipContent>Analytics</TooltipContent>
+                </Tooltip>
+              ) : (
+                <>
+                  <BarChart3 className="h-5 w-5" />
+                  <span>Analytics</span>
+                </>
+              )}
             </NavLink>
             
             <NavLink
@@ -121,8 +166,19 @@ export const Beta2Layout = ({ children }: Beta2LayoutProps) => {
                 } ${!sidebarOpen && 'md:justify-center md:px-2'}`
               }
             >
-              <Settings className="h-5 w-5" />
-              {sidebarOpen && <span>Settings</span>}
+              {!sidebarOpen ? (
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Settings className="h-5 w-5" />
+                  </TooltipTrigger>
+                  <TooltipContent>Settings</TooltipContent>
+                </Tooltip>
+              ) : (
+                <>
+                  <Settings className="h-5 w-5" />
+                  <span>Settings</span>
+                </>
+              )}
             </NavLink>
           </div>
         </nav>
