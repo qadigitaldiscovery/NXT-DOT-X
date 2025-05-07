@@ -59,7 +59,7 @@ const Landing = () => {
             <div className="flex flex-col">
               {/* NXT DOT-X title and subtitle with improved styling */}
               <h1 className="font-bold tracking-wider text-7xl">NXT DOT-X</h1>
-              <p className="font-medium tracking-wide mt-1 text-white/90 text-xl"> BUSINESS MANAGEMENT PLATFORM</p>
+              <p className="font-medium tracking-wide mt-1 text-white/90 text-xl">  BUSINESS MANAGEMENT PLATFORM</p>
             </div>
             <div className="flex items-center">
               {/* NXT LEVEL TECH logo */}
