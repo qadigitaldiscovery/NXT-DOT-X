@@ -6,7 +6,7 @@ import {
   LoyaltyTier, 
   LoyaltyTransaction,
   LoyaltyReward
-} from '@/services/loyaltyService';
+} from '@/services/loyalty';
 import { supabase } from "@/integrations/supabase/client";
 
 // Hook for managing loyalty account
