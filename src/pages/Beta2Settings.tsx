@@ -1,13 +1,13 @@
 
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
+import { CollapsibleSettingsSection } from '@/components/beta2/settings/CollapsibleSettingsSection';
 
 const Beta2Settings = () => {
   const navigate = useNavigate();
@@ -39,12 +39,12 @@ const Beta2Settings = () => {
       </div>
       
       <div className="grid gap-6 md:grid-cols-2">
-        <Card>
-          <CardHeader>
-            <CardTitle>Program Details</CardTitle>
-            <CardDescription>Basic configuration for your loyalty program</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
+        <CollapsibleSettingsSection 
+          title="Program Details" 
+          description="Basic configuration for your loyalty program"
+          defaultOpen={true}
+        >
+          <div className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="program-name">Program Name</Label>
               <Input id="program-name" defaultValue="Premium Rewards Club" />
@@ -68,15 +68,15 @@ const Beta2Settings = () => {
                 </SelectContent>
               </Select>
             </div>
-          </CardContent>
-        </Card>
+          </div>
+        </CollapsibleSettingsSection>
         
-        <Card>
-          <CardHeader>
-            <CardTitle>Member Communications</CardTitle>
-            <CardDescription>Configure member notifications and emails</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
+        <CollapsibleSettingsSection 
+          title="Member Communications" 
+          description="Configure member notifications and emails"
+          defaultOpen={true}
+        >
+          <div className="space-y-4">
             <div className="flex items-center justify-between">
               <div>
                 <Label htmlFor="welcome-email">Welcome Email</Label>
@@ -106,16 +106,24 @@ const Beta2Settings = () => {
               </div>
               <Switch id="reward-expiry" defaultChecked />
             </div>
-          </CardContent>
-        </Card>
+          </div>
+        </CollapsibleSettingsSection>
       </div>
       
-      <Card>
-        <CardHeader>
-          <CardTitle>Tier Configuration</CardTitle>
-          <CardDescription>Configure membership tiers and benefits</CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
+      <CollapsibleSettingsSection 
+        title="Tier Configuration" 
+        description="Configure membership tiers and benefits"
+        defaultOpen={true}
+        footerContent={
+          <>
+            <Button variant="outline">Reset to Defaults</Button>
+            <Button onClick={handleSave} disabled={saving}>
+              {saving ? 'Saving...' : 'Save Changes'}
+            </Button>
+          </>
+        }
+      >
+        <div className="space-y-4">
           <div className="grid gap-4 md:grid-cols-2">
             <div className="space-y-2">
               <Label htmlFor="tier-system">Tier System</Label>
@@ -166,14 +174,8 @@ const Beta2Settings = () => {
             </div>
             <Switch id="referral-bonus" defaultChecked />
           </div>
-        </CardContent>
-        <CardFooter className="flex justify-end gap-2">
-          <Button variant="outline">Reset to Defaults</Button>
-          <Button onClick={handleSave} disabled={saving}>
-            {saving ? 'Saving...' : 'Save Changes'}
-          </Button>
-        </CardFooter>
-      </Card>
+        </div>
+      </CollapsibleSettingsSection>
     </div>
   );
 };
