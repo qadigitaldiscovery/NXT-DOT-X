@@ -33,6 +33,10 @@ import SupplierCostsPage from "./pages/SupplierCostsPage";
 import UploadsPage from "./pages/UploadsPage";
 import NewUploadPage from "./pages/NewUploadPage";
 
+// Import our new loyalty pages
+import Beta2Members from "./pages/Beta2Members";
+import Beta2Rewards from "./pages/Beta2Rewards";
+
 const queryClient = new QueryClient();
 
 const App = () => {
@@ -182,6 +186,21 @@ const App = () => {
               <ProtectedRoute>
                 <Beta2Layout>
                   <Beta2Settings />
+                </Beta2Layout>
+              </ProtectedRoute>
+            } />
+            {/* New Beta 2 Loyalty Program routes */}
+            <Route path="/beta2/members" element={
+              <ProtectedRoute>
+                <Beta2Layout>
+                  <Beta2Members />
+                </Beta2Layout>
+              </ProtectedRoute>
+            } />
+            <Route path="/beta2/rewards" element={
+              <ProtectedRoute>
+                <Beta2Layout>
+                  <Beta2Rewards />
                 </Beta2Layout>
               </ProtectedRoute>
             } />

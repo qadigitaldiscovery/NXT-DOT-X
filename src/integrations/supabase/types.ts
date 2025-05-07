@@ -366,6 +366,164 @@ export type Database = {
         }
         Relationships: []
       }
+      loyalty_accounts: {
+        Row: {
+          created_at: string
+          join_date: string
+          last_activity_date: string | null
+          loyalty_id: number
+          next_tier_evaluation_date: string | null
+          points_balance: number
+          tier_assigned_date: string | null
+          tier_level: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          join_date?: string
+          last_activity_date?: string | null
+          loyalty_id?: number
+          next_tier_evaluation_date?: string | null
+          points_balance?: number
+          tier_assigned_date?: string | null
+          tier_level?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          join_date?: string
+          last_activity_date?: string | null
+          loyalty_id?: number
+          next_tier_evaluation_date?: string | null
+          points_balance?: number
+          tier_assigned_date?: string | null
+          tier_level?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      loyalty_rewards_v1: {
+        Row: {
+          created_at: string
+          description_v1: string | null
+          is_active: boolean
+          points_cost: number
+          redemption_instructions_v1: string | null
+          reward_id: number
+          reward_name: string
+          reward_type: string
+          updated_at: string
+          value_monetary: number | null
+        }
+        Insert: {
+          created_at?: string
+          description_v1?: string | null
+          is_active?: boolean
+          points_cost: number
+          redemption_instructions_v1?: string | null
+          reward_id?: number
+          reward_name: string
+          reward_type: string
+          updated_at?: string
+          value_monetary?: number | null
+        }
+        Update: {
+          created_at?: string
+          description_v1?: string | null
+          is_active?: boolean
+          points_cost?: number
+          redemption_instructions_v1?: string | null
+          reward_id?: number
+          reward_name?: string
+          reward_type?: string
+          updated_at?: string
+          value_monetary?: number | null
+        }
+        Relationships: []
+      }
+      loyalty_tiers: {
+        Row: {
+          benefits_summary_v1: string | null
+          created_at: string
+          description_v1: string | null
+          min_points_required: number
+          tier_id: number
+          tier_name: string
+          updated_at: string
+        }
+        Insert: {
+          benefits_summary_v1?: string | null
+          created_at?: string
+          description_v1?: string | null
+          min_points_required: number
+          tier_id?: number
+          tier_name: string
+          updated_at?: string
+        }
+        Update: {
+          benefits_summary_v1?: string | null
+          created_at?: string
+          description_v1?: string | null
+          min_points_required?: number
+          tier_id?: number
+          tier_name?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      loyalty_transactions: {
+        Row: {
+          created_at: string
+          description: string | null
+          loyalty_id: number
+          points_amount: number
+          points_expiry_date: string | null
+          reference_id: string | null
+          related_order_value: number | null
+          transaction_date: string
+          transaction_id: number
+          transaction_type: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          loyalty_id: number
+          points_amount: number
+          points_expiry_date?: string | null
+          reference_id?: string | null
+          related_order_value?: number | null
+          transaction_date?: string
+          transaction_id?: number
+          transaction_type: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          loyalty_id?: number
+          points_amount?: number
+          points_expiry_date?: string | null
+          reference_id?: string | null
+          related_order_value?: number | null
+          transaction_date?: string
+          transaction_id?: number
+          transaction_type?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "loyalty_transactions_loyalty_id_fkey"
+            columns: ["loyalty_id"]
+            isOneToOne: false
+            referencedRelation: "loyalty_accounts"
+            referencedColumns: ["loyalty_id"]
+          },
+        ]
+      }
       product_landed_costs: {
         Row: {
           base_cost: number

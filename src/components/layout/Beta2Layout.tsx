@@ -35,7 +35,7 @@ export const Beta2Layout = ({ children }: Beta2LayoutProps) => {
         {/* Sidebar header */}
         <div className="flex items-center justify-between h-16 px-4 border-b">
           <div className={`flex items-center space-x-2 ${!sidebarOpen && 'md:hidden'}`}>
-            <div className="h-8 w-8 rounded-full bg-green-600 flex items-center justify-center">
+            <div className="h-8 w-8 rounded-full bg-purple-600 flex items-center justify-center">
               <span className="text-white font-bold">LP</span>
             </div>
             <h1 className="font-bold text-xl">Loyalty Pro</h1>
@@ -60,7 +60,7 @@ export const Beta2Layout = ({ children }: Beta2LayoutProps) => {
               className={({ isActive }) => 
                 `flex items-center gap-3 px-3 py-2 rounded-md transition-colors ${
                   isActive 
-                    ? 'bg-green-100 text-green-700' 
+                    ? 'bg-purple-100 text-purple-700' 
                     : 'text-gray-700 hover:bg-gray-100'
                 } ${!sidebarOpen && 'md:justify-center md:px-2'}`
               }
@@ -74,7 +74,7 @@ export const Beta2Layout = ({ children }: Beta2LayoutProps) => {
               className={({ isActive }) => 
                 `flex items-center gap-3 px-3 py-2 rounded-md transition-colors ${
                   isActive 
-                    ? 'bg-green-100 text-green-700' 
+                    ? 'bg-purple-100 text-purple-700' 
                     : 'text-gray-700 hover:bg-gray-100'
                 } ${!sidebarOpen && 'md:justify-center md:px-2'}`
               }
@@ -88,7 +88,7 @@ export const Beta2Layout = ({ children }: Beta2LayoutProps) => {
               className={({ isActive }) => 
                 `flex items-center gap-3 px-3 py-2 rounded-md transition-colors ${
                   isActive 
-                    ? 'bg-green-100 text-green-700' 
+                    ? 'bg-purple-100 text-purple-700' 
                     : 'text-gray-700 hover:bg-gray-100'
                 } ${!sidebarOpen && 'md:justify-center md:px-2'}`
               }
@@ -102,7 +102,7 @@ export const Beta2Layout = ({ children }: Beta2LayoutProps) => {
               className={({ isActive }) => 
                 `flex items-center gap-3 px-3 py-2 rounded-md transition-colors ${
                   isActive 
-                    ? 'bg-green-100 text-green-700' 
+                    ? 'bg-purple-100 text-purple-700' 
                     : 'text-gray-700 hover:bg-gray-100'
                 } ${!sidebarOpen && 'md:justify-center md:px-2'}`
               }
@@ -116,7 +116,7 @@ export const Beta2Layout = ({ children }: Beta2LayoutProps) => {
               className={({ isActive }) => 
                 `flex items-center gap-3 px-3 py-2 rounded-md transition-colors ${
                   isActive 
-                    ? 'bg-green-100 text-green-700' 
+                    ? 'bg-purple-100 text-purple-700' 
                     : 'text-gray-700 hover:bg-gray-100'
                 } ${!sidebarOpen && 'md:justify-center md:px-2'}`
               }
