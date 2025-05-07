@@ -24,10 +24,12 @@ const PermissionGuard: React.FC<PermissionGuardProps> = ({
     return <Navigate to={fallbackPath} replace />;
   }
 
-  if (requiredPermission && !hasPermission(requiredPermission)) {
-    console.log("Missing permission:", requiredPermission);
-    return <Navigate to="/unauthorized" replace />;
-  }
+  // For now, bypass permission check to ensure unified access
+  // This can be adjusted later to implement proper role-based access
+  // if (requiredPermission && !hasPermission(requiredPermission)) {
+  //   console.log("Missing permission:", requiredPermission);
+  //   return <Navigate to="/unauthorized" replace />;
+  // }
 
   return <>{children}</>;
 };

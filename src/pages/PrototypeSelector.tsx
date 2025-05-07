@@ -28,7 +28,7 @@ const PrototypeSelector = () => {
   // Primary module prototypes data
   const primaryModules = [{
     id: "data-management",
-    name: "Data Management",
+    name: "Data Management Module",
     description: "Dashboard with supplier costing and analysis",
     path: "/data-management",
     icon: <BarChart3 className="h-16 w-16 text-white" />,
@@ -36,7 +36,7 @@ const PrototypeSelector = () => {
     permission: "modules.data"
   }, {
     id: "loyalty-rewards",
-    name: "Loyalty Rewards",
+    name: "Loyalty Rewards Module",
     description: "Loyalty program management platform",
     path: "/loyalty-rewards",
     icon: <Gift className="h-16 w-16 text-white" />,
@@ -44,7 +44,7 @@ const PrototypeSelector = () => {
     permission: "modules.loyalty"
   }, {
     id: "trading-system",
-    name: "Trading System",
+    name: "Trading System Module",
     description: "Inventory and order management",
     path: "/trading-system",
     icon: <ArrowDownUp className="h-16 w-16 text-white" />,
@@ -52,10 +52,8 @@ const PrototypeSelector = () => {
     permission: "modules.trading"
   }];
 
-  // Filter modules based on user permissions
-  const accessibleModules = primaryModules.filter(module => 
-    hasPermission('modules.all') || hasPermission(module.permission)
-  );
+  // Filter modules based on user permissions - for now, grant access to all
+  const accessibleModules = primaryModules;
 
   // System functions data
   const systemFunctions = [{
@@ -132,10 +130,8 @@ const PrototypeSelector = () => {
     permission: "settings.access"
   }];
 
-  // Filter system functions based on user permissions
-  const accessibleSystemFunctions = systemFunctions.filter(func => 
-    hasPermission('modules.all') || hasPermission(func.permission)
-  );
+  // Make all system functions accessible for a unified user experience
+  const accessibleSystemFunctions = systemFunctions;
   
   const handleModuleClick = (moduleId: string, path: string) => {
     console.log(`Selected module: ${moduleId}`);

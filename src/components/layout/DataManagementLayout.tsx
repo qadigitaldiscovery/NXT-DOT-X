@@ -40,7 +40,7 @@ export const DataManagementLayout = ({
             <div className="h-8 w-8 rounded-full bg-blue-600 flex items-center justify-center">
               <span className="text-white font-bold">DM</span>
             </div>
-            <h1 className="font-bold text-xl">Data Management</h1>
+            <h1 className="font-bold text-xl">Data Management Module</h1>
           </div>
           {sidebarOpen && <Button variant="ghost" size="sm" className="md:hidden" onClick={toggleSidebar}>
               <ChevronLeft className="h-4 w-4" />
@@ -168,7 +168,7 @@ export const DataManagementLayout = ({
           <Button variant="ghost" size="sm" onClick={toggleSidebar} className="mr-4">
             {sidebarOpen ? <ChevronLeft className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </Button>
-          <h1 className="text-xl font-bold">Data Management Platform</h1>
+          <h1 className="text-xl font-bold">Data Management Module</h1>
         </header>
         
         {/* Main content area */}

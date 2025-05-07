@@ -10,7 +10,7 @@ const LoyaltyDashboard = () => {
     <div className="space-y-8">
       {/* Header */}
       <DashboardHeader 
-        title="Loyalty Rewards Program" 
+        title="Loyalty Rewards Module" 
         description="Welcome to the loyalty program management platform."
       />
       

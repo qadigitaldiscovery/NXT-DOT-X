@@ -20,12 +20,12 @@ export default function SuppliersPage() {
         <div className="flex items-center gap-2">
           <Button 
             variant="outline"
-            onClick={() => navigate('/beta1/uploads/new')}
+            onClick={() => navigate('/data-management/uploads/new')}
           >
             <Upload className="h-4 w-4 mr-2" />
             Upload Cost File
           </Button>
-          <Button onClick={() => navigate('/beta1/suppliers/new')}>
+          <Button onClick={() => navigate('/data-management/suppliers/new')}>
             <PlusCircle className="h-4 w-4 mr-2" />
             New Supplier
           </Button>
