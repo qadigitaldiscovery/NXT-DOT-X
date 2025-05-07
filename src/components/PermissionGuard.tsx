@@ -15,12 +15,14 @@ const PermissionGuard: React.FC<PermissionGuardProps> = ({
   fallbackPath = '/landing'
 }) => {
   const { isAuthenticated, hasPermission } = useAuth();
-
+  
   if (!isAuthenticated) {
+    console.log("Not authenticated, redirecting to", fallbackPath);
     return <Navigate to={fallbackPath} replace />;
   }
 
   if (requiredPermission && !hasPermission(requiredPermission)) {
+    console.log("Missing permission:", requiredPermission);
     return <Navigate to="/unauthorized" replace />;
   }
 

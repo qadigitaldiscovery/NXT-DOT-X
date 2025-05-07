@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -81,14 +80,7 @@ const App = () => {
                   </Beta1Layout>
                 </PermissionGuard>
               } />
-              <Route path="/beta1/settings" element={
-                <PermissionGuard requiredPermission="modules.data">
-                  <Beta1Layout>
-                    <Beta1Settings />
-                  </Beta1Layout>
-                </PermissionGuard>
-              } />
-
+              
               {/* New Supplier Costing Module routes */}
               <Route path="/beta1/suppliers" element={
                 <PermissionGuard requiredPermission="modules.data">
