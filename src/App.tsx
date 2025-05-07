@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -172,21 +171,21 @@ const App = () => {
               <ProtectedRoute>
                 <Beta2Layout>
                   <Beta2Dashboard />
-                </Beta2Layout>
+                </Beta1Layout>
               </ProtectedRoute>
             } />
             <Route path="/beta2/analytics" element={
               <ProtectedRoute>
                 <Beta2Layout>
                   <Beta2Analytics />
-                </Beta2Layout>
+                </Beta1Layout>
               </ProtectedRoute>
             } />
             <Route path="/beta2/settings" element={
               <ProtectedRoute>
                 <Beta2Layout>
                   <Beta2Settings />
-                </Beta2Layout>
+                </Beta1Layout>
               </ProtectedRoute>
             } />
             {/* New Beta 2 Loyalty Program routes */}
@@ -194,14 +193,14 @@ const App = () => {
               <ProtectedRoute>
                 <Beta2Layout>
                   <Beta2Members />
-                </Beta2Layout>
+                </Beta1Layout>
               </ProtectedRoute>
             } />
             <Route path="/beta2/rewards" element={
               <ProtectedRoute>
                 <Beta2Layout>
                   <Beta2Rewards />
-                </Beta2Layout>
+                </Beta1Layout>
               </ProtectedRoute>
             } />
             
@@ -210,14 +209,14 @@ const App = () => {
               <ProtectedRoute>
                 <Beta3Layout>
                   <Beta3Dashboard />
-                </Beta3Layout>
+                </Beta1Layout>
               </ProtectedRoute>
             } />
             <Route path="/beta3/settings" element={
               <ProtectedRoute>
                 <Beta3Layout>
                   <Beta3Settings />
-                </Beta3Layout>
+                </Beta1Layout>
               </ProtectedRoute>
             } />
             
