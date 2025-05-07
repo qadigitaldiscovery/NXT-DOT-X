@@ -140,13 +140,9 @@ const PrototypeSelector = () => {
         {/* Primary Modules */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
           {primaryModules.map(module => <Card key={module.id} className="overflow-hidden transition-all duration-300 hover:shadow-xl border-0 shadow-md hover:scale-105">
-              <div className="">
-                <div className="p-5 rounded-full bg-white/20 backdrop-blur-sm shadow-inner">
-                  {module.icon}
-                </div>
-              </div>
+              
               <CardHeader className="pb-2">
-                <CardTitle className="text-2xl font-bold">{module.name}</CardTitle>
+                <CardTitle className="font-bold text-2xl text-center">{module.name}</CardTitle>
                 <CardDescription className="text-base">{module.description}</CardDescription>
               </CardHeader>
               <CardFooter className="pt-2 pb-6">
