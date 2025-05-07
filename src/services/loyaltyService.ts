@@ -180,11 +180,19 @@ export const loyaltyService = {
   },
   
   // Add a transaction
-  async addTransaction(transaction: Partial<LoyaltyTransaction>): Promise<boolean> {
+  async addTransaction(transaction: {
+    loyalty_id: number;
+    transaction_type: string;
+    points_amount: number;
+    description?: string | null;
+    reference_id?: string | null;
+    related_order_value?: number | null;
+    points_expiry_date?: string | null;
+  }): Promise<boolean> {
     try {
       const { error } = await supabase
         .from('loyalty_transactions')
-        .insert([transaction]);
+        .insert(transaction);
         
       if (error) throw error;
       return true;
@@ -231,12 +239,12 @@ export const loyaltyService = {
       // 4. Create redemption transaction
       const { error: transactionError } = await supabase
         .from('loyalty_transactions')
-        .insert([{
+        .insert({
           loyalty_id: loyaltyId,
           transaction_type: 'REDEMPTION',
           points_amount: -reward.points_cost, // Negative as points are being spent
           description: `Redeemed: ${reward.reward_name}`,
-        }]);
+        });
       
       if (transactionError) {
         throw transactionError;
