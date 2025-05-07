@@ -4,7 +4,7 @@ import { useIsMobile } from '@/hooks/use-mobile';
 import { Button } from '@/components/ui/button';
 import { Menu, Home, BarChart3, Settings, Gift, Users, ChevronLeft, ChevronRight } from 'lucide-react';
 import { NavLink } from 'react-router-dom';
-import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
 interface Beta2LayoutProps {
   children: React.ReactNode;
@@ -27,6 +27,14 @@ export const Beta2Layout = ({ children }: Beta2LayoutProps) => {
 
   return (
     <div className="flex h-screen bg-slate-100 overflow-hidden">
+      {/* Mobile backdrop */}
+      {sidebarOpen && isMobile && (
+        <div 
+          className="fixed inset-0 bg-black bg-opacity-50 z-20"
+          onClick={toggleSidebar}
+        />
+      )}
+
       {/* Sidebar */}
       <div 
         className={`fixed inset-y-0 left-0 z-40 h-full bg-white shadow-lg transform transition-all duration-300 ease-in-out ${
@@ -54,134 +62,136 @@ export const Beta2Layout = ({ children }: Beta2LayoutProps) => {
         </div>
         
         {/* Sidebar content */}
-        <nav className="p-4">
-          <div className={`space-y-2 ${!sidebarOpen && 'md:flex md:flex-col md:items-center'}`}>
-            <NavLink
-              to="/beta2"
-              className={({ isActive }) => 
-                `flex items-center gap-3 px-3 py-2 rounded-md transition-colors ${
-                  isActive 
-                    ? 'bg-purple-100 text-purple-700' 
-                    : 'text-gray-700 hover:bg-gray-100'
-                } ${!sidebarOpen && 'md:justify-center md:px-2'}`
-              }
-            >
-              {!sidebarOpen ? (
-                <Tooltip>
-                  <TooltipTrigger asChild>
+        <TooltipProvider>
+          <nav className="p-4">
+            <div className={`space-y-2 ${!sidebarOpen && 'md:flex md:flex-col md:items-center'}`}>
+              <NavLink
+                to="/beta2"
+                className={({ isActive }) => 
+                  `flex items-center gap-3 px-3 py-2 rounded-md transition-colors ${
+                    isActive 
+                      ? 'bg-purple-100 text-purple-700' 
+                      : 'text-gray-700 hover:bg-gray-100'
+                  } ${!sidebarOpen && 'md:justify-center md:px-2'}`
+                }
+              >
+                {!sidebarOpen && !isMobile ? (
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Home className="h-5 w-5" />
+                    </TooltipTrigger>
+                    <TooltipContent side="right">Dashboard</TooltipContent>
+                  </Tooltip>
+                ) : (
+                  <>
                     <Home className="h-5 w-5" />
-                  </TooltipTrigger>
-                  <TooltipContent>Dashboard</TooltipContent>
-                </Tooltip>
-              ) : (
-                <>
-                  <Home className="h-5 w-5" />
-                  <span>Dashboard</span>
-                </>
-              )}
-            </NavLink>
-            
-            <NavLink
-              to="/beta2/members"
-              className={({ isActive }) => 
-                `flex items-center gap-3 px-3 py-2 rounded-md transition-colors ${
-                  isActive 
-                    ? 'bg-purple-100 text-purple-700' 
-                    : 'text-gray-700 hover:bg-gray-100'
-                } ${!sidebarOpen && 'md:justify-center md:px-2'}`
-              }
-            >
-              {!sidebarOpen ? (
-                <Tooltip>
-                  <TooltipTrigger asChild>
+                    {sidebarOpen && <span>Dashboard</span>}
+                  </>
+                )}
+              </NavLink>
+              
+              <NavLink
+                to="/beta2/members"
+                className={({ isActive }) => 
+                  `flex items-center gap-3 px-3 py-2 rounded-md transition-colors ${
+                    isActive 
+                      ? 'bg-purple-100 text-purple-700' 
+                      : 'text-gray-700 hover:bg-gray-100'
+                  } ${!sidebarOpen && 'md:justify-center md:px-2'}`
+                }
+              >
+                {!sidebarOpen && !isMobile ? (
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Users className="h-5 w-5" />
+                    </TooltipTrigger>
+                    <TooltipContent side="right">Members</TooltipContent>
+                  </Tooltip>
+                ) : (
+                  <>
                     <Users className="h-5 w-5" />
-                  </TooltipTrigger>
-                  <TooltipContent>Members</TooltipContent>
-                </Tooltip>
-              ) : (
-                <>
-                  <Users className="h-5 w-5" />
-                  <span>Members</span>
-                </>
-              )}
-            </NavLink>
-            
-            <NavLink
-              to="/beta2/rewards"
-              className={({ isActive }) => 
-                `flex items-center gap-3 px-3 py-2 rounded-md transition-colors ${
-                  isActive 
-                    ? 'bg-purple-100 text-purple-700' 
-                    : 'text-gray-700 hover:bg-gray-100'
-                } ${!sidebarOpen && 'md:justify-center md:px-2'}`
-              }
-            >
-              {!sidebarOpen ? (
-                <Tooltip>
-                  <TooltipTrigger asChild>
+                    {sidebarOpen && <span>Members</span>}
+                  </>
+                )}
+              </NavLink>
+              
+              <NavLink
+                to="/beta2/rewards"
+                className={({ isActive }) => 
+                  `flex items-center gap-3 px-3 py-2 rounded-md transition-colors ${
+                    isActive 
+                      ? 'bg-purple-100 text-purple-700' 
+                      : 'text-gray-700 hover:bg-gray-100'
+                  } ${!sidebarOpen && 'md:justify-center md:px-2'}`
+                }
+              >
+                {!sidebarOpen && !isMobile ? (
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Gift className="h-5 w-5" />
+                    </TooltipTrigger>
+                    <TooltipContent side="right">Rewards</TooltipContent>
+                  </Tooltip>
+                ) : (
+                  <>
                     <Gift className="h-5 w-5" />
-                  </TooltipTrigger>
-                  <TooltipContent>Rewards</TooltipContent>
-                </Tooltip>
-              ) : (
-                <>
-                  <Gift className="h-5 w-5" />
-                  <span>Rewards</span>
-                </>
-              )}
-            </NavLink>
-            
-            <NavLink
-              to="/beta2/analytics"
-              className={({ isActive }) => 
-                `flex items-center gap-3 px-3 py-2 rounded-md transition-colors ${
-                  isActive 
-                    ? 'bg-purple-100 text-purple-700' 
-                    : 'text-gray-700 hover:bg-gray-100'
-                } ${!sidebarOpen && 'md:justify-center md:px-2'}`
-              }
-            >
-              {!sidebarOpen ? (
-                <Tooltip>
-                  <TooltipTrigger asChild>
+                    {sidebarOpen && <span>Rewards</span>}
+                  </>
+                )}
+              </NavLink>
+              
+              <NavLink
+                to="/beta2/analytics"
+                className={({ isActive }) => 
+                  `flex items-center gap-3 px-3 py-2 rounded-md transition-colors ${
+                    isActive 
+                      ? 'bg-purple-100 text-purple-700' 
+                      : 'text-gray-700 hover:bg-gray-100'
+                  } ${!sidebarOpen && 'md:justify-center md:px-2'}`
+                }
+              >
+                {!sidebarOpen && !isMobile ? (
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <BarChart3 className="h-5 w-5" />
+                    </TooltipTrigger>
+                    <TooltipContent side="right">Analytics</TooltipContent>
+                  </Tooltip>
+                ) : (
+                  <>
                     <BarChart3 className="h-5 w-5" />
-                  </TooltipTrigger>
-                  <TooltipContent>Analytics</TooltipContent>
-                </Tooltip>
-              ) : (
-                <>
-                  <BarChart3 className="h-5 w-5" />
-                  <span>Analytics</span>
-                </>
-              )}
-            </NavLink>
-            
-            <NavLink
-              to="/beta2/settings"
-              className={({ isActive }) => 
-                `flex items-center gap-3 px-3 py-2 rounded-md transition-colors ${
-                  isActive 
-                    ? 'bg-purple-100 text-purple-700' 
-                    : 'text-gray-700 hover:bg-gray-100'
-                } ${!sidebarOpen && 'md:justify-center md:px-2'}`
-              }
-            >
-              {!sidebarOpen ? (
-                <Tooltip>
-                  <TooltipTrigger asChild>
+                    {sidebarOpen && <span>Analytics</span>}
+                  </>
+                )}
+              </NavLink>
+              
+              <NavLink
+                to="/beta2/settings"
+                className={({ isActive }) => 
+                  `flex items-center gap-3 px-3 py-2 rounded-md transition-colors ${
+                    isActive 
+                      ? 'bg-purple-100 text-purple-700' 
+                      : 'text-gray-700 hover:bg-gray-100'
+                  } ${!sidebarOpen && 'md:justify-center md:px-2'}`
+                }
+              >
+                {!sidebarOpen && !isMobile ? (
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Settings className="h-5 w-5" />
+                    </TooltipTrigger>
+                    <TooltipContent side="right">Settings</TooltipContent>
+                  </Tooltip>
+                ) : (
+                  <>
                     <Settings className="h-5 w-5" />
-                  </TooltipTrigger>
-                  <TooltipContent>Settings</TooltipContent>
-                </Tooltip>
-              ) : (
-                <>
-                  <Settings className="h-5 w-5" />
-                  <span>Settings</span>
-                </>
-              )}
-            </NavLink>
-          </div>
-        </nav>
+                    {sidebarOpen && <span>Settings</span>}
+                  </>
+                )}
+              </NavLink>
+            </div>
+          </nav>
+        </TooltipProvider>
       </div>
       
       {/* Main content */}
