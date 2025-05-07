@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -43,6 +42,9 @@ import LoyaltySettings from "./pages/LoyaltySettings";
 import { TradingSystemLayout } from "./components/layout/TradingSystemLayout";
 import TradingSystemDashboard from "./pages/TradingSystemDashboard";
 import TradingSystemSettings from "./pages/TradingSystemSettings";
+
+// Import the new APIsPage
+import APIsPage from "./pages/APIsPage";
 
 const queryClient = new QueryClient();
 
@@ -172,6 +174,14 @@ const App = () => {
                 <PermissionGuard requiredPermission="modules.data">
                   <DataManagementLayout>
                     <DataManagementSettings />
+                  </DataManagementLayout>
+                </PermissionGuard>
+              } />
+              
+              <Route path="/data-management/apis" element={
+                <PermissionGuard requiredPermission="modules.data">
+                  <DataManagementLayout>
+                    <APIsPage />
                   </DataManagementLayout>
                 </PermissionGuard>
               } />

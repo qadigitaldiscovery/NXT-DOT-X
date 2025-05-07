@@ -1,5 +1,5 @@
 
-import { Home, FileUp, BarChart3, LineChart, ArrowDownUp, FileDown, Settings } from 'lucide-react';
+import { Home, FileUp, BarChart3, LineChart, ArrowDownUp, FileDown, Settings, FileCode } from 'lucide-react';
 import { NavItem, NavCategory } from './types';
 
 // Top level nav items (not in categories)
@@ -26,7 +26,8 @@ export const navCategories: NavCategory[] = [
   {
     name: "Data",
     items: [
-      { label: 'Export Data', icon: FileDown, path: '/export-data' }
+      { label: 'Export Data', icon: FileDown, path: '/export-data' },
+      { label: 'APIs', icon: FileCode, path: '/data-management/apis' }
     ]
   }
 ];
