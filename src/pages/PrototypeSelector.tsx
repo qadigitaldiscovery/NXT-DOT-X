@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -122,7 +121,7 @@ const PrototypeSelector = () => {
     toast.info(`System function ${systemId} is not implemented yet`);
   };
   return <div className="flex flex-col min-h-screen bg-zinc-100">
-      <header className="text-white shadow-sm bg-zinc-950">
+      <header className="text-white shadow-sm bg-slate-700">
         <div className="container mx-auto flex justify-between items-center h-16 px-4">
           <div className="flex items-center">
             <span className="text-2xl font-bold">DOT-X  |  BUSINESS MANAGEMENT PLATFORM</span>
