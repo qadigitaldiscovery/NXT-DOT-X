@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { Button } from '@/components/ui/button';
@@ -342,7 +341,7 @@ const UserManagement = () => {
                         </Badge>
                       </TableCell>
                       <TableCell>
-                        <Badge variant={user.status === 'active' ? 'success' : 'outline'}>
+                        <Badge variant={user.status === 'active' ? 'default' : 'outline'}>
                           {user.status}
                         </Badge>
                       </TableCell>
