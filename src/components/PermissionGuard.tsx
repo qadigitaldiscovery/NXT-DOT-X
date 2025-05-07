@@ -16,6 +16,9 @@ const PermissionGuard: React.FC<PermissionGuardProps> = ({
 }) => {
   const { isAuthenticated, hasPermission } = useAuth();
   
+  // Improved logging for debugging
+  console.log(`Permission check - Auth: ${isAuthenticated}, Required: ${requiredPermission}`);
+  
   if (!isAuthenticated) {
     console.log("Not authenticated, redirecting to", fallbackPath);
     return <Navigate to={fallbackPath} replace />;

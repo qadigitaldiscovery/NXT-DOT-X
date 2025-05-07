@@ -27,26 +27,26 @@ const PrototypeSelector = () => {
 
   // Primary module prototypes data
   const primaryModules = [{
-    id: "beta1",
+    id: "data-management",
     name: "Data Management",
     description: "Dashboard with supplier costing and analysis",
-    path: "/beta1",
+    path: "/data-management",
     icon: <BarChart3 className="h-16 w-16 text-white" />,
     bgColor: "from-blue-500 to-blue-700",
     permission: "modules.data"
   }, {
-    id: "beta2",
-    name: "Loyalty Program",
+    id: "loyalty-rewards",
+    name: "Loyalty Rewards",
     description: "Loyalty program management platform",
-    path: "/beta2",
+    path: "/loyalty-rewards",
     icon: <Gift className="h-16 w-16 text-white" />,
     bgColor: "from-purple-500 to-purple-700",
     permission: "modules.loyalty"
   }, {
-    id: "beta3",
+    id: "trading-system",
     name: "Trading System",
     description: "Inventory and order management",
-    path: "/beta3",
+    path: "/trading-system",
     icon: <ArrowDownUp className="h-16 w-16 text-white" />,
     bgColor: "from-green-500 to-green-700",
     permission: "modules.trading"
@@ -59,76 +59,76 @@ const PrototypeSelector = () => {
 
   // System functions data
   const systemFunctions = [{
-    id: "system1",
+    id: "users",
     name: "User Management",
     icon: <Users className="h-5 w-5" />,
-    path: "/users",
+    path: "/admin/users",
     permission: "users.view"
   }, {
-    id: "system2",
+    id: "security",
     name: "Security",
     icon: <Shield className="h-5 w-5" />,
-    path: "/security",
+    path: "/admin/security",
     permission: "settings.access"
   }, {
-    id: "system3",
+    id: "database",
     name: "Database",
     icon: <Database className="h-5 w-5" />,
-    path: "/database",
+    path: "/admin/database",
     permission: "settings.access"
   }, {
-    id: "system4",
+    id: "settings",
     name: "Settings",
     icon: <Settings className="h-5 w-5" />,
-    path: "/settings",
+    path: "/admin/settings",
     permission: "settings.access"
   }, {
-    id: "system5",
+    id: "api",
     name: "API",
     icon: <FileCode className="h-5 w-5" />,
-    path: "/api",
+    path: "/admin/api",
     permission: "settings.access"
   }, {
-    id: "system6",
+    id: "docs",
     name: "Documentation",
     icon: <BookOpen className="h-5 w-5" />,
-    path: "/docs",
+    path: "/admin/docs",
     permission: "settings.access"
   }, {
-    id: "system7",
+    id: "integrations",
     name: "Integrations",
     icon: <LinkIcon className="h-5 w-5" />,
-    path: "/integrations",
+    path: "/admin/integrations",
     permission: "settings.access"
   }, {
-    id: "system8",
+    id: "media",
     name: "Media",
     icon: <Image className="h-5 w-5" />,
-    path: "/media",
+    path: "/admin/media",
     permission: "settings.access"
   }, {
-    id: "system9",
+    id: "reports",
     name: "Reports",
     icon: <FileUp className="h-5 w-5" />,
-    path: "/reports",
+    path: "/admin/reports",
     permission: "settings.access"
   }, {
-    id: "system10",
+    id: "calendar",
     name: "Calendar",
     icon: <Calendar className="h-5 w-5" />,
-    path: "/calendar",
+    path: "/admin/calendar",
     permission: "settings.access"
   }, {
-    id: "system11",
+    id: "notifications",
     name: "Notifications",
     icon: <Mail className="h-5 w-5" />,
-    path: "/notifications",
+    path: "/admin/notifications",
     permission: "settings.access"
   }, {
-    id: "system12",
+    id: "search",
     name: "Search",
     icon: <Search className="h-5 w-5" />,
-    path: "/search",
+    path: "/admin/search",
     permission: "settings.access"
   }];
 
@@ -137,19 +137,19 @@ const PrototypeSelector = () => {
     hasPermission('modules.all') || hasPermission(func.permission)
   );
   
-  const handlePrototypeClick = (prototypeId: string, path: string) => {
-    console.log(`Selected module: ${prototypeId}`);
+  const handleModuleClick = (moduleId: string, path: string) => {
+    console.log(`Selected module: ${moduleId}`);
     navigate(path, {
       replace: true
     });
     setTimeout(() => {
-      toast.success(`Welcome to ${prototypeId} dashboard`);
+      toast.success(`Welcome to ${moduleId} dashboard`);
     }, 500);
   };
   
   const handleSystemClick = (systemId: string, path: string) => {
-    if (systemId === "system1") {
-      navigate("/users");
+    if (systemId === "users") {
+      navigate("/admin/users");
     } else {
       toast.info(`System function ${systemId} is not implemented yet`);
     }
@@ -189,14 +189,14 @@ const PrototypeSelector = () => {
                 <CardDescription className="text-base">{module.description}</CardDescription>
               </CardHeader>
               <CardFooter className="pt-2 pb-6">
-                <Button className="w-full bg-[#c01c1c] hover:bg-[#a51919] font-medium text-lg py-6" onClick={() => handlePrototypeClick(module.id, module.path)}>
+                <Button className="w-full bg-[#c01c1c] hover:bg-[#a51919] font-medium text-lg py-6" onClick={() => handleModuleClick(module.id, module.path)}>
                   Launch Module
                 </Button>
               </CardFooter>
             </Card>)}
         </div>
         
-        <h2 className="text-2xl font-bold mb-2 text-gray-800 mt-8">SYSTEM FUNCTIONS</h2>
+        <h2 className="text-2xl font-bold mb-2 text-gray-800 mt-8">ADMINISTRATION</h2>
         <p className="text-gray-600 mb-6">Access administration and utility features</p>
         
         {/* System Functions */}
@@ -217,7 +217,7 @@ const PrototypeSelector = () => {
                 <div className="text-sm">
                   <p className="font-semibold">{system.name}</p>
                   <p className="text-muted-foreground">
-                    {system.id === "system1" ? "Manage user accounts and permissions" : "System function coming soon"}
+                    {system.id === "users" ? "Manage user accounts and permissions" : "System function coming soon"}
                   </p>
                 </div>
               </HoverCardContent>
