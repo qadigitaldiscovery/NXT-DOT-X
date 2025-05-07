@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -124,7 +125,7 @@ const PrototypeSelector = () => {
       <header className="text-white shadow-sm bg-zinc-950">
         <div className="container mx-auto flex justify-between items-center h-16 px-4">
           <div className="flex items-center">
-            <span className="text-2xl font-bold">DOT-X  |  BUSINESS MANAGEMENT PLATFORM</span>
+            <span className="text-2xl font-bold">DOT-X  |  BUSINESS MANAGEMENT PLATFORM</span>
           </div>
           <Button variant="ghost" onClick={handleLogout} className="flex items-center gap-2 text-white hover:bg-[#a51919]">
             <LogOut className="h-4 w-4" />
@@ -134,7 +135,7 @@ const PrototypeSelector = () => {
       </header>
       
       <main className="container mx-auto px-4 py-8 flex-grow">
-        <h1 className="text-3xl font-bold mb-2 text-gray-800">Primary Modules</h1>
+        <h1 className="text-3xl font-bold mb-2 text-gray-800">PRIMARY MODULES</h1>
         <p className="text-gray-600 mb-6">Select one of our core business modules to get started</p>
         
         {/* Primary Modules */}
@@ -142,7 +143,7 @@ const PrototypeSelector = () => {
           {primaryModules.map(module => <Card key={module.id} className="overflow-hidden transition-all duration-300 hover:shadow-xl border-0 shadow-md hover:scale-105">
               
               <CardHeader className="pb-2">
-                <CardTitle className="font-bold text-2xl text-center">{module.name}</CardTitle>
+                <CardTitle className="font-bold text-2xl text-center">{module.name.toUpperCase()}</CardTitle>
                 <CardDescription className="text-base">{module.description}</CardDescription>
               </CardHeader>
               <CardFooter className="pt-2 pb-6">
@@ -153,7 +154,7 @@ const PrototypeSelector = () => {
             </Card>)}
         </div>
         
-        <h2 className="text-2xl font-bold mb-2 text-gray-800 mt-8">System Functions</h2>
+        <h2 className="text-2xl font-bold mb-2 text-gray-800 mt-8">SYSTEM FUNCTIONS</h2>
         <p className="text-gray-600 mb-6">Access administration and utility features</p>
         
         {/* System Functions */}
@@ -165,7 +166,7 @@ const PrototypeSelector = () => {
                     <div className="p-3 rounded-full bg-gray-100 mb-3">
                       {system.icon}
                     </div>
-                    <p className="text-sm font-medium">{system.name}</p>
+                    <p className="text-sm font-medium">{system.name.toUpperCase()}</p>
                   </CardContent>
                 </Card>
               </HoverCardTrigger>
