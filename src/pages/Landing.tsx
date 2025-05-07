@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -6,20 +7,23 @@ import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { LogIn } from 'lucide-react';
+import { useAuth } from '@/context/AuthContext';
+
 const Landing = () => {
   const [username, setUsername] = React.useState('');
   const [password, setPassword] = React.useState('');
   const [isLoading, setIsLoading] = React.useState(false);
   const navigate = useNavigate();
+  const { login, isAuthenticated } = useAuth();
 
   // Check if user is already logged in
   React.useEffect(() => {
-    const isAuthenticated = localStorage.getItem('isAuthenticated') === 'true';
     if (isAuthenticated) {
       navigate('/prototypes');
     }
-  }, [navigate]);
-  const handleLogin = (e: React.FormEvent) => {
+  }, [navigate, isAuthenticated]);
+
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
 
@@ -30,17 +34,16 @@ const Landing = () => {
       return;
     }
 
-    // Check admin credentials
-    if (username === 'admin' && password === 'admin1') {
-      localStorage.setItem('isAuthenticated', 'true');
-      toast.success('Login successful!');
-      setIsLoading(false);
+    // Authenticate user
+    const success = await login(username, password);
+    
+    if (success) {
       navigate('/prototypes');
-    } else {
-      toast.error('Invalid credentials');
-      setIsLoading(false);
     }
+    
+    setIsLoading(false);
   };
+
   return <div className="min-h-screen flex flex-col relative">
       {/* Background image with overlay */}
       <div className="absolute inset-0 z-0" style={{
@@ -59,7 +62,7 @@ const Landing = () => {
             <div className="flex flex-col">
               {/* NXT DOT-X title and subtitle with improved styling */}
               <h1 className="font-bold tracking-wider text-7xl">NXT DOT-X</h1>
-              <p className="font-medium tracking-wide mt-1 text-white/90 text-xl">  BUSINESS MANAGEMENT PLATFORM</p>
+              <p className="font-medium tracking-wide mt-1 text-white/90 text-xl">  BUSINESS MANAGEMENT PLATFORM</p>
             </div>
             <div className="flex items-center">
               {/* NXT LEVEL TECH logo */}
@@ -78,8 +81,8 @@ const Landing = () => {
                 <CardContent>
                   <form onSubmit={handleLogin} className="space-y-4">
                     <div className="space-y-2">
-                      <Label htmlFor="username" className="text-white">Username</Label>
-                      <Input id="username" type="text" placeholder="admin" value={username} onChange={e => setUsername(e.target.value)} required className="bg-black/30 text-white border-gray-600 focus:border-[#c01c1c]" />
+                      <Label htmlFor="username" className="text-white">Username or Email</Label>
+                      <Input id="username" type="text" placeholder="admin@example.com" value={username} onChange={e => setUsername(e.target.value)} required className="bg-black/30 text-white border-gray-600 focus:border-[#c01c1c]" />
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="password" className="text-white">Password</Label>
@@ -90,7 +93,7 @@ const Landing = () => {
                       {isLoading ? 'Signing in...' : 'Sign In'}
                     </Button>
                     <p className="text-sm text-center text-gray-300">
-                      Demo credentials: username: admin, password: admin1
+                      Demo credentials: admin@example.com / admin1 or user@example.com / user1
                     </p>
                   </form>
                 </CardContent>

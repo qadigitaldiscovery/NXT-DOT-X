@@ -8,6 +8,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel,
 import { useSupplierCosts } from '@/hooks/use-supplier-costs';
 import { useSupplierUploads } from '@/hooks/use-supplier-uploads';
 import { Badge } from '@/components/ui/badge';
+import { useAuth } from '@/context/AuthContext';
 
 interface NavbarProps {
   onMenuClick: () => void;
@@ -18,6 +19,7 @@ export const Navbar = ({
 }: NavbarProps) => {
   const isMobile = useIsMobile();
   const navigate = useNavigate();
+  const { user, logout } = useAuth();
   
   // Get unread notifications count
   const { data: pendingCosts = [] } = useSupplierCosts({ status: 'pending_approval' });
@@ -26,7 +28,7 @@ export const Navbar = ({
   const totalPending = pendingCosts.length + pendingUploads.filter(u => u.status === 'pending').length;
   
   const handleLogout = () => {
-    localStorage.removeItem('isAuthenticated');
+    logout();
     navigate('/landing');
   };
   
@@ -102,10 +104,10 @@ export const Navbar = ({
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-56">
-              <DropdownMenuLabel>Admin Account</DropdownMenuLabel>
+              <DropdownMenuLabel>{user?.username || 'User'} ({user?.role || 'Unknown'})</DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuItem>Profile</DropdownMenuItem>
-              <DropdownMenuItem>Settings</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => navigate('/users')}>User Management</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => navigate('/settings')}>Settings</DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={handleLogout}>Log out</DropdownMenuItem>
             </DropdownMenuContent>

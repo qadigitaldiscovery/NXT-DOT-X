@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -5,20 +6,22 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { toast } from 'sonner';
 import { FileUp, BarChart3, Gift, ArrowDownUp, LogOut, Database, Settings, FileCode, BookOpen, Link as LinkIcon, Image, Video, Users, Shield, Laptop, Calendar, Mail, Search } from 'lucide-react';
 import { HoverCard, HoverCardTrigger, HoverCardContent } from '@/components/ui/hover-card';
+import { useAuth } from '@/context/AuthContext';
+
 const PrototypeSelector = () => {
   const navigate = useNavigate();
+  const { logout, user, hasPermission } = useAuth();
 
   // Check if user is authenticated
   React.useEffect(() => {
-    const isAuthenticated = localStorage.getItem('isAuthenticated') === 'true';
-    if (!isAuthenticated) {
+    if (!user) {
       navigate('/landing');
       toast.error('Please sign in to access this page');
     }
-  }, [navigate]);
+  }, [navigate, user]);
+
   const handleLogout = () => {
-    localStorage.removeItem('isAuthenticated');
-    toast.success('Logged out successfully');
+    logout();
     navigate('/landing');
   };
 
@@ -29,85 +32,111 @@ const PrototypeSelector = () => {
     description: "Dashboard with supplier costing and analysis",
     path: "/beta1",
     icon: <BarChart3 className="h-16 w-16 text-white" />,
-    bgColor: "from-blue-500 to-blue-700"
+    bgColor: "from-blue-500 to-blue-700",
+    permission: "modules.data"
   }, {
     id: "beta2",
     name: "Loyalty Program",
     description: "Loyalty program management platform",
     path: "/beta2",
     icon: <Gift className="h-16 w-16 text-white" />,
-    bgColor: "from-purple-500 to-purple-700"
+    bgColor: "from-purple-500 to-purple-700",
+    permission: "modules.loyalty"
   }, {
     id: "beta3",
     name: "Trading System",
     description: "Inventory and order management",
     path: "/beta3",
     icon: <ArrowDownUp className="h-16 w-16 text-white" />,
-    bgColor: "from-green-500 to-green-700"
+    bgColor: "from-green-500 to-green-700",
+    permission: "modules.trading"
   }];
+
+  // Filter modules based on user permissions
+  const accessibleModules = primaryModules.filter(module => 
+    hasPermission('modules.all') || hasPermission(module.permission)
+  );
 
   // System functions data
   const systemFunctions = [{
     id: "system1",
     name: "User Management",
     icon: <Users className="h-5 w-5" />,
-    path: "/users"
+    path: "/users",
+    permission: "users.view"
   }, {
     id: "system2",
     name: "Security",
     icon: <Shield className="h-5 w-5" />,
-    path: "/security"
+    path: "/security",
+    permission: "settings.access"
   }, {
     id: "system3",
     name: "Database",
     icon: <Database className="h-5 w-5" />,
-    path: "/database"
+    path: "/database",
+    permission: "settings.access"
   }, {
     id: "system4",
     name: "Settings",
     icon: <Settings className="h-5 w-5" />,
-    path: "/settings"
+    path: "/settings",
+    permission: "settings.access"
   }, {
     id: "system5",
     name: "API",
     icon: <FileCode className="h-5 w-5" />,
-    path: "/api"
+    path: "/api",
+    permission: "settings.access"
   }, {
     id: "system6",
     name: "Documentation",
     icon: <BookOpen className="h-5 w-5" />,
-    path: "/docs"
+    path: "/docs",
+    permission: "settings.access"
   }, {
     id: "system7",
     name: "Integrations",
     icon: <LinkIcon className="h-5 w-5" />,
-    path: "/integrations"
+    path: "/integrations",
+    permission: "settings.access"
   }, {
     id: "system8",
     name: "Media",
     icon: <Image className="h-5 w-5" />,
-    path: "/media"
+    path: "/media",
+    permission: "settings.access"
   }, {
     id: "system9",
     name: "Reports",
     icon: <FileUp className="h-5 w-5" />,
-    path: "/reports"
+    path: "/reports",
+    permission: "settings.access"
   }, {
     id: "system10",
     name: "Calendar",
     icon: <Calendar className="h-5 w-5" />,
-    path: "/calendar"
+    path: "/calendar",
+    permission: "settings.access"
   }, {
     id: "system11",
     name: "Notifications",
     icon: <Mail className="h-5 w-5" />,
-    path: "/notifications"
+    path: "/notifications",
+    permission: "settings.access"
   }, {
     id: "system12",
     name: "Search",
     icon: <Search className="h-5 w-5" />,
-    path: "/search"
+    path: "/search",
+    permission: "settings.access"
   }];
+
+  // Filter system functions based on user permissions
+  const accessibleSystemFunctions = systemFunctions.filter(func => 
+    hasPermission('modules.all') || hasPermission(func.permission)
+  );
+  
   const handlePrototypeClick = (prototypeId: string, path: string) => {
     console.log(`Selected module: ${prototypeId}`);
     navigate(path, {
@@ -117,19 +146,33 @@ const PrototypeSelector = () => {
       toast.success(`Welcome to ${prototypeId} dashboard`);
     }, 500);
   };
-  const handleSystemClick = (systemId: string) => {
-    toast.info(`System function ${systemId} is not implemented yet`);
+  
+  const handleSystemClick = (systemId: string, path: string) => {
+    if (systemId === "system1") {
+      navigate("/users");
+    } else {
+      toast.info(`System function ${systemId} is not implemented yet`);
+    }
   };
+  
   return <div className="flex flex-col min-h-screen bg-zinc-100">
       <header className="text-white shadow-sm bg-slate-700">
         <div className="container mx-auto flex justify-between items-center h-16 px-4">
           <div className="flex items-center">
             <span className="text-2xl font-bold">DOT-X  |  BUSINESS MANAGEMENT PLATFORM</span>
           </div>
-          <Button variant="ghost" onClick={handleLogout} className="flex items-center gap-2 text-white hover:bg-[#a51919]">
-            <LogOut className="h-4 w-4" />
-            Logout
-          </Button>
+          <div className="flex items-center gap-4">
+            {user && (
+              <div className="text-sm">
+                Logged in as: <span className="font-semibold">{user.username}</span>
+                <span className="ml-2 px-2 py-1 bg-slate-600 rounded-full text-xs">{user.role}</span>
+              </div>
+            )}
+            <Button variant="ghost" onClick={handleLogout} className="flex items-center gap-2 text-white hover:bg-[#a51919]">
+              <LogOut className="h-4 w-4" />
+              Logout
+            </Button>
+          </div>
         </div>
       </header>
       
@@ -139,7 +182,7 @@ const PrototypeSelector = () => {
         
         {/* Primary Modules */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
-          {primaryModules.map(module => <Card key={module.id} className="overflow-hidden transition-all duration-300 hover:shadow-xl border-0 shadow-md hover:scale-105">
+          {accessibleModules.map(module => <Card key={module.id} className="overflow-hidden transition-all duration-300 hover:shadow-xl border-0 shadow-md hover:scale-105">
               
               <CardHeader className="pb-2">
                 <CardTitle className="font-bold text-2xl text-center">{module.name.toUpperCase()}</CardTitle>
@@ -158,9 +201,10 @@ const PrototypeSelector = () => {
         
         {/* System Functions */}
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
-          {systemFunctions.map(system => <HoverCard key={system.id}>
+          {accessibleSystemFunctions.map(system => <HoverCard key={system.id}>
               <HoverCardTrigger asChild>
-                <Card className="overflow-hidden transition-all duration-200 hover:shadow-md border cursor-pointer" onClick={() => handleSystemClick(system.id)}>
+                <Card className="overflow-hidden transition-all duration-200 hover:shadow-md border cursor-pointer" 
+                      onClick={() => handleSystemClick(system.id, system.path)}>
                   <CardContent className="p-4 flex flex-col items-center justify-center text-center">
                     <div className="p-3 rounded-full bg-gray-100 mb-3">
                       {system.icon}
@@ -172,7 +216,9 @@ const PrototypeSelector = () => {
               <HoverCardContent>
                 <div className="text-sm">
                   <p className="font-semibold">{system.name}</p>
-                  <p className="text-muted-foreground">System function coming soon</p>
+                  <p className="text-muted-foreground">
+                    {system.id === "system1" ? "Manage user accounts and permissions" : "System function coming soon"}
+                  </p>
                 </div>
               </HoverCardContent>
             </HoverCard>)}

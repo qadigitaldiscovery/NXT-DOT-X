@@ -2,6 +2,7 @@
 import React from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import { toast } from 'sonner';
+import { useAuth } from '@/context/AuthContext';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -9,10 +10,8 @@ interface ProtectedRouteProps {
 
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
   const location = useLocation();
+  const { isAuthenticated } = useAuth();
   
-  // Check authentication status
-  const isAuthenticated = localStorage.getItem('isAuthenticated') === 'true';
-
   // Additional logging to help with debugging
   console.log("Protected route check - Auth status:", isAuthenticated);
   console.log("Current path:", location.pathname);
@@ -29,7 +28,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
       // Use sessionStorage to ensure the toast only shows once per session
       const welcomeShown = sessionStorage.getItem('welcomeShown');
       if (!welcomeShown) {
-        toast.success("Welcome to Beta 1 dashboard");
+        toast.success("Welcome to the dashboard");
         sessionStorage.setItem('welcomeShown', 'true');
       }
     }
