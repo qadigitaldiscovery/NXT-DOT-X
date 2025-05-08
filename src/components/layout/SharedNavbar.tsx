@@ -35,8 +35,8 @@ export const SharedNavbar = ({
     navigate('/landing');
   };
 
-  // Dark theme styles for DOT-X Command Center
-  const navbarBgColor = 'bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900';
+  // Enhanced dark theme styles for DOT-X Command Center
+  const navbarBgColor = 'bg-gradient-to-r from-slate-950 via-indigo-950/80 to-slate-950';
   const textColor = 'text-white';
   const iconColor = 'text-blue-300';
   const hoverBgColor = 'hover:bg-blue-900/30';
@@ -49,13 +49,11 @@ export const SharedNavbar = ({
             <MenuIcon className="h-7 w-7" />
           </Button>
           
-          {/* Module Title with DOT-X styling */}
+          {/* Enhanced styling for DOT-X COMMAND CENTER title */}
           {moduleTitle === "DOT-X COMMAND CENTER" ? (
-            <div className="flex flex-col">
-              <div className="flex items-baseline">
-                <span className="text-3xl font-bold text-white">DOT-X</span>
-                <span className="ml-3 text-xl font-semibold text-blue-300">COMMAND CENTER</span>
-              </div>
+            <div className="flex items-center">
+              <span className="text-4xl font-bold bg-gradient-to-r from-blue-300 via-indigo-300 to-purple-300 bg-clip-text text-transparent">DOT-X</span>
+              <span className="ml-3 text-xl font-bold text-blue-300 tracking-widest">COMMAND CENTER</span>
             </div>
           ) : (
             <h1 className={cn("text-xl font-semibold", textColor)}>{moduleTitle}</h1>

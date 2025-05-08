@@ -24,41 +24,44 @@ const Dashboard = () => {
 
   // Avatar team members with updated specialities
   const teamAvatars = [
-    { name: "Nova", role: "Defense Specialist", specialty: "Cybersecurity & Threat Response", image: "public/lovable-uploads/d13002c2-2ff3-4e7e-b622-17975822f3e6.png" },
-    { name: "Echo", role: "Intelligence Lead", specialty: "Data Analysis & Strategic Planning", image: "public/lovable-uploads/d90a5f2a-f854-4226-9a9a-ce348f35efe2.png" },
-    { name: "Zephyr", role: "Field Agent", specialty: "Covert Operations & Reconnaissance", image: "public/lovable-uploads/f8d80e78-f644-4b77-a2f3-a951edf8dfd4.png" },
-    { name: "Pulse", role: "Communications", specialty: "Network Integration & Signal Management", image: "public/lovable-uploads/3bdd3ffc-1723-4582-bc57-33f3ce3e8763.png" },
+    { name: "Nova", role: "Defense Specialist", specialty: "Cybersecurity & Threat Response", image: "/lovable-uploads/d13002c2-2ff3-4e7e-b622-17975822f3e6.png" },
+    { name: "Echo", role: "Intelligence Lead", specialty: "Data Analysis & Strategic Planning", image: "/lovable-uploads/d90a5f2a-f854-4226-9a9a-ce348f35efe2.png" },
+    { name: "Zephyr", role: "Field Agent", specialty: "Covert Operations & Reconnaissance", image: "/lovable-uploads/f8d80e78-f644-4b77-a2f3-a951edf8dfd4.png" },
+    { name: "Pulse", role: "Communications", specialty: "Network Integration & Signal Management", image: "/lovable-uploads/3bdd3ffc-1723-4582-bc57-33f3ce3e8763.png" },
   ];
 
   return (
     <div className="space-y-8">
-      {/* Hero Section - Made smaller */}
-      <div className="relative overflow-hidden rounded-lg bg-gradient-to-r from-indigo-900 to-purple-900 p-6 text-white shadow-xl">
+      {/* Hero Section - Made more dramatic */}
+      <div className="relative overflow-hidden rounded-lg bg-gradient-to-r from-indigo-900 to-blue-900 p-6 text-white shadow-xl">
         <div className="absolute -right-20 -top-20 h-40 w-40 rounded-full bg-blue-500/20 blur-3xl"></div>
-        <div className="absolute -bottom-20 -left-20 h-40 w-40 rounded-full bg-purple-500/20 blur-3xl"></div>
+        <div className="absolute -bottom-20 -left-20 h-40 w-40 rounded-full bg-indigo-500/20 blur-3xl"></div>
         <div className="relative z-10">
-          <h1 className="mb-3 text-4xl font-bold tracking-tight font-sans">Welcome to <span className="bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">DOT-X Command Center</span></h1>
+          <h1 className="mb-3 text-5xl font-bold tracking-tight font-sans">Welcome to <span className="bg-gradient-to-r from-blue-400 to-indigo-400 bg-clip-text text-transparent">DOT-X Command Center</span></h1>
           <p className="mb-6 text-blue-100 text-2xl">Unleashing AI superpowers to protect and serve</p>
           <div className="flex flex-wrap gap-4">
-            <Button className="bg-blue-600 hover:bg-blue-700 text-lg font-semibold px-8 py-6 rounded-lg transition-all duration-300 hover:scale-105">Deploy AI Agents</Button>
+            <Button className="bg-blue-700 hover:bg-blue-600 text-lg font-semibold px-8 py-6 rounded-lg transition-all duration-300 hover:scale-105 shadow-lg shadow-blue-700/30">Deploy AI Agents</Button>
             <Button variant="outline" className="border-blue-400 text-blue-100 hover:bg-blue-800/50 text-lg font-semibold px-8 py-6 rounded-lg transition-all duration-300 hover:scale-105">View Mission Log</Button>
           </div>
         </div>
       </div>
       
-      {/* Avatar Team Section */}
-      <div className="bg-gradient-to-br from-slate-900 to-slate-800 rounded-lg p-8 shadow-lg">
-        <h2 className="mb-12 text-5xl font-bold text-white font-sans text-center">OUR DOT-X COMMANDOS</h2>
+      {/* Avatar Team Section - Improved styling */}
+      <div className="bg-gradient-to-br from-slate-900 to-indigo-900/70 rounded-lg p-8 shadow-lg">
+        <h2 className="mb-12 text-5xl font-bold text-center text-transparent bg-clip-text bg-gradient-to-r from-blue-300 via-indigo-200 to-purple-200">OUR DOT-X COMMANDOS</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 mb-8">
           {teamAvatars.map((avatar, index) => (
-            <div key={index} className="flex flex-col items-center transform transition-all duration-300 hover:scale-105">
-              <Avatar className="h-48 w-48 border-4 border-indigo-500 mb-6 shadow-lg shadow-indigo-500/30">
-                <AvatarImage src={avatar.image} alt={avatar.name} className="object-cover" />
-                <AvatarFallback className="bg-indigo-900 text-white text-4xl">{avatar.name[0]}</AvatarFallback>
-              </Avatar>
-              <div className="text-center">
-                <h3 className="text-3xl text-white font-bold font-sans mb-2">{avatar.name}</h3>
-                <p className="text-indigo-300 text-xl mb-2 font-semibold">{avatar.role}</p>
+            <div key={index} className="flex flex-col items-center transform transition-all duration-300 hover:scale-105 group">
+              <div className="relative">
+                <div className="absolute inset-0 rounded-full bg-gradient-to-r from-blue-500 to-indigo-500 blur-lg opacity-70 group-hover:opacity-100 transition-opacity"></div>
+                <Avatar className="h-52 w-52 border-4 border-indigo-500 shadow-lg shadow-indigo-500/30 relative z-10">
+                  <AvatarImage src={avatar.image} alt={avatar.name} className="object-cover" />
+                  <AvatarFallback className="bg-indigo-900 text-white text-5xl">{avatar.name[0]}</AvatarFallback>
+                </Avatar>
+              </div>
+              <div className="text-center mt-6">
+                <h3 className="text-4xl text-white font-bold font-sans mb-2">{avatar.name}</h3>
+                <p className="text-indigo-300 text-2xl mb-2 font-semibold">{avatar.role}</p>
                 <p className="text-blue-200 text-md font-light">{avatar.specialty}</p>
               </div>
             </div>
@@ -66,27 +69,27 @@ const Dashboard = () => {
         </div>
       </div>
       
-      {/* Mission Status Section */}
-      <div className="bg-gradient-to-br from-slate-900 to-slate-800 rounded-lg p-8 shadow-lg">
-        <h2 className="mb-8 text-4xl font-bold text-white font-sans">Active AI Missions</h2>
+      {/* Mission Status Section - Enhanced with more dramatic styling */}
+      <div className="bg-gradient-to-br from-slate-900 to-indigo-900/70 rounded-lg p-8 shadow-lg">
+        <h2 className="mb-8 text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-300 to-indigo-200">Active AI Missions</h2>
         <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
           {missions.map((mission) => (
-            <Card key={mission.id} className="bg-gray-800/60 border-gray-700 text-white backdrop-blur-sm hover:bg-gray-800/80 transition-colors shadow-lg transform transition-all duration-300 hover:scale-105">
+            <Card key={mission.id} className="bg-slate-900/80 border-blue-900/50 text-white backdrop-blur-sm hover:bg-slate-800/80 transition-colors shadow-lg transform transition-all duration-300 hover:scale-105 hover:shadow-blue-900/20">
               <CardHeader className="pb-2">
                 <CardTitle className="flex flex-col items-center text-center">
-                  <div className="text-3xl font-bold text-red-400 mb-1 font-sans">{mission.name}</div>
+                  <div className="text-3xl font-bold text-blue-400 mb-1 font-sans">{mission.name}</div>
                   <div className="text-xl text-white">{mission.displayName}</div>
                 </CardTitle>
-                <CardDescription className="text-gray-300 text-lg text-center">Mission #{mission.id}</CardDescription>
+                <CardDescription className="text-blue-300 text-lg text-center">Mission #{mission.id}</CardDescription>
               </CardHeader>
               <CardContent className="pb-4">
                 <div className="mb-2 flex items-center justify-between">
                   <span className="text-lg">Status: <span className={mission.status === "Active" ? "text-green-400" : mission.status === "In Progress" ? "text-yellow-400" : "text-gray-400"}>{mission.status}</span></span>
                   <span className="font-bold text-lg">{mission.completion}%</span>
                 </div>
-                <div className="h-4 w-full rounded-full bg-gray-700">
+                <div className="h-4 w-full rounded-full bg-slate-800/80">
                   <div 
-                    className="h-4 rounded-full bg-gradient-to-r from-blue-500 to-indigo-500 shadow-inner shadow-blue-500/50" 
+                    className="h-4 rounded-full bg-gradient-to-r from-indigo-500 to-blue-500 shadow-inner shadow-blue-500/50" 
                     style={{ width: `${mission.completion}%` }}
                   ></div>
                 </div>
@@ -96,17 +99,18 @@ const Dashboard = () => {
         </div>
       </div>
       
-      {/* Performance Metrics */}
-      <div className="bg-gradient-to-br from-slate-900 to-slate-800 rounded-lg p-8 shadow-lg">
-        <h2 className="mb-8 text-4xl font-bold text-white font-sans">AI Performance Metrics</h2>
+      {/* Performance Metrics - With enhanced styling */}
+      <div className="bg-gradient-to-br from-slate-900 to-indigo-900/70 rounded-lg p-8 shadow-lg">
+        <h2 className="mb-8 text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-300 to-indigo-200">AI Performance Metrics</h2>
         <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
           {metrics.map((metric) => (
-            <Card key={metric.name} className="bg-gray-800/60 border-gray-700 text-white shadow-lg transform transition-all duration-300 hover:scale-105 hover:shadow-blue-900/20">
-              <CardHeader className="pb-2">
-                <CardTitle className="text-lg font-medium text-gray-300">{metric.name}</CardTitle>
+            <Card key={metric.name} className="bg-slate-900/80 border-blue-800/30 text-white shadow-lg transform transition-all duration-300 hover:scale-105 hover:shadow-indigo-900/30 overflow-hidden relative">
+              <div className="absolute inset-0 bg-gradient-to-br from-slate-800/50 via-transparent to-blue-900/10 pointer-events-none"></div>
+              <CardHeader className="relative z-10 pb-2">
+                <CardTitle className="text-lg font-medium text-blue-300">{metric.name}</CardTitle>
               </CardHeader>
-              <CardContent>
-                <div className="text-4xl font-bold font-sans">{metric.value}</div>
+              <CardContent className="relative z-10">
+                <div className="text-4xl font-bold font-sans text-transparent bg-clip-text bg-gradient-to-r from-blue-300 to-indigo-200">{metric.value}</div>
                 <div className={`text-lg ${
                   metric.trend === 'up' ? 'text-green-400' : 
                   metric.trend === 'down' ? 'text-red-400' : 'text-blue-400'

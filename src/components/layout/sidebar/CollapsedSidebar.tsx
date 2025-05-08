@@ -48,13 +48,13 @@ export const CollapsedSidebar = ({
             cn(
               'w-20 h-20 flex flex-col items-center justify-center rounded-lg transition-all duration-300',
               isActive 
-                ? `${activeBgColor} ${activeTextColor} shadow-lg shadow-blue-500/25 scale-110` 
+                ? `${activeBgColor} ${activeTextColor} shadow-lg shadow-blue-900/50 scale-110` 
                 : `${textColor} ${hoverBgColor} hover:scale-105`
             )
           }
           title={item.label}
         >
-          <item.icon className="h-9 w-9 mb-1" />
+          <item.icon className="h-10 w-10 mb-1" />
           <span className="text-xs font-medium mt-1 opacity-80">{item.label.split(' ')[0]}</span>
         </NavLink>
       ))}

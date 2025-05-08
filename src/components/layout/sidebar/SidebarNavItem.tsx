@@ -43,16 +43,16 @@ export const SidebarNavItem = ({
           onClick={() => onToggleExpand(item.label)}
         >
           <div className="flex items-center gap-5">
-            <item.icon className="h-9 w-9" />
-            <span className="font-mono tracking-wide">{item.label}</span>
+            <item.icon className="h-10 w-10" />
+            <span className="font-mono tracking-wide text-xl">{item.label}</span>
           </div>
           {isExpanded ? 
-            <ChevronDown className="h-7 w-7" /> : 
-            <ChevronRight className="h-7 w-7" />
+            <ChevronDown className="h-8 w-8" /> : 
+            <ChevronRight className="h-8 w-8" />
           }
         </div>
         {isExpanded && (
-          <ul className="ml-12 space-y-3 mt-3">
+          <ul className="ml-14 space-y-3 mt-3">
             {item.children.map(child => (
               <li key={child.path}>
                 <NavLink
@@ -68,7 +68,7 @@ export const SidebarNavItem = ({
                   }
                 >
                   <child.icon className="h-9 w-9" />
-                  <span className="font-mono">{child.label}</span>
+                  <span className="font-mono text-lg">{child.label}</span>
                 </NavLink>
               </li>
             ))}
@@ -87,13 +87,13 @@ export const SidebarNavItem = ({
           cn(
             'flex items-center gap-5 px-5 py-5 rounded-lg transition-all duration-300 text-xl',
             isActive
-              ? `${activeBgColor} ${activeTextColor} shadow-lg shadow-blue-900/30`
+              ? `${activeBgColor} ${activeTextColor} shadow-lg shadow-indigo-900/50`
               : `${textColor} ${textHoverColor} ${hoverBgColor}`
           )
         }
       >
-        <item.icon className="h-9 w-9" />
-        <span className="font-mono tracking-wide">{item.label}</span>
+        <item.icon className="h-10 w-10" />
+        <span className="font-mono tracking-wide text-xl">{item.label}</span>
       </NavLink>
     </li>
   );

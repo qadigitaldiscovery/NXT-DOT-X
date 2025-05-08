@@ -5,7 +5,7 @@ import { SharedNavbar } from './SharedNavbar';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { cn } from '@/lib/utils';
 import { Outlet } from 'react-router-dom';
-import { Bot, Shield, Users, Settings, BarChart3, Zap, Brain } from 'lucide-react';
+import { BarChart3, Bot, Shield, Users, Settings, Zap, Brain } from 'lucide-react';
 
 interface NavItem {
   label: string;
@@ -51,7 +51,7 @@ export const DotXLayout = () => {
   };
 
   return (
-    <div className="flex h-screen overflow-hidden bg-gradient-to-br from-slate-900 via-gray-900 to-slate-950 text-white">
+    <div className="flex h-screen overflow-hidden bg-gradient-to-br from-slate-950 via-indigo-950/30 to-slate-950 text-white">
       <SharedSidebar 
         open={sidebarOpen} 
         onToggle={toggleSidebar}
@@ -65,11 +65,8 @@ export const DotXLayout = () => {
           onMenuClick={toggleSidebar} 
           moduleTitle="DOT-X COMMAND CENTER"
         />
-        <main className="flex-1 overflow-y-auto p-6 md:p-8 bg-gradient-to-br from-slate-900 via-gray-900 to-indigo-950">
-          <div className="relative">
-            <div className="absolute inset-0 bg-blue-500/5 rounded-lg pointer-events-none"></div>
-            <Outlet />
-          </div>
+        <main className="flex-1 overflow-y-auto p-6 md:p-8 bg-gradient-to-br from-slate-950 via-indigo-950/20 to-slate-950">
+          <Outlet />
         </main>
       </div>
     </div>
