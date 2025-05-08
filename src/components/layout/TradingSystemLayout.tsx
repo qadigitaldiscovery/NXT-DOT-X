@@ -1,15 +1,15 @@
-
 import React from 'react';
 import { SharedSidebar } from './SharedSidebar';
 import { SharedNavbar } from './SharedNavbar';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { cn } from '@/lib/utils';
-import { FileCode, Cloud, Settings, BrainCircuit } from 'lucide-react';
+import { FileCode, Cloud, Settings, BrainCircuit, Box } from 'lucide-react';
 
 interface NavItem {
   label: string;
   icon: React.ElementType;
   path: string;
+  children?: NavItem[];
 }
 
 interface NavCategory {
@@ -27,7 +27,14 @@ const techHubNavItems: NavCategory[] = [
     items: [
       { label: 'AI Personas', icon: BrainCircuit, path: '/tech-hub/personas' },
       { label: 'API Management', icon: FileCode, path: '/tech-hub/api-management' },
-      { label: 'Cloud Services', icon: Cloud, path: '/tech-hub/cloud-services' },
+      { 
+        label: 'Cloud Services', 
+        icon: Cloud, 
+        path: '/tech-hub/cloud-services',
+        children: [
+          { label: 'BlackBox AI', icon: Box, path: '/tech-hub/cloud-services/blackbox-ai' }
+        ]
+      },
       { label: 'Settings', icon: Settings, path: '/tech-hub/settings' },
     ]
   }

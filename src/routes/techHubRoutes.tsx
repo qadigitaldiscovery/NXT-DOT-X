@@ -11,7 +11,10 @@ export const TechHubRoutes = () => {
       <Route index element={<TechHubPersonas />} />
       <Route path="personas" element={<TechHubPersonas />} />
       <Route path="api-management" element={<TechHubApiManagement />} />
-      <Route path="cloud-services" element={<div className="p-6 text-center">Cloud Services - Feature coming soon</div>} />
+      <Route path="cloud-services" element={<Outlet />}>
+        <Route index element={<div className="p-6 text-center">Cloud Services - Feature coming soon</div>} />
+        <Route path="blackbox-ai" element={<div className="p-6">BlackBox AI Service</div>} />
+      </Route>
       <Route path="settings" element={<div className="p-6 text-center">Tech Hub Settings - Feature coming soon</div>} />
     </Route>
   );

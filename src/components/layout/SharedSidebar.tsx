@@ -13,6 +13,8 @@ import {
   FileText,
   Settings as SettingsIcon,
   FileBarChart2,
+  ChevronRight,
+  ChevronDown
 } from 'lucide-react';
 import { NavLink } from 'react-router-dom';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -56,15 +58,28 @@ const unifiedNav = [
   },
 ];
 
+type NavItem = {
+  label: string;
+  icon: React.ElementType;
+  path: string;
+  children?: NavItem[];
+};
+
+type NavCategory = {
+  name: string;
+  items: NavItem[];
+};
+
 type SharedSidebarProps = {
   open: boolean;
   onToggle: () => void;
-  navItems?: any; // Make navItems optional
+  navItems?: NavCategory[]; // Make navItems optional
 };
 
 // Accept navItems as a prop for custom menus
 export const SharedSidebar = ({ open, onToggle, navItems }: SharedSidebarProps) => {
   const isMobile = useIsMobile();
+  const [expandedItems, setExpandedItems] = React.useState<string[]>([]);
   const sidebarBgColor = 'bg-slate-800';
   const textColor = 'text-gray-300';
   const textHoverColor = 'hover:text-white';
@@ -75,6 +90,18 @@ export const SharedSidebar = ({ open, onToggle, navItems }: SharedSidebarProps) 
 
   // Use navItems if provided, otherwise use unifiedNav
   const menu = navItems || unifiedNav;
+
+  const toggleExpanded = (label: string) => {
+    setExpandedItems(prev => 
+      prev.includes(label) 
+        ? prev.filter(item => item !== label) 
+        : [...prev, label]
+    );
+  };
+
+  const isExpanded = (label: string) => {
+    return expandedItems.includes(label);
+  };
 
   return (
     <>
@@ -136,24 +163,64 @@ export const SharedSidebar = ({ open, onToggle, navItems }: SharedSidebarProps) 
                     {item.name || item.label}
                   </div>
                   <ul className="space-y-1 mb-2">
-                    {(item.items || item.children).map((sub) => (
-                      <li key={sub.path}>
-                        <NavLink
-                          to={sub.path}
-                          end
-                          className={({ isActive }) =>
-                            cn(
-                              'flex items-center gap-3 px-3 py-2 rounded-md transition-colors text-sm',
-                              isActive
-                                ? `${activeBgColor} ${activeTextColor}`
-                                : `${textColor} ${textHoverColor} hover:bg-slate-700`
-                            )
-                          }
-                        >
-                          <sub.icon className="h-5 w-5" />
-                          <span>{sub.label}</span>
-                        </NavLink>
-                      </li>
+                    {(item.items || []).map((sub) => (
+                      sub.children ? (
+                        <li key={sub.path}>
+                          <div className="flex items-center justify-between px-3 py-2 rounded-md transition-colors text-sm cursor-pointer"
+                               onClick={() => toggleExpanded(sub.label)}
+                               className={cn(textColor, textHoverColor, hoverBgColor)}>
+                            <div className="flex items-center gap-3">
+                              <sub.icon className="h-5 w-5" />
+                              <span>{sub.label}</span>
+                            </div>
+                            {isExpanded(sub.label) ? 
+                              <ChevronDown className="h-4 w-4" /> : 
+                              <ChevronRight className="h-4 w-4" />
+                            }
+                          </div>
+                          {isExpanded(sub.label) && (
+                            <ul className="ml-8 space-y-1 mt-1">
+                              {sub.children.map(child => (
+                                <li key={child.path}>
+                                  <NavLink
+                                    to={child.path}
+                                    end
+                                    className={({ isActive }) =>
+                                      cn(
+                                        'flex items-center gap-3 px-3 py-2 rounded-md transition-colors text-sm',
+                                        isActive
+                                          ? `${activeBgColor} ${activeTextColor}`
+                                          : `${textColor} ${textHoverColor} hover:bg-slate-700`
+                                      )
+                                    }
+                                  >
+                                    <child.icon className="h-5 w-5" />
+                                    <span>{child.label}</span>
+                                  </NavLink>
+                                </li>
+                              ))}
+                            </ul>
+                          )}
+                        </li>
+                      ) : (
+                        <li key={sub.path}>
+                          <NavLink
+                            to={sub.path}
+                            end
+                            className={({ isActive }) =>
+                              cn(
+                                'flex items-center gap-3 px-3 py-2 rounded-md transition-colors text-sm',
+                                isActive
+                                  ? `${activeBgColor} ${activeTextColor}`
+                                  : `${textColor} ${textHoverColor} hover:bg-slate-700`
+                              )
+                            }
+                          >
+                            <sub.icon className="h-5 w-5" />
+                            <span>{sub.label}</span>
+                          </NavLink>
+                        </li>
+                      )
                     ))}
                   </ul>
                 </li>
@@ -187,7 +254,7 @@ export const SharedSidebar = ({ open, onToggle, navItems }: SharedSidebarProps) 
         )}>
           {menu.map((item) =>
             (item.items || item.children)
-              ? (item.items || item.children).map((sub) => (
+              ? (item.items || []).map((sub) => (
                   <NavLink
                     key={sub.path + '-icon'}
                     to={sub.path}
@@ -228,4 +295,4 @@ export const SharedSidebar = ({ open, onToggle, navItems }: SharedSidebarProps) 
       </aside>
     </>
   );
-}; 
+};
