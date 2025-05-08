@@ -8,12 +8,15 @@ import {
   TableHeader, TableRow 
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { Users, FileUp, FileText, Calculator, BarChart, History, Search, ChevronLeft, ChevronRight, Upload } from "lucide-react";
+import { Users, FileUp, FileText, Calculator, BarChart3, History, Search, ChevronLeft, ChevronRight, Upload } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useSupplierUploads } from '@/hooks/use-supplier-uploads';
+import { SupplierUploadsTable } from '@/components/uploads/SupplierUploadsTable';
 
 export default function CostDashboard() {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
+  const { data: uploads = [], isLoading } = useSupplierUploads();
   
   const handleUploadClick = () => {
     navigate('/data-management/uploads/new');
@@ -78,7 +81,7 @@ export default function CostDashboard() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Cost Analysis</CardTitle>
-            <BarChart className="h-4 w-4 text-muted-foreground" />
+            <BarChart3 className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-lg font-bold">Insights</div>
@@ -116,75 +119,7 @@ export default function CostDashboard() {
         </TabsContent>
 
         <TabsContent value="file-uploads" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>File Uploads</CardTitle>
-              <CardDescription>
-                Manage supplier cost file uploads
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                <div className="flex items-center">
-                  <div className="relative flex-1">
-                    <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-                    <Input
-                      placeholder="Search all fields..."
-                      className="pl-8"
-                      value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
-                    />
-                  </div>
-                </div>
-
-                <div className="rounded-md border">
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>Filename</TableHead>
-                        <TableHead>Upload Date</TableHead>
-                        <TableHead>Supplier</TableHead>
-                        <TableHead>Status</TableHead>
-                        <TableHead>Records</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      <TableRow>
-                        <TableCell colSpan={5} className="h-24 text-center">
-                          No data available.
-                        </TableCell>
-                      </TableRow>
-                    </TableBody>
-                  </Table>
-                </div>
-
-                <div className="flex items-center justify-between">
-                  <div className="text-sm text-muted-foreground">
-                    Showing 1 of 0 pages
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <div className="flex items-center space-x-1">
-                      <span className="text-sm font-medium">per page</span>
-                      <select className="h-8 rounded-md border border-input bg-background px-2">
-                        <option>10</option>
-                        <option>20</option>
-                        <option>50</option>
-                        <option>100</option>
-                      </select>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <Button variant="outline" size="icon" disabled>
-                        <ChevronLeft className="h-4 w-4" />
-                      </Button>
-                      <Button variant="outline" size="icon" disabled>
-                        <ChevronRight className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+          <SupplierUploadsTable />
         </TabsContent>
 
         <TabsContent value="landed-costs">
