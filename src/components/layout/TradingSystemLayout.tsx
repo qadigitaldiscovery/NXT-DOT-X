@@ -4,7 +4,7 @@ import { SharedSidebar } from './SharedSidebar';
 import { SharedNavbar } from './SharedNavbar';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { cn } from '@/lib/utils';
-import { FileCode, Cloud, Settings, BrainCircuit, Box, Database, BarChart3, FileText, LineChart, FileUp, FileCog, FileArchive } from 'lucide-react';
+import { Database, BarChart3, FileText, LineChart, FileUp, FileArchive } from 'lucide-react';
 import { Outlet } from 'react-router-dom';
 
 interface NavItem {
@@ -36,7 +36,7 @@ const dataManagementNavItems: NavCategory[] = [
         path: '/data-management/pricing',
         children: [
           { label: 'Competitor Pricing', icon: LineChart, path: '/data-management/pricing/competitor-pricing' },
-          { label: 'Price Management', icon: FileCog, path: '/data-management/pricing/price-management' }
+          { label: 'Price Management', icon: FileText, path: '/data-management/pricing/price-management' }
         ]
       },
       { label: 'File Uploads', icon: FileUp, path: '/data-management/uploads' },

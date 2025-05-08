@@ -12,11 +12,11 @@ const DashboardHome = () => {
     <div className="space-y-6">
       <header>
         <h1 className="text-3xl font-bold">Data Management Module</h1>
-        <p className="text-muted-foreground">Welcome to the DOT-X Data Management Platform (ZAR)</p>
+        <p className="text-muted-foreground">Access and manage supplier data, costs, and documents</p>
       </header>
       
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <Card className="backdrop-blur-md bg-white/30 border border-white/10">
+        <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-lg font-medium">Supplier Costing</CardTitle>
             <Database className="h-4 w-4 text-muted-foreground" />
@@ -33,7 +33,7 @@ const DashboardHome = () => {
           </CardContent>
         </Card>
         
-        <Card className="backdrop-blur-md bg-white/30 border border-white/10">
+        <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-lg font-medium">Cost Analysis</CardTitle>
             <BarChart3 className="h-4 w-4 text-muted-foreground" />
@@ -50,7 +50,7 @@ const DashboardHome = () => {
           </CardContent>
         </Card>
         
-        <Card className="backdrop-blur-md bg-white/30 border border-white/10">
+        <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-lg font-medium">Document Repository</CardTitle>
             <FileArchive className="h-4 w-4 text-muted-foreground" />
@@ -67,7 +67,7 @@ const DashboardHome = () => {
           </CardContent>
         </Card>
         
-        <Card className="backdrop-blur-md bg-white/30 border border-white/10">
+        <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-lg font-medium">Competitor Pricing</CardTitle>
             <LineChart className="h-4 w-4 text-muted-foreground" />
@@ -84,7 +84,7 @@ const DashboardHome = () => {
           </CardContent>
         </Card>
         
-        <Card className="backdrop-blur-md bg-white/30 border border-white/10">
+        <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-lg font-medium">Price Management</CardTitle>
             <FileCog className="h-4 w-4 text-muted-foreground" />
@@ -101,7 +101,7 @@ const DashboardHome = () => {
           </CardContent>
         </Card>
         
-        <Card className="backdrop-blur-md bg-white/30 border border-white/10">
+        <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-lg font-medium">File Uploads</CardTitle>
             <FileUp className="h-4 w-4 text-muted-foreground" />

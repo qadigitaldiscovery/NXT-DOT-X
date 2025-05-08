@@ -1,5 +1,5 @@
 
-import { Home, FileUp, BarChart3, LineChart, ArrowDownUp, FileDown, Settings, FileCode, Database, FileText, FileArchive } from 'lucide-react';
+import { Home, FileUp, BarChart3, LineChart, ArrowDownUp, FileDown, Settings, Database, FileArchive } from 'lucide-react';
 import { NavItem, NavCategory } from './types';
 
 // Top level nav items (not in categories)

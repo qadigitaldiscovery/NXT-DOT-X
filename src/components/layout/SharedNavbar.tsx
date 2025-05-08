@@ -35,37 +35,27 @@ export const SharedNavbar = ({
     navigate('/landing');
   };
 
-  // Enhanced dark theme styles for DOT-X Command Center
-  const navbarBgColor = 'bg-gradient-to-r from-slate-950 via-indigo-950/80 to-slate-950';
-  const textColor = 'text-white';
-  const iconColor = 'text-blue-300';
-  const hoverBgColor = 'hover:bg-blue-900/30';
+  // Simple clean styling for header
+  const navbarBgColor = 'bg-white border-b border-gray-200';
+  const textColor = 'text-gray-700';
+  const iconColor = 'text-gray-500';
+  const hoverBgColor = 'hover:bg-gray-100';
   
   return (
-    <header className={cn("sticky top-0 z-20 border-b border-blue-900/50 shadow-md", navbarBgColor)}>
+    <header className={cn("sticky top-0 z-20 shadow-sm", navbarBgColor)}>
       <div className="flex items-center justify-between h-16 px-4">
         <div className="flex items-center">
           <Button variant="ghost" size="icon" onClick={onMenuClick} className={cn(iconColor, hoverBgColor, "mr-2")}>
             <MenuIcon className="h-5 w-5" />
           </Button>
           
-          {/* Welcome message in header instead of hero section */}
+          {/* Simple header text */}
           <div className="flex items-center">
-            <h1 className="text-xl font-semibold text-blue-100">Welcome to DOT-X Command Center</h1>
+            <h1 className="text-xl font-semibold text-gray-800">{moduleTitle}</h1>
           </div>
         </div>
 
         <div className="flex items-center space-x-2">
-          {/* Action Buttons */}
-          <div className="flex gap-2 mr-4">
-            <Button className="bg-blue-700 hover:bg-blue-600 text-sm px-3 py-1 h-9 rounded-lg">
-              Deploy AI Agents
-            </Button>
-            <Button variant="outline" className="border-blue-400 text-blue-100 hover:bg-blue-800/50 text-sm px-3 py-1 h-9 rounded-lg">
-              View Mission Log
-            </Button>
-          </div>
-
           {/* Settings Button */}
           <Button 
             variant="ghost" 
@@ -104,20 +94,20 @@ export const SharedNavbar = ({
             </DropdownMenuTrigger>
             <DropdownMenuContent 
               align="end" 
-              className="w-56 bg-slate-900 border-blue-900/50 text-blue-100 shadow-lg" 
+              className="w-56 border-gray-200" 
             >
-              <DropdownMenuLabel className="text-blue-200 font-medium">{user?.username || 'User'} ({user?.role || 'Unknown'})</DropdownMenuLabel>
-              <DropdownMenuSeparator className="bg-blue-900/30" />
+              <DropdownMenuLabel>{user?.username || 'User'} ({user?.role || 'Unknown'})</DropdownMenuLabel>
+              <DropdownMenuSeparator />
               {user?.role === 'admin' && (
-                <DropdownMenuItem onClick={() => navigate('/admin/users')} className="hover:bg-blue-900/50 focus:bg-blue-900/50 text-blue-100">
+                <DropdownMenuItem onClick={() => navigate('/admin/users')}>
                   User Management
                 </DropdownMenuItem>
               )}
-              <DropdownMenuItem onClick={() => navigate('/settings')} className="hover:bg-blue-900/50 focus:bg-blue-900/50 text-blue-100">
+              <DropdownMenuItem onClick={() => navigate('/settings')}>
                 Account Settings
               </DropdownMenuItem>
-              <DropdownMenuSeparator className="bg-blue-900/30" />
-              <DropdownMenuItem onClick={handleLogout} className="hover:bg-red-900/30 focus:bg-red-900/30 text-red-400 hover:text-red-300">
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={handleLogout} className="text-red-500">
                 Log out
               </DropdownMenuItem>
             </DropdownMenuContent>
