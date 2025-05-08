@@ -78,15 +78,22 @@ const PrimaryModules: React.FC = () => {
           >
             <CardHeader className="pb-2">
               <div className="flex items-center justify-center mb-4">
-                <div className="p-3 rounded-full bg-white/10">
-                  {React.cloneElement(module.icon, { className: `${module.icon.props.className} text-white` })}
+                {/* 3D effect dark red frosted icon container */}
+                <div className="p-3 rounded-full bg-gradient-to-br from-[#a51919] to-[#630d0d] shadow-lg border border-white/5 transform-gpu relative">
+                  {/* Add inner shadow and highlight for 3D effect */}
+                  <div className="absolute inset-0 rounded-full bg-gradient-to-tl from-white/10 to-transparent opacity-60"></div>
+                  {React.cloneElement(module.icon, { className: `${module.icon.props.className} drop-shadow-lg` })}
                 </div>
               </div>
               <CardTitle className="font-bold text-2xl text-center text-white">{module.name.toUpperCase()}</CardTitle>
               <CardDescription className="text-base text-slate-300">{module.description}</CardDescription>
             </CardHeader>
             <CardFooter className="pt-2 pb-6">
-              <Button className="w-full bg-[#c01c1c] hover:bg-[#a51919] font-medium text-lg py-6" onClick={() => handleModuleClick(module.id, module.path)}>
+              {/* Metallic dark grey button */}
+              <Button 
+                className="w-full py-6 font-medium text-lg bg-gradient-to-b from-gray-600 to-gray-800 border border-gray-500/30 shadow-md hover:from-gray-700 hover:to-gray-900 hover:border-gray-400/50 text-white transition-all duration-200" 
+                onClick={() => handleModuleClick(module.id, module.path)}
+              >
                 Launch Module
               </Button>
             </CardFooter>
