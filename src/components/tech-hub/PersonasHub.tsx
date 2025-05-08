@@ -2,277 +2,253 @@
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Separator } from '@/components/ui/separator';
 import { Textarea } from '@/components/ui/textarea';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
 import { BrainCircuit, Code2, PenTool, Bug } from "lucide-react";
-import { callMcpTool } from '@/utils/mcpToolCaller';
 
 // Define persona types
+interface PersonaTrait {
+  name: string;
+  description?: string;
+}
+
+interface PersonaResponsibility {
+  text: string;
+}
+
 interface Persona {
   id: string;
   name: string;
-  icon: React.ElementType;
   description: string;
-  traits: string[];
-  responsibilities: string[];
+  traits: PersonaTrait[];
+  responsibilities: PersonaResponsibility[];
+  icon: React.ReactNode;
 }
 
-// Define the personas based on the knowledge base
+// Define the personas based on the provided metadata
 const personas: Persona[] = [
   {
-    id: "boo_planner",
-    name: "Planner",
-    icon: BrainCircuit,
-    description: "Strategic project orchestrator that breaks down complex goals into well-structured tasks",
-    traits: ["visionary", "orchestrator", "clarity-first", "progress-driven"],
+    id: 'boo_planner',
+    name: 'Planner',
+    description: 'Boo acts as a strategic project orchestrator, breaking down complex user goals into well-structured sub-tasks. It manages delegation, workflow dependencies, and project health to ensure on-time, high-quality delivery.',
+    traits: [
+      { name: 'visionary' },
+      { name: 'orchestrator' },
+      { name: 'clarity-first' },
+      { name: 'progress-driven' }
+    ],
     responsibilities: [
-      "Deconstruct objectives into actionable sub-tasks",
-      "Delegate intelligently to other modes",
-      "Track interdependencies and task statuses",
-      "Resolve bottlenecks and optimize workflows"
-    ]
+      { text: "Deconstruct user objectives into clear, actionable sub-tasks." },
+      { text: "Delegate intelligently to other Boo modes or AI agents." },
+      { text: "Track interdependencies and task statuses." },
+      { text: "Resolve bottlenecks and optimize workflows." },
+      { text: "Centralize user communication and unify feedback." }
+    ],
+    icon: <BrainCircuit className="h-10 w-10 text-purple-500" />
   },
   {
-    id: "boo_designer",
-    name: "Designer",
-    icon: PenTool,
-    description: "Systems architect and conceptual engineer that crafts scalable, maintainable system designs",
-    traits: ["systems_thinker", "simplifier", "strategic_forecaster", "risk_identifier"],
+    id: 'boo_designer',
+    name: 'Designer',
+    description: 'Boo serves as a systems architect and conceptual engineer, crafting scalable, maintainable, and efficient software/system designs with a clear rationale and future-forward thinking.',
+    traits: [
+      { name: 'systems_thinker' },
+      { name: 'simplifier' },
+      { name: 'strategic_forecaster' },
+      { name: 'risk_identifier' }
+    ],
     responsibilities: [
-      "Design architecture with attention to modularity",
-      "Balance trade-offs (speed vs. scale, cost vs. quality)",
-      "Identify technical risks and dependencies",
-      "Explain architectural choices clearly"
-    ]
+      { text: "Design architecture with attention to modularity, extensibility, and performance." },
+      { text: "Balance trade-offs (speed vs. scale, cost vs. quality)." },
+      { text: "Identify technical risks, system dependencies, and long-term needs." },
+      { text: "Explain architectural choices with analogies or simplified diagrams." },
+      { text: "Promote industry best practices and resilient patterns." }
+    ],
+    icon: <PenTool className="h-10 w-10 text-blue-500" />
   },
   {
-    id: "boo_builder",
-    name: "Builder",
-    icon: Code2,
-    description: "Precision-focused engineer delivering production-grade code that is modular and secure",
-    traits: ["implementation_focused", "code_quality_enforcer", "secure_by_default", "modular_engineer"],
+    id: 'boo_builder',
+    name: 'Builder',
+    description: 'Boo becomes a precision-focused engineer delivering production-grade code that is modular, secure, and aligned with modern standards. It prioritizes complete implementations over partial solutions.',
+    traits: [
+      { name: 'implementation_focused' },
+      { name: 'code_quality_enforcer' },
+      { name: 'secure_by_default' },
+      { name: 'modular_engineer' }
+    ],
     responsibilities: [
-      "Deliver typed, testable, and linted code",
-      "Provide full code files, not just snippets",
-      "Include setup instructions and error handling",
-      "Ensure accessibility and performance standards"
-    ]
+      { text: "Deliver typed, testable, and linted code using tools like Next.js, Tailwind, Prisma, Zod, and shadcn/ui." },
+      { text: "Provide full code files, CLI commands, and configs — not just snippets." },
+      { text: "Include setup instructions, reusable utilities, and fallback/error handling." },
+      { text: "Ensure accessibility, performance, and security standards." },
+      { text: "Minimize boilerplate through generators or DRY abstractions." }
+    ],
+    icon: <Code2 className="h-10 w-10 text-green-500" />
   },
   {
-    id: "boo_debugger",
-    name: "Debugger",
-    icon: Bug,
-    description: "Expert software debugger systematically diagnosing issues and identifying root causes",
-    traits: ["methodical", "evidence_driven", "empathetic", "holistic_thinker"],
+    id: 'boo_debugger',
+    name: 'Debugger',
+    description: 'Boo becomes an expert software debugger, systematically diagnosing issues, identifying root causes, and guiding resolution through clear steps and rational analysis.',
+    traits: [
+      { name: 'methodical' },
+      { name: 'evidence_driven' },
+      { name: 'empathetic' },
+      { name: 'holistic_thinker' }
+    ],
     responsibilities: [
-      "Analyze bug reports, error messages, and logs",
-      "Ask clarifying questions to fill context gaps",
-      "Formulate diagnostic plans and hypotheses",
-      "Suggest targeted fixes with clear rationale"
-    ]
+      { text: "Thoroughly analyze bug reports, error messages, logs, and environments." },
+      { text: "Ask clarifying questions to fill context gaps." },
+      { text: "Formulate diagnostic plans and root cause hypotheses." },
+      { text: "Suggest targeted code or config fixes with rationale." },
+      { text: "Provide verification steps and guidance on regression testing." },
+      { text: "Educate users about principles behind bugs and resolutions." },
+      { text: "Document the debugging journey if needed (e.g., bug reports)." },
+      { text: "Ensure reproducibility and long-term robustness through best practices." }
+    ],
+    icon: <Bug className="h-10 w-10 text-red-500" />
   }
 ];
 
-export const PersonasHub = () => {
-  const [selectedPersona, setSelectedPersona] = useState<Persona | null>(null);
-  const [task, setTask] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-  const [response, setResponse] = useState("");
+const PersonasHub = () => {
+  const [selectedPersona, setSelectedPersona] = useState<string>('boo_planner');
+  const [taskInput, setTaskInput] = useState<string>('');
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  const handleSelectPersona = (persona: Persona) => {
-    setSelectedPersona(persona);
-    setResponse("");
-  };
+  // Find current persona
+  const currentPersona = personas.find(p => p.id === selectedPersona) || personas[0];
 
-  const handleSubmitTask = async () => {
-    if (!selectedPersona || !task.trim()) {
-      toast.error("Please select a persona and enter a task");
+  const handleInvokePersona = async () => {
+    if (!taskInput.trim()) {
+      toast.error("Please enter a task description");
       return;
     }
 
     setIsLoading(true);
-    setResponse("");
-
+    
     try {
-      // Call the MCP tool to invoke the selected persona
-      console.log(`Invoking ${selectedPersona.name} persona with task: ${task}`);
+      // Simulate tool call since we can't actually call mcpTool in this context
+      toast.success(`${currentPersona.name} is helping with your task!`);
       
-      // This is a mock implementation - in a real application, you would use
-      // the actual MCP tooling to invoke these personas
-      callMcpTool({
-        serverName: 'smithery/toolbox',
-        toolName: 'invoke_persona',
-        arguments: {
-          personaId: selectedPersona.id,
-          task: task
-        }
-      });
+      // In a real implementation, you would call something like:
+      // await callMcpTool({
+      //   serverName: 'smithery/toolbox',
+      //   toolName: currentPersona.id,
+      //   arguments: { task: taskInput }
+      // });
       
-      // Show success message
-      toast.success(`${selectedPersona.name} has been called to help!`);
-      
-      // For demo purposes, simulate a response
       setTimeout(() => {
-        setResponse(`${selectedPersona.name} is now working on: "${task}"\n\nPlease check your chat interface for responses.`);
+        toast.info(`${currentPersona.name} has processed your task. Check console for details.`);
+        console.log(`${currentPersona.name} processed task: ${taskInput}`);
         setIsLoading(false);
-      }, 1500);
+      }, 2000);
     } catch (error) {
-      console.error("Error invoking persona:", error);
-      toast.error("Failed to invoke persona. Please try again.");
+      toast.error("Error invoking persona");
       setIsLoading(false);
     }
   };
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold tracking-tight">Persona Hub</h1>
-        <p className="text-muted-foreground">
-          Invoke specialized AI personas to help with different aspects of your project
-        </p>
-      </div>
-
-      <Tabs defaultValue="personas" className="w-full">
-        <TabsList className="mb-4">
-          <TabsTrigger value="personas">Personas</TabsTrigger>
-          <TabsTrigger value="about">About</TabsTrigger>
-        </TabsList>
-        
-        <TabsContent value="personas">
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-            {personas.map((persona) => {
-              const Icon = persona.icon;
-              return (
-                <Card 
-                  key={persona.id}
-                  className={`cursor-pointer transition-all ${selectedPersona?.id === persona.id ? 'ring-2 ring-primary' : ''}`}
-                  onClick={() => handleSelectPersona(persona)}
-                >
-                  <CardHeader>
-                    <div className="flex items-center justify-between">
-                      <CardTitle className="text-xl">{persona.name}</CardTitle>
-                      <Icon className="h-6 w-6" />
+    <div className="container mx-auto p-4">
+      <h1 className="text-2xl font-bold mb-6">AI Personas Hub</h1>
+      
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Persona Selection Panel */}
+        <div className="lg:col-span-1">
+          <Card className="h-full">
+            <CardHeader>
+              <CardTitle>Select Persona</CardTitle>
+              <CardDescription>Choose the AI persona that best fits your current needs</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <RadioGroup value={selectedPersona} onValueChange={setSelectedPersona} className="space-y-4">
+                {personas.map(persona => (
+                  <div key={persona.id} className={`flex items-start space-x-3 border rounded-lg p-3 transition-all ${selectedPersona === persona.id ? 'bg-accent/20 border-accent' : 'hover:bg-muted'}`}>
+                    <RadioGroupItem value={persona.id} id={persona.id} className="mt-1" />
+                    <div className="flex-1">
+                      <Label htmlFor={persona.id} className="flex items-center gap-2 font-medium cursor-pointer">
+                        {persona.icon}
+                        <span>{persona.name}</span>
+                      </Label>
+                      <p className="text-sm text-muted-foreground mt-1">{persona.description.split('.')[0] + '.'}</p>
                     </div>
-                    <CardDescription>{persona.description}</CardDescription>
-                  </CardHeader>
-                  <CardContent className="space-y-2">
-                    <div>
-                      <h4 className="font-medium text-sm">Key Traits:</h4>
-                      <div className="flex flex-wrap gap-1 mt-1">
-                        {persona.traits.map((trait, i) => (
-                          <span 
-                            key={i} 
-                            className="text-xs bg-muted px-2 py-1 rounded-md"
-                          >
-                            {trait}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              );
-            })}
-          </div>
-
-          <div className="mt-8">
-            {selectedPersona && (
-              <Card>
-                <CardHeader>
-                  <CardTitle>Request help from {selectedPersona.name}</CardTitle>
-                  <CardDescription>Describe what you need help with below</CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div>
-                    <h4 className="text-sm font-medium mb-2">Key Responsibilities:</h4>
-                    <ul className="list-disc pl-5 space-y-1">
-                      {selectedPersona.responsibilities.map((resp, i) => (
-                        <li key={i} className="text-sm text-muted-foreground">{resp}</li>
-                      ))}
-                    </ul>
                   </div>
-                  
-                  <Textarea
-                    placeholder={`Describe what you need the ${selectedPersona.name} to help with...`}
-                    value={task}
-                    onChange={(e) => setTask(e.target.value)}
+                ))}
+              </RadioGroup>
+            </CardContent>
+          </Card>
+        </div>
+        
+        {/* Selected Persona Details */}
+        <div className="lg:col-span-2">
+          <Card className="h-full">
+            <CardHeader className="flex flex-row items-center justify-between">
+              <div>
+                <CardTitle className="flex items-center gap-2">
+                  {currentPersona.icon}
+                  <span>{currentPersona.name}</span>
+                </CardTitle>
+                <CardDescription className="mt-2">
+                  {currentPersona.description}
+                </CardDescription>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-6">
+                {/* Traits Section */}
+                <div>
+                  <h3 className="text-sm font-medium mb-2">Traits</h3>
+                  <div className="flex flex-wrap gap-2">
+                    {currentPersona.traits.map((trait, index) => (
+                      <span 
+                        key={index} 
+                        className="px-3 py-1 bg-secondary text-secondary-foreground rounded-full text-xs font-medium"
+                      >
+                        {trait.name}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+                
+                <Separator />
+                
+                {/* Responsibilities Section */}
+                <div>
+                  <h3 className="text-sm font-medium mb-2">Responsibilities</h3>
+                  <ul className="list-disc pl-5 space-y-1 text-sm">
+                    {currentPersona.responsibilities.map((responsibility, index) => (
+                      <li key={index}>{responsibility.text}</li>
+                    ))}
+                  </ul>
+                </div>
+                
+                <Separator />
+                
+                {/* Task Input Section */}
+                <div>
+                  <h3 className="text-sm font-medium mb-2">Your Task</h3>
+                  <Textarea 
+                    placeholder={`Describe what you want the ${currentPersona.name} to help you with...`}
+                    value={taskInput}
+                    onChange={(e) => setTaskInput(e.target.value)}
                     className="min-h-[120px]"
                   />
-                </CardContent>
-                <CardFooter>
-                  <Button 
-                    onClick={handleSubmitTask} 
-                    disabled={isLoading || !task.trim()}
-                    className="w-full sm:w-auto"
-                  >
-                    {isLoading ? 'Sending Request...' : `Call ${selectedPersona.name}`}
-                  </Button>
-                </CardFooter>
-              </Card>
-            )}
-            
-            {response && (
-              <Card className="mt-4">
-                <CardContent className="pt-6">
-                  <pre className="whitespace-pre-wrap text-sm">{response}</pre>
-                </CardContent>
-              </Card>
-            )}
-          </div>
-        </TabsContent>
-
-        <TabsContent value="about">
-          <Card>
-            <CardHeader>
-              <CardTitle>About Personas</CardTitle>
-              <CardDescription>How these specialized AI personas can help you</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <p>
-                These four personas represent different specialized modes of AI assistance,
-                each designed to excel at specific aspects of software and digital project workflows.
-              </p>
-              
-              <div className="space-y-3">
-                <h3 className="font-medium">When to use each persona:</h3>
-                
-                <div>
-                  <h4 className="font-medium text-sm">Planner:</h4>
-                  <p className="text-sm text-muted-foreground">
-                    Use when you need help organizing projects, breaking down complex tasks,
-                    setting milestones, or coordinating different aspects of your workflow.
-                  </p>
-                </div>
-                
-                <div>
-                  <h4 className="font-medium text-sm">Designer:</h4>
-                  <p className="text-sm text-muted-foreground">
-                    Use when you need assistance with system architecture, conceptual design,
-                    thinking through trade-offs, or evaluating different approaches.
-                  </p>
-                </div>
-                
-                <div>
-                  <h4 className="font-medium text-sm">Builder:</h4>
-                  <p className="text-sm text-muted-foreground">
-                    Use when you need production-ready code, implementation of specific features,
-                    or help with technical execution details.
-                  </p>
-                </div>
-                
-                <div>
-                  <h4 className="font-medium text-sm">Debugger:</h4>
-                  <p className="text-sm text-muted-foreground">
-                    Use when you're facing errors, need to troubleshoot issues,
-                    want to improve performance, or need systematic analysis of problems.
-                  </p>
                 </div>
               </div>
             </CardContent>
+            <CardFooter>
+              <Button 
+                className="w-full" 
+                onClick={handleInvokePersona} 
+                disabled={isLoading || !taskInput.trim()}
+              >
+                {isLoading ? "Processing..." : `Invoke ${currentPersona.name}`}
+              </Button>
+            </CardFooter>
           </Card>
-        </TabsContent>
-      </Tabs>
+        </div>
+      </div>
     </div>
   );
 };

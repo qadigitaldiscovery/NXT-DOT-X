@@ -1,9 +1,10 @@
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { toast } from 'sonner';
-import { FileUp, BarChart3, Gift, ArrowDownUp, LogOut, Database, Settings, FileCode, BookOpen, Link as LinkIcon, Image, Video, Users, Shield, Laptop, Calendar, Mail, Search } from 'lucide-react';
+import { FileUp, BarChart3, Gift, ArrowDownUp, LogOut, Database, Settings, FileCode, BookOpen, Link as LinkIcon, Image, Video, Users, Shield, Laptop, Calendar, Mail, Search, BrainCircuit } from 'lucide-react';
 import { HoverCard, HoverCardTrigger, HoverCardContent } from '@/components/ui/hover-card';
 import { useAuth } from '@/context/AuthContext';
 
@@ -52,6 +53,14 @@ const MasterDash = () => {
     icon: <ArrowDownUp className="h-16 w-16 text-white" />,
     bgColor: "from-green-500 to-green-700",
     permission: "modules.trading"
+  }, {
+    id: "tech-hub",
+    name: "Tech Hub Module",
+    description: "AI personas and technology resources",
+    path: "/tech-hub/personas",
+    icon: <BrainCircuit className="h-16 w-16 text-white" />,
+    bgColor: "from-amber-500 to-amber-700",
+    permission: "modules.tech"
   }];
 
   // Filter modules based on user permissions - for now, grant access to all
