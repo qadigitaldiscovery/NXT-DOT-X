@@ -23,69 +23,69 @@ export default function CostDashboard() {
   };
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
+    <div className="space-y-8 max-w-[1200px] mx-auto px-4 py-6">
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Supplier Costing</h1>
-          <p className="text-muted-foreground">
+          <h1 className="text-3xl font-bold tracking-tight">Supplier Costing</h1>
+          <p className="text-muted-foreground mt-1">
             Upload and manage supplier cost data with advanced tools
           </p>
         </div>
-        <Button onClick={handleUploadClick}>
+        <Button onClick={handleUploadClick} size="lg" className="md:w-auto w-full">
           <Upload className="mr-2 h-4 w-4" />
           Upload Cost File
         </Button>
       </div>
 
       {/* Feature cards */}
-      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
-        <Card>
+      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        <Card className="hover:shadow-md transition-shadow">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Supplier Management</CardTitle>
-            <Users className="h-4 w-4 text-muted-foreground" />
+            <Users className="h-5 w-5 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-lg font-bold">Suppliers</div>
-            <p className="text-xs text-muted-foreground">
+            <div className="text-2xl font-bold">Suppliers</div>
+            <p className="text-xs text-muted-foreground mt-1">
               Manage supplier information and contacts
             </p>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="hover:shadow-md transition-shadow">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">File Uploads</CardTitle>
-            <FileUp className="h-4 w-4 text-muted-foreground" />
+            <FileUp className="h-5 w-5 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-lg font-bold">Supplier Files</div>
-            <p className="text-xs text-muted-foreground">
+            <div className="text-2xl font-bold">Supplier Files</div>
+            <p className="text-xs text-muted-foreground mt-1">
               Upload and manage supplier cost files
             </p>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="hover:shadow-md transition-shadow">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Landed Costs</CardTitle>
-            <FileText className="h-4 w-4 text-muted-foreground" />
+            <FileText className="h-5 w-5 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-lg font-bold">Templates</div>
-            <p className="text-xs text-muted-foreground">
+            <div className="text-2xl font-bold">Templates</div>
+            <p className="text-xs text-muted-foreground mt-1">
               Configure landed cost calculation templates
             </p>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="hover:shadow-md transition-shadow">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Cost Analysis</CardTitle>
-            <BarChart3 className="h-4 w-4 text-muted-foreground" />
+            <BarChart3 className="h-5 w-5 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-lg font-bold">Insights</div>
-            <p className="text-xs text-muted-foreground">
+            <div className="text-2xl font-bold">Insights</div>
+            <p className="text-xs text-muted-foreground mt-1">
               View cost trends and supplier metrics
             </p>
           </CardContent>
@@ -93,13 +93,13 @@ export default function CostDashboard() {
       </div>
 
       {/* Tab navigation */}
-      <Tabs defaultValue="file-uploads" className="space-y-4">
-        <TabsList>
-          <TabsTrigger value="supplier-management">Supplier Management</TabsTrigger>
-          <TabsTrigger value="file-uploads">File Uploads</TabsTrigger>
-          <TabsTrigger value="landed-costs">Landed Costs</TabsTrigger>
-          <TabsTrigger value="cost-analysis">Cost Analysis</TabsTrigger>
-          <TabsTrigger value="cost-history">Cost History</TabsTrigger>
+      <Tabs defaultValue="file-uploads" className="space-y-6">
+        <TabsList className="grid grid-cols-2 md:grid-cols-5 gap-4 h-auto p-1">
+          <TabsTrigger value="supplier-management" className="py-2">Supplier Management</TabsTrigger>
+          <TabsTrigger value="file-uploads" className="py-2">File Uploads</TabsTrigger>
+          <TabsTrigger value="landed-costs" className="py-2">Landed Costs</TabsTrigger>
+          <TabsTrigger value="cost-analysis" className="py-2">Cost Analysis</TabsTrigger>
+          <TabsTrigger value="cost-history" className="py-2">Cost History</TabsTrigger>
         </TabsList>
 
         <TabsContent value="supplier-management">
@@ -110,7 +110,15 @@ export default function CostDashboard() {
                 Manage supplier information, contacts, and preferences
               </CardDescription>
             </CardHeader>
-            <CardContent>
+            <CardContent className="space-y-4">
+              <div className="relative">
+                <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                <Input
+                  type="search"
+                  placeholder="Search suppliers..."
+                  className="pl-8"
+                />
+              </div>
               <p className="text-sm text-muted-foreground">
                 This tab will display supplier management functionality.
               </p>
@@ -119,7 +127,17 @@ export default function CostDashboard() {
         </TabsContent>
 
         <TabsContent value="file-uploads" className="space-y-4">
-          <SupplierUploadsTable />
+          <Card>
+            <CardHeader className="pb-3">
+              <CardTitle>Recent File Uploads</CardTitle>
+              <CardDescription>
+                View and manage your recently uploaded supplier cost files
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <SupplierUploadsTable />
+            </CardContent>
+          </Card>
         </TabsContent>
 
         <TabsContent value="landed-costs">
@@ -130,7 +148,7 @@ export default function CostDashboard() {
                 Configure landed cost calculation templates
               </CardDescription>
             </CardHeader>
-            <CardContent>
+            <CardContent className="space-y-4">
               <p className="text-sm text-muted-foreground">
                 This tab will display landed cost configuration functionality.
               </p>
@@ -146,7 +164,7 @@ export default function CostDashboard() {
                 View cost trends and insights
               </CardDescription>
             </CardHeader>
-            <CardContent>
+            <CardContent className="space-y-4">
               <p className="text-sm text-muted-foreground">
                 This tab will display cost analysis tools and visualizations.
               </p>
@@ -162,7 +180,7 @@ export default function CostDashboard() {
                 View historical cost changes over time
               </CardDescription>
             </CardHeader>
-            <CardContent>
+            <CardContent className="space-y-4">
               <p className="text-sm text-muted-foreground">
                 This tab will display cost history and changes.
               </p>
