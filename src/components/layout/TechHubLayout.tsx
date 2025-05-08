@@ -26,7 +26,6 @@ const techHubNavItems: NavCategory[] = [
   {
     name: "TECH HUB",
     items: [
-      { label: 'Home', icon: Home, path: '/tech-hub' },
       { label: 'AI Personas', icon: BrainCircuit, path: '/tech-hub/personas' },
       { label: 'API Management', icon: Bot, path: '/tech-hub/api-management' },
       { label: 'Cloud Services', icon: Cloud, path: '/tech-hub/cloud-services' },
@@ -34,6 +33,9 @@ const techHubNavItems: NavCategory[] = [
     ]
   }
 ];
+
+// Add home item that will be shown at the bottom of sidebar
+const homeNavItem: NavItem = { label: 'Master Dashboard', icon: Home, path: '/' };
 
 export const TechHubLayout = ({ children }: TechHubLayoutProps) => {
   const [sidebarOpen, setSidebarOpen] = React.useState(true);
@@ -57,6 +59,7 @@ export const TechHubLayout = ({ children }: TechHubLayoutProps) => {
         open={sidebarOpen} 
         onToggle={toggleSidebar} 
         navItems={techHubNavItems}
+        homeItem={homeNavItem}
       />
       <div className={cn(
           "flex flex-col flex-1 overflow-hidden",

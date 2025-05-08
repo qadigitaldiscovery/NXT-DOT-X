@@ -49,3 +49,6 @@ export const navCategories: NavCategory[] = [
 
 // Settings item (for footer)
 export const settingsItem: NavItem = { label: 'Settings', icon: Settings, path: '/settings' };
+
+// Home item for master dashboard (to be placed at the bottom of specialized layouts)
+export const masterDashItem: NavItem = { label: 'Master Dashboard', icon: Home, path: '/' };

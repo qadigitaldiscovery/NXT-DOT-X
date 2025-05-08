@@ -6,26 +6,16 @@ import { ChevronLeft, MenuIcon } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { SidebarNavList } from './sidebar/SidebarNavList';
 import { CollapsedSidebar } from './sidebar/CollapsedSidebar';
-
-type NavItem = {
-  label: string;
-  icon: React.ElementType;
-  path: string;
-  children?: NavItem[];
-};
-
-type NavCategory = {
-  name: string;
-  items: NavItem[];
-};
+import { NavItem, NavCategory } from './sidebar/types';
 
 interface SharedSidebarProps {
   open: boolean;
   onToggle: () => void;
   navItems: NavCategory[];
+  homeItem?: NavItem;
 }
 
-export const SharedSidebar = ({ open, onToggle, navItems }: SharedSidebarProps) => {
+export const SharedSidebar = ({ open, onToggle, navItems, homeItem }: SharedSidebarProps) => {
   const isMobile = useIsMobile();
   const [expandedItems, setExpandedItems] = React.useState<string[]>([]);
   
@@ -123,12 +113,28 @@ export const SharedSidebar = ({ open, onToggle, navItems }: SharedSidebarProps) 
             activeBgColor={activeBgColor}
             activeTextColor={activeTextColor}
             hoverBgColor={hoverBgColor}
+            homeItem={homeItem}
           />
         )}
 
-        {/* Footer area */}
-        <div className="p-2 border-t border-blue-900/50 flex items-center justify-center bg-indigo-950/50">
-          <div className="text-xs text-blue-400 font-mono">v2.5.8</div>
+        {/* Footer area with Home button */}
+        <div className="p-2 border-t border-blue-900/50">
+          {/* Home button when sidebar is open */}
+          {open && homeItem && (
+            <NavLink
+              to={homeItem.path}
+              className={({ isActive }) => cn(
+                "flex items-center gap-3 px-4 py-3 rounded-lg transition-colors mx-auto my-1",
+                isActive 
+                  ? `${activeBgColor} ${activeTextColor} shadow-md shadow-indigo-900/50` 
+                  : `${textColor} ${textHoverColor} ${hoverBgColor}`
+              )}
+            >
+              <homeItem.icon className="h-5 w-5" />
+              <span className="font-medium uppercase">{homeItem.label}</span>
+            </NavLink>
+          )}
+          <div className="text-xs text-blue-400 font-mono text-center mt-2">v2.5.8</div>
         </div>
       </aside>
     </>

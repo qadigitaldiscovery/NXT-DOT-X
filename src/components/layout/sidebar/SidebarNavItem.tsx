@@ -44,7 +44,7 @@ export const SidebarNavItem = ({
         >
           <div className="flex items-center gap-3">
             <item.icon className="h-5 w-5" />
-            <span className="font-medium">{item.label}</span>
+            <span className="font-medium uppercase">{item.label}</span>
           </div>
           {isExpanded ? 
             <ChevronDown className="h-4 w-4" /> : 
@@ -68,7 +68,7 @@ export const SidebarNavItem = ({
                   }
                 >
                   <child.icon className="h-4 w-4" />
-                  <span className="font-medium">{child.label}</span>
+                  <span className="font-medium uppercase">{child.label}</span>
                 </NavLink>
               </li>
             ))}
@@ -78,11 +78,8 @@ export const SidebarNavItem = ({
     );
   }
 
-  // Ensure Home is at the bottom by checking the label
-  const isHomeItem = item.label === "Home";
-  
   return (
-    <li key={item.path} className={cn("my-1", isHomeItem && "mt-auto")}>
+    <li key={item.path} className="my-1">
       <NavLink
         to={item.path}
         end
@@ -96,7 +93,7 @@ export const SidebarNavItem = ({
         }
       >
         <item.icon className="h-5 w-5" />
-        <span className="font-medium">{item.label}</span>
+        <span className="font-medium uppercase">{item.label}</span>
       </NavLink>
     </li>
   );
