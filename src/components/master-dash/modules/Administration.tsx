@@ -1,14 +1,9 @@
-
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent } from '@/components/ui/card';
 import { HoverCard, HoverCardTrigger, HoverCardContent } from '@/components/ui/hover-card';
 import { toast } from 'sonner';
-import { 
-  FileUp, Database, Settings, FileCode, BookOpen, Link as LinkIcon, 
-  Image, Video, Users, Shield, Calendar, Mail, Search 
-} from 'lucide-react';
-
+import { FileUp, Database, Settings, FileCode, BookOpen, Link as LinkIcon, Image, Video, Users, Shield, Calendar, Mail, Search } from 'lucide-react';
 interface SystemFunction {
   id: string;
   name: string;
@@ -17,7 +12,6 @@ interface SystemFunction {
   permission: string;
   description: string;
 }
-
 const Administration: React.FC = () => {
   const navigate = useNavigate();
 
@@ -107,7 +101,6 @@ const Administration: React.FC = () => {
     permission: "settings.access",
     description: "Advanced search functionality"
   }];
-
   const handleSystemClick = (systemId: string, path: string) => {
     if (systemId === "users") {
       navigate("/admin/users");
@@ -115,29 +108,23 @@ const Administration: React.FC = () => {
       toast.info(`System function ${systemId} is not implemented yet`);
     }
   };
-
   const chunkedFunctions = [];
   for (let i = 0; i < systemFunctions.length; i += 2) {
     chunkedFunctions.push(systemFunctions.slice(i, i + 2));
   }
-
-  return (
-    <section>
-      <h2 className="text-2xl font-bold mb-2 text-gray-100">ADMINISTRATION</h2>
-      <p className="text-gray-300 mb-6">Access administration and utility features</p>
+  return <section>
+      <h2 className="text-2xl font-bold mb-2 text-gray-100 text-right">ADMINISTRATION</h2>
+      <p className="text-gray-300 mb-6 text-right">Access administration and utility features</p>
       
-      {chunkedFunctions.map((chunk, index) => (
-        <div key={index} className="mb-4 grid grid-cols-2 gap-4">
-          {chunk.map(system => (
-            <HoverCard key={system.id}>
+      {chunkedFunctions.map((chunk, index) => <div key={index} className="mb-4 grid grid-cols-2 gap-4">
+          {chunk.map(system => <HoverCard key={system.id}>
               <HoverCardTrigger asChild>
-                <Card 
-                  className="overflow-hidden transition-all duration-200 hover:shadow-md cursor-pointer backdrop-blur-lg bg-black/40 border-white/10"
-                  onClick={() => handleSystemClick(system.id, system.path)}
-                >
+                <Card className="overflow-hidden transition-all duration-200 hover:shadow-md cursor-pointer backdrop-blur-lg bg-black/40 border-white/10" onClick={() => handleSystemClick(system.id, system.path)}>
                   <CardContent className="p-4 flex flex-col items-center justify-center text-center">
                     <div className="p-3 rounded-full bg-white/10 mb-3">
-                      {React.cloneElement(system.icon, { className: `${system.icon.props.className} text-white` })}
+                      {React.cloneElement(system.icon, {
+                  className: `${system.icon.props.className} text-white`
+                })}
                     </div>
                     <p className="text-sm font-medium text-white">{system.name.toUpperCase()}</p>
                   </CardContent>
@@ -149,12 +136,8 @@ const Administration: React.FC = () => {
                   <p className="text-slate-300">{system.description}</p>
                 </div>
               </HoverCardContent>
-            </HoverCard>
-          ))}
-        </div>
-      ))}
-    </section>
-  );
+            </HoverCard>)}
+        </div>)}
+    </section>;
 };
-
 export default Administration;

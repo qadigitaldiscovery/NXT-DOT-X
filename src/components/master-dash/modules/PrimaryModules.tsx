@@ -60,8 +60,8 @@ const PrimaryModules: React.FC = () => {
     }, 500);
   };
   return <section className="mb-12">
-      <h1 className="text-3xl font-bold mb-2 text-gray-100">PRIMARY MODULES</h1>
-      <p className="text-gray-300 mb-6">Select one of our core business modules to get started</p>
+      <h1 className="font-bold mb-2 text-gray-100 text-2xl text-center">PRIMARY MODULES</h1>
+      <p className="text-gray-300 mb-6 text-center">Select one of our core business modules to get started</p>
       
       {/* Primary Modules - 2x2 grid with specific order */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
