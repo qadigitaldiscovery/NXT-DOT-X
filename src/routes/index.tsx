@@ -25,22 +25,12 @@ export const AppRoutes = () => {
       {/* Legacy route redirects */}
       <Route path="/prototypes" element={<Navigate to="/" replace />} />
       
-      {/* Module-specific Routes - Use Fragment to include the routes */}
-      <Route>
-        {AdminRoutes()}
-      </Route>
-      <Route>
-        {DataManagementRoutes()}
-      </Route>
-      <Route>
-        {LoyaltyRoutes()}
-      </Route>
-      <Route>
-        {TradingSystemRoutes()}
-      </Route>
-      <Route>
-        {TechHubRoutes()}
-      </Route>
+      {/* Module-specific Routes */}
+      {AdminRoutes()}
+      {DataManagementRoutes()}
+      {LoyaltyRoutes()}
+      {TradingSystemRoutes()}
+      {TechHubRoutes()}
       
       {/* 404 Page */}
       <Route path="*" element={<NotFound />} />
