@@ -31,7 +31,8 @@ const Dashboard = () => {
   ];
 
   const handleVapiDemo = () => {
-    window.open('https://demo.vapi.ai/', '_blank');
+    // Updated URL to a working Vapi demo link
+    window.open('https://app.vapi.ai/demo', '_blank');
   };
 
   return (
