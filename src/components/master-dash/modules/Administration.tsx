@@ -116,36 +116,43 @@ const Administration: React.FC = () => {
     }
   };
 
+  const chunkedFunctions = [];
+  for (let i = 0; i < systemFunctions.length; i += 2) {
+    chunkedFunctions.push(systemFunctions.slice(i, i + 2));
+  }
+
   return (
     <section>
-      <h2 className="text-2xl font-bold mb-2 text-gray-100 mt-8">ADMINISTRATION</h2>
+      <h2 className="text-2xl font-bold mb-2 text-gray-100">ADMINISTRATION</h2>
       <p className="text-gray-300 mb-6">Access administration and utility features</p>
       
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
-        {systemFunctions.map(system => (
-          <HoverCard key={system.id}>
-            <HoverCardTrigger asChild>
-              <Card 
-                className="overflow-hidden transition-all duration-200 hover:shadow-md cursor-pointer backdrop-blur-sm bg-black/50 border-white/20"
-                onClick={() => handleSystemClick(system.id, system.path)}
-              >
-                <CardContent className="p-4 flex flex-col items-center justify-center text-center">
-                  <div className="p-3 rounded-full bg-white/10 mb-3">
-                    {React.cloneElement(system.icon, { className: `${system.icon.props.className} text-white` })}
-                  </div>
-                  <p className="text-sm font-medium text-white">{system.name.toUpperCase()}</p>
-                </CardContent>
-              </Card>
-            </HoverCardTrigger>
-            <HoverCardContent className="backdrop-blur-md bg-black/80 border-slate-700 text-white">
-              <div className="text-sm">
-                <p className="font-semibold">{system.name}</p>
-                <p className="text-slate-300">{system.description}</p>
-              </div>
-            </HoverCardContent>
-          </HoverCard>
-        ))}
-      </div>
+      {chunkedFunctions.map((chunk, index) => (
+        <div key={index} className="mb-4 grid grid-cols-2 gap-4">
+          {chunk.map(system => (
+            <HoverCard key={system.id}>
+              <HoverCardTrigger asChild>
+                <Card 
+                  className="overflow-hidden transition-all duration-200 hover:shadow-md cursor-pointer backdrop-blur-lg bg-black/40 border-white/10"
+                  onClick={() => handleSystemClick(system.id, system.path)}
+                >
+                  <CardContent className="p-4 flex flex-col items-center justify-center text-center">
+                    <div className="p-3 rounded-full bg-white/10 mb-3">
+                      {React.cloneElement(system.icon, { className: `${system.icon.props.className} text-white` })}
+                    </div>
+                    <p className="text-sm font-medium text-white">{system.name.toUpperCase()}</p>
+                  </CardContent>
+                </Card>
+              </HoverCardTrigger>
+              <HoverCardContent className="backdrop-blur-xl bg-black/80 border-slate-700 text-white">
+                <div className="text-sm">
+                  <p className="font-semibold">{system.name}</p>
+                  <p className="text-slate-300">{system.description}</p>
+                </div>
+              </HoverCardContent>
+            </HoverCard>
+          ))}
+        </div>
+      ))}
     </section>
   );
 };

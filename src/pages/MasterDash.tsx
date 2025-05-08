@@ -36,24 +36,30 @@ const MasterDash = () => {
         backgroundRepeat: 'no-repeat',
       }}
     >
-      {/* Overlay to improve readability of content on top of the background */}
-      <div className="absolute inset-0 bg-black/50 z-0"></div>
+      {/* Improved overlay with better frosted glass effect */}
+      <div className="absolute inset-0 bg-black/70 backdrop-blur-md z-0"></div>
       
       {/* Content needs to be on a higher z-index to appear above the overlay */}
       <div className="relative z-10 flex flex-col flex-grow">
         {/* Header component */}
         <MasterDashHeader user={user} />
         
-        {/* Main content */}
+        {/* Main content with new layout */}
         <main className="container mx-auto px-4 py-8 flex-grow">
-          {/* Primary Modules */}
-          <PrimaryModules />
-          
-          {/* AI Army Section */}
-          <AiArmy />
-          
-          {/* Administration Section */}
-          <Administration />
+          <div className="flex flex-col lg:flex-row gap-8">
+            {/* Primary Modules in the center/left (3/4 width on large screens) */}
+            <div className="lg:w-3/4">
+              <PrimaryModules />
+              
+              {/* AI Army Section */}
+              <AiArmy />
+            </div>
+            
+            {/* Administration section on the right (1/4 width) */}
+            <div className="lg:w-1/4">
+              <Administration />
+            </div>
+          </div>
         </main>
         
         {/* Footer component */}

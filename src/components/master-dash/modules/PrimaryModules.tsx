@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { Card, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
-import { Bot, BarChart3, Gift, ArrowDownUp, BrainCircuit } from 'lucide-react';
+import { Bot, BarChart3, Gift, BrainCircuit } from 'lucide-react';
 
 interface ModuleItem {
   id: string;
@@ -19,7 +19,7 @@ interface ModuleItem {
 const PrimaryModules: React.FC = () => {
   const navigate = useNavigate();
 
-  // Primary module prototypes data
+  // Primary module prototypes data - Trading System module removed as requested
   const primaryModules = [{
     id: "dot-x",
     name: "DOT-X",
@@ -45,14 +45,6 @@ const PrimaryModules: React.FC = () => {
     bgColor: "from-purple-500 to-purple-700",
     permission: "modules.loyalty"
   }, {
-    id: "trading-system",
-    name: "Trading System Module",
-    description: "Inventory and order management",
-    path: "/trading-system",
-    icon: <ArrowDownUp className="h-16 w-16 text-white" />,
-    bgColor: "from-green-500 to-green-700",
-    permission: "modules.trading"
-  }, {
     id: "tech-hub",
     name: "Tech Hub Module",
     description: "AI personas and technology resources",
@@ -73,18 +65,23 @@ const PrimaryModules: React.FC = () => {
   };
 
   return (
-    <section>
+    <section className="mb-12">
       <h1 className="text-3xl font-bold mb-2 text-gray-100">PRIMARY MODULES</h1>
       <p className="text-gray-300 mb-6">Select one of our core business modules to get started</p>
       
-      {/* Primary Modules */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+      {/* Primary Modules - improved styling with frosted glass effect */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {primaryModules.map(module => (
           <Card 
             key={module.id} 
-            className="overflow-hidden transition-all duration-300 hover:shadow-xl shadow-md hover:scale-105 backdrop-blur-sm bg-black/50 border-white/20"
+            className="overflow-hidden transition-all duration-300 hover:shadow-xl hover:scale-105 backdrop-blur-lg bg-black/40 border-white/10 text-white"
           >
             <CardHeader className="pb-2">
+              <div className="flex items-center justify-center mb-4">
+                <div className="p-3 rounded-full bg-white/10">
+                  {React.cloneElement(module.icon, { className: `${module.icon.props.className} text-white` })}
+                </div>
+              </div>
               <CardTitle className="font-bold text-2xl text-center text-white">{module.name.toUpperCase()}</CardTitle>
               <CardDescription className="text-base text-slate-300">{module.description}</CardDescription>
             </CardHeader>
