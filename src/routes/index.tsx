@@ -11,6 +11,7 @@ import { DataManagementRoutes } from "./dataManagementRoutes";
 import { LoyaltyRoutes } from "./loyaltyRoutes";
 import { TradingSystemRoutes } from "./tradingSystemRoutes";
 import { TechHubRoutes } from "./techHubRoutes";
+import { DotXRoutes } from "./dotXRoutes"; // New import for DOT-X routes
 
 export const AppRoutes = () => {
   return (
@@ -31,6 +32,7 @@ export const AppRoutes = () => {
       {LoyaltyRoutes()}
       {TradingSystemRoutes()}
       {TechHubRoutes()}
+      {DotXRoutes()} // Added DOT-X routes
       
       {/* 404 Page */}
       <Route path="*" element={<NotFound />} />

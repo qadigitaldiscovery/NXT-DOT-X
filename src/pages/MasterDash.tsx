@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { toast } from 'sonner';
-import { FileUp, BarChart3, Gift, ArrowDownUp, LogOut, Database, Settings, FileCode, BookOpen, Link as LinkIcon, Image, Video, Users, Shield, Laptop, Calendar, Mail, Search, BrainCircuit } from 'lucide-react';
+import { FileUp, BarChart3, Gift, ArrowDownUp, LogOut, Database, Settings, FileCode, BookOpen, Link as LinkIcon, Image, Video, Users, Shield, Laptop, Calendar, Mail, Search, BrainCircuit, Bot, ShieldCheck } from 'lucide-react';
 import { HoverCard, HoverCardTrigger, HoverCardContent } from '@/components/ui/hover-card';
 import { useAuth } from '@/context/AuthContext';
 
@@ -30,6 +30,14 @@ const MasterDash = () => {
 
   // Primary module prototypes data
   const primaryModules = [{
+    id: "dot-x",
+    name: "DOT-X",
+    description: "The next generation business intelligence platform",
+    path: "/dot-x",
+    icon: <Bot className="h-16 w-16 text-white" />,
+    bgColor: "from-blue-500 to-blue-700",
+    permission: "modules.dotx"
+  }, {
     id: "data-management",
     name: "Data Management Module",
     description: "Dashboard with supplier costing and analysis",
@@ -65,6 +73,13 @@ const MasterDash = () => {
 
   // Filter modules based on user permissions - for now, grant access to all
   const accessibleModules = primaryModules;
+
+  // AI Army data
+  const aiArmyData = [
+    { id: "ai-assistant", name: "AI Assistant", icon: <Bot className="h-5 w-5" />, path: "/ai-army/assistant" },
+    { id: "ai-shield", name: "AI Shield", icon: <ShieldCheck className="h-5 w-5" />, path: "/ai-army/shield" },
+    { id: "ai-commander", name: "AI Commander", icon: <Shield className="h-5 w-5" />, path: "/ai-army/commander" },
+  ];
 
   // System functions data
   const systemFunctions = [{
@@ -161,6 +176,12 @@ const MasterDash = () => {
       toast.info(`System function ${systemId} is not implemented yet`);
     }
   };
+
+  const handleAiArmyClick = (aiId: string, path: string) => {
+    toast.info(`AI Army ${aiId} is being deployed`);
+    // We would navigate here if the paths were implemented
+    // navigate(path);
+  };
   
   return <div 
     className="min-h-screen flex flex-col relative p-4 sm:p-6 md:p-8" 
@@ -217,6 +238,40 @@ const MasterDash = () => {
                 </Button>
               </CardFooter>
             </Card>
+          ))}
+        </div>
+
+        {/* AI Army Section */}
+        <h2 className="text-2xl font-bold mb-2 text-gray-100 mt-8">AI ARMY</h2>
+        <p className="text-gray-300 mb-6">Deploy your AI agents to assist with tasks</p>
+        
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 mb-12">
+          {aiArmyData.map(ai => (
+            <HoverCard key={ai.id}>
+              <HoverCardTrigger asChild>
+                <Card 
+                  className="overflow-hidden transition-all duration-200 hover:shadow-md cursor-pointer backdrop-blur-sm bg-black/50 border-white/20"
+                  onClick={() => handleAiArmyClick(ai.id, ai.path)}
+                >
+                  <CardContent className="p-4 flex flex-col items-center justify-center text-center">
+                    <div className="p-3 rounded-full bg-blue-500/30 mb-3">
+                      {React.cloneElement(ai.icon, { className: `${ai.icon.props.className} text-white` })}
+                    </div>
+                    <p className="text-sm font-medium text-white">{ai.name.toUpperCase()}</p>
+                  </CardContent>
+                </Card>
+              </HoverCardTrigger>
+              <HoverCardContent className="backdrop-blur-md bg-black/80 border-slate-700 text-white">
+                <div className="text-sm">
+                  <p className="font-semibold">{ai.name}</p>
+                  <p className="text-slate-300">
+                    {ai.id === "ai-assistant" ? "Your personal AI assistant for everyday tasks" : 
+                     ai.id === "ai-shield" ? "Protect your systems with AI-powered security" : 
+                     "Command and coordinate your AI resources"}
+                  </p>
+                </div>
+              </HoverCardContent>
+            </HoverCard>
           ))}
         </div>
         
