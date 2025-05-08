@@ -31,8 +31,22 @@ const Dashboard = () => {
   ];
 
   return (
-    <div className="space-y-8">
-      {/* Avatar Team Section */}
+    <div className="space-y-6">
+      {/* Hero Section - Made smaller */}
+      <div className="relative overflow-hidden rounded-lg bg-gradient-to-r from-blue-900 to-indigo-900 p-6 text-white shadow-xl">
+        <div className="absolute -right-20 -top-20 h-60 w-60 rounded-full bg-blue-500/20 blur-3xl"></div>
+        <div className="absolute -bottom-20 -left-20 h-60 w-60 rounded-full bg-indigo-500/20 blur-3xl"></div>
+        <div className="relative z-10">
+          <h1 className="mb-2 text-3xl font-bold tracking-tight">Welcome to <span className="bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">DOT-X Command Center</span></h1>
+          <p className="mb-4 text-lg text-blue-100">Unleashing AI superpowers to protect and serve</p>
+          <div className="flex flex-wrap gap-3">
+            <Button className="bg-blue-600 hover:bg-blue-700">Deploy AI Agents</Button>
+            <Button variant="outline" className="border-blue-400 text-blue-100 hover:bg-blue-800/50">View Mission Log</Button>
+          </div>
+        </div>
+      </div>
+      
+      {/* Avatar Team Section - Bigger and moved up under hero */}
       <div>
         <h2 className="mb-4 text-2xl font-bold text-white">DOT-X Command Team</h2>
         <div className="grid grid-cols-4 gap-8 mb-6">
@@ -51,21 +65,37 @@ const Dashboard = () => {
         </div>
       </div>
       
-      {/* Hero Section */}
-      <div className="relative overflow-hidden rounded-lg bg-gradient-to-r from-blue-900 to-indigo-900 p-8 text-white shadow-xl">
-        <div className="absolute -right-20 -top-20 h-60 w-60 rounded-full bg-blue-500/20 blur-3xl"></div>
-        <div className="absolute -bottom-20 -left-20 h-60 w-60 rounded-full bg-indigo-500/20 blur-3xl"></div>
-        <div className="relative z-10">
-          <h1 className="mb-2 text-4xl font-bold tracking-tight">Welcome to <span className="bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">DOT-X Command Center</span></h1>
-          <p className="mb-6 text-xl text-blue-100">Unleashing AI superpowers to protect and serve</p>
-          <div className="flex flex-wrap gap-3">
-            <Button className="bg-blue-600 hover:bg-blue-700">Deploy AI Agents</Button>
-            <Button variant="outline" className="border-blue-400 text-blue-100 hover:bg-blue-800/50">View Mission Log</Button>
-          </div>
+      {/* Mission Status Section - Moved to middle and made bigger */}
+      <div>
+        <h2 className="mb-4 text-2xl font-bold text-white">Active AI Missions</h2>
+        <div className="grid gap-6 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
+          {missions.map((mission) => (
+            <Card key={mission.id} className="bg-gray-800/60 border-gray-700 text-white backdrop-blur-sm hover:bg-gray-800/80 transition-colors">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-2xl">
+                  {mission.icon}
+                  {mission.name}
+                </CardTitle>
+                <CardDescription className="text-gray-300 text-base">Mission #{mission.id}</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="mb-4 flex items-center justify-between text-lg">
+                  <span>Status: <span className={mission.status === "Active" ? "text-green-400" : mission.status === "In Progress" ? "text-yellow-400" : "text-gray-400"}>{mission.status}</span></span>
+                  <span className="font-bold">{mission.completion}%</span>
+                </div>
+                <div className="h-3 w-full rounded-full bg-gray-700">
+                  <div 
+                    className="h-3 rounded-full bg-gradient-to-r from-blue-500 to-indigo-500" 
+                    style={{ width: `${mission.completion}%` }}
+                  ></div>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
         </div>
       </div>
       
-      {/* Performance Metrics */}
+      {/* Performance Metrics - Kept at the bottom */}
       <div>
         <h2 className="mb-4 text-2xl font-bold text-white">AI Performance Metrics</h2>
         <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
@@ -81,36 +111,6 @@ const Dashboard = () => {
                   metric.trend === 'down' ? 'text-red-400' : 'text-blue-400'
                 }`}>
                   {metric.trend === 'up' ? '↑' : metric.trend === 'down' ? '↓' : '→'} {metric.trend}
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      </div>
-      
-      {/* Mission Status Section - Moved down as requested */}
-      <div>
-        <h2 className="mb-4 text-2xl font-bold text-white">Active AI Missions</h2>
-        <div className="grid gap-4 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
-          {missions.map((mission) => (
-            <Card key={mission.id} className="bg-gray-800/60 border-gray-700 text-white backdrop-blur-sm hover:bg-gray-800/80 transition-colors">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  {mission.icon}
-                  {mission.name}
-                </CardTitle>
-                <CardDescription className="text-gray-300">Mission #{mission.id}</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="mb-2 flex items-center justify-between">
-                  <span>Status: <span className={mission.status === "Active" ? "text-green-400" : mission.status === "In Progress" ? "text-yellow-400" : "text-gray-400"}>{mission.status}</span></span>
-                  <span>{mission.completion}%</span>
-                </div>
-                <div className="h-2 w-full rounded-full bg-gray-700">
-                  <div 
-                    className="h-2 rounded-full bg-gradient-to-r from-blue-500 to-indigo-500" 
-                    style={{ width: `${mission.completion}%` }}
-                  ></div>
                 </div>
               </CardContent>
             </Card>
