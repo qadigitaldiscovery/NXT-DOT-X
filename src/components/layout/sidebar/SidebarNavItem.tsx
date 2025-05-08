@@ -37,22 +37,22 @@ export const SidebarNavItem = ({
       <li key={item.path}>
         <div 
           className={cn(
-            "flex items-center justify-between px-4 py-4 rounded-md transition-colors text-xl cursor-pointer",
+            "flex items-center justify-between px-5 py-5 rounded-lg transition-all duration-300 cursor-pointer text-2xl",
             textColor, textHoverColor, hoverBgColor
           )}
           onClick={() => onToggleExpand(item.label)}
         >
-          <div className="flex items-center gap-4">
-            <item.icon className="h-7 w-7" />
-            <span>{item.label}</span>
+          <div className="flex items-center gap-5">
+            <item.icon className="h-9 w-9" />
+            <span className="font-mono tracking-wide">{item.label}</span>
           </div>
           {isExpanded ? 
-            <ChevronDown className="h-6 w-6" /> : 
-            <ChevronRight className="h-6 w-6" />
+            <ChevronDown className="h-7 w-7" /> : 
+            <ChevronRight className="h-7 w-7" />
           }
         </div>
         {isExpanded && (
-          <ul className="ml-10 space-y-2 mt-2">
+          <ul className="ml-12 space-y-3 mt-3">
             {item.children.map(child => (
               <li key={child.path}>
                 <NavLink
@@ -60,15 +60,15 @@ export const SidebarNavItem = ({
                   end
                   className={({ isActive }) =>
                     cn(
-                      'flex items-center gap-4 px-4 py-3 rounded-md transition-colors text-xl',
+                      'flex items-center gap-5 px-5 py-4 rounded-lg transition-all duration-300 text-xl',
                       isActive
                         ? `${activeBgColor} ${activeTextColor} shadow-lg shadow-blue-900/30`
                         : `${textColor} ${textHoverColor} ${hoverBgColor}`
                     )
                   }
                 >
-                  <child.icon className="h-7 w-7" />
-                  <span>{child.label}</span>
+                  <child.icon className="h-9 w-9" />
+                  <span className="font-mono">{child.label}</span>
                 </NavLink>
               </li>
             ))}
@@ -79,21 +79,21 @@ export const SidebarNavItem = ({
   }
 
   return (
-    <li key={item.path} className="my-2">
+    <li key={item.path} className="my-3">
       <NavLink
         to={item.path}
         end
         className={({ isActive }) =>
           cn(
-            'flex items-center gap-4 px-4 py-4 rounded-md transition-colors text-xl',
+            'flex items-center gap-5 px-5 py-5 rounded-lg transition-all duration-300 text-xl',
             isActive
               ? `${activeBgColor} ${activeTextColor} shadow-lg shadow-blue-900/30`
               : `${textColor} ${textHoverColor} ${hoverBgColor}`
           )
         }
       >
-        <item.icon className="h-7 w-7" />
-        <span>{item.label}</span>
+        <item.icon className="h-9 w-9" />
+        <span className="font-mono tracking-wide">{item.label}</span>
       </NavLink>
     </li>
   );

@@ -38,28 +38,28 @@ const Dashboard = () => {
         <div className="absolute -bottom-20 -left-20 h-40 w-40 rounded-full bg-purple-500/20 blur-3xl"></div>
         <div className="relative z-10">
           <h1 className="mb-3 text-4xl font-bold tracking-tight font-sans">Welcome to <span className="bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">DOT-X Command Center</span></h1>
-          <p className="mb-4 text-blue-100 text-xl">Unleashing AI superpowers to protect and serve</p>
+          <p className="mb-6 text-blue-100 text-2xl">Unleashing AI superpowers to protect and serve</p>
           <div className="flex flex-wrap gap-4">
-            <Button className="bg-blue-600 hover:bg-blue-700 text-lg font-semibold px-6 py-6">Deploy AI Agents</Button>
-            <Button variant="outline" className="border-blue-400 text-blue-100 hover:bg-blue-800/50 text-lg font-semibold px-6 py-6">View Mission Log</Button>
+            <Button className="bg-blue-600 hover:bg-blue-700 text-lg font-semibold px-8 py-6 rounded-lg transition-all duration-300 hover:scale-105">Deploy AI Agents</Button>
+            <Button variant="outline" className="border-blue-400 text-blue-100 hover:bg-blue-800/50 text-lg font-semibold px-8 py-6 rounded-lg transition-all duration-300 hover:scale-105">View Mission Log</Button>
           </div>
         </div>
       </div>
       
       {/* Avatar Team Section */}
-      <div className="bg-gradient-to-br from-gray-900 to-slate-800 rounded-lg p-8 shadow-lg">
-        <h2 className="mb-8 text-4xl font-bold text-white font-sans text-center">OUR DOT-X COMMANDOS</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
+      <div className="bg-gradient-to-br from-slate-900 to-slate-800 rounded-lg p-8 shadow-lg">
+        <h2 className="mb-12 text-5xl font-bold text-white font-sans text-center">OUR DOT-X COMMANDOS</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 mb-8">
           {teamAvatars.map((avatar, index) => (
-            <div key={index} className="flex flex-col items-center">
-              <Avatar className="h-40 w-40 border-2 border-indigo-500 mb-4 shadow-lg shadow-indigo-500/30">
-                <AvatarImage src={avatar.image} alt={avatar.name} />
-                <AvatarFallback className="bg-indigo-900 text-white text-2xl">{avatar.name[0]}</AvatarFallback>
+            <div key={index} className="flex flex-col items-center transform transition-all duration-300 hover:scale-105">
+              <Avatar className="h-48 w-48 border-4 border-indigo-500 mb-6 shadow-lg shadow-indigo-500/30">
+                <AvatarImage src={avatar.image} alt={avatar.name} className="object-cover" />
+                <AvatarFallback className="bg-indigo-900 text-white text-4xl">{avatar.name[0]}</AvatarFallback>
               </Avatar>
               <div className="text-center">
-                <h3 className="text-2xl text-white font-bold font-sans mb-1">{avatar.name}</h3>
-                <p className="text-indigo-300 text-xl mb-1">{avatar.role}</p>
-                <p className="text-blue-200 text-sm font-light">{avatar.specialty}</p>
+                <h3 className="text-3xl text-white font-bold font-sans mb-2">{avatar.name}</h3>
+                <p className="text-indigo-300 text-xl mb-2 font-semibold">{avatar.role}</p>
+                <p className="text-blue-200 text-md font-light">{avatar.specialty}</p>
               </div>
             </div>
           ))}
@@ -67,11 +67,11 @@ const Dashboard = () => {
       </div>
       
       {/* Mission Status Section */}
-      <div className="bg-gradient-to-br from-gray-900 to-slate-800 rounded-lg p-8 shadow-lg">
+      <div className="bg-gradient-to-br from-slate-900 to-slate-800 rounded-lg p-8 shadow-lg">
         <h2 className="mb-8 text-4xl font-bold text-white font-sans">Active AI Missions</h2>
         <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
           {missions.map((mission) => (
-            <Card key={mission.id} className="bg-gray-800/60 border-gray-700 text-white backdrop-blur-sm hover:bg-gray-800/80 transition-colors shadow-lg">
+            <Card key={mission.id} className="bg-gray-800/60 border-gray-700 text-white backdrop-blur-sm hover:bg-gray-800/80 transition-colors shadow-lg transform transition-all duration-300 hover:scale-105">
               <CardHeader className="pb-2">
                 <CardTitle className="flex flex-col items-center text-center">
                   <div className="text-3xl font-bold text-red-400 mb-1 font-sans">{mission.name}</div>
@@ -97,11 +97,11 @@ const Dashboard = () => {
       </div>
       
       {/* Performance Metrics */}
-      <div className="bg-gradient-to-br from-gray-900 to-slate-800 rounded-lg p-8 shadow-lg">
+      <div className="bg-gradient-to-br from-slate-900 to-slate-800 rounded-lg p-8 shadow-lg">
         <h2 className="mb-8 text-4xl font-bold text-white font-sans">AI Performance Metrics</h2>
         <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
           {metrics.map((metric) => (
-            <Card key={metric.name} className="bg-gray-800/60 border-gray-700 text-white shadow-lg">
+            <Card key={metric.name} className="bg-gray-800/60 border-gray-700 text-white shadow-lg transform transition-all duration-300 hover:scale-105 hover:shadow-blue-900/20">
               <CardHeader className="pb-2">
                 <CardTitle className="text-lg font-medium text-gray-300">{metric.name}</CardTitle>
               </CardHeader>

@@ -51,7 +51,7 @@ export const DotXLayout = () => {
   };
 
   return (
-    <div className="flex h-screen overflow-hidden bg-gray-900 text-white">
+    <div className="flex h-screen overflow-hidden bg-gradient-to-br from-slate-900 via-gray-900 to-slate-950 text-white">
       <SharedSidebar 
         open={sidebarOpen} 
         onToggle={toggleSidebar}
@@ -64,15 +64,6 @@ export const DotXLayout = () => {
         <SharedNavbar 
           onMenuClick={toggleSidebar} 
           moduleTitle="DOT-X COMMAND CENTER"
-          notificationArea={
-            <div className="flex flex-col">
-              <div className="flex items-baseline">
-                <span className="text-2xl font-bold bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-text text-transparent">DOT-</span>
-                <span className="text-4xl font-bold bg-gradient-to-r from-purple-600 to-blue-500 bg-clip-text text-transparent">X</span>
-              </div>
-              <div className="text-sm text-blue-400 -mt-1 font-semibold">AND HIS AI ARMY</div>
-            </div>
-          }
         />
         <main className="flex-1 overflow-y-auto p-6 md:p-8 bg-gradient-to-br from-slate-900 via-gray-900 to-indigo-950">
           <div className="relative">
