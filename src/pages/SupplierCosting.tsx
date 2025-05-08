@@ -1,9 +1,14 @@
 
 import React from 'react';
-import CostDashboard from './data-management/cost-management/CostDashboard';
+import { TradingSystemLayout } from '../components/layout/TradingSystemLayout';
+import CostAnalysis from './CostAnalysis';
 
 const SupplierCosting = () => {
-  return <CostDashboard />;
+  return (
+    <TradingSystemLayout>
+      <CostAnalysis />
+    </TradingSystemLayout>
+  );
 };
 
 export default SupplierCosting;
