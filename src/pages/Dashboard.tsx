@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Bot, Zap, MessageSquare, Smartphone, Globe, Share2 } from 'lucide-react';
+import { Bot, Zap, MessageSquare, Smartphone, Globe } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
@@ -11,7 +11,6 @@ const Dashboard = () => {
     { id: 1, name: "DOT-X Voice Mobile", icon: <Smartphone className="h-5 w-5 text-blue-400" />, status: "Active", completion: 75 },
     { id: 2, name: "DOT-X Voice Web", icon: <Globe className="h-5 w-5 text-blue-400" />, status: "In Progress", completion: 62 },
     { id: 3, name: "DOT-X Chat", icon: <MessageSquare className="h-5 w-5 text-blue-400" />, status: "Active", completion: 89 },
-    { id: 4, name: "DOT-X Marketing Social", icon: <Share2 className="h-5 w-5 text-blue-400" />, status: "In Progress", completion: 44 },
   ];
 
   // AI performance metrics
@@ -65,33 +64,58 @@ const Dashboard = () => {
         </div>
       </div>
       
-      {/* Mission Status Section - Reduced to half size */}
-      <div>
-        <h2 className="mb-4 text-2xl font-bold text-white">Active AI Missions</h2>
-        <div className="grid gap-4 grid-cols-4">
-          {missions.map((mission) => (
-            <Card key={mission.id} className="bg-gray-800/60 border-gray-700 text-white backdrop-blur-sm hover:bg-gray-800/80 transition-colors">
-              <CardHeader className="pb-2">
-                <CardTitle className="flex items-center gap-2 text-lg">
-                  {mission.icon}
-                  {mission.name}
-                </CardTitle>
-                <CardDescription className="text-gray-300 text-sm">Mission #{mission.id}</CardDescription>
-              </CardHeader>
-              <CardContent className="pb-4">
-                <div className="mb-2 flex items-center justify-between">
-                  <span className="text-sm">Status: <span className={mission.status === "Active" ? "text-green-400" : mission.status === "In Progress" ? "text-yellow-400" : "text-gray-400"}>{mission.status}</span></span>
-                  <span className="font-bold text-sm">{mission.completion}%</span>
-                </div>
-                <div className="h-2 w-full rounded-full bg-gray-700">
-                  <div 
-                    className="h-2 rounded-full bg-gradient-to-r from-blue-500 to-indigo-500" 
-                    style={{ width: `${mission.completion}%` }}
-                  ></div>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
+      {/* Mission Status Section - Modified to have 3 missions and AI Marketing Interface */}
+      <div className="grid grid-cols-4 gap-6">
+        <div className="col-span-3">
+          <h2 className="mb-4 text-2xl font-bold text-white">Active AI Missions</h2>
+          <div className="grid gap-4 grid-cols-3">
+            {missions.map((mission) => (
+              <Card key={mission.id} className="bg-gray-800/60 border-gray-700 text-white backdrop-blur-sm hover:bg-gray-800/80 transition-colors">
+                <CardHeader className="pb-2">
+                  <CardTitle className="flex items-center gap-2 text-lg">
+                    {mission.icon}
+                    {mission.name}
+                  </CardTitle>
+                  <CardDescription className="text-gray-300 text-sm">Mission #{mission.id}</CardDescription>
+                </CardHeader>
+                <CardContent className="pb-4">
+                  <div className="mb-2 flex items-center justify-between">
+                    <span className="text-sm">Status: <span className={mission.status === "Active" ? "text-green-400" : mission.status === "In Progress" ? "text-yellow-400" : "text-gray-400"}>{mission.status}</span></span>
+                    <span className="font-bold text-sm">{mission.completion}%</span>
+                  </div>
+                  <div className="h-2 w-full rounded-full bg-gray-700">
+                    <div 
+                      className="h-2 rounded-full bg-gradient-to-r from-blue-500 to-indigo-500" 
+                      style={{ width: `${mission.completion}%` }}
+                    ></div>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+        
+        {/* AI Marketing Interface with uploaded image */}
+        <div className="col-span-1">
+          <div className="h-full flex flex-col">
+            <h2 className="mb-4 text-2xl font-bold text-white">AI Marketing</h2>
+            <div className="flex-1 rounded-lg overflow-hidden bg-gray-800/60 border border-gray-700 flex flex-col">
+              <div className="p-4 border-b border-gray-700">
+                <h3 className="text-lg font-semibold text-white">Neural Interface</h3>
+                <p className="text-sm text-blue-300">DOT-X Marketing System</p>
+              </div>
+              <div className="flex-1 p-4 flex items-center justify-center">
+                <img 
+                  src="public/lovable-uploads/898d7acf-7e57-42a5-889b-06d75c90e559.png" 
+                  alt="AI Marketing Neural Interface"
+                  className="max-w-full max-h-full object-contain rounded"
+                />
+              </div>
+              <div className="p-3 bg-blue-900/40 text-center">
+                <div className="text-sm text-blue-200">Neural processing: <span className="text-green-400">96%</span></div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
       
