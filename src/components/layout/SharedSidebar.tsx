@@ -6,12 +6,15 @@ import { useIsMobile } from '@/hooks/use-mobile';
 import { SidebarNavList } from './sidebar/SidebarNavList';
 import { CollapsedSidebar } from './sidebar/CollapsedSidebar';
 import { NavItem, NavCategory } from './sidebar/types';
+import { NavLink } from 'react-router-dom';
+
 interface SharedSidebarProps {
   open: boolean;
   onToggle: () => void;
   navItems: NavCategory[];
   homeItem?: NavItem;
 }
+
 export const SharedSidebar = ({
   open,
   onToggle,
