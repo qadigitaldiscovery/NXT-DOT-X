@@ -63,14 +63,6 @@ const App = () => {
               {/* Unauthorized Page */}
               <Route path="/unauthorized" element={<Unauthorized />} />
               
-              {/* Dashboard / Module Selector */}
-              {/* Removed: <Route path="/dashboard" element={ ... } /> */}
-
-              {/* Redirect old prototypes route to new dashboard route (now root for MasterDash) */}
-              <Route path="/prototypes" element={
-                <Navigate to="/" replace />
-              } />
-              
               {/* Admin Routes */}
               <Route path="/admin/users" element={
                 <PermissionGuard requiredPermission="users.view">
@@ -95,6 +87,21 @@ const App = () => {
                 </PermissionGuard>
               } />
               
+              {/* Direct path for supplier-costing for backward compatibility */}
+              <Route path="/supplier-costing" element={
+                <PermissionGuard requiredPermission="modules.data">
+                  <DashboardLayout>
+                    <SupplierCosting />
+                  </DashboardLayout>
+                </PermissionGuard>
+              } />
+              
+              {/* Redirect old prototypes route to new dashboard route (now root for MasterDash) */}
+              <Route path="/prototypes" element={
+                <Navigate to="/" replace />
+              } />
+              
+              {/* Data Management Module Routes */}
               <Route path="/data-management/suppliers" element={
                 <PermissionGuard requiredPermission="modules.data">
                   <DashboardLayout>
