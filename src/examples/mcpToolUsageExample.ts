@@ -1,15 +1,10 @@
-import { useMcpTool } from '@smithery/toolbox'; // Hypothetical import, adjust based on actual library
 
-// Example function to demonstrate calling a tool from the Smithery Toolbox
+// Example function to demonstrate calling a tool
 export async function callSmitheryTool(toolName: string, params: Record<string, any>): Promise<any> {
   try {
-    const result = await useMcpTool({
-      serverName: 'smithery/toolbox',
-      toolName,
-      arguments: params,
-    });
-    console.log(`Tool ${toolName} executed successfully:`, result);
-    return result;
+    // This is a placeholder implementation
+    console.log(`Mock tool ${toolName} called with params:`, params);
+    return { success: true, message: `${toolName} executed successfully` };
   } catch (error) {
     console.error(`Error calling tool ${toolName}:`, error);
     throw error;
