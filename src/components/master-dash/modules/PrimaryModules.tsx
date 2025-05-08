@@ -80,7 +80,7 @@ const PrimaryModules: React.FC = () => {
               <CardTitle className="font-bold text-2xl text-center text-white">{module.name.toUpperCase()}</CardTitle>
               <CardDescription className="text-base text-slate-300 text-center font-semibold px-0 mx-[43px]">{module.description}</CardDescription>
             </CardHeader>
-            <CardFooter className="pt-2 pb-6 bg-nxt-darkGray">
+            <CardFooter className="pt-2 pb-6 bg-zinc-900">
               {/* Enhanced 3D metallic dark grey button with stronger depth effects */}
               <Button className="w-full py-6 font-medium text-lg bg-gradient-to-b from-gray-600 to-gray-800 border border-gray-500/30 shadow-[0_4px_10px_rgba(0,0,0,0.3)] hover:from-gray-700 hover:to-gray-900 hover:border-gray-400/50 hover:shadow-[0_6px_12px_rgba(0,0,0,0.4)] text-white transition-all duration-200 transform hover:translate-y-[-2px] active:translate-y-[1px] active:shadow-[0_2px_5px_rgba(0,0,0,0.2)]" onClick={() => handleModuleClick(module.id, module.path)}>
                 Launch Module
