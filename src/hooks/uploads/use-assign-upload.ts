@@ -1,65 +1,51 @@
 
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { toast } from 'sonner';
-import { SupplierUpload } from '@/types/supplier-uploads';
+import { useToast } from '@/hooks/use-toast';
 
-export function useAssignUploadToSupplier() {
+export const useAssignUploadToSupplier = () => {
   const queryClient = useQueryClient();
-  
+  const { toast } = useToast();
+
   return useMutation({
-    mutationFn: async ({ uploadId, supplierId }: { uploadId: string, supplierId: string }) => {
-      // First fetch the original upload to get the file path
-      const { data: upload, error: fetchError } = await supabase
+    mutationFn: async ({
+      uploadId,
+      supplierId
+    }: {
+      uploadId: string;
+      supplierId: string;
+    }) => {
+      // Update the supplier_cost_uploads table
+      const { data, error } = await supabase
         .from('supplier_cost_uploads')
-        .select('file_path, file_name, for_allocation')
-        .eq('id', uploadId)
-        .single();
-      
-      if (fetchError) {
-        console.error('Error fetching upload:', fetchError);
-        toast.error('Failed to assign upload to supplier');
-        throw fetchError;
-      }
-      
-      // Create a new path for the file
-      const oldPath = upload.file_path;
-      const newPath = `uploads/${supplierId}/${Date.now()}-${upload.file_name}`;
-      
-      // Copy the file to the new location
-      const { error: copyError } = await supabase.storage
-        .from('supplier-price-lists')
-        .copy(oldPath, newPath);
-      
-      if (copyError) {
-        console.error('Error copying file:', copyError);
-        toast.error('Failed to assign upload to supplier');
-        throw copyError;
-      }
-      
-      // Update the database record
-      const { data: updatedUpload, error: updateError } = await supabase
-        .from('supplier_cost_uploads')
-        .update({
+        .update({ 
           supplier_id: supplierId,
-          file_path: newPath,
-          for_allocation: false
+          for_allocation: false 
         })
         .eq('id', uploadId)
-        .select()
-        .single();
-      
-      if (updateError) {
-        console.error('Error updating upload record:', updateError);
-        toast.error('Failed to assign upload to supplier');
-        throw updateError;
+        .select('file_path, file_name');
+
+      if (error) throw error;
+
+      if (!data || data.length === 0) {
+        throw new Error('No data returned after update');
       }
-      
-      return updatedUpload as unknown as SupplierUpload;
+
+      return { filePath: data[0].file_path, fileName: data[0].file_name };
     },
-    onSuccess: () => {
+    onSuccess: (result, variables) => {
       queryClient.invalidateQueries({ queryKey: ['supplier-uploads'] });
-      toast.success('Upload successfully assigned to supplier');
+      toast({
+        title: 'Upload Assigned',
+        description: `File ${result.fileName} has been successfully assigned to a supplier.`
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: 'Assignment Failed',
+        description: `Error: ${error instanceof Error ? error.message : 'Unknown error occurred'}`,
+        variant: 'destructive'
+      });
     }
   });
-}
+};

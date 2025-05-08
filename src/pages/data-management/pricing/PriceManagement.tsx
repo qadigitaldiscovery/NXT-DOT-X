@@ -23,11 +23,22 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { 
   Search, 
-  Save, 
+  Save,
+  Trash,
+  CheckSquare, 
   Percent, 
   ArrowUpRight, 
   ArrowDownRight
 } from 'lucide-react';
+import { Checkbox } from "@/components/ui/checkbox";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 // Mock product data for South African market in ZAR
 const productsData = [
@@ -113,6 +124,8 @@ const PriceManagement = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [products, setProducts] = useState(productsData);
   const { toast } = useToast();
+  const [selectedProductIds, setSelectedProductIds] = useState<number[]>([]);
+  const [selectAll, setSelectAll] = useState(false);
 
   // Format currency in ZAR
   const formatZAR = (value: number) => {
@@ -136,6 +149,11 @@ const PriceManagement = () => {
 
   const applyBulkPriceChange = (method: string, value: number) => {
     const newProducts = products.map(product => {
+      // Only modify selected products if any are selected, otherwise modify all
+      if (selectedProductIds.length > 0 && !selectedProductIds.includes(product.id)) {
+        return product;
+      }
+      
       let newPrice = product.newRetail;
       
       switch (method) {
@@ -163,11 +181,64 @@ const PriceManagement = () => {
     
     setProducts(newProducts);
     
+    const affectedCount = selectedProductIds.length > 0 ? selectedProductIds.length : products.length;
+    
     toast({
       title: "Bulk Update Applied",
-      description: `Price changes have been calculated and applied to all visible products.`,
+      description: `Price changes have been applied to ${affectedCount} product(s).`,
     });
   };
+  
+  const handleSelectProduct = (id: number, isChecked: boolean) => {
+    if (isChecked) {
+      setSelectedProductIds([...selectedProductIds, id]);
+    } else {
+      setSelectedProductIds(selectedProductIds.filter(productId => productId !== id));
+    }
+  };
+
+  const handleSelectAll = (isChecked: boolean) => {
+    setSelectAll(isChecked);
+    if (isChecked) {
+      // Select all visible/filtered products
+      const visibleProductIds = products
+        .filter(product => 
+          (selectedCategory === "1" || categories.find(c => c.id.toString() === selectedCategory)?.name.includes(product.name)) &&
+          (selectedSupplier === "1" || product.supplier === suppliers.find(s => s.id.toString() === selectedSupplier)?.name) &&
+          (searchTerm === "" || 
+            product.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
+            product.sku.toLowerCase().includes(searchTerm.toLowerCase()))
+        )
+        .map(product => product.id);
+      
+      setSelectedProductIds(visibleProductIds);
+    } else {
+      setSelectedProductIds([]);
+    }
+  };
+  
+  const handleDeleteSelected = () => {
+    if (selectedProductIds.length === 0) return;
+    
+    // Filter out the selected products
+    const newProducts = products.filter(product => !selectedProductIds.includes(product.id));
+    setProducts(newProducts);
+    setSelectedProductIds([]);
+    setSelectAll(false);
+    
+    toast({
+      title: "Products Removed",
+      description: `${selectedProductIds.length} product(s) have been removed.`,
+    });
+  };
+
+  const filteredProducts = products.filter(product => 
+    (selectedCategory === "1" || categories.find(c => c.id.toString() === selectedCategory)?.name.includes(product.name)) &&
+    (selectedSupplier === "1" || product.supplier === suppliers.find(s => s.id.toString() === selectedSupplier)?.name) &&
+    (searchTerm === "" || 
+      product.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
+      product.sku.toLowerCase().includes(searchTerm.toLowerCase()))
+  );
 
   return (
     <div className="space-y-6">
@@ -257,16 +328,30 @@ const PriceManagement = () => {
                 <CardTitle>Product Price Management</CardTitle>
                 <CardDescription>Manage and update individual product prices</CardDescription>
               </div>
-              <Button onClick={handleSaveChanges}>
-                <Save className="mr-2 h-4 w-4" />
-                Save Changes
-              </Button>
+              <div className="flex space-x-2">
+                {selectedProductIds.length > 0 && (
+                  <Button variant="outline" onClick={handleDeleteSelected} className="text-red-500">
+                    <Trash className="mr-2 h-4 w-4" />
+                    Remove Selected ({selectedProductIds.length})
+                  </Button>
+                )}
+                <Button onClick={handleSaveChanges}>
+                  <Save className="mr-2 h-4 w-4" />
+                  Save Changes
+                </Button>
+              </div>
             </CardHeader>
             <CardContent>
               <div className="rounded-md border overflow-x-auto">
                 <Table>
                   <TableHeader>
                     <TableRow>
+                      <TableHead className="w-[40px]">
+                        <Checkbox 
+                          checked={selectAll && filteredProducts.length > 0} 
+                          onCheckedChange={handleSelectAll}
+                        />
+                      </TableHead>
                       <TableHead>SKU</TableHead>
                       <TableHead>Product</TableHead>
                       <TableHead>Cost</TableHead>
@@ -277,71 +362,68 @@ const PriceManagement = () => {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {products
-                      .filter(product => 
-                        (selectedCategory === "1" || categories.find(c => c.id.toString() === selectedCategory)?.name.includes(product.name)) &&
-                        (selectedSupplier === "1" || product.supplier === suppliers.find(s => s.id.toString() === selectedSupplier)?.name) &&
-                        (searchTerm === "" || 
-                          product.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
-                          product.sku.toLowerCase().includes(searchTerm.toLowerCase()))
-                      )
-                      .map(product => {
-                        const margin = ((product.newRetail - product.cost) / product.newRetail) * 100;
-                        const competitorDiff = ((product.newRetail - product.competitorAvg) / product.competitorAvg) * 100;
-                        
-                        return (
-                          <TableRow key={product.id}>
-                            <TableCell className="font-mono">{product.sku}</TableCell>
-                            <TableCell>
-                              <div>
-                                <div className="font-medium">{product.name}</div>
-                                <div className="text-xs text-muted-foreground">{product.supplier}</div>
-                              </div>
-                            </TableCell>
-                            <TableCell>{formatZAR(product.cost)}</TableCell>
-                            <TableCell>{formatZAR(product.currentRetail)}</TableCell>
-                            <TableCell>
-                              <div className="flex items-center">
-                                {formatZAR(product.competitorAvg)}
-                                <span className="ml-2 text-xs">
-                                  {competitorDiff < 0 ? (
-                                    <span className="text-green-500 flex items-center">
-                                      <ArrowDownRight className="h-3 w-3 mr-1" />
-                                      {Math.abs(competitorDiff).toFixed(1)}%
-                                    </span>
-                                  ) : (
-                                    <span className="text-amber-500 flex items-center">
-                                      <ArrowUpRight className="h-3 w-3 mr-1" />
-                                      {competitorDiff.toFixed(1)}%
-                                    </span>
-                                  )}
-                                </span>
-                              </div>
-                            </TableCell>
-                            <TableCell>
-                              <Input
-                                type="number"
-                                value={product.newRetail}
-                                onChange={(e) => {
-                                  const value = parseFloat(e.target.value);
-                                  if (!isNaN(value)) {
-                                    handlePriceChange(product.id, value);
-                                  }
-                                }}
-                                className="w-28"
-                              />
-                            </TableCell>
-                            <TableCell>
-                              <div className="font-medium">{margin.toFixed(1)}%</div>
-                            </TableCell>
-                          </TableRow>
-                        );
-                      })
-                    }
+                    {filteredProducts.map(product => {
+                      const margin = ((product.newRetail - product.cost) / product.newRetail) * 100;
+                      const competitorDiff = ((product.newRetail - product.competitorAvg) / product.competitorAvg) * 100;
+                      
+                      return (
+                        <TableRow key={product.id}>
+                          <TableCell>
+                            <Checkbox 
+                              checked={selectedProductIds.includes(product.id)} 
+                              onCheckedChange={(checked) => handleSelectProduct(product.id, !!checked)}
+                            />
+                          </TableCell>
+                          <TableCell className="font-mono">{product.sku}</TableCell>
+                          <TableCell>
+                            <div>
+                              <div className="font-medium">{product.name}</div>
+                              <div className="text-xs text-muted-foreground">{product.supplier}</div>
+                            </div>
+                          </TableCell>
+                          <TableCell>{formatZAR(product.cost)}</TableCell>
+                          <TableCell>{formatZAR(product.currentRetail)}</TableCell>
+                          <TableCell>
+                            <div className="flex items-center">
+                              {formatZAR(product.competitorAvg)}
+                              <span className="ml-2 text-xs">
+                                {competitorDiff < 0 ? (
+                                  <span className="text-green-500 flex items-center">
+                                    <ArrowDownRight className="h-3 w-3 mr-1" />
+                                    {Math.abs(competitorDiff).toFixed(1)}%
+                                  </span>
+                                ) : (
+                                  <span className="text-amber-500 flex items-center">
+                                    <ArrowUpRight className="h-3 w-3 mr-1" />
+                                    {competitorDiff.toFixed(1)}%
+                                  </span>
+                                )}
+                              </span>
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            <Input
+                              type="number"
+                              value={product.newRetail}
+                              onChange={(e) => {
+                                const value = parseFloat(e.target.value);
+                                if (!isNaN(value)) {
+                                  handlePriceChange(product.id, value);
+                                }
+                              }}
+                              className="w-28"
+                            />
+                          </TableCell>
+                          <TableCell>
+                            <div className="font-medium">{margin.toFixed(1)}%</div>
+                          </TableCell>
+                        </TableRow>
+                      );
+                    })}
                   </TableBody>
                 </Table>
               </div>
-              {products.filter(p => searchTerm === "" || p.name.toLowerCase().includes(searchTerm.toLowerCase())).length === 0 && (
+              {filteredProducts.length === 0 && (
                 <div className="py-6 text-center text-muted-foreground">
                   No products match your search criteria
                 </div>
@@ -355,7 +437,7 @@ const PriceManagement = () => {
             <CardHeader>
               <CardTitle>Bulk Price Changes</CardTitle>
               <CardDescription>
-                Apply price changes to multiple products at once
+                Apply price changes to {selectedProductIds.length > 0 ? `${selectedProductIds.length} selected products` : "all products"}
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -420,7 +502,11 @@ const PriceManagement = () => {
                 </div>
                 
                 <div className="flex justify-end space-x-2 pt-4">
-                  <Button variant="outline" onClick={() => setProducts(productsData)}>
+                  <Button variant="outline" onClick={() => {
+                    setProducts(productsData);
+                    setSelectedProductIds([]);
+                    setSelectAll(false);
+                  }}>
                     Reset Changes
                   </Button>
                   <Button onClick={handleSaveChanges}>

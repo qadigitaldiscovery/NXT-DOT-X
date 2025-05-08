@@ -23,3 +23,4 @@ export type SupplierUpload = {
   supplier_name?: string;
   suppliers?: { name: string } | null;
 };
+
