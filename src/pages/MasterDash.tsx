@@ -1,5 +1,4 @@
-
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
@@ -8,7 +7,10 @@ import { FileUp, BarChart3, Gift, ArrowDownUp, LogOut, Database, Settings, FileC
 import { HoverCard, HoverCardTrigger, HoverCardContent } from '@/components/ui/hover-card';
 import { useAuth } from '@/context/AuthContext';
 
-const PrototypeSelector = () => {
+// Assuming this is the correct path based on previous searches
+const backgroundImagePath = '/lovable-uploads/backk1.png';
+
+const MasterDash = () => {
   const navigate = useNavigate();
   const { logout, user, hasPermission } = useAuth();
 
@@ -151,8 +153,21 @@ const PrototypeSelector = () => {
     }
   };
   
-  return <div className="flex flex-col min-h-screen bg-zinc-100">
-      <header className="text-white shadow-sm bg-slate-700">
+  return <div 
+    className="min-h-screen flex flex-col relative p-4 sm:p-6 md:p-8" 
+    style={{
+      backgroundImage: `url(${backgroundImagePath})`,
+      backgroundSize: 'cover',
+      backgroundPosition: 'center',
+      backgroundRepeat: 'no-repeat',
+    }}
+  >
+    {/* Overlay to improve readability of content on top of the background */}
+    <div className="absolute inset-0 bg-black/50 z-0"></div>
+    
+    {/* Content needs to be on a higher z-index to appear above the overlay */}
+    <div className="relative z-10 flex flex-col flex-grow">
+      <header className="text-white shadow-sm bg-slate-700/80 backdrop-blur-sm">
         <div className="container mx-auto flex justify-between items-center h-16 px-4">
           <div className="flex items-center">
             <span className="text-2xl font-bold">DOT-X  |  BUSINESS MANAGEMENT PLATFORM</span>
@@ -173,55 +188,63 @@ const PrototypeSelector = () => {
       </header>
       
       <main className="container mx-auto px-4 py-8 flex-grow">
-        <h1 className="text-3xl font-bold mb-2 text-gray-800">PRIMARY MODULES</h1>
-        <p className="text-gray-600 mb-6">Select one of our core business modules to get started</p>
+        <h1 className="text-3xl font-bold mb-2 text-gray-100">PRIMARY MODULES</h1>
+        <p className="text-gray-300 mb-6">Select one of our core business modules to get started</p>
         
         {/* Primary Modules */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
-          {accessibleModules.map(module => <Card key={module.id} className="overflow-hidden transition-all duration-300 hover:shadow-xl border-0 shadow-md hover:scale-105">
-              
+          {accessibleModules.map(module => (
+            <Card 
+              key={module.id} 
+              className="overflow-hidden transition-all duration-300 hover:shadow-xl shadow-md hover:scale-105 backdrop-blur-sm bg-black/50 border-white/20"
+            >
               <CardHeader className="pb-2">
-                <CardTitle className="font-bold text-2xl text-center">{module.name.toUpperCase()}</CardTitle>
-                <CardDescription className="text-base">{module.description}</CardDescription>
+                <CardTitle className="font-bold text-2xl text-center text-white">{module.name.toUpperCase()}</CardTitle>
+                <CardDescription className="text-base text-slate-300">{module.description}</CardDescription>
               </CardHeader>
               <CardFooter className="pt-2 pb-6">
                 <Button className="w-full bg-[#c01c1c] hover:bg-[#a51919] font-medium text-lg py-6" onClick={() => handleModuleClick(module.id, module.path)}>
                   Launch Module
                 </Button>
               </CardFooter>
-            </Card>)}
+            </Card>
+          ))}
         </div>
         
-        <h2 className="text-2xl font-bold mb-2 text-gray-800 mt-8">ADMINISTRATION</h2>
-        <p className="text-gray-600 mb-6">Access administration and utility features</p>
+        <h2 className="text-2xl font-bold mb-2 text-gray-100 mt-8">ADMINISTRATION</h2>
+        <p className="text-gray-300 mb-6">Access administration and utility features</p>
         
         {/* System Functions */}
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
-          {accessibleSystemFunctions.map(system => <HoverCard key={system.id}>
+          {accessibleSystemFunctions.map(system => (
+            <HoverCard key={system.id}>
               <HoverCardTrigger asChild>
-                <Card className="overflow-hidden transition-all duration-200 hover:shadow-md border cursor-pointer" 
-                      onClick={() => handleSystemClick(system.id, system.path)}>
+                <Card 
+                  className="overflow-hidden transition-all duration-200 hover:shadow-md cursor-pointer backdrop-blur-sm bg-black/50 border-white/20"
+                  onClick={() => handleSystemClick(system.id, system.path)}
+                >
                   <CardContent className="p-4 flex flex-col items-center justify-center text-center">
-                    <div className="p-3 rounded-full bg-gray-100 mb-3">
-                      {system.icon}
+                    <div className="p-3 rounded-full bg-white/10 mb-3">
+                      {React.cloneElement(system.icon, { className: `${system.icon.props.className} text-white` })}
                     </div>
-                    <p className="text-sm font-medium">{system.name.toUpperCase()}</p>
+                    <p className="text-sm font-medium text-white">{system.name.toUpperCase()}</p>
                   </CardContent>
                 </Card>
               </HoverCardTrigger>
-              <HoverCardContent>
+              <HoverCardContent className="backdrop-blur-md bg-black/80 border-slate-700 text-white">
                 <div className="text-sm">
                   <p className="font-semibold">{system.name}</p>
-                  <p className="text-muted-foreground">
+                  <p className="text-slate-300">
                     {system.id === "users" ? "Manage user accounts and permissions" : "System function coming soon"}
                   </p>
                 </div>
               </HoverCardContent>
-            </HoverCard>)}
+            </HoverCard>
+          ))}
         </div>
       </main>
       
-      <footer className="border-t border-border bg-gray-900 text-white py-6 mt-auto">
+      <footer className="border-t border-border bg-gray-900/80 backdrop-blur-sm text-white py-6">
         <div className="container mx-auto px-4 flex justify-between items-center">
           <div className="flex items-center">
             <img src="/lovable-uploads/f39ef88d-7664-4c92-8f4a-44368177dfde.png" alt="NXT LEVEL TECH" className="h-6 mr-3" />
@@ -229,6 +252,7 @@ const PrototypeSelector = () => {
           </div>
         </div>
       </footer>
-    </div>;
+    </div>
+  </div>;
 };
-export default PrototypeSelector;
+export default MasterDash;

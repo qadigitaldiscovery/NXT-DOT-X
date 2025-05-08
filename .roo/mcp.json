@@ -1,0 +1,22 @@
+{
+  "mcpServers": {
+    "mcp-server-time": {
+      "command": "python",
+      "args": [
+        "-m",
+        "mcp_server_time",
+        "--local-timezone=America/Los_Angeles"
+      ],
+      "env": {}
+    },
+    "supabase": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@supabase/mcp-server-supabase@latest",
+        "--access-token",
+        "sbp_925eb6eb43ad3ec5457e2e649c3612a082f0343f"
+      ]
+    }
+  }
+}

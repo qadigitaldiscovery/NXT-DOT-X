@@ -5,7 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import NotFound from "./pages/NotFound";
 import Landing from "./pages/Landing";
-import PrototypeSelector from "./pages/PrototypeSelector";
+import RootHandler from './components/RootHandler';
 import ProtectedRoute from "./components/ProtectedRoute";
 import PermissionGuard from "./components/PermissionGuard";
 import Unauthorized from "./pages/Unauthorized";
@@ -15,7 +15,7 @@ import { AuthProvider } from "./context/AuthContext";
 import UserManagement from "./pages/UserManagement";
 
 // Import Data Management layouts and pages
-import { DataManagementLayout } from "./components/layout/DataManagementLayout";
+import { DashboardLayout } from './components/layout/DashboardLayout';
 import DataManagementDashboard from "./pages/DataManagementDashboard";
 import SupplierCosting from "./pages/SupplierCosting";
 import CostAnalysis from "./pages/CostAnalysis";
@@ -45,6 +45,7 @@ import TradingSystemSettings from "./pages/TradingSystemSettings";
 
 // Import the new APIsPage
 import APIsPage from "./pages/APIsPage";
+import TechHubApiManagement from "./pages/APIsPage";
 
 const queryClient = new QueryClient();
 
@@ -56,22 +57,18 @@ const App = () => {
           <TooltipProvider>
             <Routes>
               {/* Landing Page (Login) */}
-              <Route index element={<Navigate to="/landing" replace />} />
+              <Route index element={<RootHandler />} />
               <Route path="/landing" element={<Landing />} />
               
               {/* Unauthorized Page */}
               <Route path="/unauthorized" element={<Unauthorized />} />
               
               {/* Dashboard / Module Selector */}
-              <Route path="/dashboard" element={
-                <ProtectedRoute>
-                  <PrototypeSelector />
-                </ProtectedRoute>
-              } />
+              {/* Removed: <Route path="/dashboard" element={ ... } /> */}
 
-              {/* Redirect old prototypes route to new dashboard route */}
+              {/* Redirect old prototypes route to new dashboard route (now root for MasterDash) */}
               <Route path="/prototypes" element={
-                <Navigate to="/dashboard" replace />
+                <Navigate to="/" replace />
               } />
               
               {/* Admin Routes */}
@@ -84,105 +81,113 @@ const App = () => {
               {/* Data Management Module Routes */}
               <Route path="/data-management" element={
                 <PermissionGuard requiredPermission="modules.data">
-                  <DataManagementLayout>
+                  <DashboardLayout>
                     <DataManagementDashboard />
-                  </DataManagementLayout>
+                  </DashboardLayout>
+                </PermissionGuard>
+              } />
+              
+              <Route path="/data-management/supplier-costing" element={
+                <PermissionGuard requiredPermission="modules.data">
+                  <DashboardLayout>
+                    <SupplierCosting />
+                  </DashboardLayout>
                 </PermissionGuard>
               } />
               
               <Route path="/data-management/suppliers" element={
                 <PermissionGuard requiredPermission="modules.data">
-                  <DataManagementLayout>
+                  <DashboardLayout>
                     <SuppliersPage />
-                  </DataManagementLayout>
+                  </DashboardLayout>
                 </PermissionGuard>
               } />
               
               <Route path="/data-management/suppliers/new" element={
                 <PermissionGuard requiredPermission="modules.data">
-                  <DataManagementLayout>
+                  <DashboardLayout>
                     <NewSupplierPage />
-                  </DataManagementLayout>
+                  </DashboardLayout>
                 </PermissionGuard>
               } />
               
               <Route path="/data-management/suppliers/:id" element={
                 <PermissionGuard requiredPermission="modules.data">
-                  <DataManagementLayout>
+                  <DashboardLayout>
                     <EditSupplierPage />
-                  </DataManagementLayout>
+                  </DashboardLayout>
                 </PermissionGuard>
               } />
               
               <Route path="/data-management/suppliers/:id/costs" element={
                 <PermissionGuard requiredPermission="modules.data">
-                  <DataManagementLayout>
+                  <DashboardLayout>
                     <SupplierCostsPage />
-                  </DataManagementLayout>
+                  </DashboardLayout>
                 </PermissionGuard>
               } />
               
               <Route path="/data-management/uploads" element={
                 <PermissionGuard requiredPermission="modules.data">
-                  <DataManagementLayout>
+                  <DashboardLayout>
                     <UploadsPage />
-                  </DataManagementLayout>
+                  </DashboardLayout>
                 </PermissionGuard>
               } />
               
               <Route path="/data-management/uploads/new" element={
                 <PermissionGuard requiredPermission="modules.data">
-                  <DataManagementLayout>
+                  <DashboardLayout>
                     <NewUploadPage />
-                  </DataManagementLayout>
+                  </DashboardLayout>
                 </PermissionGuard>
               } />
               
               <Route path="/data-management/cost-analysis" element={
                 <PermissionGuard requiredPermission="modules.data">
-                  <DataManagementLayout>
+                  <DashboardLayout>
                     <CostAnalysis />
-                  </DataManagementLayout>
+                  </DashboardLayout>
                 </PermissionGuard>
               } />
               
               <Route path="/data-management/competitor-pricing" element={
                 <PermissionGuard requiredPermission="modules.data">
-                  <DataManagementLayout>
+                  <DashboardLayout>
                     <CompetitorPricing />
-                  </DataManagementLayout>
+                  </DashboardLayout>
                 </PermissionGuard>
               } />
               
               <Route path="/data-management/price-management" element={
                 <PermissionGuard requiredPermission="modules.data">
-                  <DataManagementLayout>
+                  <DashboardLayout>
                     <PriceManagement />
-                  </DataManagementLayout>
+                  </DashboardLayout>
                 </PermissionGuard>
               } />
               
               <Route path="/data-management/exports" element={
                 <PermissionGuard requiredPermission="modules.data">
-                  <DataManagementLayout>
+                  <DashboardLayout>
                     <ExportData />
-                  </DataManagementLayout>
+                  </DashboardLayout>
                 </PermissionGuard>
               } />
               
               <Route path="/data-management/settings" element={
                 <PermissionGuard requiredPermission="modules.data">
-                  <DataManagementLayout>
+                  <DashboardLayout>
                     <DataManagementSettings />
-                  </DataManagementLayout>
+                  </DashboardLayout>
                 </PermissionGuard>
               } />
               
               <Route path="/data-management/apis" element={
                 <PermissionGuard requiredPermission="modules.data">
-                  <DataManagementLayout>
+                  <DashboardLayout>
                     <APIsPage />
-                  </DataManagementLayout>
+                  </DashboardLayout>
                 </PermissionGuard>
               } />
               
@@ -262,6 +267,14 @@ const App = () => {
               {/* Legacy routes for Trading System - redirect to new structure */}
               <Route path="/beta3" element={<Navigate to="/trading-system" replace />} />
               <Route path="/beta3/settings" element={<Navigate to="/trading-system/settings" replace />} />
+              
+              <Route path="/tech-hub/api-management" element={
+                <PermissionGuard requiredPermission="modules.trading">
+                  <TradingSystemLayout>
+                    <TechHubApiManagement />
+                  </TradingSystemLayout>
+                </PermissionGuard>
+              } />
               
               {/* 404 Page */}
               <Route path="*" element={<NotFound />} />
