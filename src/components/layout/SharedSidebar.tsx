@@ -161,8 +161,20 @@ export const SharedSidebar = ({ open, onToggle, navItems }: SharedSidebarProps) 
           />
         )}
 
-        {/* Footer can be empty or used later */}
-        <div className="mt-auto h-10"></div> {/* Empty footer placeholder */}
+        {/* Large Home button at the bottom */}
+        <div className="mt-auto p-4 border-t border-gray-700">
+          <NavLink
+            to="/"
+            className={({ isActive }) => cn(
+              "flex items-center justify-center gap-2 w-full py-3 rounded-md transition-colors",
+              "bg-blue-500 hover:bg-blue-600 text-white font-medium text-center",
+              isActive && "bg-blue-600"
+            )}
+          >
+            <Home className="h-5 w-5" />
+            {open && <span className="text-base">HOME</span>}
+          </NavLink>
+        </div>
       </aside>
     </>
   );
