@@ -22,12 +22,12 @@ const Dashboard = () => {
     { name: "Response Time", value: "0.03ms", trend: "down" },
   ];
 
-  // Avatar team members - using the uploaded images
+  // Avatar team members - updated Pulse's image with the new uploaded image
   const teamAvatars = [
     { name: "Nova", role: "Defense Specialist", image: "public/lovable-uploads/d13002c2-2ff3-4e7e-b622-17975822f3e6.png" },
     { name: "Echo", role: "Intelligence Lead", image: "public/lovable-uploads/d90a5f2a-f854-4226-9a9a-ce348f35efe2.png" },
     { name: "Zephyr", role: "Field Agent", image: "public/lovable-uploads/f8d80e78-f644-4b77-a2f3-a951edf8dfd4.png" },
-    { name: "Pulse", role: "Communications", image: "public/lovable-uploads/9eaf9e59-0193-4976-ae9e-e6e66894ed8f.png" },
+    { name: "Pulse", role: "Communications", image: "public/lovable-uploads/3bdd3ffc-1723-4582-bc57-33f3ce3e8763.png" },
   ];
 
   return (
