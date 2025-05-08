@@ -1,9 +1,10 @@
+
 import React from 'react';
 import { SharedSidebar } from './SharedSidebar';
 import { SharedNavbar } from './SharedNavbar';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { cn } from '@/lib/utils';
-import { Home, Users, Gift, BarChart3, Settings } from 'lucide-react';
+import { Home, Users, Gift, BarChart3, Settings, BrainCircuit } from 'lucide-react';
 
 interface NavItem {
   label: string;
@@ -29,6 +30,12 @@ const loyaltyNavItems: NavCategory[] = [
       { label: 'Rewards', icon: Gift, path: '/loyalty-rewards/rewards' },
       { label: 'Analytics', icon: BarChart3, path: '/loyalty-rewards/analytics' },
       { label: 'Settings', icon: Settings, path: '/loyalty-rewards/settings' },
+    ]
+  },
+  {
+    name: "Tech Hub",
+    items: [
+      { label: 'AI Personas', icon: BrainCircuit, path: '/tech-hub/personas' },
     ]
   }
 ];
