@@ -12,7 +12,7 @@ export function useAssignUploadToSupplier() {
       // First fetch the original upload to get the file path
       const { data: upload, error: fetchError } = await supabase
         .from('supplier_cost_uploads')
-        .select('file_path, file_name')
+        .select('file_path, file_name, for_allocation')
         .eq('id', uploadId)
         .single();
       
@@ -55,7 +55,7 @@ export function useAssignUploadToSupplier() {
         throw updateError;
       }
       
-      return updatedUpload as SupplierUpload;
+      return updatedUpload as unknown as SupplierUpload;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['supplier-uploads'] });

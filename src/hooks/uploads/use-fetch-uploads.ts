@@ -38,11 +38,10 @@ export function useSupplierUploads(supplierId?: string, includeHolding: boolean 
       // Transform the nested objects
       const transformedData = data.map(item => ({
         ...item,
-        supplier_name: item.for_allocation ? 'Holding Bucket' : (item.suppliers?.name || 'Unknown Supplier'),
-        suppliers: undefined
-      }));
+        supplier_name: item.for_allocation === true ? 'Holding Bucket' : (item.suppliers?.name || 'Unknown Supplier')
+      })) as SupplierUpload[];
       
-      return transformedData as SupplierUpload[];
+      return transformedData;
     }
   });
 }

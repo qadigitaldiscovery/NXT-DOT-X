@@ -49,7 +49,7 @@ export function useProcessSupplierUpload() {
         throw completedError;
       }
       
-      return completedData as SupplierUpload;
+      return completedData as unknown as SupplierUpload;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['supplier-uploads'] });

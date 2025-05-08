@@ -16,7 +16,10 @@ export type SupplierUpload = {
   processing_start: string | null;
   processing_end: string | null;
   created_at: string;
+  updated_at: string;
   for_allocation: boolean;
+  created_by?: string | null;
   // Joined fields
   supplier_name?: string;
+  suppliers?: { name: string } | null;
 };

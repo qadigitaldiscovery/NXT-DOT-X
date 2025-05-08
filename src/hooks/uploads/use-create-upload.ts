@@ -56,7 +56,7 @@ export function useCreateSupplierUpload() {
         throw dbError;
       }
       
-      return data as SupplierUpload;
+      return data as unknown as SupplierUpload;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['supplier-uploads'] });
