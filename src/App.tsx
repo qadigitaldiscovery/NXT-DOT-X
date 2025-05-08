@@ -264,6 +264,23 @@ const App = () => {
                 </PermissionGuard>
               } />
               
+              {/* Tech Hub API Management Route */}
+              <Route path="/tech-hub" element={
+                <PermissionGuard requiredPermission="modules.trading">
+                  <TradingSystemLayout>
+                    <TradingSystemDashboard />
+                  </TradingSystemLayout>
+                </PermissionGuard>
+              } />
+              
+              <Route path="/tech-hub/api-management" element={
+                <PermissionGuard requiredPermission="modules.trading">
+                  <TradingSystemLayout>
+                    <TechHubApiManagement />
+                  </TradingSystemLayout>
+                </PermissionGuard>
+              } />
+              
               {/* Legacy routes for Trading System - redirect to new structure */}
               <Route path="/beta3" element={<Navigate to="/trading-system" replace />} />
               <Route path="/beta3/settings" element={<Navigate to="/trading-system/settings" replace />} />

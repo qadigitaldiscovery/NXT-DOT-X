@@ -1,9 +1,10 @@
+
 import React from 'react';
 import { SharedSidebar } from './SharedSidebar';
 import { SharedNavbar } from './SharedNavbar';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { cn } from '@/lib/utils';
-import { Home, ShoppingCart, Package, Truck, BarChart3, Settings, Cloud } from 'lucide-react';
+import { Home, ShoppingCart, Package, Truck, BarChart3, Settings, Cloud, FileCode } from 'lucide-react';
 
 interface NavItem {
   label: string;
@@ -29,7 +30,7 @@ const techHubNavItems: NavCategory[] = [
       { label: 'Inventory', icon: Package, path: '/tech-hub/inventory' },
       { label: 'Logistics', icon: Truck, path: '/tech-hub/logistics' },
       { label: 'Analytics', icon: BarChart3, path: '/tech-hub/analytics' },
-      { label: 'API Management', icon: Cloud, path: '/tech-hub/api-management' },
+      { label: 'API Management', icon: FileCode, path: '/tech-hub/api-management' },
       { label: 'Settings', icon: Settings, path: '/tech-hub/settings' },
     ]
   }
