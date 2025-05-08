@@ -2,10 +2,11 @@
 import React from 'react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
-import { ChevronLeft, MenuIcon } from 'lucide-react';
+import { ChevronLeft, MenuIcon, Home } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { SidebarNavList } from './sidebar/SidebarNavList';
 import { CollapsedSidebar } from './sidebar/CollapsedSidebar';
+import { NavLink } from 'react-router-dom';
 
 type NavItem = {
   label: string;
@@ -37,6 +38,9 @@ export const SharedSidebar = ({ open, onToggle, navItems }: SharedSidebarProps) 
   const activeTextColor = 'text-white';
   const headerTextColor = 'text-white';
   const hoverBgColor = 'hover:bg-slate-700';
+
+  // Add Home button to master dashboard
+  const homeItem = { label: "Back to Home", icon: Home, path: "/" };
 
   const toggleExpanded = (label: string) => {
     setExpandedItems(prev => 
@@ -90,6 +94,26 @@ export const SharedSidebar = ({ open, onToggle, navItems }: SharedSidebarProps) 
           </Button>
         </div>
 
+        {/* Home button for Master Dashboard */}
+        {open && (
+          <div className="px-3 py-2">
+            <NavLink
+              to="/"
+              className={({ isActive }) =>
+                cn(
+                  'flex items-center gap-3 px-3 py-2 rounded-md transition-colors text-sm',
+                  isActive
+                    ? `${activeBgColor} ${activeTextColor}`
+                    : `${textColor} ${textHoverColor} ${hoverBgColor}`
+                )
+              }
+            >
+              <Home className="h-5 w-5" />
+              <span>Back to Home</span>
+            </NavLink>
+          </div>
+        )}
+
         {/* Full Navigation List (Visible when open) */}
         <nav className={cn(
           "flex-1 py-4 px-2 overflow-y-auto scrollbar-thin scrollbar-thumb-slate-600 scrollbar-track-slate-700",
@@ -108,6 +132,25 @@ export const SharedSidebar = ({ open, onToggle, navItems }: SharedSidebarProps) 
         </nav>
 
         {/* Icon-Only Navigation (Visible when collapsed on desktop) */}
+        {!open && (
+          <div className="mt-4">
+            <NavLink
+              to="/"
+              className={({ isActive }) =>
+                cn(
+                  "w-12 h-12 flex items-center justify-center rounded-md transition-colors mx-auto",
+                  isActive 
+                    ? `${activeBgColor} ${activeTextColor}` 
+                    : `${textColor} ${hoverBgColor}`
+                )
+              }
+              title="Back to Home"
+            >
+              <Home className="h-5 w-5" />
+            </NavLink>
+          </div>
+        )}
+
         {!open && (
           <CollapsedSidebar 
             navItems={navItems}

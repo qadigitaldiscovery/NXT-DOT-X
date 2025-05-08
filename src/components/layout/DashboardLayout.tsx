@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { cn } from '@/lib/utils';
 import { SharedSidebar } from './SharedSidebar';
@@ -26,9 +25,15 @@ interface DashboardLayoutProps {
 // Dashboard navigation items
 const dashboardNavItems: NavCategory[] = [
   {
-    name: "Dashboard",
+    name: "Navigation",
     items: [
       { label: 'Home', icon: Home, path: '/' }
+    ]
+  },
+  {
+    name: "Dashboard",
+    items: [
+      { label: 'Dashboard Home', icon: Home, path: '/dashboard' }
     ]
   },
   {
