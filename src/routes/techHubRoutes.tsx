@@ -1,13 +1,13 @@
 
 import { Route } from "react-router-dom";
-import { TradingSystemLayout } from "@/components/layout/TradingSystemLayout";
 import TechHubPersonas from "@/pages/TechHubPersonas";
 import { Outlet } from "react-router-dom";
 import TechHubApiManagement from "@/pages/APIsPage";
+import { TechHubLayout } from "@/components/layout/TechHubLayout";
 
 export const TechHubRoutes = () => {
   return (
-    <Route path="/tech-hub" element={<TradingSystemLayout><Outlet /></TradingSystemLayout>}>
+    <Route path="/tech-hub" element={<TechHubLayout><Outlet /></TechHubLayout>}>
       <Route index element={<TechHubPersonas />} />
       <Route path="personas" element={<TechHubPersonas />} />
       <Route path="api-management" element={<TechHubApiManagement />} />

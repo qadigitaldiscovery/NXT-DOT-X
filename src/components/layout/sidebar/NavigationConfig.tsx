@@ -1,5 +1,5 @@
 
-import { Home, FileUp, BarChart3, LineChart, ArrowDownUp, FileDown, Settings, Database, FileArchive, BookOpen } from 'lucide-react';
+import { Home, FileUp, BarChart3, LineChart, ArrowDownUp, FileDown, Settings, Database, FileArchive, BookOpen, BrainCircuit, Cloud, Robot } from 'lucide-react';
 import { NavItem, NavCategory } from './types';
 
 // Top level nav items (not in categories)
@@ -28,7 +28,20 @@ export const navCategories: NavCategory[] = [
     items: [
       { label: 'File Uploads', icon: FileUp, path: '/data-management/uploads' },
       { label: 'Document Repository', icon: FileArchive, path: '/data-management/documents' },
-      { label: 'Export Data', icon: FileDown, path: '/export-data' },
+      { label: 'Export Data', icon: FileDown, path: '/export-data' }
+    ]
+  },
+  {
+    name: "Tech Hub",
+    items: [
+      { label: 'AI Personas', icon: BrainCircuit, path: '/tech-hub/personas' },
+      { label: 'API Management', icon: Robot, path: '/tech-hub/api-management' },
+      { label: 'Cloud Services', icon: Cloud, path: '/tech-hub/cloud-services' }
+    ]
+  },
+  {
+    name: "Admin",
+    items: [
       { label: 'Documentation', icon: BookOpen, path: '/admin/documentation' }
     ]
   }
