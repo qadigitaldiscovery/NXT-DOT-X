@@ -5,7 +5,7 @@ import { SharedNavbar } from './SharedNavbar';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { cn } from '@/lib/utils';
 import { Outlet } from 'react-router-dom';
-import { Bot, Shield, Users, Settings, BarChart3 } from 'lucide-react';
+import { Bot, Shield, Users, Settings, BarChart3, Zap, Brain, Star } from 'lucide-react';
 
 interface NavItem {
   label: string;
@@ -21,13 +21,15 @@ interface NavCategory {
 
 const dotXNavItems: NavCategory[] = [
   {
-    name: "DOT-X Menu",
+    name: "DOT-X COMMAND CENTER",
     items: [
-      { label: 'Dashboard', icon: BarChart3, path: '/dot-x' },
+      { label: 'Mission Control', icon: BarChart3, path: '/dot-x' },
       { label: 'AI Agents', icon: Bot, path: '/dot-x/ai-agents' },
-      { label: 'Security', icon: Shield, path: '/dot-x/security' },
-      { label: 'User Management', icon: Users, path: '/dot-x/users' },
-      { label: 'Settings', icon: Settings, path: '/dot-x/settings' },
+      { label: 'Neural Shield', icon: Shield, path: '/dot-x/security' },
+      { label: 'Team Members', icon: Users, path: '/dot-x/users' },
+      { label: 'Command Settings', icon: Settings, path: '/dot-x/settings' },
+      { label: 'Power Center', icon: Zap, path: '/dot-x/power' },
+      { label: 'Intelligence Hub', icon: Brain, path: '/dot-x/intelligence' },
     ]
   }
 ];
@@ -49,7 +51,7 @@ export const DotXLayout = () => {
   };
 
   return (
-    <div className="flex h-screen overflow-hidden bg-gray-50">
+    <div className="flex h-screen overflow-hidden bg-gray-900 text-white">
       <SharedSidebar 
         open={sidebarOpen} 
         onToggle={toggleSidebar}
@@ -65,15 +67,18 @@ export const DotXLayout = () => {
           notificationArea={
             <div className="flex flex-col">
               <div className="flex items-baseline">
-                <span className="text-xl font-bold">DOT-</span>
-                <span className="text-3xl font-bold">X</span>
+                <span className="text-xl font-bold bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-text text-transparent">DOT-</span>
+                <span className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-blue-500 bg-clip-text text-transparent">X</span>
               </div>
-              <div className="text-xs text-gray-400 -mt-1">AND HIS AI ARMY</div>
+              <div className="text-xs text-blue-400 -mt-1 font-semibold">AND HIS AI ARMY</div>
             </div>
           }
         />
-        <main className="flex-1 overflow-y-auto p-4 md:p-6 bg-gray-50">
-          <Outlet />
+        <main className="flex-1 overflow-y-auto p-4 md:p-6 bg-gradient-to-br from-slate-900 to-slate-800">
+          <div className="relative">
+            <div className="absolute inset-0 bg-blue-500/5 rounded-lg pointer-events-none"></div>
+            <Outlet />
+          </div>
         </main>
       </div>
     </div>
