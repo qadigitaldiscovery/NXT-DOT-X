@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent } from '@/components/ui/card';
@@ -55,7 +56,7 @@ const Administration: React.FC = () => {
     id: "docs",
     name: "Documentation",
     icon: <BookOpen className="h-5 w-5" />,
-    path: "/admin/docs",
+    path: "/admin/documentation",
     permission: "settings.access",
     description: "System documentation and guides"
   }, {
@@ -102,8 +103,8 @@ const Administration: React.FC = () => {
     description: "Advanced search functionality"
   }];
   const handleSystemClick = (systemId: string, path: string) => {
-    if (systemId === "users") {
-      navigate("/admin/users");
+    if (systemId === "users" || systemId === "docs") {
+      navigate(path);
     } else {
       toast.info(`System function ${systemId} is not implemented yet`);
     }
