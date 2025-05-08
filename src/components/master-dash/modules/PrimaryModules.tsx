@@ -74,7 +74,7 @@ const PrimaryModules: React.FC = () => {
         {primaryModules.map((module, index) => (
           <Card 
             key={module.id} 
-            className="overflow-hidden transition-all duration-300 hover:shadow-xl hover:scale-105 backdrop-blur-lg bg-black/10 border border-white/10 text-white shadow-[0_8px_32px_rgba(0,0,0,0.1)]"
+            className="overflow-hidden transition-all duration-300 hover:shadow-xl hover:scale-105 bg-white/15 backdrop-blur-sm border border-white/20 text-white shadow-[0_8px_32px_rgba(0,0,0,0.1)]"
           >
             <CardHeader className="pb-2">
               <div className="flex items-center justify-center mb-4">
