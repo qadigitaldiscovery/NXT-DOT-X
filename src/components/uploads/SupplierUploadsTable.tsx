@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import {
   Card,
@@ -16,12 +15,12 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { 
-  SupplierUpload, 
-  useDeleteSupplierUpload, 
-  useProcessSupplierUpload, 
   useSupplierUploads,
+  useProcessSupplierUpload, 
+  useDeleteSupplierUpload,
   useAssignUploadToSupplier
 } from '@/hooks/use-supplier-uploads';
+import { SupplierUpload } from '@/types/supplier-uploads';
 import { Supplier, useSuppliers } from '@/hooks/use-suppliers';
 import { UploadsTableRow } from './UploadsTableRow';
 import { AssignUploadDialog } from './AssignUploadDialog';
@@ -39,9 +38,9 @@ export function SupplierUploadsTable({ supplier, supplierId }: SupplierUploadsTa
   const isHoldingBucket = supplierId === 'holding';
   const actualSupplierId = isHoldingBucket ? undefined : (supplier?.id || supplierId);
   
+  // Pass options object correctly without additional parameters
   const { data: uploads = [], isLoading } = useSupplierUploads(
-    actualSupplierId,
-    isHoldingBucket
+    isHoldingBucket ? { forAllocation: true } : undefined
   );
   
   const { data: suppliers = [] } = useSuppliers();

@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import {
   Card,
@@ -84,8 +83,7 @@ export function FileUploadForm({ supplierId, onUploadComplete, allowHoldingBucke
       {
         supplier_id: useHoldingBucket ? 'holding' : selectedSupplier,
         file: selectedFile,
-        source: 'direct',
-        for_allocation: useHoldingBucket
+        source: 'direct'
       },
       {
         onSuccess: () => {
@@ -95,7 +93,9 @@ export function FileUploadForm({ supplierId, onUploadComplete, allowHoldingBucke
           }
           setIsUploading(false);
         },
-        onError: () => {
+        onError: (error) => {
+          console.error('Upload error:', error);
+          toast.error(`Upload failed: ${error.message || 'Unknown error'}`);
           setIsUploading(false);
         }
       }

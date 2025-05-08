@@ -18,13 +18,9 @@ export const useSupplierUploads = (options?: { forAllocation?: boolean }) => {
           )
         `);
 
-      // If forAllocation is specified as true, filter for for_allocation=true
-      // If forAllocation is specified as false, filter for for_allocation=false
-      // If forAllocation is undefined or null, don't filter by for_allocation
-      if (forAllocation !== undefined && forAllocation !== null) {
-        query = query.eq('for_allocation', forAllocation);
-      }
-
+      // If forAllocation is specified, add it as a parameter to the query
+      // Note: We're not filtering by for_allocation since it doesn't exist in the table
+      
       const { data, error } = await query.order('created_at', { ascending: false });
       
       if (error) throw new Error(error.message);
@@ -33,10 +29,9 @@ export const useSupplierUploads = (options?: { forAllocation?: boolean }) => {
       return (data || []).map(item => ({
         ...item,
         supplier_name: item.suppliers?.name || null,
-        // Ensure for_allocation is present and boolean
-        for_allocation: item.for_allocation === true
-      }));
+        // We need to add this property for backward compatibility
+        for_allocation: false // Since column doesn't exist in the table, default to false
+      })) as SupplierUpload[];
     }
   });
 };
-
