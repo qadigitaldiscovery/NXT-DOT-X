@@ -29,7 +29,7 @@ export const SharedSidebar = ({ open, onToggle, navItems }: SharedSidebarProps) 
   const isMobile = useIsMobile();
   const [expandedItems, setExpandedItems] = React.useState<string[]>([]);
   
-  // Updated styling for a more dramatic, futuristic look
+  // Updated styling with more reasonable sizing
   const sidebarBgColor = 'bg-gradient-to-b from-indigo-950 via-blue-950 to-slate-950';
   const textColor = 'text-blue-200';
   const textHoverColor = 'hover:text-blue-300';
@@ -59,24 +59,24 @@ export const SharedSidebar = ({ open, onToggle, navItems }: SharedSidebarProps) 
         className={cn(
           "fixed md:sticky top-0 left-0 h-screen z-30 shadow-xl flex flex-col transition-all duration-300 ease-in-out",
           sidebarBgColor,
-          open ? "w-80" : "w-0 md:w-24",
+          open ? "w-64" : "w-0 md:w-16",
           isMobile && !open && "-translate-x-full",
           isMobile && open && "translate-x-0"
         )}
       >
         {/* Sidebar Header */}
         <div className={cn(
-          "flex items-center justify-between p-6 border-b border-blue-900/50",
+          "flex items-center justify-center p-4 border-b border-blue-900/50",
           "bg-gradient-to-r from-indigo-900/90 to-blue-900/80 shadow-md",
-          "h-24"
+          "h-16"
         )}>
           {/* Only show DOT-X logo when sidebar is open */}
           {open && (
-            <div className="flex flex-col">
+            <div className="flex flex-col items-center">
               <div className="flex items-center">
-                <span className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-indigo-200">DOT-X</span>
+                <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-indigo-200">DOT-X</span>
               </div>
-              <span className="text-xs text-blue-300 font-medium mt-1">NAVIGATION PANEL</span>
+              <span className="text-xs text-blue-300 font-medium">NAVIGATION PANEL</span>
             </div>
           )}
           
@@ -86,21 +86,21 @@ export const SharedSidebar = ({ open, onToggle, navItems }: SharedSidebarProps) 
             size="icon"
             onClick={onToggle}
             className={cn(
-              "bg-blue-900/30 hover:bg-blue-800/50 text-blue-300 hover:text-blue-200 rounded-lg",
-              open ? "ml-2" : "mx-auto"
+              "bg-blue-900/30 hover:bg-blue-800/50 text-blue-300 hover:text-blue-200 rounded-lg absolute right-2",
+              !open && "mx-auto"
             )}
           >
             {isMobile ? (
-              <ChevronLeft className="h-6 w-6" />
+              <ChevronLeft className="h-5 w-5" />
             ) : ( 
-              open ? <ChevronLeft className="h-6 w-6" /> : <MenuIcon className="h-6 w-6" /> 
+              open ? <ChevronLeft className="h-5 w-5" /> : <MenuIcon className="h-5 w-5" /> 
             )}
           </Button>
         </div>
 
         {/* Full Navigation List (Visible when open) */}
         <nav className={cn(
-          "flex-1 py-6 px-4 overflow-y-auto scrollbar-thin scrollbar-thumb-blue-800/50 scrollbar-track-slate-900/50",
+          "flex-1 py-4 px-2 overflow-y-auto scrollbar-thin scrollbar-thumb-blue-800/50 scrollbar-track-slate-900/50",
           !open && "hidden" // Hide when sidebar is collapsed
         )}>
           <SidebarNavList 
@@ -127,8 +127,8 @@ export const SharedSidebar = ({ open, onToggle, navItems }: SharedSidebarProps) 
         )}
 
         {/* Footer area */}
-        <div className="p-4 border-t border-blue-900/50 flex items-center justify-center bg-indigo-950/50">
-          <div className="text-sm text-blue-400 font-mono">v2.5.8</div>
+        <div className="p-2 border-t border-blue-900/50 flex items-center justify-center bg-indigo-950/50">
+          <div className="text-xs text-blue-400 font-mono">v2.5.8</div>
         </div>
       </aside>
     </>

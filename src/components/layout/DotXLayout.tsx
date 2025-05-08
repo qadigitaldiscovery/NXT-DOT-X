@@ -5,7 +5,7 @@ import { SharedNavbar } from './SharedNavbar';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { cn } from '@/lib/utils';
 import { Outlet } from 'react-router-dom';
-import { BarChart3, Bot, Shield, Users, Settings, Zap, Brain } from 'lucide-react';
+import { BarChart3, Bot, Shield, Users, Settings, Zap, Brain, Home } from 'lucide-react';
 
 interface NavItem {
   label: string;
@@ -30,6 +30,7 @@ const dotXNavItems: NavCategory[] = [
       { label: 'Command Settings', icon: Settings, path: '/dot-x/settings' },
       { label: 'Power Center', icon: Zap, path: '/dot-x/power' },
       { label: 'Intelligence Hub', icon: Brain, path: '/dot-x/intelligence' },
+      { label: 'Home', icon: Home, path: '/' },
     ]
   }
 ];

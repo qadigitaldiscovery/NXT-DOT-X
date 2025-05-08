@@ -37,22 +37,22 @@ export const SidebarNavItem = ({
       <li key={item.path}>
         <div 
           className={cn(
-            "flex items-center justify-between px-5 py-5 rounded-lg transition-all duration-300 cursor-pointer text-2xl",
+            "flex items-center justify-between px-3 py-2 rounded-lg transition-all duration-300 cursor-pointer text-sm",
             textColor, textHoverColor, hoverBgColor
           )}
           onClick={() => onToggleExpand(item.label)}
         >
-          <div className="flex items-center gap-5">
-            <item.icon className="h-10 w-10" />
-            <span className="font-mono tracking-wide text-xl">{item.label}</span>
+          <div className="flex items-center gap-3">
+            <item.icon className="h-5 w-5" />
+            <span className="font-medium">{item.label}</span>
           </div>
           {isExpanded ? 
-            <ChevronDown className="h-8 w-8" /> : 
-            <ChevronRight className="h-8 w-8" />
+            <ChevronDown className="h-4 w-4" /> : 
+            <ChevronRight className="h-4 w-4" />
           }
         </div>
         {isExpanded && (
-          <ul className="ml-14 space-y-3 mt-3">
+          <ul className="ml-8 space-y-1 mt-1">
             {item.children.map(child => (
               <li key={child.path}>
                 <NavLink
@@ -60,15 +60,15 @@ export const SidebarNavItem = ({
                   end
                   className={({ isActive }) =>
                     cn(
-                      'flex items-center gap-5 px-5 py-4 rounded-lg transition-all duration-300 text-xl',
+                      'flex items-center gap-3 px-3 py-2 rounded-lg transition-all duration-300 text-sm',
                       isActive
-                        ? `${activeBgColor} ${activeTextColor} shadow-lg shadow-blue-900/30`
+                        ? `${activeBgColor} ${activeTextColor} shadow-md shadow-blue-900/30`
                         : `${textColor} ${textHoverColor} ${hoverBgColor}`
                     )
                   }
                 >
-                  <child.icon className="h-9 w-9" />
-                  <span className="font-mono text-lg">{child.label}</span>
+                  <child.icon className="h-4 w-4" />
+                  <span className="font-medium">{child.label}</span>
                 </NavLink>
               </li>
             ))}
@@ -78,22 +78,25 @@ export const SidebarNavItem = ({
     );
   }
 
+  // Ensure Home is at the bottom by checking the label
+  const isHomeItem = item.label === "Home";
+  
   return (
-    <li key={item.path} className="my-3">
+    <li key={item.path} className={cn("my-1", isHomeItem && "mt-auto")}>
       <NavLink
         to={item.path}
         end
         className={({ isActive }) =>
           cn(
-            'flex items-center gap-5 px-5 py-5 rounded-lg transition-all duration-300 text-xl',
+            'flex items-center gap-3 px-3 py-2 rounded-lg transition-all duration-300 text-sm',
             isActive
-              ? `${activeBgColor} ${activeTextColor} shadow-lg shadow-indigo-900/50`
+              ? `${activeBgColor} ${activeTextColor} shadow-md shadow-indigo-900/50`
               : `${textColor} ${textHoverColor} ${hoverBgColor}`
           )
         }
       >
-        <item.icon className="h-10 w-10" />
-        <span className="font-mono tracking-wide text-xl">{item.label}</span>
+        <item.icon className="h-5 w-5" />
+        <span className="font-medium">{item.label}</span>
       </NavLink>
     </li>
   );

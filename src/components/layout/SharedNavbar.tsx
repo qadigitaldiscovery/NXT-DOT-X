@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { MenuIcon, UserCircle, Settings as SettingsIcon } from 'lucide-react';
+import { MenuIcon, UserCircle, Settings as SettingsIcon, Home } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useNavigate } from 'react-router-dom';
 import { 
@@ -43,24 +43,29 @@ export const SharedNavbar = ({
   
   return (
     <header className={cn("sticky top-0 z-20 border-b border-blue-900/50 shadow-md", navbarBgColor)}>
-      <div className="flex items-center justify-between h-24 px-6">
+      <div className="flex items-center justify-between h-16 px-4">
         <div className="flex items-center">
-          <Button variant="ghost" size="icon" onClick={onMenuClick} className={cn(iconColor, hoverBgColor, "mr-4")}>
-            <MenuIcon className="h-7 w-7" />
+          <Button variant="ghost" size="icon" onClick={onMenuClick} className={cn(iconColor, hoverBgColor, "mr-2")}>
+            <MenuIcon className="h-5 w-5" />
           </Button>
           
-          {/* Enhanced styling for DOT-X COMMAND CENTER title */}
-          {moduleTitle === "DOT-X COMMAND CENTER" ? (
-            <div className="flex items-center">
-              <span className="text-4xl font-bold bg-gradient-to-r from-blue-300 via-indigo-300 to-purple-300 bg-clip-text text-transparent">DOT-X</span>
-              <span className="ml-3 text-xl font-bold text-blue-300 tracking-widest">COMMAND CENTER</span>
-            </div>
-          ) : (
-            <h1 className={cn("text-xl font-semibold", textColor)}>{moduleTitle}</h1>
-          )}
+          {/* Welcome message in header instead of hero section */}
+          <div className="flex items-center">
+            <h1 className="text-xl font-semibold text-blue-100">Welcome to DOT-X Command Center</h1>
+          </div>
         </div>
 
-        <div className="flex items-center space-x-3 md:space-x-5">
+        <div className="flex items-center space-x-2">
+          {/* Action Buttons */}
+          <div className="flex gap-2 mr-4">
+            <Button className="bg-blue-700 hover:bg-blue-600 text-sm px-3 py-1 h-9 rounded-lg">
+              Deploy AI Agents
+            </Button>
+            <Button variant="outline" className="border-blue-400 text-blue-100 hover:bg-blue-800/50 text-sm px-3 py-1 h-9 rounded-lg">
+              View Mission Log
+            </Button>
+          </div>
+
           {/* Settings Button */}
           <Button 
             variant="ghost" 
@@ -69,7 +74,18 @@ export const SharedNavbar = ({
             className={cn(iconColor, hoverBgColor, "rounded-lg")} 
             title="Settings"
           >
-            <SettingsIcon className="h-6 w-6" />
+            <SettingsIcon className="h-5 w-5" />
+          </Button>
+
+          {/* Home Button */}
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            onClick={() => navigate('/')} 
+            className={cn(iconColor, hoverBgColor, "rounded-lg")} 
+            title="Home"
+          >
+            <Home className="h-5 w-5" />
           </Button>
 
           {/* Module-specific Notification Area */}
@@ -83,7 +99,7 @@ export const SharedNavbar = ({
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" size="icon" className={cn("rounded-lg", iconColor, hoverBgColor)}>
-                <UserCircle className="h-7 w-7" />
+                <UserCircle className="h-6 w-6" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent 
