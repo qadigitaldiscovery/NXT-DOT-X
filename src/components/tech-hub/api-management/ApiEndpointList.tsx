@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -11,11 +11,31 @@ import { sampleEndpoints } from './sampleData';
 import EndpointsTable from './EndpointsTable';
 import AddEndpointDialog from './AddEndpointDialog';
 
+const LOCAL_STORAGE_KEY = 'tech-hub-api-endpoints';
+
 const ApiEndpointList: React.FC = () => {
-  const [endpoints, setEndpoints] = useState<ApiEndpoint[]>(sampleEndpoints);
+  const [endpoints, setEndpoints] = useState<ApiEndpoint[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [dialogOpen, setDialogOpen] = useState(false);
   const [showApiKeys, setShowApiKeys] = useState<{[key: string]: boolean}>({});
+  
+  // Load endpoints from localStorage on initial render
+  useEffect(() => {
+    const storedEndpoints = localStorage.getItem(LOCAL_STORAGE_KEY);
+    if (storedEndpoints) {
+      setEndpoints(JSON.parse(storedEndpoints));
+    } else {
+      // Use sample data as fallback
+      setEndpoints(sampleEndpoints);
+    }
+  }, []);
+  
+  // Save endpoints to localStorage whenever they change
+  useEffect(() => {
+    if (endpoints.length > 0) {
+      localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(endpoints));
+    }
+  }, [endpoints]);
   
   const filteredEndpoints = endpoints.filter(endpoint => 
     endpoint.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
@@ -49,7 +69,7 @@ const ApiEndpointList: React.FC = () => {
   const onSubmit = (data: EndpointFormValues) => {
     // Create a new endpoint with the form data
     const newEndpoint: ApiEndpoint = {
-      id: `${endpoints.length + 1}`,
+      id: `${Date.now()}`, // Use timestamp for unique ID
       name: data.name,
       url: data.url,
       apiKey: data.apiKey,
@@ -59,7 +79,11 @@ const ApiEndpointList: React.FC = () => {
     };
 
     // Add the new endpoint to the list
-    setEndpoints([...endpoints, newEndpoint]);
+    const updatedEndpoints = [...endpoints, newEndpoint];
+    setEndpoints(updatedEndpoints);
+    
+    // Save to localStorage immediately as well
+    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(updatedEndpoints));
     
     // Close the dialog
     setDialogOpen(false);
