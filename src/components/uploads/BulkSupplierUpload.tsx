@@ -8,16 +8,15 @@ import {
   CardHeader,
   CardTitle
 } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { UploadCloud } from 'lucide-react';
 import { useCreateBulkSuppliers } from '@/hooks/use-suppliers';
 import { toast } from 'sonner';
 
-// Import the new components
+// Import the components
 import { SampleCsvSection } from './bulk-supplier/SampleCsvSection';
 import { UploadArea } from './bulk-supplier/UploadArea';
 import { CsvPasteArea } from './bulk-supplier/CsvPasteArea';
+import { ImportButton } from './bulk-supplier/ImportButton';
 
 export function BulkSupplierUpload() {
   const [file, setFile] = useState<File | null>(null);
@@ -70,6 +69,9 @@ export function BulkSupplierUpload() {
     }
   };
   
+  const isSubmitDisabled = (activeTab === 'upload' && !file) || 
+                          (activeTab === 'paste' && !csvText.trim());
+  
   return (
     <Card>
       <CardHeader>
@@ -105,15 +107,11 @@ export function BulkSupplierUpload() {
         </Tabs>
       </CardContent>
       <CardFooter>
-        <Button
-          className="w-full"
-          onClick={handleSubmit}
-          disabled={(activeTab === 'upload' && !file) || (activeTab === 'paste' && !csvText.trim()) || isUploading}
-          loading={isUploading}
-        >
-          <UploadCloud className="h-4 w-4 mr-2" />
-          {isUploading ? 'Importing...' : 'Import Suppliers'}
-        </Button>
+        <ImportButton 
+          onSubmit={handleSubmit}
+          isUploading={isUploading}
+          isDisabled={isSubmitDisabled}
+        />
       </CardFooter>
     </Card>
   );

@@ -9,7 +9,7 @@ export default function NewUploadPage() {
   const navigate = useNavigate();
   
   const handleUploadComplete = () => {
-    navigate('/beta1/uploads');
+    navigate('/data-management/uploads');
   };
   
   return (
@@ -23,7 +23,7 @@ export default function NewUploadPage() {
         </div>
         <Button
           variant="outline"
-          onClick={() => navigate('/beta1/uploads')}
+          onClick={() => navigate('/data-management/uploads')}
         >
           <ArrowLeft className="h-4 w-4 mr-2" />
           Back to Uploads
@@ -31,7 +31,7 @@ export default function NewUploadPage() {
       </div>
       
       <div className="max-w-md mx-auto">
-        <FileUploadForm onUploadComplete={handleUploadComplete} />
+        <FileUploadForm onUploadComplete={handleUploadComplete} allowHoldingBucket={true} />
       </div>
     </div>
   );

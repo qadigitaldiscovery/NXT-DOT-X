@@ -10,6 +10,7 @@ import CostAnalysis from "@/pages/data-management/cost-management/CostAnalysis";
 import CompetitorPricing from "@/pages/data-management/pricing/CompetitorPricing";
 import PriceManagement from "@/pages/data-management/pricing/PriceManagement";
 import UploadsPage from "@/pages/UploadsPage";
+import NewUploadPage from "@/pages/NewUploadPage";
 import DocumentsPage from "@/pages/data-management/documents/DocumentsPage";
 import NotFound from "@/pages/NotFound";
 
@@ -38,7 +39,7 @@ export const DataManagementRoutes = () => {
         
         {/* File Uploads */}
         <Route path="uploads" element={<UploadsPage />} />
-        <Route path="uploads/new" element={<UploadsPage />} />
+        <Route path="uploads/new" element={<NewUploadPage />} />
         <Route path="uploads/holding" element={<UploadsPage />} />
         <Route path="uploads/bulk-import" element={<UploadsPage />} />
         
