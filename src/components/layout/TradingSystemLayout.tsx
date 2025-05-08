@@ -4,7 +4,7 @@ import { SharedSidebar } from './SharedSidebar';
 import { SharedNavbar } from './SharedNavbar';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { cn } from '@/lib/utils';
-import { Home, ShoppingCart, Package, Truck, BarChart3, Settings, Cloud, FileCode } from 'lucide-react';
+import { Home, ShoppingCart, Package, Truck, BarChart3, Settings, FileCode, Cloud } from 'lucide-react';
 
 interface NavItem {
   label: string;
@@ -31,6 +31,7 @@ const techHubNavItems: NavCategory[] = [
       { label: 'Logistics', icon: Truck, path: '/tech-hub/logistics' },
       { label: 'Analytics', icon: BarChart3, path: '/tech-hub/analytics' },
       { label: 'API Management', icon: FileCode, path: '/tech-hub/api-management' },
+      { label: 'Cloud Services', icon: Cloud, path: '/tech-hub/cloud-services' },
       { label: 'Settings', icon: Settings, path: '/tech-hub/settings' },
     ]
   }
