@@ -1,11 +1,20 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { FileCode, Cloud, Settings, BrainCircuit } from "lucide-react";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { FileCode, Cloud, Settings, BrainCircuit, Plus, Trash, Copy } from "lucide-react";
+import { toast } from "sonner";
+import ApiKeyForm from "@/components/tech-hub/api-management/ApiKeyForm";
+import ApiEndpointList from "@/components/tech-hub/api-management/ApiEndpointList";
+import ApiPermissionsTable from "@/components/tech-hub/api-management/ApiPermissionsTable";
 import TechHubPersonas from './TechHubPersonas';
 
 const TechHubApiManagement: React.FC = () => {
+  const [activeTab, setActiveTab] = useState("apis");
+
   return (
     <div className="space-y-8">
       <div className="flex justify-between items-center">
@@ -15,7 +24,7 @@ const TechHubApiManagement: React.FC = () => {
         </div>
       </div>
       
-      <Tabs defaultValue="apis" className="w-full">
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
         <TabsList className="mb-4">
           <TabsTrigger value="apis"><FileCode className="h-4 w-4 mr-1" />API Endpoints</TabsTrigger>
           <TabsTrigger value="keys"><Cloud className="h-4 w-4 mr-1" />API Keys</TabsTrigger>
@@ -24,39 +33,15 @@ const TechHubApiManagement: React.FC = () => {
         </TabsList>
         
         <TabsContent value="apis">
-          <Card>
-            <CardHeader>
-              <CardTitle>API Endpoints</CardTitle>
-              <CardDescription>Configure and manage API endpoints and connections</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <p className="text-center py-8 text-muted-foreground">API Endpoint management functionality coming soon.</p>
-            </CardContent>
-          </Card>
+          <ApiEndpointList />
         </TabsContent>
         
         <TabsContent value="keys">
-          <Card>
-            <CardHeader>
-              <CardTitle>API Keys</CardTitle>
-              <CardDescription>Manage API keys and authentication</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <p className="text-center py-8 text-muted-foreground">API Key management functionality coming soon.</p>
-            </CardContent>
-          </Card>
+          <ApiKeyForm />
         </TabsContent>
         
         <TabsContent value="permissions">
-          <Card>
-            <CardHeader>
-              <CardTitle>API Permissions</CardTitle>
-              <CardDescription>Configure access control and permissions for APIs</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <p className="text-center py-8 text-muted-foreground">Permission management functionality coming soon.</p>
-            </CardContent>
-          </Card>
+          <ApiPermissionsTable />
         </TabsContent>
         
         <TabsContent value="personas">

@@ -30,7 +30,9 @@ interface PersonaCardProps {
 const PersonaCard: React.FC<PersonaCardProps> = ({ persona, isSelected, onClick }) => {
   return (
     <Card 
-      className={`cursor-pointer transition-all hover:shadow-md ${isSelected ? `border-2 ${persona.color}` : 'border hover:border-gray-300'}`}
+      className={`cursor-pointer transition-all hover:shadow-md ${
+        isSelected ? `border-2 border-${persona.color.split(' ')[0].replace('bg-', '')}` : 'border hover:border-gray-300'
+      }`}
       onClick={onClick}
     >
       <CardHeader className="p-4 pb-0">
