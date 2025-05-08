@@ -1,4 +1,3 @@
-
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
@@ -13,10 +12,11 @@ import Administration from '@/components/master-dash/modules/Administration';
 
 // Assuming this is the correct path based on previous searches
 const backgroundImagePath = '/lovable-uploads/backk1.png';
-
 const MasterDash = () => {
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const {
+    user
+  } = useAuth();
 
   // Check if user is authenticated
   useEffect(() => {
@@ -25,19 +25,14 @@ const MasterDash = () => {
       toast.error('Please sign in to access this page');
     }
   }, [navigate, user]);
-  
-  return (
-    <div 
-      className="min-h-screen flex flex-col relative p-4 sm:p-6 md:p-8" 
-      style={{
-        backgroundImage: `url(${backgroundImagePath})`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundRepeat: 'no-repeat',
-      }}
-    >
+  return <div className="min-h-screen flex flex-col relative p-4 sm:p-6 md:p-8" style={{
+    backgroundImage: `url(${backgroundImagePath})`,
+    backgroundSize: 'cover',
+    backgroundPosition: 'center',
+    backgroundRepeat: 'no-repeat'
+  }}>
       {/* Dark overlay without blur to maintain background image clarity */}
-      <div className="absolute inset-0 bg-black/80 z-0"></div>
+      <div className="absolute inset-0 z-0 bg-inherit"></div>
       
       {/* Content needs to be on a higher z-index to appear above the overlay */}
       <div className="relative z-10 flex flex-col flex-grow">
@@ -65,8 +60,6 @@ const MasterDash = () => {
         {/* Footer component */}
         <MasterDashFooter />
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default MasterDash;
