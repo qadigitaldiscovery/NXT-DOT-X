@@ -74,13 +74,13 @@ const PrimaryModules: React.FC = () => {
         {primaryModules.map((module, index) => (
           <Card 
             key={module.id} 
-            className="overflow-hidden transition-all duration-300 hover:shadow-xl hover:scale-105 backdrop-blur-lg bg-black/40 border-white/10 text-white"
+            className="overflow-hidden transition-all duration-300 hover:shadow-xl hover:scale-105 backdrop-blur-lg bg-black/20 border-white/10 text-white"
           >
             <CardHeader className="pb-2">
               <div className="flex items-center justify-center mb-4">
-                {/* 3D effect dark red frosted icon container */}
+                {/* Enhanced 3D effect dark red frosted icon container */}
                 <div className="p-3 rounded-full bg-gradient-to-br from-[#a51919] to-[#630d0d] shadow-lg border border-white/5 transform-gpu relative">
-                  {/* Add inner shadow and highlight for 3D effect */}
+                  {/* Enhanced inner shadow and highlight for 3D effect */}
                   <div className="absolute inset-0 rounded-full bg-gradient-to-tl from-white/10 to-transparent opacity-60"></div>
                   {React.cloneElement(module.icon, { className: `${module.icon.props.className} drop-shadow-lg` })}
                 </div>
@@ -89,9 +89,9 @@ const PrimaryModules: React.FC = () => {
               <CardDescription className="text-base text-slate-300">{module.description}</CardDescription>
             </CardHeader>
             <CardFooter className="pt-2 pb-6">
-              {/* Metallic dark grey button */}
+              {/* Enhanced 3D metallic dark grey button with stronger depth effects */}
               <Button 
-                className="w-full py-6 font-medium text-lg bg-gradient-to-b from-gray-600 to-gray-800 border border-gray-500/30 shadow-md hover:from-gray-700 hover:to-gray-900 hover:border-gray-400/50 text-white transition-all duration-200" 
+                className="w-full py-6 font-medium text-lg bg-gradient-to-b from-gray-600 to-gray-800 border border-gray-500/30 shadow-[0_4px_10px_rgba(0,0,0,0.3)] hover:from-gray-700 hover:to-gray-900 hover:border-gray-400/50 hover:shadow-[0_6px_12px_rgba(0,0,0,0.4)] text-white transition-all duration-200 transform hover:translate-y-[-2px] active:translate-y-[1px] active:shadow-[0_2px_5px_rgba(0,0,0,0.2)]" 
                 onClick={() => handleModuleClick(module.id, module.path)}
               >
                 Launch Module
