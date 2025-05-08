@@ -31,7 +31,7 @@ export const SharedSidebar = ({ open, onToggle, navItems }: SharedSidebarProps) 
   
   // Style constants
   const sidebarBgColor = 'bg-slate-800';
-  const textColor = 'text-gray-300';
+  const textColor = 'text-gray-200';
   const textHoverColor = 'hover:text-white';
   const activeBgColor = 'bg-blue-600';
   const activeTextColor = 'text-white';
@@ -60,18 +60,18 @@ export const SharedSidebar = ({ open, onToggle, navItems }: SharedSidebarProps) 
         className={cn(
           "fixed md:sticky top-0 left-0 h-screen z-30 shadow-lg flex flex-col transition-all duration-300 ease-in-out",
           sidebarBgColor,
-          open ? "w-60" : "w-0 md:w-20",
+          open ? "w-72" : "w-0 md:w-24",
           isMobile && !open && "-translate-x-full",
           isMobile && open && "translate-x-0"
         )}
       >
         {/* Sidebar Header */}
         <div className={cn(
-          "flex items-center justify-between p-4 h-16",
+          "flex items-center justify-between p-5 h-20",
         )}>
           {/* Render Title only when open */}
           {open && (
-            <h1 className={cn("text-xl font-bold whitespace-nowrap", headerTextColor)}>
+            <h1 className={cn("text-2xl font-bold whitespace-nowrap", headerTextColor)}>
               NXT DOT-X
             </h1>
           )}
@@ -83,16 +83,16 @@ export const SharedSidebar = ({ open, onToggle, navItems }: SharedSidebarProps) 
             className={cn(headerTextColor, textHoverColor, open ? "ml-2" : "mx-auto")}
           >
             {isMobile ? (
-              <ChevronLeft className="h-5 w-5" />
+              <ChevronLeft className="h-6 w-6" />
             ) : ( 
-              open ? <ChevronLeft className="h-5 w-5" /> : <MenuIcon className="h-5 w-5" /> 
+              open ? <ChevronLeft className="h-6 w-6" /> : <MenuIcon className="h-6 w-6" /> 
             )}
           </Button>
         </div>
 
         {/* Full Navigation List (Visible when open) */}
         <nav className={cn(
-          "flex-1 py-4 px-2 overflow-y-auto scrollbar-thin scrollbar-thumb-slate-600 scrollbar-track-slate-700",
+          "flex-1 py-4 px-3 overflow-y-auto scrollbar-thin scrollbar-thumb-slate-600 scrollbar-track-slate-700",
           !open && "hidden" // Hide when sidebar is collapsed
         )}>
           <SidebarNavList 
