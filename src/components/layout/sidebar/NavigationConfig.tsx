@@ -1,5 +1,5 @@
 
-import { Home, FileUp, BarChart3, LineChart, ArrowDownUp, FileDown, Settings, Database, FileArchive, BookOpen, BrainCircuit, Cloud, Robot } from 'lucide-react';
+import { Home, FileUp, BarChart3, LineChart, ArrowDownUp, FileDown, Settings, Database, FileArchive, BookOpen, BrainCircuit, Cloud, Bot } from 'lucide-react';
 import { NavItem, NavCategory } from './types';
 
 // Top level nav items (not in categories)
@@ -35,7 +35,7 @@ export const navCategories: NavCategory[] = [
     name: "Tech Hub",
     items: [
       { label: 'AI Personas', icon: BrainCircuit, path: '/tech-hub/personas' },
-      { label: 'API Management', icon: Robot, path: '/tech-hub/api-management' },
+      { label: 'API Management', icon: Bot, path: '/tech-hub/api-management' },
       { label: 'Cloud Services', icon: Cloud, path: '/tech-hub/cloud-services' }
     ]
   },

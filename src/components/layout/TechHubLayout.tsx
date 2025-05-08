@@ -4,7 +4,7 @@ import { SharedSidebar } from './SharedSidebar';
 import { SharedNavbar } from './SharedNavbar';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { cn } from '@/lib/utils';
-import { BrainCircuit, Robot, Cloud, Cog, Home, Dna, Bot } from 'lucide-react';
+import { BrainCircuit, Bot, Cloud, Cog, Home } from 'lucide-react';
 
 interface NavItem {
   label: string;
@@ -28,7 +28,7 @@ const techHubNavItems: NavCategory[] = [
     items: [
       { label: 'Home', icon: Home, path: '/tech-hub' },
       { label: 'AI Personas', icon: BrainCircuit, path: '/tech-hub/personas' },
-      { label: 'API Management', icon: Robot, path: '/tech-hub/api-management' },
+      { label: 'API Management', icon: Bot, path: '/tech-hub/api-management' },
       { label: 'Cloud Services', icon: Cloud, path: '/tech-hub/cloud-services' },
       { label: 'Settings', icon: Cog, path: '/tech-hub/settings' },
     ]
