@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Bot, Zap, MessageSquare, Smartphone, Globe } from 'lucide-react';
+import { Bot, Zap, MessageSquare, Smartphone, Globe, ExternalLink } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
@@ -22,17 +22,21 @@ const Dashboard = () => {
     { name: "Response Time", value: "0.03ms", trend: "down" },
   ];
 
-  // Team members with their original names
+  // Updated team members with the correct AI agent names
   const teamAvatars = [
-    { name: "Nova", role: "Defense Specialist", specialty: "Cybersecurity & Threat Response", image: "/lovable-uploads/d13002c2-2ff3-4e7e-b622-17975822f3e6.png" },
-    { name: "Echo", role: "Intelligence Lead", specialty: "Data Analysis & Strategic Planning", image: "/lovable-uploads/d90a5f2a-f854-4226-9a9a-ce348f35efe2.png" },
-    { name: "Zephyr", role: "Field Agent", specialty: "Covert Operations & Reconnaissance", image: "/lovable-uploads/f8d80e78-f644-4b77-a2f3-a951edf8dfd4.png" },
-    { name: "Pulse", role: "Communications", specialty: "Network Integration & Signal Management", image: "/lovable-uploads/3bdd3ffc-1723-4582-bc57-33f3ce3e8763.png" },
+    { name: "DOT-XM", role: "Mobile Voice Assistant", specialty: "Voice Commands & Mobile Integration", image: "/lovable-uploads/d13002c2-2ff3-4e7e-b622-17975822f3e6.png" },
+    { name: "DOT-XW", role: "Voice Web Assistant", specialty: "Web Navigation & Voice Control", image: "/lovable-uploads/d90a5f2a-f854-4226-9a9a-ce348f35efe2.png" },
+    { name: "DOT-XC", role: "Chat Channels", specialty: "Real-time Communication & Support", image: "/lovable-uploads/f8d80e78-f644-4b77-a2f3-a951edf8dfd4.png", hasDemoButton: true },
+    { name: "DOT-XS", role: "Social Media Marketing", specialty: "Content Strategy & Audience Engagement", image: "/lovable-uploads/3bdd3ffc-1723-4582-bc57-33f3ce3e8763.png" },
   ];
+
+  const handleVapiDemo = () => {
+    window.open('https://demo.vapi.ai/', '_blank');
+  };
 
   return (
     <div className="space-y-6">
-      {/* Avatar Team Section - Improved styling */}
+      {/* Avatar Team Section - Improved styling with larger avatars */}
       <div className="bg-gradient-to-br from-slate-900 to-indigo-900/70 rounded-lg p-6 shadow-lg">
         <h2 className="mb-8 text-3xl font-bold text-center text-transparent bg-clip-text bg-gradient-to-r from-blue-300 via-indigo-200 to-purple-200">DOT-X COMMANDOS</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
@@ -40,7 +44,8 @@ const Dashboard = () => {
             <div key={index} className="flex flex-col items-center transform transition-all duration-300 hover:scale-105 group">
               <div className="relative">
                 <div className="absolute inset-0 rounded-full bg-gradient-to-r from-blue-500 to-indigo-500 blur-lg opacity-50 group-hover:opacity-80 transition-opacity"></div>
-                <Avatar className="h-32 w-32 border-2 border-indigo-500 shadow-lg shadow-indigo-500/20 relative z-10">
+                {/* Increased avatar size by ~40% */}
+                <Avatar className="h-44 w-44 border-2 border-indigo-500 shadow-lg shadow-indigo-500/20 relative z-10">
                   <AvatarImage src={avatar.image} alt={avatar.name} className="object-cover" />
                   <AvatarFallback className="bg-indigo-900 text-white text-lg">{avatar.name[0]}</AvatarFallback>
                 </Avatar>
@@ -48,14 +53,22 @@ const Dashboard = () => {
               <div className="text-center mt-4">
                 <h3 className="text-xl text-white font-bold mb-1">{avatar.name}</h3>
                 <p className="text-indigo-300 text-sm mb-1">{avatar.role}</p>
-                <p className="text-blue-200 text-xs font-light">{avatar.specialty}</p>
+                <p className="text-blue-200 text-xs font-light mb-2">{avatar.specialty}</p>
+                {avatar.hasDemoButton && (
+                  <Button 
+                    onClick={handleVapiDemo} 
+                    className="mt-2 bg-blue-600 hover:bg-blue-500 text-white flex items-center gap-1 rounded-full px-4 py-1 text-sm"
+                  >
+                    Talk to {avatar.name} <ExternalLink className="h-3 w-3 ml-1" />
+                  </Button>
+                )}
               </div>
             </div>
           ))}
         </div>
       </div>
       
-      {/* Mission Status Section - Adjusted styling */}
+      {/* Mission Status Section */}
       <div className="bg-gradient-to-br from-slate-900 to-indigo-900/70 rounded-lg p-6 shadow-lg">
         <h2 className="mb-6 text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-300 to-indigo-200">Active AI Missions</h2>
         <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
@@ -85,7 +98,7 @@ const Dashboard = () => {
         </div>
       </div>
       
-      {/* Performance Metrics - Adjusted styling */}
+      {/* Performance Metrics */}
       <div className="bg-gradient-to-br from-slate-900 to-indigo-900/70 rounded-lg p-6 shadow-lg">
         <h2 className="mb-6 text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-300 to-indigo-200">AI Performance Metrics</h2>
         <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">

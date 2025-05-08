@@ -59,12 +59,12 @@ export const SharedSidebar = ({ open, onToggle, navItems }: SharedSidebarProps) 
         className={cn(
           "fixed md:sticky top-0 left-0 h-screen z-30 shadow-xl flex flex-col transition-all duration-300 ease-in-out",
           sidebarBgColor,
-          open ? "w-64" : "w-0 md:w-16",
+          open ? "w-60" : "w-0 md:w-16",
           isMobile && !open && "-translate-x-full",
           isMobile && open && "translate-x-0"
         )}
       >
-        {/* Sidebar Header */}
+        {/* Sidebar Header - Centered Logo */}
         <div className={cn(
           "flex items-center justify-center p-4 border-b border-blue-900/50",
           "bg-gradient-to-r from-indigo-900/90 to-blue-900/80 shadow-md",
@@ -72,8 +72,8 @@ export const SharedSidebar = ({ open, onToggle, navItems }: SharedSidebarProps) 
         )}>
           {/* Only show DOT-X logo when sidebar is open */}
           {open && (
-            <div className="flex flex-col items-center">
-              <div className="flex items-center">
+            <div className="flex flex-col items-center justify-center w-full">
+              <div className="flex items-center justify-center">
                 <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-indigo-200">DOT-X</span>
               </div>
               <span className="text-xs text-blue-300 font-medium">NAVIGATION PANEL</span>

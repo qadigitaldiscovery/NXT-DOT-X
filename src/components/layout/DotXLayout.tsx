@@ -30,7 +30,7 @@ const dotXNavItems: NavCategory[] = [
       { label: 'Command Settings', icon: Settings, path: '/dot-x/settings' },
       { label: 'Power Center', icon: Zap, path: '/dot-x/power' },
       { label: 'Intelligence Hub', icon: Brain, path: '/dot-x/intelligence' },
-      { label: 'Home', icon: Home, path: '/' },
+      { label: 'Home', icon: Home, path: '/' }, // Home item at the end of the array - will be moved to bottom in the UI
     ]
   }
 ];
