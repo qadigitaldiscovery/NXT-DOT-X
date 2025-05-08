@@ -17,6 +17,7 @@ export default function CostDashboard() {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
   const { data: uploads = [], isLoading } = useSupplierUploads();
+  const [baseCurrency, setBaseCurrency] = useState('ZAR');
   
   const handleUploadClick = () => {
     navigate('/data-management/uploads/new');
@@ -28,18 +29,23 @@ export default function CostDashboard() {
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Supplier Costing</h1>
           <p className="text-muted-foreground mt-1">
-            Upload and manage supplier cost data with advanced tools
+            Upload and manage supplier cost data with advanced tools (ZAR)
           </p>
         </div>
-        <Button onClick={handleUploadClick} size="lg" className="md:w-auto w-full">
-          <Upload className="mr-2 h-4 w-4" />
-          Upload Cost File
-        </Button>
+        <div className="flex gap-2">
+          <div className="text-sm font-medium bg-gray-100 px-3 py-1 rounded-md border border-gray-300">
+            Base Currency: ZAR
+          </div>
+          <Button onClick={handleUploadClick} size="lg" className="md:w-auto w-full">
+            <Upload className="mr-2 h-4 w-4" />
+            Upload Cost File
+          </Button>
+        </div>
       </div>
 
       {/* Feature cards */}
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-        <Card className="hover:shadow-md transition-shadow">
+        <Card className="hover:shadow-md transition-shadow backdrop-blur-md bg-white/30 border border-white/10">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Supplier Management</CardTitle>
             <Users className="h-5 w-5 text-muted-foreground" />
@@ -52,7 +58,7 @@ export default function CostDashboard() {
           </CardContent>
         </Card>
 
-        <Card className="hover:shadow-md transition-shadow">
+        <Card className="hover:shadow-md transition-shadow backdrop-blur-md bg-white/30 border border-white/10">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">File Uploads</CardTitle>
             <FileUp className="h-5 w-5 text-muted-foreground" />
@@ -65,7 +71,7 @@ export default function CostDashboard() {
           </CardContent>
         </Card>
 
-        <Card className="hover:shadow-md transition-shadow">
+        <Card className="hover:shadow-md transition-shadow backdrop-blur-md bg-white/30 border border-white/10">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Landed Costs</CardTitle>
             <FileText className="h-5 w-5 text-muted-foreground" />
@@ -78,7 +84,7 @@ export default function CostDashboard() {
           </CardContent>
         </Card>
 
-        <Card className="hover:shadow-md transition-shadow">
+        <Card className="hover:shadow-md transition-shadow backdrop-blur-md bg-white/30 border border-white/10">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Cost Analysis</CardTitle>
             <BarChart3 className="h-5 w-5 text-muted-foreground" />
@@ -103,7 +109,7 @@ export default function CostDashboard() {
         </TabsList>
 
         <TabsContent value="supplier-management">
-          <Card>
+          <Card className="backdrop-blur-md bg-white/30 border border-white/10">
             <CardHeader>
               <CardTitle>Supplier Management</CardTitle>
               <CardDescription>
@@ -127,7 +133,7 @@ export default function CostDashboard() {
         </TabsContent>
 
         <TabsContent value="file-uploads" className="space-y-4">
-          <Card>
+          <Card className="backdrop-blur-md bg-white/30 border border-white/10">
             <CardHeader className="pb-3">
               <CardTitle>Recent File Uploads</CardTitle>
               <CardDescription>
@@ -141,7 +147,7 @@ export default function CostDashboard() {
         </TabsContent>
 
         <TabsContent value="landed-costs">
-          <Card>
+          <Card className="backdrop-blur-md bg-white/30 border border-white/10">
             <CardHeader>
               <CardTitle>Landed Costs</CardTitle>
               <CardDescription>
@@ -157,7 +163,7 @@ export default function CostDashboard() {
         </TabsContent>
 
         <TabsContent value="cost-analysis">
-          <Card>
+          <Card className="backdrop-blur-md bg-white/30 border border-white/10">
             <CardHeader>
               <CardTitle>Cost Analysis</CardTitle>
               <CardDescription>
@@ -173,7 +179,7 @@ export default function CostDashboard() {
         </TabsContent>
 
         <TabsContent value="cost-history">
-          <Card>
+          <Card className="backdrop-blur-md bg-white/30 border border-white/10">
             <CardHeader>
               <CardTitle>Cost History</CardTitle>
               <CardDescription>

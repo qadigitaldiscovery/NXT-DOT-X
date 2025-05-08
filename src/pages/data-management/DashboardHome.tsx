@@ -2,7 +2,7 @@
 import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Database, FileUp, BarChart3, LineChart } from "lucide-react";
+import { ArrowRight, Database, FileUp, BarChart3, LineChart, FileCog, FileArchive } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 const DashboardHome = () => {
@@ -12,11 +12,11 @@ const DashboardHome = () => {
     <div className="space-y-6">
       <header>
         <h1 className="text-3xl font-bold">Data Management Module</h1>
-        <p className="text-muted-foreground">Welcome to the DOT-X Data Management Platform</p>
+        <p className="text-muted-foreground">Welcome to the DOT-X Data Management Platform (ZAR)</p>
       </header>
       
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <Card>
+        <Card className="backdrop-blur-md bg-white/30 border border-white/10">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-lg font-medium">Supplier Costing</CardTitle>
             <Database className="h-4 w-4 text-muted-foreground" />
@@ -26,14 +26,14 @@ const DashboardHome = () => {
             <Button 
               variant="outline" 
               className="w-full" 
-              onClick={() => navigate('/data-management/supplier-costing')}
+              onClick={() => navigate('/data-management/cost-management')}
             >
               Access <ArrowRight className="h-4 w-4 ml-2" />
             </Button>
           </CardContent>
         </Card>
         
-        <Card>
+        <Card className="backdrop-blur-md bg-white/30 border border-white/10">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-lg font-medium">Cost Analysis</CardTitle>
             <BarChart3 className="h-4 w-4 text-muted-foreground" />
@@ -50,24 +50,24 @@ const DashboardHome = () => {
           </CardContent>
         </Card>
         
-        <Card>
+        <Card className="backdrop-blur-md bg-white/30 border border-white/10">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-lg font-medium">API Management</CardTitle>
-            <FileUp className="h-4 w-4 text-muted-foreground" />
+            <CardTitle className="text-lg font-medium">Document Repository</CardTitle>
+            <FileArchive className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <p className="text-sm text-muted-foreground mb-4">Manage API connections and data integrations.</p>
+            <p className="text-sm text-muted-foreground mb-4">Manage supplier contracts, specifications and other documents.</p>
             <Button 
               variant="outline" 
               className="w-full" 
-              onClick={() => navigate('/data-management/apis')}
+              onClick={() => navigate('/data-management/documents')}
             >
-              Manage APIs <ArrowRight className="h-4 w-4 ml-2" />
+              View Documents <ArrowRight className="h-4 w-4 ml-2" />
             </Button>
           </CardContent>
         </Card>
         
-        <Card>
+        <Card className="backdrop-blur-md bg-white/30 border border-white/10">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-lg font-medium">Competitor Pricing</CardTitle>
             <LineChart className="h-4 w-4 text-muted-foreground" />
@@ -77,9 +77,43 @@ const DashboardHome = () => {
             <Button 
               variant="outline" 
               className="w-full" 
-              onClick={() => navigate('/data-management/competitor-pricing')}
+              onClick={() => navigate('/data-management/pricing/competitor-pricing')}
             >
               View Pricing <ArrowRight className="h-4 w-4 ml-2" />
+            </Button>
+          </CardContent>
+        </Card>
+        
+        <Card className="backdrop-blur-md bg-white/30 border border-white/10">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-lg font-medium">Price Management</CardTitle>
+            <FileCog className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <p className="text-sm text-muted-foreground mb-4">Set and manage product pricing and discounts.</p>
+            <Button 
+              variant="outline" 
+              className="w-full" 
+              onClick={() => navigate('/data-management/pricing/price-management')}
+            >
+              Manage Prices <ArrowRight className="h-4 w-4 ml-2" />
+            </Button>
+          </CardContent>
+        </Card>
+        
+        <Card className="backdrop-blur-md bg-white/30 border border-white/10">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-lg font-medium">File Uploads</CardTitle>
+            <FileUp className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <p className="text-sm text-muted-foreground mb-4">Upload and process supplier cost files.</p>
+            <Button 
+              variant="outline" 
+              className="w-full" 
+              onClick={() => navigate('/data-management/uploads')}
+            >
+              Upload Files <ArrowRight className="h-4 w-4 ml-2" />
             </Button>
           </CardContent>
         </Card>

@@ -1,9 +1,11 @@
+
 import React from 'react';
 import { SharedSidebar } from './SharedSidebar';
 import { SharedNavbar } from './SharedNavbar';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { cn } from '@/lib/utils';
-import { FileCode, Cloud, Settings, BrainCircuit, Box } from 'lucide-react';
+import { FileCode, Cloud, Settings, BrainCircuit, Box, Database, BarChart3, FileText, LineChart, FileUp, FileCog, FileArchive } from 'lucide-react';
+import { Outlet } from 'react-router-dom';
 
 interface NavItem {
   label: string;
@@ -18,24 +20,27 @@ interface NavCategory {
 }
 
 interface TradingSystemLayoutProps {
-  children: React.ReactNode;
+  children?: React.ReactNode;
 }
 
-const techHubNavItems: NavCategory[] = [
+const dataManagementNavItems: NavCategory[] = [
   {
-    name: "Tech Hub Menu",
+    name: "DATA MANAGEMENT",
     items: [
-      { label: 'AI Personas', icon: BrainCircuit, path: '/tech-hub/personas' },
-      { label: 'API Management', icon: FileCode, path: '/tech-hub/api-management' },
+      { label: 'Dashboard', icon: Database, path: '/data-management' },
+      { label: 'Supplier Costing', icon: Database, path: '/data-management/cost-management' },
+      { label: 'Cost Analysis', icon: BarChart3, path: '/data-management/cost-analysis' },
       { 
-        label: 'Cloud Services', 
-        icon: Cloud, 
-        path: '/tech-hub/cloud-services',
+        label: 'Pricing', 
+        icon: LineChart, 
+        path: '/data-management/pricing',
         children: [
-          { label: 'BlackBox AI', icon: Box, path: '/tech-hub/cloud-services/blackbox-ai' }
+          { label: 'Competitor Pricing', icon: LineChart, path: '/data-management/pricing/competitor-pricing' },
+          { label: 'Price Management', icon: FileCog, path: '/data-management/pricing/price-management' }
         ]
       },
-      { label: 'Settings', icon: Settings, path: '/tech-hub/settings' },
+      { label: 'File Uploads', icon: FileUp, path: '/data-management/uploads' },
+      { label: 'Document Repository', icon: FileArchive, path: '/data-management/documents' },
     ]
   }
 ];
@@ -61,7 +66,7 @@ export const TradingSystemLayout = ({ children }: TradingSystemLayoutProps) => {
       <SharedSidebar 
         open={sidebarOpen} 
         onToggle={toggleSidebar} 
-        navItems={techHubNavItems}
+        navItems={dataManagementNavItems}
       />
       <div className={cn(
           "flex flex-col flex-1 overflow-hidden",
@@ -69,10 +74,10 @@ export const TradingSystemLayout = ({ children }: TradingSystemLayoutProps) => {
         )}>
         <SharedNavbar 
           onMenuClick={toggleSidebar} 
-          moduleTitle="Tech Hub"
+          moduleTitle="Data Management"
         />
         <main className="flex-1 overflow-y-auto p-4 md:p-6 bg-gray-50">
-          {children}
+          {children || <Outlet />}
         </main>
       </div>
     </div>
