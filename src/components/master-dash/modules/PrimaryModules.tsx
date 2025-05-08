@@ -21,14 +21,6 @@ const PrimaryModules: React.FC = () => {
 
   // Primary module prototypes data - Trading System module removed as requested
   const primaryModules = [{
-    id: "dot-x",
-    name: "DOT-X",
-    description: "The next generation business intelligence platform",
-    path: "/dot-x",
-    icon: <Bot className="h-16 w-16 text-white" />,
-    bgColor: "from-blue-500 to-blue-700",
-    permission: "modules.dotx"
-  }, {
     id: "data-management",
     name: "Data Management Module",
     description: "Dashboard with supplier costing and analysis",
@@ -44,6 +36,14 @@ const PrimaryModules: React.FC = () => {
     icon: <Gift className="h-16 w-16 text-white" />,
     bgColor: "from-purple-500 to-purple-700",
     permission: "modules.loyalty"
+  }, {
+    id: "dot-x",
+    name: "DOT-X",
+    description: "The next generation business intelligence platform",
+    path: "/dot-x",
+    icon: <Bot className="h-16 w-16 text-white" />,
+    bgColor: "from-blue-500 to-blue-700",
+    permission: "modules.dotx"
   }, {
     id: "tech-hub",
     name: "Tech Hub Module",
@@ -69,9 +69,9 @@ const PrimaryModules: React.FC = () => {
       <h1 className="text-3xl font-bold mb-2 text-gray-100">PRIMARY MODULES</h1>
       <p className="text-gray-300 mb-6">Select one of our core business modules to get started</p>
       
-      {/* Primary Modules - improved styling with frosted glass effect */}
+      {/* Primary Modules - 2x2 grid with specific order */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {primaryModules.map(module => (
+        {primaryModules.map((module, index) => (
           <Card 
             key={module.id} 
             className="overflow-hidden transition-all duration-300 hover:shadow-xl hover:scale-105 backdrop-blur-lg bg-black/40 border-white/10 text-white"
