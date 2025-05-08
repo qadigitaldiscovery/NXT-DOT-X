@@ -1,12 +1,12 @@
 
 import React from 'react';
-import CostAnalysis from '../../CostAnalysis';
+import CostDashboard from './CostDashboard';
 import { TradingSystemLayout } from '@/components/layout/TradingSystemLayout';
 
 const SupplierCostingPage = () => {
   return (
     <TradingSystemLayout>
-      <CostAnalysis />
+      <CostDashboard />
     </TradingSystemLayout>
   );
 };
