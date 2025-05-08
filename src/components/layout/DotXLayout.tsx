@@ -61,7 +61,15 @@ export const DotXLayout = () => {
         )}>
         <SharedNavbar 
           onMenuClick={toggleSidebar} 
-          moduleTitle="DOT-X Platform"
+          moduleTitle={
+            <div className="flex flex-col">
+              <div className="flex items-baseline">
+                <span className="text-xl font-bold">DOT-</span>
+                <span className="text-3xl font-bold">X</span>
+              </div>
+              <div className="text-xs text-gray-400 -mt-1">AND HIS AI ARMY</div>
+            </div>
+          }
         />
         <main className="flex-1 overflow-y-auto p-4 md:p-6 bg-gray-50">
           <Outlet />
