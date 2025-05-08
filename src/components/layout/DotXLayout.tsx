@@ -5,7 +5,7 @@ import { SharedNavbar } from './SharedNavbar';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { cn } from '@/lib/utils';
 import { Outlet } from 'react-router-dom';
-import { Bot, Shield, Users, Settings, BarChart3, Zap, Brain, Star } from 'lucide-react';
+import { Bot, Shield, Users, Settings, BarChart3, Zap, Brain } from 'lucide-react';
 
 interface NavItem {
   label: string;
