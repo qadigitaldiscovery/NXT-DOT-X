@@ -240,13 +240,6 @@ const App = () => {
                 </PermissionGuard>
               } />
               
-              {/* Legacy routes for Loyalty Rewards - redirect to new structure */}
-              <Route path="/beta2" element={<Navigate to="/loyalty-rewards" replace />} />
-              <Route path="/beta2/members" element={<Navigate to="/loyalty-rewards/members" replace />} />
-              <Route path="/beta2/rewards" element={<Navigate to="/loyalty-rewards/rewards" replace />} />
-              <Route path="/beta2/analytics" element={<Navigate to="/loyalty-rewards/analytics" replace />} />
-              <Route path="/beta2/settings" element={<Navigate to="/loyalty-rewards/settings" replace />} />
-              
               {/* Trading System Module Routes */}
               <Route path="/trading-system" element={
                 <PermissionGuard requiredPermission="modules.trading">
@@ -272,18 +265,6 @@ const App = () => {
                   </TradingSystemLayout>
                 </PermissionGuard>
               } />
-              
-              <Route path="/tech-hub/api-management" element={
-                <PermissionGuard requiredPermission="modules.trading">
-                  <TradingSystemLayout>
-                    <TechHubApiManagement />
-                  </TradingSystemLayout>
-                </PermissionGuard>
-              } />
-              
-              {/* Legacy routes for Trading System - redirect to new structure */}
-              <Route path="/beta3" element={<Navigate to="/trading-system" replace />} />
-              <Route path="/beta3/settings" element={<Navigate to="/trading-system/settings" replace />} />
               
               <Route path="/tech-hub/api-management" element={
                 <PermissionGuard requiredPermission="modules.trading">
