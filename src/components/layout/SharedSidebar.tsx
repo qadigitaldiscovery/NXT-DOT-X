@@ -29,14 +29,14 @@ export const SharedSidebar = ({ open, onToggle, navItems }: SharedSidebarProps) 
   const isMobile = useIsMobile();
   const [expandedItems, setExpandedItems] = React.useState<string[]>([]);
   
-  // Style constants
-  const sidebarBgColor = 'bg-slate-800';
+  // Style constants - updated for a more stylish look
+  const sidebarBgColor = 'bg-gradient-to-b from-slate-800 to-slate-900';
   const textColor = 'text-gray-200';
-  const textHoverColor = 'hover:text-white';
-  const activeBgColor = 'bg-blue-600';
+  const textHoverColor = 'hover:text-blue-300';
+  const activeBgColor = 'bg-gradient-to-r from-blue-600 to-indigo-700';
   const activeTextColor = 'text-white';
   const headerTextColor = 'text-white';
-  const hoverBgColor = 'hover:bg-slate-700';
+  const hoverBgColor = 'hover:bg-slate-700/50';
 
   const toggleExpanded = (label: string) => {
     setExpandedItems(prev => 
@@ -51,14 +51,14 @@ export const SharedSidebar = ({ open, onToggle, navItems }: SharedSidebarProps) 
       {/* Mobile backdrop */}
       {open && isMobile && (
         <div 
-          className="fixed inset-0 bg-black bg-opacity-50 z-20"
+          className="fixed inset-0 bg-black bg-opacity-50 z-20 backdrop-blur-sm"
           onClick={onToggle}
         />
       )}
 
       <aside 
         className={cn(
-          "fixed md:sticky top-0 left-0 h-screen z-30 shadow-lg flex flex-col transition-all duration-300 ease-in-out",
+          "fixed md:sticky top-0 left-0 h-screen z-30 shadow-xl flex flex-col transition-all duration-300 ease-in-out",
           sidebarBgColor,
           open ? "w-72" : "w-0 md:w-24",
           isMobile && !open && "-translate-x-full",
@@ -67,20 +67,26 @@ export const SharedSidebar = ({ open, onToggle, navItems }: SharedSidebarProps) 
       >
         {/* Sidebar Header */}
         <div className={cn(
-          "flex items-center justify-between p-5 h-20",
+          "flex items-center justify-between p-6 h-24 border-b border-blue-900/40",
         )}>
           {/* Render Title only when open */}
           {open && (
-            <h1 className={cn("text-2xl font-bold whitespace-nowrap", headerTextColor)}>
-              NXT DOT-X
-            </h1>
+            <div className="flex flex-col">
+              <span className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-indigo-500 bg-clip-text text-transparent">
+                DOT-X
+              </span>
+              <span className="text-xs text-blue-400 font-semibold">NAVIGATION</span>
+            </div>
           )}
           {/* Toggle Button */}
           <Button
             variant="ghost"
             size="icon"
             onClick={onToggle}
-            className={cn(headerTextColor, textHoverColor, open ? "ml-2" : "mx-auto")}
+            className={cn(
+              "bg-blue-900/20 hover:bg-blue-800/30 text-blue-300 hover:text-blue-200 rounded-lg",
+              open ? "ml-2" : "mx-auto"
+            )}
           >
             {isMobile ? (
               <ChevronLeft className="h-6 w-6" />
@@ -92,7 +98,7 @@ export const SharedSidebar = ({ open, onToggle, navItems }: SharedSidebarProps) 
 
         {/* Full Navigation List (Visible when open) */}
         <nav className={cn(
-          "flex-1 py-4 px-3 overflow-y-auto scrollbar-thin scrollbar-thumb-slate-600 scrollbar-track-slate-700",
+          "flex-1 py-6 px-4 overflow-y-auto scrollbar-thin scrollbar-thumb-blue-800 scrollbar-track-slate-800",
           !open && "hidden" // Hide when sidebar is collapsed
         )}>
           <SidebarNavList 
@@ -118,9 +124,9 @@ export const SharedSidebar = ({ open, onToggle, navItems }: SharedSidebarProps) 
           />
         )}
 
-        {/* Footer area - removed home button */}
-        <div className="mt-auto p-4 border-t border-gray-700">
-          {/* Content can be added here if needed */}
+        {/* Footer area */}
+        <div className="p-4 border-t border-blue-900/40 flex items-center justify-center">
+          <div className="text-sm text-blue-400 font-mono">v2.5.8</div>
         </div>
       </aside>
     </>

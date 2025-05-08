@@ -37,22 +37,22 @@ export const SidebarNavItem = ({
       <li key={item.path}>
         <div 
           className={cn(
-            "flex items-center justify-between px-4 py-3 rounded-md transition-colors text-lg cursor-pointer",
+            "flex items-center justify-between px-4 py-4 rounded-md transition-colors text-xl cursor-pointer",
             textColor, textHoverColor, hoverBgColor
           )}
           onClick={() => onToggleExpand(item.label)}
         >
-          <div className="flex items-center gap-3">
-            <item.icon className="h-6 w-6" />
+          <div className="flex items-center gap-4">
+            <item.icon className="h-7 w-7" />
             <span>{item.label}</span>
           </div>
           {isExpanded ? 
-            <ChevronDown className="h-5 w-5" /> : 
-            <ChevronRight className="h-5 w-5" />
+            <ChevronDown className="h-6 w-6" /> : 
+            <ChevronRight className="h-6 w-6" />
           }
         </div>
         {isExpanded && (
-          <ul className="ml-9 space-y-2 mt-2">
+          <ul className="ml-10 space-y-2 mt-2">
             {item.children.map(child => (
               <li key={child.path}>
                 <NavLink
@@ -60,14 +60,14 @@ export const SidebarNavItem = ({
                   end
                   className={({ isActive }) =>
                     cn(
-                      'flex items-center gap-3 px-4 py-3 rounded-md transition-colors text-lg',
+                      'flex items-center gap-4 px-4 py-3 rounded-md transition-colors text-xl',
                       isActive
-                        ? `${activeBgColor} ${activeTextColor}`
+                        ? `${activeBgColor} ${activeTextColor} shadow-lg shadow-blue-900/30`
                         : `${textColor} ${textHoverColor} ${hoverBgColor}`
                     )
                   }
                 >
-                  <child.icon className="h-6 w-6" />
+                  <child.icon className="h-7 w-7" />
                   <span>{child.label}</span>
                 </NavLink>
               </li>
@@ -79,20 +79,20 @@ export const SidebarNavItem = ({
   }
 
   return (
-    <li key={item.path}>
+    <li key={item.path} className="my-2">
       <NavLink
         to={item.path}
         end
         className={({ isActive }) =>
           cn(
-            'flex items-center gap-3 px-4 py-3 rounded-md transition-colors text-lg',
+            'flex items-center gap-4 px-4 py-4 rounded-md transition-colors text-xl',
             isActive
-              ? `${activeBgColor} ${activeTextColor}`
+              ? `${activeBgColor} ${activeTextColor} shadow-lg shadow-blue-900/30`
               : `${textColor} ${textHoverColor} ${hoverBgColor}`
           )
         }
       >
-        <item.icon className="h-6 w-6" />
+        <item.icon className="h-7 w-7" />
         <span>{item.label}</span>
       </NavLink>
     </li>

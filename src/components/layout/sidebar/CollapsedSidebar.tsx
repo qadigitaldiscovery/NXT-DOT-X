@@ -38,7 +38,7 @@ export const CollapsedSidebar = ({
   );
 
   return (
-    <div className="hidden md:flex flex-col items-center pt-4 space-y-3">
+    <div className="hidden md:flex flex-col items-center pt-6 space-y-5">
       {allItems.map(item => (
         <NavLink
           key={item.path}
@@ -48,13 +48,13 @@ export const CollapsedSidebar = ({
             cn(
               'w-16 h-16 flex items-center justify-center rounded-md transition-colors',
               isActive 
-                ? `${activeBgColor} ${activeTextColor}` 
+                ? `${activeBgColor} ${activeTextColor} shadow-lg shadow-blue-500/25` 
                 : `${textColor} ${hoverBgColor}`
             )
           }
           title={item.label}
         >
-          <item.icon className="h-7 w-7" />
+          <item.icon className="h-8 w-8" />
         </NavLink>
       ))}
     </div>

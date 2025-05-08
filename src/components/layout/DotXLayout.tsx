@@ -21,7 +21,7 @@ interface NavCategory {
 
 const dotXNavItems: NavCategory[] = [
   {
-    name: "DOT-X COMMAND CENTER",
+    name: "NAVIGATION",
     items: [
       { label: 'Mission Control', icon: BarChart3, path: '/dot-x' },
       { label: 'AI Agents', icon: Bot, path: '/dot-x/ai-agents' },
@@ -63,7 +63,7 @@ export const DotXLayout = () => {
         )}>
         <SharedNavbar 
           onMenuClick={toggleSidebar} 
-          moduleTitle="DOT-X"
+          moduleTitle="DOT-X COMMAND CENTER"
           notificationArea={
             <div className="flex flex-col">
               <div className="flex items-baseline">
