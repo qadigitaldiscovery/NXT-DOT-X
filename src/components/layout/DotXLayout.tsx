@@ -61,7 +61,8 @@ export const DotXLayout = () => {
         )}>
         <SharedNavbar 
           onMenuClick={toggleSidebar} 
-          moduleTitle={
+          moduleTitle="DOT-X"
+          notificationArea={
             <div className="flex flex-col">
               <div className="flex items-baseline">
                 <span className="text-xl font-bold">DOT-</span>
