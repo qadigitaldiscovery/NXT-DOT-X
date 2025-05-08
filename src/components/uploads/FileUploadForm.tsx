@@ -19,18 +19,21 @@ import {
 import { Label } from "@/components/ui/label";
 import { useSuppliers } from '@/hooks/use-suppliers';
 import { useCreateSupplierUpload } from '@/hooks/use-supplier-uploads';
-import { UploadCloud } from 'lucide-react';
+import { UploadCloud, InfoIcon } from 'lucide-react';
+import { toast } from 'sonner';
 
 type FileUploadFormProps = {
   supplierId?: string;
   onUploadComplete?: () => void;
+  allowHoldingBucket?: boolean;
 };
 
-export function FileUploadForm({ supplierId, onUploadComplete }: FileUploadFormProps) {
+export function FileUploadForm({ supplierId, onUploadComplete, allowHoldingBucket = false }: FileUploadFormProps) {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [selectedSupplier, setSelectedSupplier] = useState<string>(supplierId || '');
   const [isUploading, setIsUploading] = useState(false);
   const [dragActive, setDragActive] = useState(false);
+  const [useHoldingBucket, setUseHoldingBucket] = useState(false);
   
   const { data: suppliers = [] } = useSuppliers();
   const { mutate: createUpload } = useCreateSupplierUpload();
@@ -65,7 +68,13 @@ export function FileUploadForm({ supplierId, onUploadComplete }: FileUploadFormP
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
     
-    if (!selectedFile || !selectedSupplier) {
+    if (!selectedFile) {
+      toast.error("Please select a file to upload");
+      return;
+    }
+    
+    if (!selectedSupplier && !useHoldingBucket) {
+      toast.error("Please select a supplier or use the holding bucket option");
       return;
     }
     
@@ -73,9 +82,10 @@ export function FileUploadForm({ supplierId, onUploadComplete }: FileUploadFormP
     
     createUpload(
       {
-        supplier_id: selectedSupplier,
+        supplier_id: useHoldingBucket ? 'holding' : selectedSupplier,
         file: selectedFile,
-        source: 'direct'
+        source: 'direct',
+        for_allocation: useHoldingBucket
       },
       {
         onSuccess: () => {
@@ -104,23 +114,53 @@ export function FileUploadForm({ supplierId, onUploadComplete }: FileUploadFormP
         <CardContent className="space-y-6">
           {!supplierId && (
             <div className="space-y-2">
-              <Label htmlFor="supplier">Select Supplier</Label>
-              <Select
-                value={selectedSupplier}
-                onValueChange={setSelectedSupplier}
-                disabled={isUploading}
-              >
-                <SelectTrigger id="supplier">
-                  <SelectValue placeholder="Select a supplier" />
-                </SelectTrigger>
-                <SelectContent>
-                  {suppliers.map((supplier) => (
-                    <SelectItem key={supplier.id} value={supplier.id}>
-                      {supplier.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <div className="flex items-center justify-between">
+                <Label htmlFor="supplier">Select Supplier</Label>
+                
+                {allowHoldingBucket && (
+                  <div className="flex items-center space-x-2">
+                    <input 
+                      type="checkbox" 
+                      id="holding-bucket"
+                      className="rounded border-gray-300 text-primary focus:ring-primary"
+                      checked={useHoldingBucket}
+                      onChange={() => setUseHoldingBucket(!useHoldingBucket)}
+                      disabled={isUploading}
+                    />
+                    <Label 
+                      htmlFor="holding-bucket" 
+                      className="text-sm font-normal cursor-pointer flex items-center"
+                    >
+                      Upload to holding bucket for later allocation
+                    </Label>
+                  </div>
+                )}
+              </div>
+              
+              {!useHoldingBucket && (
+                <Select
+                  value={selectedSupplier}
+                  onValueChange={setSelectedSupplier}
+                  disabled={isUploading || useHoldingBucket}
+                >
+                  <SelectTrigger id="supplier">
+                    <SelectValue placeholder="Select a supplier" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {suppliers.map((supplier) => (
+                      <SelectItem key={supplier.id} value={supplier.id}>
+                        {supplier.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
+              
+              {useHoldingBucket && (
+                <div className="p-3 bg-amber-50 border border-amber-200 rounded-md text-sm text-amber-800">
+                  The file will be uploaded to a holding bucket and can be assigned to a supplier later.
+                </div>
+              )}
             </div>
           )}
           
@@ -180,7 +220,7 @@ export function FileUploadForm({ supplierId, onUploadComplete }: FileUploadFormP
           <Button 
             type="submit" 
             className="w-full"
-            disabled={!selectedFile || !selectedSupplier || isUploading}
+            disabled={(!selectedSupplier && !useHoldingBucket) || !selectedFile || isUploading}
             loading={isUploading}
           >
             <UploadCloud className="h-4 w-4 mr-2" />

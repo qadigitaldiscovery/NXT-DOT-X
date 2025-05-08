@@ -1,7 +1,7 @@
-
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { formatCurrency } from '@/lib/utils';
 
 export type SupplierUpload = {
   id: string;
@@ -18,13 +18,14 @@ export type SupplierUpload = {
   processing_start: string | null;
   processing_end: string | null;
   created_at: string;
+  for_allocation: boolean;
   // Joined fields
   supplier_name?: string;
 };
 
-export function useSupplierUploads(supplierId?: string) {
+export function useSupplierUploads(supplierId?: string, includeHolding: boolean = false) {
   return useQuery({
-    queryKey: ['supplier-uploads', supplierId],
+    queryKey: ['supplier-uploads', supplierId, includeHolding],
     queryFn: async () => {
       let query = supabase
         .from('supplier_cost_uploads')
@@ -33,8 +34,16 @@ export function useSupplierUploads(supplierId?: string) {
           suppliers:supplier_id (name)
         `);
 
-      if (supplierId) {
+      if (supplierId && supplierId !== 'holding') {
         query = query.eq('supplier_id', supplierId);
+      } else if (includeHolding && !supplierId) {
+        // Include both regular uploads and holding bucket
+      } else if (supplierId === 'holding') {
+        // Only get holding bucket uploads
+        query = query.eq('for_allocation', true);
+      } else if (!includeHolding) {
+        // Skip holding bucket uploads
+        query = query.eq('for_allocation', false);
       }
       
       const { data, error } = await query.order('created_at', { ascending: false });
@@ -48,7 +57,7 @@ export function useSupplierUploads(supplierId?: string) {
       // Transform the nested objects
       const transformedData = data.map(item => ({
         ...item,
-        supplier_name: item.suppliers?.name || 'Unknown Supplier',
+        supplier_name: item.for_allocation ? 'Holding Bucket' : (item.suppliers?.name || 'Unknown Supplier'),
         suppliers: undefined
       }));
       
@@ -65,9 +74,17 @@ export function useCreateSupplierUpload() {
       supplier_id: string; 
       file: File;
       source: 'direct' | 'email' | 'api' | 'sftp';
+      for_allocation?: boolean;
     }) => {
       const { file, ...uploadData } = upload;
-      const filePath = `uploads/${uploadData.supplier_id}/${Date.now()}-${file.name}`;
+      
+      // Handle the case when the file is going to a holding bucket
+      const isHoldingBucket = upload.supplier_id === 'holding' || uploadData.for_allocation;
+      
+      // Use a different path for holding bucket files
+      const filePath = isHoldingBucket 
+        ? `uploads/holding/${Date.now()}-${file.name}`
+        : `uploads/${uploadData.supplier_id}/${Date.now()}-${file.name}`;
       
       // Step 1: Upload file to storage
       const { error: storageError } = await supabase.storage
@@ -84,12 +101,13 @@ export function useCreateSupplierUpload() {
       const { data, error: dbError } = await supabase
         .from('supplier_cost_uploads')
         .insert({
-          supplier_id: uploadData.supplier_id,
+          supplier_id: isHoldingBucket ? null : uploadData.supplier_id,
           file_name: file.name,
           file_path: filePath,
           file_type: file.type || file.name.split('.').pop() || 'unknown',
           file_size: file.size,
-          source: uploadData.source
+          source: uploadData.source,
+          for_allocation: isHoldingBucket ? true : false
         })
         .select()
         .single();
@@ -196,6 +214,66 @@ export function useProcessSupplierUpload() {
       queryClient.invalidateQueries({ queryKey: ['supplier-uploads'] });
       queryClient.invalidateQueries({ queryKey: ['supplier-costs'] });
       toast.success('File processed successfully');
+    }
+  });
+}
+
+export function useAssignUploadToSupplier() {
+  const queryClient = useQueryClient();
+  
+  return useMutation({
+    mutationFn: async ({ uploadId, supplierId }: { uploadId: string, supplierId: string }) => {
+      // First fetch the original upload to get the file path
+      const { data: upload, error: fetchError } = await supabase
+        .from('supplier_cost_uploads')
+        .select('file_path, file_name')
+        .eq('id', uploadId)
+        .single();
+      
+      if (fetchError) {
+        console.error('Error fetching upload:', fetchError);
+        toast.error('Failed to assign upload to supplier');
+        throw fetchError;
+      }
+      
+      // Create a new path for the file
+      const oldPath = upload.file_path;
+      const newPath = `uploads/${supplierId}/${Date.now()}-${upload.file_name}`;
+      
+      // Copy the file to the new location
+      const { error: copyError } = await supabase.storage
+        .from('supplier-price-lists')
+        .copy(oldPath, newPath);
+      
+      if (copyError) {
+        console.error('Error copying file:', copyError);
+        toast.error('Failed to assign upload to supplier');
+        throw copyError;
+      }
+      
+      // Update the database record
+      const { data: updatedUpload, error: updateError } = await supabase
+        .from('supplier_cost_uploads')
+        .update({
+          supplier_id: supplierId,
+          file_path: newPath,
+          for_allocation: false
+        })
+        .eq('id', uploadId)
+        .select()
+        .single();
+      
+      if (updateError) {
+        console.error('Error updating upload record:', updateError);
+        toast.error('Failed to assign upload to supplier');
+        throw updateError;
+      }
+      
+      return updatedUpload as SupplierUpload;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['supplier-uploads'] });
+      toast.success('Upload successfully assigned to supplier');
     }
   });
 }

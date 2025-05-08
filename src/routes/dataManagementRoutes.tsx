@@ -39,6 +39,8 @@ export const DataManagementRoutes = () => {
         {/* File Uploads */}
         <Route path="uploads" element={<UploadsPage />} />
         <Route path="uploads/new" element={<UploadsPage />} />
+        <Route path="uploads/holding" element={<UploadsPage />} />
+        <Route path="uploads/bulk-import" element={<UploadsPage />} />
         
         {/* Document Repository */}
         <Route path="documents" element={<DocumentsPage />} />
