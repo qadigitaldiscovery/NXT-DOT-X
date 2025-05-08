@@ -65,6 +65,18 @@ const ApiEndpointList: React.FC = () => {
     navigator.clipboard.writeText(apiKey);
     toast.success(`API key for ${name} copied to clipboard`);
   };
+  
+  const handleDeleteEndpoint = (id: string, name: string) => {
+    // Filter out the endpoint with the given id
+    const updatedEndpoints = endpoints.filter(endpoint => endpoint.id !== id);
+    setEndpoints(updatedEndpoints);
+    
+    // Update localStorage
+    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(updatedEndpoints));
+    
+    // Show confirmation message
+    toast.success(`API endpoint "${name}" has been deleted`);
+  };
 
   const onSubmit = (data: EndpointFormValues) => {
     // Create a new endpoint with the form data
@@ -120,6 +132,7 @@ const ApiEndpointList: React.FC = () => {
             onToggleApiKey={toggleApiKeyVisibility}
             onCopyApiKey={copyApiKey}
             onTestEndpoint={handleTestEndpoint}
+            onDeleteEndpoint={handleDeleteEndpoint}
           />
         </CardContent>
       </Card>

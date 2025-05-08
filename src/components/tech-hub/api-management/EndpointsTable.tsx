@@ -10,6 +10,7 @@ interface EndpointsTableProps {
   onToggleApiKey: (id: string) => void;
   onCopyApiKey: (apiKey: string, name: string) => void;
   onTestEndpoint: (id: string) => void;
+  onDeleteEndpoint: (id: string, name: string) => void;
 }
 
 const EndpointsTable: React.FC<EndpointsTableProps> = ({ 
@@ -17,7 +18,8 @@ const EndpointsTable: React.FC<EndpointsTableProps> = ({
   showApiKeys, 
   onToggleApiKey, 
   onCopyApiKey, 
-  onTestEndpoint 
+  onTestEndpoint,
+  onDeleteEndpoint
 }) => {
   return (
     <div className="rounded-md border">
@@ -43,6 +45,7 @@ const EndpointsTable: React.FC<EndpointsTableProps> = ({
                 onToggleApiKey={() => onToggleApiKey(endpoint.id)}
                 onCopyApiKey={() => endpoint.apiKey && onCopyApiKey(endpoint.apiKey, endpoint.name)}
                 onTestEndpoint={() => onTestEndpoint(endpoint.id)}
+                onDeleteEndpoint={() => onDeleteEndpoint(endpoint.id, endpoint.name)}
               />
             ))
           ) : (

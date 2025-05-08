@@ -3,7 +3,7 @@ import React from 'react';
 import { Button } from "@/components/ui/button";
 import { TableCell, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { ExternalLink, KeyRound } from "lucide-react";
+import { ExternalLink, KeyRound, Trash2 } from "lucide-react";
 import { ApiEndpoint } from './types';
 
 interface ApiEndpointRowProps {
@@ -12,6 +12,7 @@ interface ApiEndpointRowProps {
   onToggleApiKey: () => void;
   onCopyApiKey: () => void;
   onTestEndpoint: () => void;
+  onDeleteEndpoint: () => void;
 }
 
 const ApiEndpointRow: React.FC<ApiEndpointRowProps> = ({ 
@@ -19,7 +20,8 @@ const ApiEndpointRow: React.FC<ApiEndpointRowProps> = ({
   showApiKey, 
   onToggleApiKey, 
   onCopyApiKey, 
-  onTestEndpoint 
+  onTestEndpoint,
+  onDeleteEndpoint
 }) => {
   // Function to render the appropriate status badge
   const getStatusBadge = (status: string) => {
@@ -110,9 +112,14 @@ const ApiEndpointRow: React.FC<ApiEndpointRowProps> = ({
       <TableCell>{getStatusBadge(endpoint.status)}</TableCell>
       <TableCell>{new Date(endpoint.lastUsed).toLocaleString()}</TableCell>
       <TableCell className="text-right">
-        <Button variant="outline" size="sm" onClick={onTestEndpoint}>
-          Test
-        </Button>
+        <div className="flex justify-end space-x-2">
+          <Button variant="outline" size="sm" onClick={onTestEndpoint}>
+            Test
+          </Button>
+          <Button variant="destructive" size="sm" onClick={onDeleteEndpoint}>
+            <Trash2 className="h-4 w-4" />
+          </Button>
+        </div>
       </TableCell>
     </TableRow>
   );
