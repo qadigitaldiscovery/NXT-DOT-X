@@ -24,18 +24,13 @@ import { PlusCircle } from 'lucide-react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
+import { Permission } from '@/context/UserManagementContext';
 
 const roleFormSchema = z.object({
   name: z.string().min(3, { message: "Role name must be at least 3 characters" }),
   description: z.string().optional(),
   permissions: z.array(z.string()).nonempty({ message: "Select at least one permission" }),
 });
-
-interface Permission {
-  id: string;
-  name: string;
-  category: string;
-}
 
 interface AddRoleDialogProps {
   open: boolean;

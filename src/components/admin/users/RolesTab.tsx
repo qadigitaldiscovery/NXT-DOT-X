@@ -15,32 +15,15 @@ import { PlusCircle } from 'lucide-react';
 import { toast } from 'sonner';
 import { useAuth } from '@/context/AuthContext';
 import AddRoleDialog from './AddRoleDialog';
+import { useUserManagement } from '@/context/UserManagementContext';
 
-interface Role {
-  id: string;
-  name: string;
-  description: string;
-  permissions: string[];
-}
-
-interface Permission {
-  id: string;
-  name: string;
-  category: string;
-}
-
-interface RolesTabProps {
-  rolesData: Role[];
-  setRolesData: React.Dispatch<React.SetStateAction<Role[]>>;
-  permissions: Permission[];
-}
-
-const RolesTab: React.FC<RolesTabProps> = ({ rolesData, setRolesData, permissions }) => {
+const RolesTab: React.FC = () => {
   const { hasPermission } = useAuth();
+  const { roles, permissions, addRole } = useUserManagement();
   const [roleDialogOpen, setRoleDialogOpen] = useState(false);
 
-  const handleAddRole = (newRole: Role) => {
-    setRolesData([...rolesData, newRole]);
+  const handleAddRole = (newRole: any) => {
+    addRole(newRole);
     toast.success(`Role ${newRole.name} created successfully`);
     setRoleDialogOpen(false);
   };
@@ -74,7 +57,7 @@ const RolesTab: React.FC<RolesTabProps> = ({ rolesData, setRolesData, permission
             </TableRow>
           </TableHeader>
           <TableBody>
-            {rolesData.map((role) => (
+            {roles.map((role) => (
               <TableRow key={role.id}>
                 <TableCell className="font-medium">{role.name}</TableCell>
                 <TableCell>{role.description}</TableCell>

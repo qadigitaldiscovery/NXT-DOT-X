@@ -1,25 +1,18 @@
 
 import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { useUserManagement } from '@/context/UserManagementContext';
 
-interface Permission {
-  id: string;
-  name: string;
-  category: string;
-}
-
-interface PermissionsTabProps {
-  permissions: Permission[];
-}
-
-const PermissionsTab: React.FC<PermissionsTabProps> = ({ permissions }) => {
+const PermissionsTab: React.FC = () => {
+  const { permissions } = useUserManagement();
+  
   // Group permissions by category
   const permissionsByCategory = permissions.reduce((acc, permission) => {
     const { category } = permission;
     if (!acc[category]) acc[category] = [];
     acc[category].push(permission);
     return acc;
-  }, {} as Record<string, Permission[]>);
+  }, {} as Record<string, typeof permissions>);
 
   return (
     <Card>

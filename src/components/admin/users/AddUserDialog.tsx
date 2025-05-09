@@ -30,6 +30,7 @@ import { UserPlus } from 'lucide-react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
+import { Role } from '@/context/UserManagementContext';
 
 // Form schema
 const userFormSchema = z.object({
@@ -43,12 +44,7 @@ interface AddUserDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onAddUser: (user: any) => void;
-  rolesData: {
-    id: string;
-    name: string;
-    description: string;
-    permissions: string[];
-  }[];
+  rolesData: Role[];
 }
 
 const AddUserDialog: React.FC<AddUserDialogProps> = ({ open, onOpenChange, onAddUser, rolesData }) => {

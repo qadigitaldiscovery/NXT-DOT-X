@@ -16,29 +16,11 @@ import { Search, UserPlus } from 'lucide-react';
 import { toast } from 'sonner';
 import { useAuth } from '@/context/AuthContext';
 import AddUserDialog from './AddUserDialog';
+import { useUserManagement } from '@/context/UserManagementContext';
 
-interface User {
-  id: string;
-  username: string;
-  email: string;
-  role: string;
-  status: string;
-  created: string;
-}
-
-interface UsersTabProps {
-  users: User[];
-  rolesData: {
-    id: string;
-    name: string;
-    description: string;
-    permissions: string[];
-  }[];
-  setUsers: React.Dispatch<React.SetStateAction<User[]>>;
-}
-
-const UsersTab: React.FC<UsersTabProps> = ({ users, rolesData, setUsers }) => {
+const UsersTab: React.FC = () => {
   const { hasPermission } = useAuth();
+  const { users, roles: rolesData, addUser } = useUserManagement();
   const [searchTerm, setSearchTerm] = useState('');
   const [dialogOpen, setDialogOpen] = useState(false);
 
@@ -49,8 +31,8 @@ const UsersTab: React.FC<UsersTabProps> = ({ users, rolesData, setUsers }) => {
     user.role.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const handleAddUser = (newUser: User) => {
-    setUsers([...users, newUser]);
+  const handleAddUser = (newUser: any) => {
+    addUser(newUser);
     toast.success(`User ${newUser.username} created successfully`);
     setDialogOpen(false);
   };
