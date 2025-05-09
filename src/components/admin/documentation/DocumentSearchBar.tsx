@@ -4,26 +4,26 @@ import { Search } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 
 interface DocumentSearchBarProps {
-  onSearch: (query: string) => void;
+  onSearch: (searchTerm: string) => void;
 }
 
 export const DocumentSearchBar = ({ onSearch }: DocumentSearchBarProps) => {
-  const [query, setQuery] = useState('');
-  
-  const handleSubmit = (e: React.FormEvent) => {
+  const [searchTerm, setSearchTerm] = useState('');
+
+  const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    onSearch(query);
+    onSearch(searchTerm);
   };
-  
+
   return (
-    <form onSubmit={handleSubmit} className="relative mb-4">
-      <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+    <form onSubmit={handleSearch} className="relative w-full">
+      <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-gray-500 dark:text-gray-400" />
       <Input
         type="search"
         placeholder="Search documents..."
-        value={query}
-        onChange={(e) => setQuery(e.target.value)}
-        className="pl-10 w-full"
+        className="w-full pl-9 bg-white/50 dark:bg-gray-900/50 border border-gray-300 dark:border-gray-700"
+        value={searchTerm}
+        onChange={(e) => setSearchTerm(e.target.value)}
       />
     </form>
   );
