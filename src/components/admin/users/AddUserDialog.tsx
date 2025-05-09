@@ -32,12 +32,29 @@ import { useForm } from 'react-hook-form';
 import * as z from 'zod';
 import { Role } from '@/context/UserManagementContext';
 
-// Form schema
+// Enhanced form schema with validation
 const userFormSchema = z.object({
-  username: z.string().min(3, { message: "Username must be at least 3 characters" }),
-  email: z.string().email({ message: "Invalid email address" }),
-  password: z.string().min(6, { message: "Password must be at least 6 characters" }),
-  role: z.string().min(1, { message: "Please select a role" }),
+  username: z
+    .string()
+    .min(3, { message: "Username must be at least 3 characters" })
+    .max(50, { message: "Username must be less than 50 characters" })
+    .regex(/^[a-zA-Z0-9_]+$/, { 
+      message: "Username can only contain letters, numbers and underscores" 
+    }),
+  email: z
+    .string()
+    .email({ message: "Invalid email address" })
+    .max(100, { message: "Email must be less than 100 characters" }),
+  password: z
+    .string()
+    .min(8, { message: "Password must be at least 8 characters" })
+    .max(100, { message: "Password must be less than 100 characters" })
+    .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/, {
+      message: "Password must contain at least one uppercase letter, one lowercase letter, one number and one special character"
+    }),
+  role: z
+    .string()
+    .min(1, { message: "Please select a role" }),
 });
 
 interface AddUserDialogProps {

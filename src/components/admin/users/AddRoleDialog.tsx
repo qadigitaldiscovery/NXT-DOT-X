@@ -26,10 +26,22 @@ import { useForm } from 'react-hook-form';
 import * as z from 'zod';
 import { Permission } from '@/context/UserManagementContext';
 
+// Enhanced form schema with validation
 const roleFormSchema = z.object({
-  name: z.string().min(3, { message: "Role name must be at least 3 characters" }),
-  description: z.string().optional(),
-  permissions: z.array(z.string()).nonempty({ message: "Select at least one permission" }),
+  name: z
+    .string()
+    .min(3, { message: "Role name must be at least 3 characters" })
+    .max(50, { message: "Role name must be less than 50 characters" })
+    .regex(/^[a-zA-Z0-9_\- ]+$/, { 
+      message: "Role name can only contain letters, numbers, spaces, underscores and hyphens" 
+    }),
+  description: z
+    .string()
+    .max(200, { message: "Description must be less than 200 characters" })
+    .optional(),
+  permissions: z
+    .array(z.string())
+    .nonempty({ message: "Select at least one permission" }),
 });
 
 interface AddRoleDialogProps {
