@@ -73,7 +73,13 @@ export function SupplierMatchDialog({
     createSupplier({
       name: newSupplierName,
       code: newSupplierCode,
-      status: 'active'
+      status: 'active',
+      // Add the missing properties with null values to match the Supplier type
+      email: null,
+      phone: null,
+      contact_name: null,
+      payment_terms: null,
+      website: null
     }, {
       onSuccess: (newSupplier) => {
         toast.success(`Created supplier: ${newSupplier.name}`);
