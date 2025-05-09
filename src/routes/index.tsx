@@ -4,6 +4,7 @@ import NotFound from "@/pages/NotFound";
 import Landing from "@/pages/Landing";
 import RootHandler from '@/components/RootHandler';
 import Unauthorized from "@/pages/Unauthorized";
+import SupplierSettings from "@/pages/supplier-management/SupplierSettings";
 
 // Import module-specific routes
 import { AdminRoutes } from "./adminRoutes";
@@ -11,7 +12,7 @@ import { DataManagementRoutes } from "./dataManagementRoutes";
 import { LoyaltyRoutes } from "./loyaltyRoutes";
 import { TradingSystemRoutes } from "./tradingSystemRoutes";
 import { TechHubRoutes } from "./techHubRoutes";
-import { DotXRoutes } from "./dotXRoutes"; // New import for DOT-X routes
+import { DotXRoutes } from "./dotXRoutes";
 
 export const AppRoutes = () => {
   return (
@@ -25,6 +26,9 @@ export const AppRoutes = () => {
       
       {/* Legacy route redirects */}
       <Route path="/prototypes" element={<Navigate to="/" replace />} />
+
+      {/* Supplier Management Routes */}
+      <Route path="/supplier-settings" element={<SupplierSettings />} />
       
       {/* Module-specific Routes */}
       {AdminRoutes()}
@@ -32,7 +36,7 @@ export const AppRoutes = () => {
       {LoyaltyRoutes()}
       {TradingSystemRoutes()}
       {TechHubRoutes()}
-      {DotXRoutes()} // Added DOT-X routes
+      {DotXRoutes()}
       
       {/* 404 Page */}
       <Route path="*" element={<NotFound />} />

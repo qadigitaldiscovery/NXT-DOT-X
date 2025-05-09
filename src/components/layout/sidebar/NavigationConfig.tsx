@@ -13,6 +13,7 @@ export const navCategories: NavCategory[] = [
     name: "Cost Management",
     items: [
       { label: 'Supplier Costing', icon: Database, path: '/supplier-costing' },
+      { label: 'Supplier Settings', icon: Settings, path: '/supplier-settings' },
       { label: 'Cost Analysis', icon: BarChart3, path: '/cost-analysis' }
     ]
   },
