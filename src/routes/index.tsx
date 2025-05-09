@@ -10,7 +10,7 @@ import MasterDash from '@/pages/MasterDash';
 import { AdminRoutes } from "./adminRoutes";
 import { DataManagementRoutes } from "./dataManagementRoutes";
 import { LoyaltyRoutes } from "./loyaltyRoutes";
-import { TradingSystemRoutes } from "./tradingSystemRoutes";
+import { TradingSystemRoutes, CostManagementRoutes } from "./tradingSystemRoutes";
 import { TechHubRoutes } from "./techHubRoutes";
 import { DotXRoutes } from "./dotXRoutes";
 import { SupplierManagementRoutes } from "./supplierManagementRoutes";
@@ -39,6 +39,7 @@ export const AppRoutes = () => {
       {DotXRoutes()}
       {SupplierManagementRoutes()}
       {CustomerManagementRoutes()}
+      {CostManagementRoutes()}
       
       {/* 404 Page */}
       <Route path="*" element={<NotFound />} />

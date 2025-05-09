@@ -1,13 +1,10 @@
 
 import React from 'react';
-import CostDashboard from './data-management/cost-management/CostDashboard';
+import { Navigate } from 'react-router-dom';
 
 const SupplierCosting = () => {
-  return (
-    <div className="space-y-6">
-      <CostDashboard />
-    </div>
-  );
+  // Redirect to the actual supplier costing page
+  return <Navigate to="/supplier-costing" replace />;
 };
 
 export default SupplierCosting;

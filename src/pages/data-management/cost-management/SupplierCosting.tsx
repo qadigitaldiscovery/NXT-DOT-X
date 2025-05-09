@@ -1,14 +1,16 @@
 
 import React from 'react';
-import CostDashboard from './CostDashboard';
 import { TradingSystemLayout } from '@/components/layout/TradingSystemLayout';
+import CostDashboard from './CostDashboard';
 
-const SupplierCostingPage = () => {
+const SupplierCosting = () => {
   return (
     <TradingSystemLayout>
-      <CostDashboard />
+      <div className="space-y-6">
+        <CostDashboard />
+      </div>
     </TradingSystemLayout>
   );
 };
 
-export default SupplierCostingPage;
+export default SupplierCosting;
