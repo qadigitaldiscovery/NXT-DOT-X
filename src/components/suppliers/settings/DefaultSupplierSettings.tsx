@@ -34,7 +34,7 @@ export const DefaultSupplierSettings = () => {
     defaultValues: {
       defaultStatus: 'active',
       defaultPaymentTerms: 'Net 30',
-      defaultCurrency: 'USD',
+      defaultCurrency: 'ZAR',
       defaultEmailTemplate: '',
     },
   });
@@ -122,6 +122,7 @@ export const DefaultSupplierSettings = () => {
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
+                    <SelectItem value="ZAR">ZAR - South African Rand</SelectItem>
                     <SelectItem value="USD">USD - US Dollar</SelectItem>
                     <SelectItem value="EUR">EUR - Euro</SelectItem>
                     <SelectItem value="GBP">GBP - British Pound</SelectItem>

@@ -43,6 +43,10 @@ export function convertCurrency(
   const fallbackRates: Record<string, number> = {
     'USD_to_ZAR': 18.57, // 1 USD = 18.57 ZAR (sample rate)
     'ZAR_to_USD': 0.0538, // 1 ZAR = 0.0538 USD (sample rate)
+    'EUR_to_ZAR': 20.12, // 1 EUR = 20.12 ZAR (sample rate)
+    'ZAR_to_EUR': 0.0497, // 1 ZAR = 0.0497 EUR (sample rate) 
+    'GBP_to_ZAR': 23.42, // 1 GBP = 23.42 ZAR (sample rate)
+    'ZAR_to_GBP': 0.0427, // 1 ZAR = 0.0427 GBP (sample rate)
   };
   
   const rateKey = `${fromCurrency}_to_${toCurrency}`;
