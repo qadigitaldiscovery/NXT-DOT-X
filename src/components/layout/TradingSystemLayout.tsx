@@ -1,8 +1,10 @@
 
 import React from 'react';
 import { Outlet } from 'react-router-dom';
-import { Sidebar, SidebarProvider, useSidebar } from '@/components/ui/sidebar';
 import { 
+  Sidebar, 
+  SidebarProvider, 
+  useSidebar,
   SidebarContent, 
   SidebarFooter, 
   SidebarHeader,
@@ -19,7 +21,8 @@ import { navCategories, masterDashItem } from './sidebar/NavigationConfig';
 import { useNavigate } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 
-export const TradingSystemLayout: React.FC = () => {
+// Separate the inner content that uses the sidebar hook
+const TradingSystemContent = () => {
   const navigate = useNavigate();
   const { toggleSidebar } = useSidebar();
   
@@ -89,5 +92,14 @@ export const TradingSystemLayout: React.FC = () => {
         </main>
       </div>
     </div>
+  );
+};
+
+// Main layout component that provides the SidebarProvider context
+export const TradingSystemLayout: React.FC = () => {
+  return (
+    <SidebarProvider defaultOpen={true}>
+      <TradingSystemContent />
+    </SidebarProvider>
   );
 };
