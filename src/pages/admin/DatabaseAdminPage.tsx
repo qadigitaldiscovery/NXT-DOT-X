@@ -58,6 +58,8 @@ const DatabaseAdminPage = () => {
   const [sqlQuery, setSqlQuery] = useState('');
   const [queryResult, setQueryResult] = useState<any>(null);
   const [isExecutingQuery, setIsExecutingQuery] = useState(false);
+  const [exportLoading, setExportLoading] = useState<string | null>(null);
+  const [importLoading, setImportLoading] = useState<string | null>(null);
 
   // Check if user has required permission
   React.useEffect(() => {
@@ -69,8 +71,10 @@ const DatabaseAdminPage = () => {
 
   // Fetch database tables - in a real implementation, this would fetch from Supabase
   const { data: tables, isLoading: tablesLoading, refetch: refetchTables } = useQuery({
-    queryKey: ['database-tables'],
+    queryKey: ['database-tables', searchTerm],
     queryFn: async () => {
+      // In a real implementation, this would call a Supabase function
+      console.log('Fetching tables with search term:', searchTerm);
       return mockTables.filter(table => 
         searchTerm ? table.name.toLowerCase().includes(searchTerm.toLowerCase()) : true
       );
@@ -88,6 +92,7 @@ const DatabaseAdminPage = () => {
     try {
       // In a real implementation, this would execute the query via Supabase
       // const { data, error } = await supabase.rpc('execute_sql', { query: sqlQuery });
+      console.log('Executing SQL query:', sqlQuery);
       
       // Mock response for demo
       await new Promise(resolve => setTimeout(resolve, 1000));
@@ -112,14 +117,58 @@ const DatabaseAdminPage = () => {
     }
   };
 
-  const handleExportData = (tableName: string) => {
-    toast.info(`Preparing export for ${tableName}...`);
-    // In a real implementation, this would trigger a data export via Supabase
+  const handleExportData = async (tableName: string) => {
+    try {
+      setExportLoading(tableName);
+      console.log(`Exporting data for table: ${tableName}`);
+      
+      // In a real implementation, this would call a Supabase function to export data
+      // For demo purposes, we'll simulate a delay
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      
+      // Create a mock CSV content
+      const csvContent = `id,name,status\n1,Item 1,active\n2,Item 2,inactive`;
+      
+      // Create a blob and download it
+      const blob = new Blob([csvContent], { type: 'text/csv' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${tableName}_export.csv`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      
+      toast.success(`Export for ${tableName} completed`);
+    } catch (error) {
+      toast.error(`Error exporting data from ${tableName}`);
+      console.error('Export error:', error);
+    } finally {
+      setExportLoading(null);
+    }
   };
 
-  const handleImportData = (tableName: string) => {
-    toast.info(`Preparing import for ${tableName}...`);
-    // In a real implementation, this would open an import dialog
+  const handleImportData = async (tableName: string) => {
+    try {
+      setImportLoading(tableName);
+      console.log(`Preparing import for table: ${tableName}`);
+      
+      // In a real implementation, this would open a file picker and process the file
+      // For demo purposes, we'll simulate a delay and show a success message
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      
+      // Simulate a successful import
+      toast.success(`Data imported successfully to ${tableName}`);
+      
+      // Refresh the tables data
+      refetchTables();
+    } catch (error) {
+      toast.error(`Error importing data to ${tableName}`);
+      console.error('Import error:', error);
+    } finally {
+      setImportLoading(null);
+    }
   };
 
   return (
@@ -211,18 +260,38 @@ const DatabaseAdminPage = () => {
                               variant="outline" 
                               className="flex items-center gap-1"
                               onClick={() => handleExportData(table.name)}
+                              disabled={exportLoading === table.name}
                             >
-                              <FileDown className="h-4 w-4" />
-                              Export
+                              {exportLoading === table.name ? (
+                                <>
+                                  <RefreshCw className="h-4 w-4 animate-spin" />
+                                  Exporting...
+                                </>
+                              ) : (
+                                <>
+                                  <FileDown className="h-4 w-4" />
+                                  Export
+                                </>
+                              )}
                             </Button>
                             <Button 
                               size="sm" 
                               variant="outline" 
                               className="flex items-center gap-1"
                               onClick={() => handleImportData(table.name)}
+                              disabled={importLoading === table.name}
                             >
-                              <FileUp className="h-4 w-4" />
-                              Import
+                              {importLoading === table.name ? (
+                                <>
+                                  <RefreshCw className="h-4 w-4 animate-spin" />
+                                  Importing...
+                                </>
+                              ) : (
+                                <>
+                                  <FileUp className="h-4 w-4" />
+                                  Import
+                                </>
+                              )}
                             </Button>
                           </div>
                         </div>
@@ -270,7 +339,12 @@ const DatabaseAdminPage = () => {
                     onClick={handleExecuteQuery}
                     disabled={isExecutingQuery}
                   >
-                    {isExecutingQuery ? 'Executing...' : 'Execute Query'}
+                    {isExecutingQuery ? (
+                      <>
+                        <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
+                        Executing...
+                      </>
+                    ) : 'Execute Query'}
                   </Button>
                 </div>
                 
