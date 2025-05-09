@@ -56,7 +56,7 @@ export function DropZone({ onFileChange, selectedFile, isUploading }: DropZonePr
         name="file"
         type="file"
         className="hidden"
-        accept=".csv,.xls,.xlsx,.pdf"
+        accept="*/*" /* Changed from .csv,.xls,.xlsx,.pdf to accept all file types */
         onChange={handleFileChange}
         disabled={isUploading}
       />

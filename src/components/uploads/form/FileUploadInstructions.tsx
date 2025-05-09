@@ -14,7 +14,7 @@ export function FileUploadInstructions({ isUploading }: FileUploadInstructionsPr
         {isUploading ? 'Uploading your file...' : 'Drag and drop your file here, or click to browse'}
       </p>
       <p className="text-xs text-muted-foreground mb-4">
-        Supports CSV, Excel (.xlsx, .xls), and PDF files
+        Supports all file types including EML with Excel attachments
       </p>
     </div>
   );
