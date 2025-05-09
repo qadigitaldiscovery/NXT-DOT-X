@@ -14,6 +14,11 @@ export const AdminRoutes = () => {
           <UserManagement />
         </PermissionGuard>
       } />
+      <Route path="/admin/customers" element={
+        <PermissionGuard requiredPermission="users.view">
+          <CustomerManagement />
+        </PermissionGuard>
+      } />
       <Route path="/admin/documentation" element={
         <PermissionGuard requiredPermission="settings.access">
           <DocumentationPage />
@@ -24,12 +29,27 @@ export const AdminRoutes = () => {
           <DatabaseAdminPage />
         </PermissionGuard>
       } />
-      <Route path="/admin/customers" element={
-        <PermissionGuard requiredPermission="users.view">
-          <CustomerManagement />
+      <Route path="/admin/system-settings" element={
+        <PermissionGuard requiredPermission="settings.access">
+          <DocumentationPage />
         </PermissionGuard>
       } />
-      <Route path="/admin/system-settings" element={
+      <Route path="/admin/roles" element={
+        <PermissionGuard requiredPermission="settings.access">
+          <DocumentationPage />
+        </PermissionGuard>
+      } />
+      <Route path="/admin/security" element={
+        <PermissionGuard requiredPermission="settings.access">
+          <DocumentationPage />
+        </PermissionGuard>
+      } />
+      <Route path="/admin/reporting" element={
+        <PermissionGuard requiredPermission="settings.access">
+          <DocumentationPage />
+        </PermissionGuard>
+      } />
+      <Route path="/admin/localization" element={
         <PermissionGuard requiredPermission="settings.access">
           <DocumentationPage />
         </PermissionGuard>
