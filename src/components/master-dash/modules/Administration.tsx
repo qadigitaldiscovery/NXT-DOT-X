@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Users, BookOpen, Settings, Database, UserCog, Building, FileBarChart, Shield, Globe } from 'lucide-react';
+import { Users, BookOpen, Settings, Database, UserCog, Building, FileBarChart, Shield, Globe, Truck } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
@@ -24,9 +24,15 @@ const Administration: React.FC = () => {
     },
     { 
       id: "customers", 
-      name: "Customers", 
+      name: "Customer Management", 
       icon: <Building className="h-5 w-5" />, 
-      path: "/admin/customers"
+      path: "/customer-management"
+    },
+    { 
+      id: "suppliers", 
+      name: "Supplier Management", 
+      icon: <Truck className="h-5 w-5" />, 
+      path: "/supplier-management"
     },
     { 
       id: "roles", 
