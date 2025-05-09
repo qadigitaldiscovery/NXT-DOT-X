@@ -10,6 +10,7 @@ export interface DocumentItem {
   content?: string;
   createdAt: string;
   updatedAt: string;
+  author: string;
 }
 
 export interface DocumentCategory {
