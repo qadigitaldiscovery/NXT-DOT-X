@@ -11,10 +11,12 @@ import {
 import { Button } from "@/components/ui/button";
 import { useSuppliers } from '@/hooks/use-suppliers';
 import { useCreateSupplierUpload } from '@/hooks/use-supplier-uploads';
-import { UploadCloud } from 'lucide-react';
+import { Upload } from 'lucide-react';
 import { toast } from 'sonner';
 import { DropZone } from './form/DropZone';
 import { SupplierSelector } from './form/SupplierSelector';
+import { FilePreview } from './form/FilePreview';
+import { SupplierMatchDialog } from './form/SupplierMatchDialog';
 
 type FileUploadFormProps = {
   supplierId?: string;
@@ -31,8 +33,10 @@ export function FileUploadForm({
   const [selectedSupplier, setSelectedSupplier] = useState<string>(supplierId || '');
   const [isUploading, setIsUploading] = useState(false);
   const [useHoldingBucket, setUseHoldingBucket] = useState(false);
+  const [detectedSupplier, setDetectedSupplier] = useState<string | null>(null);
+  const [showMatchDialog, setShowMatchDialog] = useState(false);
   
-  const { data: suppliers = [] } = useSuppliers();
+  const { data: suppliers = [], isLoading: isSuppliersLoading } = useSuppliers();
   const { mutate: createUpload } = useCreateSupplierUpload();
   
   const handleSubmit = (event: React.FormEvent) => {
@@ -44,6 +48,12 @@ export function FileUploadForm({
     }
     
     if (!selectedSupplier && !useHoldingBucket) {
+      // If we detected a supplier but haven't matched it yet, show the dialog
+      if (detectedSupplier && !showMatchDialog) {
+        setShowMatchDialog(true);
+        return;
+      }
+      
       toast.error("Please select a supplier or use the holding bucket option");
       return;
     }
@@ -59,6 +69,7 @@ export function FileUploadForm({
       {
         onSuccess: () => {
           setSelectedFile(null);
+          setDetectedSupplier(null);
           if (onUploadComplete) {
             onUploadComplete();
           }
@@ -72,6 +83,38 @@ export function FileUploadForm({
       }
     );
   };
+
+  const handleFileChange = (file: File | null) => {
+    setSelectedFile(file);
+    setDetectedSupplier(null); // Reset detected supplier when file changes
+  };
+  
+  const handleSupplierDetection = (supplierName: string) => {
+    setDetectedSupplier(supplierName);
+    
+    // Check if we can automatically match the supplier
+    const matchingSupplier = suppliers.find(
+      s => s.name.toLowerCase() === supplierName.toLowerCase()
+    );
+    
+    if (matchingSupplier) {
+      // Exact match found, auto-select
+      setSelectedSupplier(matchingSupplier.id);
+      toast.info(`Automatically matched to supplier: ${matchingSupplier.name}`);
+    } else if (!supplierId && !selectedSupplier && !useHoldingBucket) {
+      // No exact match and no supplier selected yet - show helper message
+      toast.info(
+        "Supplier detected in file. Click 'Match Supplier' to assign or create.",
+        {
+          duration: 5000,
+          action: {
+            label: "Match Now",
+            onClick: () => setShowMatchDialog(true),
+          },
+        }
+      );
+    }
+  };
   
   return (
     <Card>
@@ -83,6 +126,13 @@ export function FileUploadForm({
       </CardHeader>
       <form onSubmit={handleSubmit}>
         <CardContent className="space-y-6">
+          {selectedFile && (
+            <FilePreview 
+              file={selectedFile} 
+              onDetectedSupplier={handleSupplierDetection} 
+            />
+          )}
+          
           {!supplierId && (
             <SupplierSelector
               suppliers={suppliers}
@@ -97,11 +147,24 @@ export function FileUploadForm({
           
           <div className="space-y-2">
             <DropZone
-              onFileChange={setSelectedFile}
+              onFileChange={handleFileChange}
               selectedFile={selectedFile}
               isUploading={isUploading}
             />
           </div>
+          
+          {detectedSupplier && !supplierId && !useHoldingBucket && (
+            <div className="flex justify-end">
+              <Button
+                type="button"
+                variant="outline"
+                disabled={isUploading || !selectedFile}
+                onClick={() => setShowMatchDialog(true)}
+              >
+                Match Supplier
+              </Button>
+            </div>
+          )}
         </CardContent>
         <CardFooter>
           <Button 
@@ -110,11 +173,22 @@ export function FileUploadForm({
             disabled={(!selectedSupplier && !useHoldingBucket) || !selectedFile || isUploading}
             loading={isUploading}
           >
-            <UploadCloud className="h-4 w-4 mr-2" />
+            <Upload className="h-4 w-4 mr-2" />
             {isUploading ? 'Uploading...' : 'Upload File'}
           </Button>
         </CardFooter>
       </form>
+      
+      <SupplierMatchDialog
+        open={showMatchDialog}
+        onOpenChange={setShowMatchDialog}
+        detectedSupplier={detectedSupplier}
+        suppliers={suppliers}
+        onSupplierSelected={(id) => {
+          setSelectedSupplier(id);
+          toast.success("Supplier matched successfully");
+        }}
+      />
     </Card>
   );
 }
