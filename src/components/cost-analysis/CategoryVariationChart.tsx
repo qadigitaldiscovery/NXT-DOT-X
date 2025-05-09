@@ -21,11 +21,12 @@ type CategoryVariationChartProps = {
   data: CategoryData[];
   title: string;
   description: string;
+  className?: string;
 };
 
-export const CategoryVariationChart = ({ data, title, description }: CategoryVariationChartProps) => {
+export const CategoryVariationChart = ({ data, title, description, className }: CategoryVariationChartProps) => {
   return (
-    <Card className="backdrop-blur-md bg-white/30 border border-white/10">
+    <Card className={`backdrop-blur-md bg-white/30 border border-white/10 ${className}`}>
       <CardHeader>
         <CardTitle>{title}</CardTitle>
         <CardDescription>

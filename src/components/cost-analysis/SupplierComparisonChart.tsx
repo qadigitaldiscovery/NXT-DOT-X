@@ -20,11 +20,12 @@ type SupplierComparisonChartProps = {
   title: string;
   description: string;
   colors: string[];
+  className?: string;
 };
 
-export const SupplierComparisonChart = ({ data, title, description, colors }: SupplierComparisonChartProps) => {
+export const SupplierComparisonChart = ({ data, title, description, colors, className }: SupplierComparisonChartProps) => {
   return (
-    <Card className="col-span-1 backdrop-blur-md bg-white/30 border border-white/10">
+    <Card className={`backdrop-blur-md bg-white/30 border border-white/10 ${className}`}>
       <CardHeader>
         <CardTitle>{title}</CardTitle>
         <CardDescription>

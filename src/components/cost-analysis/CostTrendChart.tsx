@@ -22,11 +22,12 @@ type CostTrendChartProps = {
   data: CostTrendData[];
   title: string;
   description: string;
+  className?: string;
 };
 
-export const CostTrendChart = ({ data, title, description }: CostTrendChartProps) => {
+export const CostTrendChart = ({ data, title, description, className }: CostTrendChartProps) => {
   return (
-    <Card className="col-span-1 backdrop-blur-md bg-white/30 border border-white/10">
+    <Card className={`backdrop-blur-md bg-white/30 border border-white/10 ${className}`}>
       <CardHeader>
         <CardTitle>{title}</CardTitle>
         <CardDescription>

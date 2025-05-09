@@ -12,11 +12,12 @@ type CostMetricCardProps = {
     isPositive: boolean;
     text: string;
   };
+  className?: string;
 };
 
-export const CostMetricCard = ({ title, icon, value, change }: CostMetricCardProps) => {
+export const CostMetricCard = ({ title, icon, value, change, className }: CostMetricCardProps) => {
   return (
-    <Card className="backdrop-blur-md bg-white/30 border border-white/10">
+    <Card className={`backdrop-blur-md bg-white/30 border border-white/10 ${className}`}>
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
         <CardTitle className="text-sm font-medium">{title}</CardTitle>
         {icon}
