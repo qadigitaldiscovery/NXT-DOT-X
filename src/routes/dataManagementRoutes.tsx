@@ -16,6 +16,12 @@ import DocumentsPage from "@/pages/data-management/documents/DocumentsPage";
 import SuppliersPage from "@/pages/SuppliersPage";
 import NotFound from "@/pages/NotFound";
 
+// Customer Management Pages
+import CustomerDirectoryPage from "@/pages/customer-management/CustomerDirectoryPage";
+import CustomerSettings from "@/pages/customer-management/CustomerSettings";
+import NewCustomerPage from "@/pages/customer-management/NewCustomerPage";
+import EditCustomerPage from "@/pages/customer-management/EditCustomerPage";
+
 export const DataManagementRoutes = () => {
   return (
     <>
@@ -33,11 +39,17 @@ export const DataManagementRoutes = () => {
         
         {/* Supplier Management */}
         <Route path="suppliers" element={<SuppliersPage />} />
+        <Route path="supplier-costing" element={<SupplierCosting />} />
+        
+        {/* Customer Management */}
+        <Route path="customers" element={<CustomerDirectoryPage />} />
+        <Route path="customers/new" element={<NewCustomerPage />} />
+        <Route path="customers/:customerId" element={<EditCustomerPage />} />
+        <Route path="customers/settings" element={<CustomerSettings />} />
         
         {/* Cost Management */}
         <Route path="cost-management" element={<CostDashboard />} />
         <Route path="cost-analysis" element={<CostAnalysis />} />
-        <Route path="supplier-costing" element={<SupplierCosting />} />
         
         {/* Pricing */}
         <Route path="pricing/competitor-pricing" element={<CompetitorPricing />} />
