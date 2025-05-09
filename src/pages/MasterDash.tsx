@@ -1,3 +1,4 @@
+
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
@@ -7,7 +8,7 @@ import { useAuth } from '@/context/AuthContext';
 import MasterDashHeader from '@/components/master-dash/MasterDashHeader';
 import MasterDashFooter from '@/components/master-dash/MasterDashFooter';
 import PrimaryModules from '@/components/master-dash/modules/PrimaryModules';
-import AiArmy from '@/components/master-dash/modules/AiArmy';
+import SystemTechnicalConfig from '@/components/master-dash/modules/SystemTechnicalConfig';
 import Administration from '@/components/master-dash/modules/Administration';
 
 // Assuming this is the correct path based on previous searches
@@ -46,8 +47,8 @@ const MasterDash = () => {
             <div className="lg:w-3/4">
               <PrimaryModules />
               
-              {/* AI Army Section */}
-              <AiArmy />
+              {/* System Technical Configuration Section (replaced AI Army) */}
+              <SystemTechnicalConfig />
             </div>
             
             {/* Administration section on the right (1/4 width) */}

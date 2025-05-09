@@ -23,6 +23,16 @@ export const AdminRoutes = () => {
           <DatabaseAdminPage />
         </PermissionGuard>
       } />
+      <Route path="/admin/customers" element={
+        <PermissionGuard requiredPermission="users.view">
+          <UserManagement />
+        </PermissionGuard>
+      } />
+      <Route path="/admin/system-settings" element={
+        <PermissionGuard requiredPermission="settings.access">
+          <DocumentationPage />
+        </PermissionGuard>
+      } />
     </>
   );
 };

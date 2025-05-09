@@ -1,5 +1,5 @@
 
-import { Home, FileUp, BarChart3, LineChart, ArrowDownUp, FileDown, Settings, Database, FileArchive, BookOpen, BrainCircuit, Cloud, Bot, Users } from 'lucide-react';
+import { Home, FileUp, BarChart3, LineChart, ArrowDownUp, FileDown, Settings, Database, FileArchive, BookOpen, BrainCircuit, Cloud, Server, Users, Truck } from 'lucide-react';
 import { NavItem, NavCategory } from './types';
 
 // Top level nav items (not in categories)
@@ -12,8 +12,8 @@ export const navCategories: NavCategory[] = [
   {
     name: "Supplier Management",
     items: [
-      { label: 'Supplier Dashboard', icon: Database, path: '/supplier-management' },
-      { label: 'Supplier Directory', icon: Users, path: '/supplier-management/directory' },
+      { label: 'Supplier Dashboard', icon: Truck, path: '/supplier-management' },
+      { label: 'Supplier Directory', icon: Database, path: '/supplier-management/directory' },
       { label: 'Supplier Settings', icon: Settings, path: '/supplier-management/settings' }
     ]
   },
@@ -43,14 +43,16 @@ export const navCategories: NavCategory[] = [
     name: "Tech Hub",
     items: [
       { label: 'AI Personas', icon: BrainCircuit, path: '/tech-hub/personas' },
-      { label: 'API Management', icon: Bot, path: '/tech-hub/api-management' },
+      { label: 'API Management', icon: Server, path: '/tech-hub/api-management' },
       { label: 'Cloud Services', icon: Cloud, path: '/tech-hub/cloud-services' }
     ]
   },
   {
     name: "Admin",
     items: [
-      { label: 'Documentation', icon: BookOpen, path: '/admin/documentation' }
+      { label: 'Documentation', icon: BookOpen, path: '/admin/documentation' },
+      { label: 'Customer Management', icon: Users, path: '/admin/customers' },
+      { label: 'System Settings', icon: Settings, path: '/admin/system-settings' }
     ]
   }
 ];
