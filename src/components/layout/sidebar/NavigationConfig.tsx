@@ -1,5 +1,5 @@
 
-import { Home, FileUp, BarChart3, LineChart, ArrowDownUp, FileDown, Settings, Database, FileArchive, BookOpen, BrainCircuit, Cloud, Bot } from 'lucide-react';
+import { Home, FileUp, BarChart3, LineChart, ArrowDownUp, FileDown, Settings, Database, FileArchive, BookOpen, BrainCircuit, Cloud, Bot, Users } from 'lucide-react';
 import { NavItem, NavCategory } from './types';
 
 // Top level nav items (not in categories)
@@ -10,10 +10,17 @@ export const topLevelNavItems: NavItem[] = [
 // Organize remaining nav items into categories
 export const navCategories: NavCategory[] = [
   {
+    name: "Supplier Management",
+    items: [
+      { label: 'Supplier Dashboard', icon: Database, path: '/supplier-management' },
+      { label: 'Supplier Directory', icon: Users, path: '/supplier-management/directory' },
+      { label: 'Supplier Settings', icon: Settings, path: '/supplier-management/settings' }
+    ]
+  },
+  {
     name: "Cost Management",
     items: [
       { label: 'Supplier Costing', icon: Database, path: '/supplier-costing' },
-      { label: 'Supplier Settings', icon: Settings, path: '/supplier-settings' },
       { label: 'Cost Analysis', icon: BarChart3, path: '/cost-analysis' }
     ]
   },

@@ -4,7 +4,6 @@ import NotFound from "@/pages/NotFound";
 import Landing from "@/pages/Landing";
 import RootHandler from '@/components/RootHandler';
 import Unauthorized from "@/pages/Unauthorized";
-import SupplierSettings from "@/pages/supplier-management/SupplierSettings";
 
 // Import module-specific routes
 import { AdminRoutes } from "./adminRoutes";
@@ -13,6 +12,7 @@ import { LoyaltyRoutes } from "./loyaltyRoutes";
 import { TradingSystemRoutes } from "./tradingSystemRoutes";
 import { TechHubRoutes } from "./techHubRoutes";
 import { DotXRoutes } from "./dotXRoutes";
+import { SupplierManagementRoutes } from "./supplierManagementRoutes";
 
 export const AppRoutes = () => {
   return (
@@ -26,9 +26,7 @@ export const AppRoutes = () => {
       
       {/* Legacy route redirects */}
       <Route path="/prototypes" element={<Navigate to="/" replace />} />
-
-      {/* Supplier Management Routes */}
-      <Route path="/supplier-settings" element={<SupplierSettings />} />
+      <Route path="/supplier-settings" element={<Navigate to="/supplier-management/settings" replace />} />
       
       {/* Module-specific Routes */}
       {AdminRoutes()}
@@ -37,6 +35,7 @@ export const AppRoutes = () => {
       {TradingSystemRoutes()}
       {TechHubRoutes()}
       {DotXRoutes()}
+      {SupplierManagementRoutes()}
       
       {/* 404 Page */}
       <Route path="*" element={<NotFound />} />
