@@ -3,6 +3,7 @@ import React from 'react';
 import { Settings, Shield, Database, Server } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { HoverCard, HoverCardTrigger, HoverCardContent } from '@/components/ui/hover-card';
+import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 
 interface ConfigItem {
@@ -14,6 +15,8 @@ interface ConfigItem {
 }
 
 const SystemTechnicalConfig: React.FC = () => {
+  const navigate = useNavigate();
+  
   // Technical configuration items with descriptions
   const configItems = [
     { 
@@ -48,8 +51,7 @@ const SystemTechnicalConfig: React.FC = () => {
 
   const handleConfigClick = (configId: string, path: string) => {
     toast.info(`Navigating to ${configId} configuration`);
-    // We would navigate here if the paths were implemented
-    // navigate(path);
+    navigate(path);
   };
 
   return (

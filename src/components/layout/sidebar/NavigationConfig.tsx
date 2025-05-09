@@ -50,8 +50,10 @@ export const navCategories: NavCategory[] = [
   {
     name: "Admin",
     items: [
-      { label: 'Documentation', icon: BookOpen, path: '/admin/documentation' },
+      { label: 'User Management', icon: Users, path: '/admin/users' },
       { label: 'Customer Management', icon: Users, path: '/admin/customers' },
+      { label: 'Documentation', icon: BookOpen, path: '/admin/documentation' },
+      { label: 'Database Admin', icon: Database, path: '/admin/database' },
       { label: 'System Settings', icon: Settings, path: '/admin/system-settings' }
     ]
   }

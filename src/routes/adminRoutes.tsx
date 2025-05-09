@@ -4,6 +4,7 @@ import PermissionGuard from "@/components/PermissionGuard";
 import UserManagement from "@/pages/UserManagement";
 import DocumentationPage from "@/pages/admin/DocumentationPage";
 import DatabaseAdminPage from "@/pages/admin/DatabaseAdminPage";
+import CustomerManagement from "@/pages/UserManagement"; // Reusing UserManagement temporarily for customers
 
 export const AdminRoutes = () => {
   return (
@@ -25,7 +26,7 @@ export const AdminRoutes = () => {
       } />
       <Route path="/admin/customers" element={
         <PermissionGuard requiredPermission="users.view">
-          <UserManagement />
+          <CustomerManagement />
         </PermissionGuard>
       } />
       <Route path="/admin/system-settings" element={
