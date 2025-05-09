@@ -14,10 +14,7 @@ export const AdminRoutes = () => {
         </PermissionGuard>
       } />
       <Route path="/admin/customers" element={
-        <Navigate to="/customer-management" replace />
-      } />
-      <Route path="/admin/suppliers" element={
-        <Navigate to="/supplier-management" replace />
+        <Navigate to="/data-management/customers" replace />
       } />
       <Route path="/admin/documentation" element={
         <PermissionGuard requiredPermission="settings.access">

@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Outlet } from 'react-router-dom';
+import { Outlet, useLocation } from 'react-router-dom';
 import { 
   Sidebar, 
   SidebarProvider, 
@@ -25,6 +25,7 @@ import { cn } from '@/lib/utils';
 const TradingSystemContent = () => {
   const navigate = useNavigate();
   const { toggleSidebar } = useSidebar();
+  const location = useLocation();
   
   return (
     <div className="flex h-screen overflow-hidden bg-gray-50">
