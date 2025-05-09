@@ -10,11 +10,17 @@ export const topLevelNavItems: NavItem[] = [
 // Organize remaining nav items into categories
 export const navCategories: NavCategory[] = [
   {
-    name: "Supplier Management",
+    name: "Data Management",
     items: [
-      { label: 'Supplier Dashboard', icon: Truck, path: '/supplier-management' },
-      { label: 'Supplier Directory', icon: Database, path: '/supplier-management/directory' },
-      { label: 'Supplier Settings', icon: Settings, path: '/supplier-management/settings' }
+      { label: 'Dashboard', icon: Database, path: '/data-management' },
+      { label: 'Supplier Directory', icon: Truck, path: '/data-management/suppliers' },
+      { label: 'Supplier Costing', icon: Database, path: '/data-management/supplier-costing' },
+      { label: 'Cost Analysis', icon: BarChart3, path: '/data-management/cost-analysis' },
+      { label: 'Competitor Pricing', icon: LineChart, path: '/data-management/pricing/competitor-pricing' },
+      { label: 'Price Management', icon: ArrowDownUp, path: '/data-management/pricing/price-management' },
+      { label: 'File Uploads', icon: FileUp, path: '/data-management/uploads' },
+      { label: 'Document Repository', icon: FileArchive, path: '/data-management/documents' },
+      { label: 'Export Data', icon: FileDown, path: '/data-management/export-data' }
     ]
   },
   {
@@ -23,28 +29,6 @@ export const navCategories: NavCategory[] = [
       { label: 'Customer Dashboard', icon: Building, path: '/customer-management' },
       { label: 'Customer Directory', icon: Database, path: '/customer-management/directory' },
       { label: 'Customer Settings', icon: Settings, path: '/customer-management/settings' }
-    ]
-  },
-  {
-    name: "Cost Management",
-    items: [
-      { label: 'Supplier Costing', icon: Database, path: '/supplier-costing' },
-      { label: 'Cost Analysis', icon: BarChart3, path: '/cost-analysis' }
-    ]
-  },
-  {
-    name: "Pricing",
-    items: [
-      { label: 'Competitor Pricing', icon: LineChart, path: '/competitor-pricing' },
-      { label: 'Price Management', icon: ArrowDownUp, path: '/price-management' }
-    ]
-  },
-  {
-    name: "Data",
-    items: [
-      { label: 'File Uploads', icon: FileUp, path: '/data-management/uploads' },
-      { label: 'Document Repository', icon: FileArchive, path: '/data-management/documents' },
-      { label: 'Export Data', icon: FileDown, path: '/export-data' }
     ]
   },
   {

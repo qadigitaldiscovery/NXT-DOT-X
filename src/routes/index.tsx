@@ -10,7 +10,7 @@ import MasterDash from '@/pages/MasterDash';
 import { AdminRoutes } from "./adminRoutes";
 import { DataManagementRoutes } from "./dataManagementRoutes";
 import { LoyaltyRoutes } from "./loyaltyRoutes";
-import { TradingSystemRoutes, CostManagementRoutes } from "./tradingSystemRoutes";
+import { TradingSystemRoutes } from "./tradingSystemRoutes";
 import { TechHubRoutes } from "./techHubRoutes";
 import { DotXRoutes } from "./dotXRoutes";
 import { SupplierManagementRoutes } from "./supplierManagementRoutes";
@@ -28,7 +28,9 @@ export const AppRoutes = () => {
       
       {/* Legacy route redirects */}
       <Route path="/prototypes" element={<Navigate to="/" replace />} />
-      <Route path="/supplier-settings" element={<Navigate to="/supplier-management/settings" replace />} />
+      <Route path="/supplier-settings" element={<Navigate to="/data-management/suppliers" replace />} />
+      <Route path="/supplier-costing" element={<Navigate to="/data-management/supplier-costing" replace />} />
+      <Route path="/cost-analysis" element={<Navigate to="/data-management/cost-analysis" replace />} />
       
       {/* Module-specific Routes */}
       {AdminRoutes()}
@@ -39,7 +41,6 @@ export const AppRoutes = () => {
       {DotXRoutes()}
       {SupplierManagementRoutes()}
       {CustomerManagementRoutes()}
-      {CostManagementRoutes()}
       
       {/* 404 Page */}
       <Route path="*" element={<NotFound />} />
