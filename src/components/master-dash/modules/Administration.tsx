@@ -42,7 +42,7 @@ const Administration: React.FC = () => {
       icon: <Database className="h-5 w-5" />,
       path: "/admin/database",
       permission: "settings.access",
-      description: "Database management and configuration"
+      description: "Database management and administration"
     }, 
     {
       id: "settings",
@@ -119,7 +119,7 @@ const Administration: React.FC = () => {
   ];
 
   const handleSystemClick = (systemId: string, path: string) => {
-    if (systemId === "users" || systemId === "docs") {
+    if (["users", "docs", "database"].includes(systemId)) {
       navigate(path);
     } else {
       toast.info(`System function ${systemId} is not implemented yet`);
