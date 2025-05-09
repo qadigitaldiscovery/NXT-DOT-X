@@ -30,6 +30,7 @@ const TablesList: React.FC<TablesListProps> = ({
 }) => {
   const [exportLoading, setExportLoading] = useState<string | null>(null);
   const [importLoading, setImportLoading] = useState<string | null>(null);
+  const [isRefreshing, setIsRefreshing] = useState(false);
 
   const handleExportData = async (tableName: string) => {
     try {
@@ -84,6 +85,19 @@ const TablesList: React.FC<TablesListProps> = ({
       setImportLoading(null);
     }
   };
+
+  const handleRefreshTables = async () => {
+    try {
+      setIsRefreshing(true);
+      await refetchTables();
+      toast.success("Table list refreshed successfully");
+    } catch (error) {
+      toast.error("Failed to refresh tables");
+      console.error("Refresh error:", error);
+    } finally {
+      setIsRefreshing(false);
+    }
+  };
   
   return (
     <Card>
@@ -98,6 +112,16 @@ const TablesList: React.FC<TablesListProps> = ({
               onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
+          <Button 
+            variant="outline" 
+            size="sm"
+            onClick={handleRefreshTables} 
+            disabled={isRefreshing}
+            className="flex items-center gap-1"
+          >
+            <RefreshCw className={`h-4 w-4 ${isRefreshing ? 'animate-spin' : ''}`} />
+            {isRefreshing ? 'Refreshing...' : 'Refresh Tables'}
+          </Button>
         </div>
         
         {isLoading ? (
