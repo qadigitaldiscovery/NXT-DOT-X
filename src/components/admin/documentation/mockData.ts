@@ -1,5 +1,5 @@
 
-import { DocumentCategory } from './types';
+import { DocumentCategory, DocumentType } from './types';
 
 export const documentCategories: DocumentCategory[] = [
   {
@@ -9,6 +9,7 @@ export const documentCategories: DocumentCategory[] = [
       {
         id: 'sysplan-01',
         title: 'SYSPLAN-01: System Architecture & Module Design',
+        type: 'markdown',
         content: `
 # SYSPLAN-01: System Architecture & Module Design
 
@@ -121,8 +122,8 @@ This document outlines the comprehensive architecture design for the NXT-DOT-X s
 - Add advanced reporting features
 - Implement predictive analytics capabilities
 `,
-        created: '2023-05-09T10:00:00',
-        updated: '2023-05-09T10:00:00',
+        createdAt: '2023-05-09T10:00:00',
+        updatedAt: '2023-05-09T10:00:00',
         author: 'System Architecture Team'
       }
     ]
@@ -134,17 +135,19 @@ This document outlines the comprehensive architecture design for the NXT-DOT-X s
       {
         id: 'getting-started',
         title: 'Getting Started Guide',
+        type: 'markdown',
         content: '# Getting Started\n\nWelcome to our documentation. This guide will help you get started with our system.',
-        created: '2023-01-15T09:30:00',
-        updated: '2023-02-01T14:20:00',
+        createdAt: '2023-01-15T09:30:00',
+        updatedAt: '2023-02-01T14:20:00',
         author: 'Admin Team'
       },
       {
         id: 'api-docs',
         title: 'API Documentation',
+        type: 'markdown',
         content: '# API Documentation\n\nThis document provides details about our API endpoints and how to use them.',
-        created: '2023-01-20T11:45:00',
-        updated: '2023-03-15T16:30:00',
+        createdAt: '2023-01-20T11:45:00',
+        updatedAt: '2023-03-15T16:30:00',
         author: 'API Team'
       }
     ]
@@ -156,17 +159,19 @@ This document outlines the comprehensive architecture design for the NXT-DOT-X s
       {
         id: 'dashboard-guide',
         title: 'Dashboard User Guide',
+        type: 'markdown',
         content: '# Dashboard Guide\n\nLearn how to use the dashboard effectively with this comprehensive guide.',
-        created: '2023-02-10T13:15:00',
-        updated: '2023-02-10T13:15:00',
+        createdAt: '2023-02-10T13:15:00',
+        updatedAt: '2023-02-10T13:15:00',
         author: 'User Experience Team'
       },
       {
         id: 'report-guide',
         title: 'Reporting System Guide',
+        type: 'markdown',
         content: '# Reporting System\n\nThis guide explains how to generate and customize reports in the system.',
-        created: '2023-02-12T10:00:00',
-        updated: '2023-04-05T09:20:00',
+        createdAt: '2023-02-12T10:00:00',
+        updatedAt: '2023-04-05T09:20:00',
         author: 'Reporting Team'
       }
     ]
