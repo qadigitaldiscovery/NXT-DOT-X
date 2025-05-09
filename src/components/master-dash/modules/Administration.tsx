@@ -59,16 +59,16 @@ const Administration: React.FC = () => {
       path: "/admin/documentation"
     },
     { 
-      id: "system-settings", 
-      name: "System Settings", 
-      icon: <Settings className="h-5 w-5" />, 
-      path: "/admin/system-settings"
-    },
-    { 
       id: "database", 
       name: "Database Admin", 
       icon: <Database className="h-5 w-5" />, 
       path: "/admin/database"
+    },
+    { 
+      id: "system-settings", 
+      name: "System Settings", 
+      icon: <Settings className="h-5 w-5" />, 
+      path: "/admin/system-settings"
     }
   ];
 

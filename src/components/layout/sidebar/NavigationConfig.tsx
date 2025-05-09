@@ -18,6 +18,14 @@ export const navCategories: NavCategory[] = [
     ]
   },
   {
+    name: "Customer Management",
+    items: [
+      { label: 'Customer Dashboard', icon: Building, path: '/customer-management' },
+      { label: 'Customer Directory', icon: Database, path: '/customer-management/directory' },
+      { label: 'Customer Settings', icon: Settings, path: '/customer-management/settings' }
+    ]
+  },
+  {
     name: "Cost Management",
     items: [
       { label: 'Supplier Costing', icon: Database, path: '/supplier-costing' },

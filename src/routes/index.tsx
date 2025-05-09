@@ -14,6 +14,7 @@ import { TradingSystemRoutes } from "./tradingSystemRoutes";
 import { TechHubRoutes } from "./techHubRoutes";
 import { DotXRoutes } from "./dotXRoutes";
 import { SupplierManagementRoutes } from "./supplierManagementRoutes";
+import { CustomerManagementRoutes } from "./customerManagementRoutes";
 
 export const AppRoutes = () => {
   return (
@@ -37,6 +38,7 @@ export const AppRoutes = () => {
       {TechHubRoutes()}
       {DotXRoutes()}
       {SupplierManagementRoutes()}
+      {CustomerManagementRoutes()}
       
       {/* 404 Page */}
       <Route path="*" element={<NotFound />} />
