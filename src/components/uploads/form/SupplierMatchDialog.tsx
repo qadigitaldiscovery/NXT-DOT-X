@@ -8,19 +8,13 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
 import { Supplier, useCreateSupplier } from '@/hooks/use-suppliers';
-import { Check, FileText } from "lucide-react";
+import { Check } from "lucide-react";
 import { toast } from "sonner";
+import { MatchOptionButtons } from './supplier-match/MatchOptionButtons';
+import { ExistingSupplierForm } from './supplier-match/ExistingSupplierForm';
+import { NewSupplierForm } from './supplier-match/NewSupplierForm';
 
 interface SupplierMatchDialogProps {
   open: boolean;
@@ -131,74 +125,25 @@ export function SupplierMatchDialog({
         </DialogHeader>
         
         <div className="grid gap-4 py-4">
-          <div className="flex items-center gap-4">
-            <Button
-              type="button"
-              variant={matchOption === 'existing' ? "default" : "outline"}
-              className="flex-1"
-              onClick={() => setMatchOption('existing')}
-            >
-              Use Existing Supplier
-            </Button>
-            <Button
-              type="button"
-              variant={matchOption === 'new' ? "default" : "outline"}
-              className="flex-1"
-              onClick={() => setMatchOption('new')}
-            >
-              Create New Supplier
-            </Button>
-          </div>
+          <MatchOptionButtons 
+            matchOption={matchOption} 
+            setMatchOption={setMatchOption} 
+          />
           
           {matchOption === 'existing' ? (
-            <div className="space-y-2">
-              <Label htmlFor="supplier">Select Supplier</Label>
-              <Select value={selectedSupplierId} onValueChange={setSelectedSupplierId}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select a supplier" />
-                </SelectTrigger>
-                <SelectContent>
-                  {suppliers.map((supplier) => (
-                    <SelectItem key={supplier.id} value={supplier.id}>
-                      {supplier.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
+            <ExistingSupplierForm
+              suppliers={suppliers}
+              selectedSupplierId={selectedSupplierId}
+              setSelectedSupplierId={setSelectedSupplierId}
+            />
           ) : (
-            <div className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="supplier-name">Supplier Name</Label>
-                <Input 
-                  id="supplier-name"
-                  value={newSupplierName} 
-                  onChange={(e) => setNewSupplierName(e.target.value)} 
-                  placeholder="Enter supplier name"
-                />
-              </div>
-              <div className="space-y-2">
-                <div className="flex justify-between">
-                  <Label htmlFor="supplier-code">Supplier Code</Label>
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="sm"
-                    onClick={generateSupplierCode}
-                    className="h-6 text-xs"
-                  >
-                    Generate
-                  </Button>
-                </div>
-                <Input 
-                  id="supplier-code"
-                  value={newSupplierCode} 
-                  onChange={(e) => setNewSupplierCode(e.target.value.toUpperCase())} 
-                  placeholder="Enter supplier code"
-                  className="uppercase"
-                />
-              </div>
-            </div>
+            <NewSupplierForm
+              newSupplierName={newSupplierName}
+              setNewSupplierName={setNewSupplierName}
+              newSupplierCode={newSupplierCode}
+              setNewSupplierCode={setNewSupplierCode}
+              generateSupplierCode={generateSupplierCode}
+            />
           )}
         </div>
         
