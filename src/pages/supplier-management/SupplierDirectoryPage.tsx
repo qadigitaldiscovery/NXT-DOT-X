@@ -73,10 +73,8 @@ const SupplierDirectoryPage = () => {
             </div>
           </div>
           
-          <SuppliersTable 
-            suppliers={filteredSuppliers || []} 
-            isLoading={isLoading} 
-          />
+          {/* Modified: We're now using SuppliersTable without passing any props */}
+          <SuppliersTable />
         </CardContent>
       </Card>
     </div>
