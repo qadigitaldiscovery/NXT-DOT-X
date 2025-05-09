@@ -23,6 +23,10 @@ export default function CostDashboard() {
     navigate('/data-management/uploads/new');
   };
 
+  const handleAnalysisClick = () => {
+    navigate('/data-management/cost-analysis');
+  };
+
   return (
     <div className="space-y-8 max-w-[1200px] mx-auto px-4 py-6">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
@@ -45,7 +49,10 @@ export default function CostDashboard() {
 
       {/* Feature cards */}
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-        <Card className="hover:shadow-md transition-shadow backdrop-blur-md bg-white/30 border border-white/10">
+        <Card 
+          className="hover:shadow-md transition-shadow backdrop-blur-md bg-white/30 border border-white/10 cursor-pointer"
+          onClick={() => navigate('/data-management/suppliers')}
+        >
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Supplier Management</CardTitle>
             <Users className="h-5 w-5 text-muted-foreground" />
@@ -58,7 +65,10 @@ export default function CostDashboard() {
           </CardContent>
         </Card>
 
-        <Card className="hover:shadow-md transition-shadow backdrop-blur-md bg-white/30 border border-white/10">
+        <Card 
+          className="hover:shadow-md transition-shadow backdrop-blur-md bg-white/30 border border-white/10 cursor-pointer"
+          onClick={handleUploadClick}
+        >
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">File Uploads</CardTitle>
             <FileUp className="h-5 w-5 text-muted-foreground" />
@@ -71,7 +81,10 @@ export default function CostDashboard() {
           </CardContent>
         </Card>
 
-        <Card className="hover:shadow-md transition-shadow backdrop-blur-md bg-white/30 border border-white/10">
+        <Card 
+          className="hover:shadow-md transition-shadow backdrop-blur-md bg-white/30 border border-white/10 cursor-pointer"
+          onClick={() => navigate('/data-management/cost-management')}
+        >
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Landed Costs</CardTitle>
             <FileText className="h-5 w-5 text-muted-foreground" />
@@ -84,7 +97,10 @@ export default function CostDashboard() {
           </CardContent>
         </Card>
 
-        <Card className="hover:shadow-md transition-shadow backdrop-blur-md bg-white/30 border border-white/10">
+        <Card 
+          className="hover:shadow-md transition-shadow backdrop-blur-md bg-white/30 border border-white/10 cursor-pointer"
+          onClick={handleAnalysisClick}
+        >
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Cost Analysis</CardTitle>
             <BarChart3 className="h-5 w-5 text-muted-foreground" />
@@ -104,7 +120,7 @@ export default function CostDashboard() {
           <TabsTrigger value="supplier-management" className="py-2">Supplier Management</TabsTrigger>
           <TabsTrigger value="file-uploads" className="py-2">File Uploads</TabsTrigger>
           <TabsTrigger value="landed-costs" className="py-2">Landed Costs</TabsTrigger>
-          <TabsTrigger value="cost-analysis" className="py-2">Cost Analysis</TabsTrigger>
+          <TabsTrigger value="cost-analysis" className="py-2" onClick={handleAnalysisClick}>Cost Analysis</TabsTrigger>
           <TabsTrigger value="cost-history" className="py-2">Cost History</TabsTrigger>
         </TabsList>
 
