@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { useSuppliers } from '@/hooks/use-suppliers';
+import { useSuppliers } from '@/hooks/suppliers'; // Updated import path
 import { BarChart, LineChart, PieChart, Activity, Package, AlertTriangle } from 'lucide-react';
 
 const SupplierDashboard = () => {
