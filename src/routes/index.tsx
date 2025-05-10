@@ -15,6 +15,7 @@ import { TechHubRoutes } from "./techHubRoutes";
 import { DotXRoutes } from "./dotXRoutes";
 import { SupplierManagementRoutes } from "./supplierManagementRoutes";
 import { CustomerManagementRoutes } from "./customerManagementRoutes";
+import { BrandMarketingRoutes } from "./brandMarketingRoutes";
 
 export const AppRoutes = () => {
   return (
@@ -41,6 +42,7 @@ export const AppRoutes = () => {
       {DotXRoutes()}
       {SupplierManagementRoutes()}
       {CustomerManagementRoutes()}
+      {BrandMarketingRoutes()}
       
       {/* 404 Page */}
       <Route path="*" element={<NotFound />} />

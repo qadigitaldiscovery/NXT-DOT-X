@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { Card, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
-import { Bot, BarChart3, Gift, BrainCircuit } from 'lucide-react';
+import { Bot, BarChart3, Gift, BrainCircuit, Award } from 'lucide-react';
 
 interface ModuleItem {
   id: string;
@@ -39,6 +39,15 @@ const PrimaryModules: React.FC = () => {
       bgColor: "from-purple-500 to-purple-700",
       permission: "modules.loyalty"
     }, 
+    {
+      id: "brand-marketing",
+      name: "Brand Marketing Module",
+      description: "Brand management and trust analysis",
+      path: "/brand-marketing",
+      icon: <Award className="h-16 w-16 text-white" />,
+      bgColor: "from-amber-500 to-amber-700",
+      permission: "modules.brand"
+    },
     {
       id: "dot-x",
       name: "DOT-X",
