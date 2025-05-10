@@ -342,6 +342,186 @@ const BrandSettings = () => {
                   </Table>
                 </CardContent>
               </Card>
+              
+              <Card className="bg-green-50 border-green-100">
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-lg">Competitive Position</CardTitle>
+                  <CardDescription>Configure tracking for competitor analysis metrics</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Metric</TableHead>
+                        <TableHead>Source</TableHead>
+                        <TableHead className="text-right">Track</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      <TableRow>
+                        <TableCell>Share of Search</TableCell>
+                        <TableCell>SEMRUSH</TableCell>
+                        <TableCell className="text-right"><Switch defaultChecked={true} /></TableCell>
+                      </TableRow>
+                      <TableRow>
+                        <TableCell>Competitor Traffic Comparison</TableCell>
+                        <TableCell>AHREFS</TableCell>
+                        <TableCell className="text-right"><Switch defaultChecked={true} /></TableCell>
+                      </TableRow>
+                      <TableRow>
+                        <TableCell>Competitor Keyword Overlap</TableCell>
+                        <TableCell>SEMRUSH</TableCell>
+                        <TableCell className="text-right"><Switch defaultChecked={true} /></TableCell>
+                      </TableRow>
+                      <TableRow>
+                        <TableCell>Competitor Social Share</TableCell>
+                        <TableCell>UNMETRIC</TableCell>
+                        <TableCell className="text-right"><Switch defaultChecked={true} /></TableCell>
+                      </TableRow>
+                      <TableRow>
+                        <TableCell>Brand Positioning Score</TableCell>
+                        <TableCell>Internal</TableCell>
+                        <TableCell className="text-right"><Switch defaultChecked={true} /></TableCell>
+                      </TableRow>
+                    </TableBody>
+                  </Table>
+                </CardContent>
+              </Card>
+              
+              <Card className="bg-indigo-50 border-indigo-100">
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-lg">Customer Trust Metrics</CardTitle>
+                  <CardDescription>Configure tracking for brand trust and customer confidence</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Metric</TableHead>
+                        <TableHead>Source</TableHead>
+                        <TableHead className="text-right">Track</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      <TableRow>
+                        <TableCell>Trust Score</TableCell>
+                        <TableCell>Trustpilot</TableCell>
+                        <TableCell className="text-right"><Switch defaultChecked={true} /></TableCell>
+                      </TableRow>
+                      <TableRow>
+                        <TableCell>Net Promoter Score</TableCell>
+                        <TableCell>Internal Survey</TableCell>
+                        <TableCell className="text-right"><Switch defaultChecked={true} /></TableCell>
+                      </TableRow>
+                      <TableRow>
+                        <TableCell>Customer Retention Rate</TableCell>
+                        <TableCell>CRM</TableCell>
+                        <TableCell className="text-right"><Switch defaultChecked={true} /></TableCell>
+                      </TableRow>
+                      <TableRow>
+                        <TableCell>Positive Reviews %</TableCell>
+                        <TableCell>Google Reviews</TableCell>
+                        <TableCell className="text-right"><Switch defaultChecked={true} /></TableCell>
+                      </TableRow>
+                      <TableRow>
+                        <TableCell>Customer Lifetime Value</TableCell>
+                        <TableCell>Analytics</TableCell>
+                        <TableCell className="text-right"><Switch defaultChecked={true} /></TableCell>
+                      </TableRow>
+                    </TableBody>
+                  </Table>
+                </CardContent>
+              </Card>
+              
+              <Card className="bg-cyan-50 border-cyan-100">
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-lg">Organic Search Performance</CardTitle>
+                  <CardDescription>Configure tracking for SEO and organic search metrics</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Metric</TableHead>
+                        <TableHead>Source</TableHead>
+                        <TableHead className="text-right">Track</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      <TableRow>
+                        <TableCell>Organic Traffic</TableCell>
+                        <TableCell>Google Analytics</TableCell>
+                        <TableCell className="text-right"><Switch defaultChecked={true} /></TableCell>
+                      </TableRow>
+                      <TableRow>
+                        <TableCell>Organic Keywords</TableCell>
+                        <TableCell>SEMRUSH</TableCell>
+                        <TableCell className="text-right"><Switch defaultChecked={true} /></TableCell>
+                      </TableRow>
+                      <TableRow>
+                        <TableCell>Brand SERP Features</TableCell>
+                        <TableCell>AHREFS</TableCell>
+                        <TableCell className="text-right"><Switch defaultChecked={true} /></TableCell>
+                      </TableRow>
+                      <TableRow>
+                        <TableCell>Average Keyword Position</TableCell>
+                        <TableCell>Google Search Console</TableCell>
+                        <TableCell className="text-right"><Switch defaultChecked={true} /></TableCell>
+                      </TableRow>
+                      <TableRow>
+                        <TableCell>Click-Through Rate</TableCell>
+                        <TableCell>Google Search Console</TableCell>
+                        <TableCell className="text-right"><Switch defaultChecked={true} /></TableCell>
+                      </TableRow>
+                    </TableBody>
+                  </Table>
+                </CardContent>
+              </Card>
+              
+              <Card className="bg-teal-50 border-teal-100">
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-lg">Content Marketing Impact</CardTitle>
+                  <CardDescription>Configure tracking for content effectiveness metrics</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Metric</TableHead>
+                        <TableHead>Source</TableHead>
+                        <TableHead className="text-right">Track</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      <TableRow>
+                        <TableCell>Top Performing Content</TableCell>
+                        <TableCell>Google Analytics</TableCell>
+                        <TableCell className="text-right"><Switch defaultChecked={true} /></TableCell>
+                      </TableRow>
+                      <TableRow>
+                        <TableCell>Content Engagement Rate</TableCell>
+                        <TableCell>Multiple Sources</TableCell>
+                        <TableCell className="text-right"><Switch defaultChecked={true} /></TableCell>
+                      </TableRow>
+                      <TableRow>
+                        <TableCell>Content Conversion Rate</TableCell>
+                        <TableCell>Marketing Platform</TableCell>
+                        <TableCell className="text-right"><Switch defaultChecked={true} /></TableCell>
+                      </TableRow>
+                      <TableRow>
+                        <TableCell>Content Authority Score</TableCell>
+                        <TableCell>Internal</TableCell>
+                        <TableCell className="text-right"><Switch defaultChecked={true} /></TableCell>
+                      </TableRow>
+                      <TableRow>
+                        <TableCell>Content Sharing Metrics</TableCell>
+                        <TableCell>Multiple Platforms</TableCell>
+                        <TableCell className="text-right"><Switch defaultChecked={true} /></TableCell>
+                      </TableRow>
+                    </TableBody>
+                  </Table>
+                </CardContent>
+              </Card>
             </div>
           </div>
         </CollapsibleSettingsSection>
