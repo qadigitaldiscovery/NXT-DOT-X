@@ -8,6 +8,7 @@ import BrandAnalytics from "@/pages/brand-marketing/BrandAnalytics";
 import BrandTrust from "@/pages/brand-marketing/BrandTrust";
 import MarketPerception from "@/pages/brand-marketing/MarketPerception";
 import BrandSettings from "@/pages/brand-marketing/BrandSettings";
+import SEOKeywords from "@/pages/brand-marketing/SEOKeywords";
 
 export const BrandMarketingRoutes = () => {
   return (
@@ -17,6 +18,7 @@ export const BrandMarketingRoutes = () => {
       <Route path="/brand-marketing/trust-analysis" element={<BrandTrust />} />
       <Route path="/brand-marketing/market-perception" element={<MarketPerception />} />
       <Route path="/brand-marketing/settings" element={<BrandSettings />} />
+      <Route path="/brand-marketing/seo" element={<SEOKeywords />} />
     </>
   );
 };
