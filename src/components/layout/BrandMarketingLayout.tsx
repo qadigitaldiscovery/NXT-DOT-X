@@ -1,10 +1,9 @@
-
 import React from 'react';
 import { cn } from '@/lib/utils';
 import { SharedSidebar } from './SharedSidebar';
 import { SharedNavbar } from './SharedNavbar';
 import { useIsMobile } from '@/hooks/use-mobile';
-import { Home, Award, BarChart3, LineChart, TrendingUp, Settings, BadgePercent, Globe } from 'lucide-react';
+import { Home, Award, BarChart3, LineChart, TrendingUp, Settings, BadgePercent, Globe, Search } from 'lucide-react';
 
 type NavItem = {
   label: string;
@@ -37,7 +36,8 @@ const brandNavItems: NavCategory[] = [
       { label: 'Brand Dashboard', icon: Award, path: '/brand-marketing' },
       { label: 'Brand Analytics', icon: BarChart3, path: '/brand-marketing/analytics' },
       { label: 'Trust Analysis', icon: BadgePercent, path: '/brand-marketing/trust-analysis' },
-      { label: 'Market Perception', icon: TrendingUp, path: '/brand-marketing/market-perception' }
+      { label: 'Market Perception', icon: TrendingUp, path: '/brand-marketing/market-perception' },
+      { label: 'SEO & Keywords', icon: Search, path: '/brand-marketing/seo' }
     ]
   },
   {
