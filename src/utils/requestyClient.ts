@@ -1,6 +1,6 @@
 
 // Requesty API client utility
-import React from "react";
+import { useState } from "react";
 import { toast } from "sonner";
 
 // Interface for the chat completion request
@@ -65,8 +65,8 @@ export const sendRequestyMessage = async (
 
 // Hook for using Requesty in components
 export const useRequestyClient = () => {
-  const [isLoading, setIsLoading] = React.useState(false);
-  const [error, setError] = React.useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const sendMessage = async (prompt: string, systemMessage?: string) => {
     setIsLoading(true);
