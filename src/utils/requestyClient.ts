@@ -1,5 +1,6 @@
 
 // Requesty API client utility
+import React from "react";
 import { toast } from "sonner";
 
 // Interface for the chat completion request
