@@ -4,7 +4,7 @@ import { File, FileSearch } from 'lucide-react';
 import { DocumentItem } from './types';
 import { Button } from '@/components/ui/button';
 import { toast } from "sonner";
-import { callOpenAI } from '@/utils/openai-client';
+import { callOpenAI, ChatCompletionResponse } from '@/utils/openai-client';
 
 interface DocumentViewerProps {
   document: DocumentItem | null;
@@ -109,7 +109,7 @@ export const DocumentViewer = ({ document }: DocumentViewerProps) => {
     try {
       const model = localStorage.getItem('openai-preferred-model') || 'gpt-4o-mini';
       
-      const result = await callOpenAI({
+      const result = await callOpenAI<ChatCompletionResponse>({
         endpoint: 'chat',
         payload: {
           model,
@@ -129,8 +129,10 @@ export const DocumentViewer = ({ document }: DocumentViewerProps) => {
         apiKey
       });
       
-      setSummary(result.choices[0].message.content);
-      toast.success("Summary generated successfully");
+      if (result.choices && result.choices[0]?.message) {
+        setSummary(result.choices[0].message.content);
+        toast.success("Summary generated successfully");
+      }
     } catch (error) {
       console.error("Error generating summary:", error);
       toast.error("Failed to generate summary");

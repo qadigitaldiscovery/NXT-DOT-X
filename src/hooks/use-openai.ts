@@ -1,7 +1,23 @@
 
 import { useState, useCallback, useRef, useEffect } from 'react';
 import { callOpenAI, OpenAIResponse, processStream, OpenAIError } from '@/utils/openai-client';
-import { useDebounce } from '@/hooks/use-debounce';
+
+// Custom hook for debouncing
+const useDebounce = <T>(value: T, delay: number): T => {
+  const [debouncedValue, setDebouncedValue] = useState<T>(value);
+  
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedValue(value);
+    }, delay);
+    
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [value, delay]);
+  
+  return debouncedValue;
+};
 
 // Cache for memoizing identical requests
 interface CacheEntry<T> {
@@ -27,23 +43,6 @@ interface UseOpenAIResult<T extends OpenAIResponse> {
   isLoading: boolean;
   abort: () => void;
 }
-
-// Custom hook for debouncing
-export const useDebounce = <T>(value: T, delay: number): T => {
-  const [debouncedValue, setDebouncedValue] = useState<T>(value);
-  
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setDebouncedValue(value);
-    }, delay);
-    
-    return () => {
-      clearTimeout(timer);
-    };
-  }, [value, delay]);
-  
-  return debouncedValue;
-};
 
 // Main hook for OpenAI API calls
 export function useOpenAI<T extends OpenAIResponse>({

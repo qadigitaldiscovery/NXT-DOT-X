@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { FileCode, Cloud, Settings, BrainCircuit, Plus, Api } from "lucide-react";
+import { FileCode, Cloud, Settings, BrainCircuit, Plus, Terminal } from "lucide-react";
 import ApiKeyForm from "@/components/tech-hub/api-management/ApiKeyForm";
 import ApiEndpointList from "@/components/tech-hub/api-management/ApiEndpointList";
 import ApiPermissionsTable from "@/components/tech-hub/api-management/ApiPermissionsTable";
@@ -27,7 +27,7 @@ const TechHubApiManagement: React.FC = () => {
           <TabsTrigger value="apis"><FileCode className="h-4 w-4 mr-1" />API Endpoints</TabsTrigger>
           <TabsTrigger value="keys"><Cloud className="h-4 w-4 mr-1" />API Keys</TabsTrigger>
           <TabsTrigger value="permissions"><Settings className="h-4 w-4 mr-1" />Permissions</TabsTrigger>
-          <TabsTrigger value="openai"><Api className="h-4 w-4 mr-1" />OpenAI</TabsTrigger>
+          <TabsTrigger value="openai"><Terminal className="h-4 w-4 mr-1" />OpenAI</TabsTrigger>
           <TabsTrigger value="personas"><BrainCircuit className="h-4 w-4 mr-1" />AI Assistance</TabsTrigger>
         </TabsList>
         

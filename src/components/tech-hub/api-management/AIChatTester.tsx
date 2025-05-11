@@ -4,7 +4,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
-import { callOpenAI, estimateTokenCount, estimateCost } from '@/utils/openai-client';
+import { callOpenAI, ChatCompletionResponse, estimateTokenCount, estimateCost } from '@/utils/openai-client';
 
 const AIChatTester: React.FC = () => {
   const [prompt, setPrompt] = useState<string>('');
@@ -46,7 +46,7 @@ const AIChatTester: React.FC = () => {
       
       const model = localStorage.getItem('openai-preferred-model') || 'gpt-4o-mini';
       
-      const result = await callOpenAI({
+      const result = await callOpenAI<ChatCompletionResponse>({
         endpoint: 'chat',
         payload: {
           model,
@@ -58,19 +58,21 @@ const AIChatTester: React.FC = () => {
         signal: abortControllerRef.current.signal
       });
       
-      const completionText = result.choices[0].message.content;
-      setResponse(completionText);
-      
-      // Update token counts and cost estimate
-      const promptTokens = result.usage.prompt_tokens;
-      const completionTokens = result.usage.completion_tokens;
-      setTokens({
-        prompt: promptTokens,
-        completion: completionTokens,
-        total: result.usage.total_tokens
-      });
-      
-      setCost(estimateCost(model, promptTokens, completionTokens));
+      if (result.choices && result.choices[0]?.message) {
+        const completionText = result.choices[0].message.content;
+        setResponse(completionText);
+        
+        // Update token counts and cost estimate
+        const promptTokens = result.usage?.prompt_tokens || 0;
+        const completionTokens = result.usage?.completion_tokens || 0;
+        setTokens({
+          prompt: promptTokens,
+          completion: completionTokens,
+          total: result.usage?.total_tokens || 0
+        });
+        
+        setCost(estimateCost(model, promptTokens, completionTokens));
+      }
       
     } catch (error) {
       if (!(error instanceof DOMException && error.name === 'AbortError')) {
