@@ -12,11 +12,11 @@ export function ThemeToggle() {
       variant="outline" 
       size="icon" 
       onClick={toggleTheme}
-      className="rounded-lg border-gray-300 dark:border-gray-700"
+      className="rounded-lg border-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 shadow-sm"
       title={theme === "light" ? "Switch to dark mode" : "Switch to light mode"}
     >
       {theme === "light" ? (
-        <Moon className="h-5 w-5" />
+        <Moon className="h-5 w-5 text-gray-700" />
       ) : (
         <Sun className="h-5 w-5 text-yellow-400" />
       )}

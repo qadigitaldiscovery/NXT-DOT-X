@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { MenuIcon, UserCircle, Settings as SettingsIcon, Home } from 'lucide-react';
@@ -52,8 +51,10 @@ export const SharedNavbar = ({
         </div>
 
         <div className="flex items-center space-x-3">
-          {/* Theme Toggle - Explicitly styled to be more visible */}
-          <ThemeToggle />
+          {/* Theme Toggle - Making it more prominent */}
+          <div className="relative z-10">
+            <ThemeToggle />
+          </div>
           
           {/* Settings Button */}
           <Button variant="ghost" size="icon" onClick={() => navigate('/settings')} className={cn(iconColor, hoverBgColor, "rounded-lg")} title="Settings">
