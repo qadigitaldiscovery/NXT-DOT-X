@@ -1,3 +1,4 @@
+
 import React, { useState, useCallback, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -97,19 +98,19 @@ const ApiKeyForm: React.FC<ApiKeyFormProps> = ({
                 .eq('user_id', user.id)
                 .maybeSingle();
                 
-              if (!simpleError && simpleData?.api_key) {
+              if (!simpleError && simpleData) {
                 setApiKey(simpleData.api_key);
                 setSavedKey(simpleData.api_key);
                 if (simpleData.preferred_model) setModel(simpleData.preferred_model);
                 setKeyStatus('valid');
-              } else {
+              } else if (simpleError) {
                 console.error(`Error in simple fetch for ${providerName} API key:`, simpleError);
               }
             } else {
               console.error(`Error fetching ${providerName} API key:`, error);
               toast.error(`Failed to fetch saved API key for ${providerName}`);
             }
-          } else if (data?.api_key) {
+          } else if (data) {
             // Override localStorage values with database values if available
             setApiKey(data.api_key);
             setSavedKey(data.api_key);
@@ -150,14 +151,14 @@ const ApiKeyForm: React.FC<ApiKeyFormProps> = ({
       if (isAuthenticated && user) {
         try {
           // First check if the config column exists
-          const { error: columnCheckError } = await supabase.rpc('column_exists', { 
+          const { data: columnExists, error: columnCheckError } = await supabase.rpc('column_exists', { 
             table_name: 'api_provider_settings',
             column_name: 'config'
           });
 
-          let upsertData;
+          let upsertData: any;
           
-          if (columnCheckError) {
+          if (columnCheckError || !columnExists) {
             console.log("Could not check if config column exists or it doesn't exist:", columnCheckError);
             // Use basic upsert without config column
             upsertData = {

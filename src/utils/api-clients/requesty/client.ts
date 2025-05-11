@@ -50,7 +50,7 @@ const getApiKey = async (): Promise<{ key: string | null, model: string | null, 
             .eq('user_id', session.user.id)
             .maybeSingle();
             
-          if (!simpleError && simpleData?.api_key) {
+          if (!simpleError && simpleData) {
             return { 
               key: simpleData.api_key,
               model: simpleData.preferred_model || 'openai/gpt-4o-mini',
@@ -62,7 +62,7 @@ const getApiKey = async (): Promise<{ key: string | null, model: string | null, 
         } else {
           console.error("Error fetching API key:", error);
         }
-      } else if (data?.api_key) {
+      } else if (data) {
         return { 
           key: data.api_key,
           model: data.preferred_model || 'openai/gpt-4o-mini',

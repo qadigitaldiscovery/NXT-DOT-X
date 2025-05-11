@@ -53,7 +53,7 @@ export const getApiKey = async (): Promise<{key: string | null, config: any | nu
             .eq('user_id', session.user.id)
             .maybeSingle();
             
-          if (!simpleError && simpleData?.api_key) {
+          if (!simpleError && simpleData) {
             return { 
               key: simpleData.api_key, 
               config: null
@@ -64,7 +64,7 @@ export const getApiKey = async (): Promise<{key: string | null, config: any | nu
         } else {
           console.error("Error fetching API key:", error);
         }
-      } else if (data?.api_key) {
+      } else if (data) {
         return { 
           key: data.api_key, 
           config: data.config
