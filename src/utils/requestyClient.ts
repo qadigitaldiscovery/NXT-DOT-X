@@ -26,21 +26,26 @@ interface RequestyChatCompletionResponse {
 // Get API key from storage or database
 const getApiKey = async (): Promise<{ key: string | null, model: string | null }> => {
   // Try to get from database first if user is logged in
-  const { data: { session } } = await supabase.auth.getSession();
-  
-  if (session) {
-    const { data, error } = await supabase
-      .from('api_provider_settings')
-      .select('api_key, preferred_model')
-      .eq('provider_name', 'requesty')
-      .maybeSingle();
-      
-    if (!error && data?.api_key) {
-      return { 
-        key: data.api_key,
-        model: data.preferred_model || 'openai/gpt-4o-mini'
-      };
+  try {
+    const { data: { session } } = await supabase.auth.getSession();
+    
+    if (session) {
+      const { data, error } = await supabase
+        .from('api_provider_settings')
+        .select('api_key, preferred_model')
+        .eq('provider_name', 'requesty')
+        .eq('user_id', session.user.id)
+        .maybeSingle();
+        
+      if (!error && data?.api_key) {
+        return { 
+          key: data.api_key,
+          model: data.preferred_model || 'openai/gpt-4o-mini'
+        };
+      }
     }
+  } catch (err) {
+    console.error("Error fetching API key from database:", err);
   }
   
   // Fallback to localStorage if no key in DB or user not logged in

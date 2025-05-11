@@ -20,31 +20,35 @@ const OpenAIKeyForm: React.FC = () => {
   // Load API key from database on component mount
   useEffect(() => {
     const fetchApiKey = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      
-      if (!session) {
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        
+        if (!session) {
+          setIsLoading(false);
+          return;
+        }
+        
+        const { data, error } = await supabase
+          .from('api_provider_settings')
+          .select('api_key, preferred_model')
+          .eq('provider_name', 'openai')
+          .maybeSingle();
+        
+        if (error) {
+          console.error("Error fetching API key:", error);
+          toast.error("Failed to fetch saved API key");
+        } else if (data?.api_key) {
+          // Set the actual API key
+          setApiKey(data.api_key);
+          setSavedKey(data.api_key);
+          if (data.preferred_model) setModel(data.preferred_model);
+          setKeyStatus('valid'); // Assume valid until tested
+        }
+      } catch (err) {
+        console.error("Exception while fetching API key:", err);
+      } finally {
         setIsLoading(false);
-        return;
       }
-      
-      const { data, error } = await supabase
-        .from('api_provider_settings')
-        .select('api_key, preferred_model')
-        .eq('provider_name', 'openai')
-        .maybeSingle();
-      
-      if (error) {
-        console.error("Error fetching API key:", error);
-      } else if (data) {
-        // Mask the API key for display
-        const maskedKey = data.api_key.substring(0, 3) + '...' + data.api_key.substring(data.api_key.length - 4);
-        setApiKey(data.api_key);
-        setSavedKey(data.api_key);
-        if (data.preferred_model) setModel(data.preferred_model);
-        setKeyStatus('valid'); // Assume valid until tested
-      }
-      
-      setIsLoading(false);
     };
     
     fetchApiKey();
@@ -57,10 +61,10 @@ const OpenAIKeyForm: React.FC = () => {
       
       if (!session) {
         toast.error("You must be logged in to save API keys");
-        return;
+        return false;
       }
 
-      const { data, error } = await supabase
+      const { error } = await supabase
         .from('api_provider_settings')
         .upsert({
           provider_name: 'openai',
@@ -68,8 +72,7 @@ const OpenAIKeyForm: React.FC = () => {
           preferred_model: verifiedModel,
           user_id: session.user.id,
           updated_at: new Date().toISOString()
-        }, { onConflict: 'user_id, provider_name' })
-        .select();
+        }, { onConflict: 'user_id, provider_name' });
       
       if (error) {
         console.error("Error saving API key:", error);
@@ -77,6 +80,7 @@ const OpenAIKeyForm: React.FC = () => {
         return false;
       }
       
+      setSavedKey(key);
       return true;
     } catch (error) {
       console.error("Error saving API key:", error);
@@ -110,7 +114,6 @@ const OpenAIKeyForm: React.FC = () => {
       
       if (saved) {
         setKeyStatus('valid');
-        setSavedKey(apiKey);
         toast.success("API key verified and saved successfully!");
       }
     } catch (error) {

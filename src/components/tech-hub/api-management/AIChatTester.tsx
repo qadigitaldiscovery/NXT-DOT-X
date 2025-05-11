@@ -30,6 +30,7 @@ const AIChatTester = () => {
           .from('api_provider_settings')
           .select('preferred_model')
           .eq('provider_name', 'openai')
+          .eq('user_id', session.user.id)
           .maybeSingle();
           
         if (data?.preferred_model) {
