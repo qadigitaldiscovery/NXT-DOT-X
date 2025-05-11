@@ -12,11 +12,22 @@ import {
 } from './types';
 
 // Get API key from storage or database
-export const getApiKey = async (): Promise<string | null> => {
+export const getApiKey = async (): Promise<{key: string | null, config: any | null}> => {
   // Try to get from localStorage first as it's simpler
   const localKey = localStorage.getItem('openai-api-key');
+  const localConfig = localStorage.getItem('openai-additional-config');
+  
   if (localKey) {
-    return localKey;
+    let config = null;
+    try {
+      if (localConfig) {
+        config = JSON.parse(localConfig);
+      }
+    } catch (e) {
+      console.error("Error parsing config from localStorage:", e);
+    }
+    
+    return { key: localKey, config };
   }
   
   // If no key in localStorage, try database if user is logged in
@@ -26,20 +37,23 @@ export const getApiKey = async (): Promise<string | null> => {
     if (session?.user) {
       const { data, error } = await supabase
         .from('api_provider_settings')
-        .select('api_key')
+        .select('api_key, config')
         .eq('provider_name', 'openai')
         .eq('user_id', session.user.id)
         .maybeSingle();
         
       if (!error && data?.api_key) {
-        return data.api_key;
+        return { 
+          key: data.api_key, 
+          config: data.config
+        };
       }
     }
   } catch (err) {
     console.error("Error fetching API key from database:", err);
   }
   
-  return null;
+  return { key: null, config: null };
 };
 
 // Main function to call OpenAI API
@@ -50,10 +64,36 @@ export async function callOpenAI<T extends OpenAIResponse>({
   signal 
 }: CallOptions): Promise<T> {
   // Use provided apiKey or fetch from storage
-  const key = apiKey || await getApiKey();
+  const { key, config } = apiKey ? { key: apiKey, config: null } : await getApiKey();
   
   if (!key) {
     throw new Error("No API key available. Please add your OpenAI API key in the settings.");
+  }
+  
+  // Apply any additional config parameters if available
+  if (config && !apiKey) {
+    // Merge the saved config with the provided payload
+    if (typeof config === 'object') {
+      // Apply temperature if it exists
+      if (config.temperature_default !== undefined && payload.temperature === undefined) {
+        payload.temperature = config.temperature_default;
+      }
+      
+      // Apply max_tokens if it exists
+      if (config.max_tokens_default !== undefined && payload.max_tokens === undefined) {
+        payload.max_tokens = config.max_tokens_default;
+      }
+      
+      // Apply frequency_penalty if it exists
+      if (config.frequency_penalty_default !== undefined && payload.frequency_penalty === undefined) {
+        payload.frequency_penalty = config.frequency_penalty_default;
+      }
+      
+      // Apply presence_penalty if it exists
+      if (config.presence_penalty_default !== undefined && payload.presence_penalty === undefined) {
+        payload.presence_penalty = config.presence_penalty_default;
+      }
+    }
   }
   
   // First try to use our secure proxy if available
@@ -66,7 +106,8 @@ export async function callOpenAI<T extends OpenAIResponse>({
         body: {
           provider: 'openai',
           endpoint: endpoint === 'chat' ? 'chat/completions' : endpoint,
-          payload
+          payload,
+          config
         }
       });
       
@@ -85,15 +126,22 @@ export async function callOpenAI<T extends OpenAIResponse>({
   const baseUrl = 'https://api.openai.com/v1';
   const url = `${baseUrl}/${endpoint === 'chat' ? 'chat/completions' : endpoint}`;
   
+  // Add organization if configured
+  const headers: Record<string, string> = {
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${key}`,
+    'User-Agent': 'lovable.dev-fe',
+    'X-Request-Timestamp': new Date().toISOString()
+  };
+  
+  if (config?.organization_id) {
+    headers['OpenAI-Organization'] = config.organization_id;
+  }
+  
   try {
     const response = await fetch(url, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${key}`,
-        'User-Agent': 'lovable.dev-fe',
-        'X-Request-Timestamp': new Date().toISOString(),
-      },
+      headers,
       body: JSON.stringify(payload),
       signal
     });

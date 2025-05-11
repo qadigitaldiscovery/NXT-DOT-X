@@ -7,6 +7,12 @@ import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/context/AuthContext';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Slider } from "@/components/ui/slider";
+import { Switch } from "@/components/ui/switch";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { ChevronDown, ChevronUp } from "lucide-react";
 
 export interface ApiKeyFormProps {
   providerName: string;
@@ -22,6 +28,7 @@ export interface ApiKeyFormProps {
   }[];
   initialModel?: string;
   footerText?: string;
+  additionalConfig?: Record<string, any>;
 }
 
 const ApiKeyForm: React.FC<ApiKeyFormProps> = ({
@@ -31,15 +38,19 @@ const ApiKeyForm: React.FC<ApiKeyFormProps> = ({
   onVerify,
   preferredModelOptions,
   initialModel,
-  footerText
+  footerText,
+  additionalConfig = {}
 }) => {
-  const { isAuthenticated, user } = useAuth(); // Use the auth context
+  const { isAuthenticated, user } = useAuth();
   const [apiKey, setApiKey] = useState<string>('');
   const [savedKey, setSavedKey] = useState<string>('');
   const [isVerifying, setIsVerifying] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [keyStatus, setKeyStatus] = useState<'unknown' | 'valid' | 'invalid' | 'quota_exceeded'>('unknown');
   const [model, setModel] = useState<string>(initialModel || preferredModelOptions[0]?.value || '');
+  const [activeTab, setActiveTab] = useState<string>("basic");
+  const [advancedConfig, setAdvancedConfig] = useState(additionalConfig);
+  const [showAdvanced, setShowAdvanced] = useState(false);
   
   // Load API key from database or localStorage on component mount
   useEffect(() => {
@@ -48,12 +59,21 @@ const ApiKeyForm: React.FC<ApiKeyFormProps> = ({
         // Check localStorage first for any saved keys
         const localKey = localStorage.getItem(`${providerName.toLowerCase()}-api-key`);
         const localModel = localStorage.getItem(`${providerName.toLowerCase()}-preferred-model`);
+        const localConfig = localStorage.getItem(`${providerName.toLowerCase()}-additional-config`);
         
         // Initialize with localStorage values if available
         if (localKey) {
           setApiKey(localKey);
           setSavedKey(localKey);
           if (localModel) setModel(localModel);
+          if (localConfig) {
+            try {
+              const parsedConfig = JSON.parse(localConfig);
+              setAdvancedConfig({...additionalConfig, ...parsedConfig});
+            } catch (e) {
+              console.error("Error parsing stored config:", e);
+            }
+          }
           setKeyStatus('valid');
         }
         
@@ -61,7 +81,7 @@ const ApiKeyForm: React.FC<ApiKeyFormProps> = ({
         if (isAuthenticated && user) {
           const { data, error } = await supabase
             .from('api_provider_settings')
-            .select('api_key, preferred_model')
+            .select('api_key, preferred_model, config')
             .eq('provider_name', providerName.toLowerCase())
             .eq('user_id', user.id)
             .maybeSingle();
@@ -74,6 +94,14 @@ const ApiKeyForm: React.FC<ApiKeyFormProps> = ({
             setApiKey(data.api_key);
             setSavedKey(data.api_key);
             if (data.preferred_model) setModel(data.preferred_model);
+            if (data.config) {
+              try {
+                const parsedConfig = typeof data.config === 'string' ? JSON.parse(data.config) : data.config;
+                setAdvancedConfig({...additionalConfig, ...parsedConfig});
+              } catch (e) {
+                console.error("Error parsing stored config:", e);
+              }
+            }
             setKeyStatus('valid');
           }
         }
@@ -85,14 +113,18 @@ const ApiKeyForm: React.FC<ApiKeyFormProps> = ({
     };
     
     fetchApiKey();
-  }, [providerName, isAuthenticated, user]);
+  }, [providerName, isAuthenticated, user, additionalConfig]);
   
   // Save API key to database or localStorage
   const saveApiKey = async (key: string, verifiedModel: string) => {
     try {
+      // Prepare the config data
+      const configData = JSON.stringify(advancedConfig);
+      
       // Always save to localStorage as a backup
       localStorage.setItem(`${providerName.toLowerCase()}-api-key`, key);
       localStorage.setItem(`${providerName.toLowerCase()}-preferred-model`, verifiedModel);
+      localStorage.setItem(`${providerName.toLowerCase()}-additional-config`, configData);
       
       // If authenticated, try to save to Supabase as well
       if (isAuthenticated && user) {
@@ -102,6 +134,7 @@ const ApiKeyForm: React.FC<ApiKeyFormProps> = ({
             provider_name: providerName.toLowerCase(),
             api_key: key,
             preferred_model: verifiedModel,
+            config: advancedConfig,
             user_id: user.id,
             updated_at: new Date().toISOString()
           }, { onConflict: 'provider_name,user_id' });
@@ -173,6 +206,7 @@ const ApiKeyForm: React.FC<ApiKeyFormProps> = ({
       // Always clear from localStorage
       localStorage.removeItem(`${providerName.toLowerCase()}-api-key`);
       localStorage.removeItem(`${providerName.toLowerCase()}-preferred-model`);
+      localStorage.removeItem(`${providerName.toLowerCase()}-additional-config`);
       
       // If authenticated, try to clear from Supabase as well
       if (isAuthenticated && user) {
@@ -191,6 +225,7 @@ const ApiKeyForm: React.FC<ApiKeyFormProps> = ({
       setApiKey('');
       setSavedKey('');
       setKeyStatus('unknown');
+      setAdvancedConfig(additionalConfig); // Reset to defaults
       toast.info(`${providerName} API key removed`);
     } catch (error) {
       console.error(`Error removing ${providerName} API key:`, error);
@@ -205,6 +240,19 @@ const ApiKeyForm: React.FC<ApiKeyFormProps> = ({
     if (savedKey) {
       await saveApiKey(savedKey, value);
     }
+  };
+  
+  const updateAdvancedConfig = (key: string, value: any) => {
+    setAdvancedConfig(prev => {
+      const updated = { ...prev, [key]: value };
+      
+      // If we have a saved key, save the updated config
+      if (savedKey) {
+        saveApiKey(savedKey, model);
+      }
+      
+      return updated;
+    });
   };
   
   const renderStatusMessage = () => {
@@ -228,6 +276,110 @@ const ApiKeyForm: React.FC<ApiKeyFormProps> = ({
             )}
           </p>
         );
+      default:
+        return null;
+    }
+  };
+
+  const renderAdvancedConfigField = (key: string, value: any) => {
+    // Determine the field type based on the value type
+    const valueType = typeof value;
+    
+    switch (valueType) {
+      case 'boolean':
+        return (
+          <div className="flex items-center space-x-2" key={key}>
+            <Switch 
+              id={key} 
+              checked={advancedConfig[key]} 
+              onCheckedChange={(checked) => updateAdvancedConfig(key, checked)} 
+            />
+            <Label htmlFor={key} className="capitalize">
+              {key.replace(/_/g, ' ')}
+            </Label>
+          </div>
+        );
+        
+      case 'number':
+        if (key.includes('temperature') || (value >= 0 && value <= 1)) {
+          return (
+            <div className="space-y-2" key={key}>
+              <div className="flex justify-between">
+                <Label htmlFor={key} className="capitalize">{key.replace(/_/g, ' ')}</Label>
+                <span className="text-sm">{advancedConfig[key].toFixed(1)}</span>
+              </div>
+              <Slider 
+                id={key}
+                min={0} 
+                max={1} 
+                step={0.1} 
+                value={[advancedConfig[key]]} 
+                onValueChange={(values) => updateAdvancedConfig(key, values[0])} 
+              />
+            </div>
+          );
+        } else if (key.includes('max_tokens') || key.includes('limit')) {
+          return (
+            <div className="space-y-2" key={key}>
+              <Label htmlFor={key} className="capitalize">{key.replace(/_/g, ' ')}</Label>
+              <Input
+                id={key}
+                type="number"
+                value={advancedConfig[key]}
+                onChange={(e) => updateAdvancedConfig(key, parseInt(e.target.value) || 0)}
+                className="w-full"
+              />
+            </div>
+          );
+        }
+        // For other number types
+        return (
+          <div className="space-y-2" key={key}>
+            <Label htmlFor={key} className="capitalize">{key.replace(/_/g, ' ')}</Label>
+            <Input
+              id={key}
+              type="number"
+              value={advancedConfig[key]}
+              onChange={(e) => updateAdvancedConfig(key, parseFloat(e.target.value) || 0)}
+              className="w-full"
+            />
+          </div>
+        );
+        
+      case 'string':
+        if (key === 'response_format') {
+          return (
+            <div className="space-y-2" key={key}>
+              <Label htmlFor={key} className="capitalize">{key.replace(/_/g, ' ')}</Label>
+              <Select 
+                value={advancedConfig[key]} 
+                onValueChange={(value) => updateAdvancedConfig(key, value)}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select format" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="text">Text</SelectItem>
+                  <SelectItem value="json_object">JSON Object</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          );
+        }
+        // For other string types
+        return (
+          <div className="space-y-2" key={key}>
+            <Label htmlFor={key} className="capitalize">{key.replace(/_/g, ' ')}</Label>
+            <Input
+              id={key}
+              type="text"
+              value={advancedConfig[key]}
+              onChange={(e) => updateAdvancedConfig(key, e.target.value)}
+              className="w-full"
+            />
+          </div>
+        );
+        
       default:
         return null;
     }
@@ -274,29 +426,60 @@ const ApiKeyForm: React.FC<ApiKeyFormProps> = ({
           {renderStatusMessage()}
         </div>
         
-        {preferredModelOptions.length > 0 && (
-          <div className="space-y-2">
-            <Label>Preferred Model</Label>
-            <div className="grid grid-cols-2 gap-2">
-              {preferredModelOptions.map((option) => (
-                <div key={option.value} className="flex items-center space-x-2">
-                  <input
-                    type="radio"
-                    id={option.value}
-                    name="model"
-                    value={option.value}
-                    checked={model === option.value}
-                    onChange={() => handleModelChange(option.value)}
-                    className="h-4 w-4 text-blue-600"
-                  />
-                  <Label htmlFor={option.value} className="text-sm cursor-pointer">
-                    {option.label}
-                  </Label>
+        <Tabs value={activeTab} onValueChange={setActiveTab}>
+          <TabsList className="grid grid-cols-2">
+            <TabsTrigger value="basic">Basic Settings</TabsTrigger>
+            <TabsTrigger value="advanced">Advanced Settings</TabsTrigger>
+          </TabsList>
+          
+          <TabsContent value="basic">
+            {preferredModelOptions.length > 0 && (
+              <div className="space-y-2 pt-4">
+                <Label>Preferred Model</Label>
+                <div className="grid grid-cols-2 gap-2">
+                  {preferredModelOptions.map((option) => (
+                    <div key={option.value} className="flex items-center space-x-2">
+                      <input
+                        type="radio"
+                        id={option.value}
+                        name="model"
+                        value={option.value}
+                        checked={model === option.value}
+                        onChange={() => handleModelChange(option.value)}
+                        className="h-4 w-4 text-blue-600"
+                      />
+                      <Label htmlFor={option.value} className="text-sm cursor-pointer">
+                        {option.label}
+                      </Label>
+                    </div>
+                  ))}
                 </div>
-              ))}
+              </div>
+            )}
+          </TabsContent>
+          
+          <TabsContent value="advanced">
+            <div className="space-y-4 pt-4">
+              <Collapsible open={showAdvanced} onOpenChange={setShowAdvanced}>
+                <div className="flex items-center justify-between">
+                  <h4 className="text-sm font-medium">Advanced Configuration Options</h4>
+                  <CollapsibleTrigger asChild>
+                    <Button variant="ghost" size="sm">
+                      {showAdvanced ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+                    </Button>
+                  </CollapsibleTrigger>
+                </div>
+                <CollapsibleContent className="space-y-4 pt-4">
+                  {Object.entries(advancedConfig).map(([key, value]) => (
+                    <div key={key}>
+                      {renderAdvancedConfigField(key, value)}
+                    </div>
+                  ))}
+                </CollapsibleContent>
+              </Collapsible>
             </div>
-          </div>
-        )}
+          </TabsContent>
+        </Tabs>
         
         {savedKey && (
           <div className="pt-2">

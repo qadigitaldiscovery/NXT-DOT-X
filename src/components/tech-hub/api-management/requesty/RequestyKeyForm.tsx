@@ -38,11 +38,23 @@ const RequestyKeyForm: React.FC = () => {
   };
 
   const modelOptions = [
-    { value: 'openai/gpt-4o-mini', label: 'OpenAI GPT-4o Mini' },
+    { value: 'openai/gpt-4o-mini', label: 'OpenAI GPT-4o Mini (Default)' },
     { value: 'openai/gpt-4o', label: 'OpenAI GPT-4o' },
     { value: 'anthropic/claude-3-5-sonnet', label: 'Claude 3.5 Sonnet' },
-    { value: 'mistral/mistral-large', label: 'Mistral Large' }
+    { value: 'anthropic/claude-3-opus', label: 'Claude 3 Opus' },
+    { value: 'anthropic/claude-3-haiku', label: 'Claude 3 Haiku' },
+    { value: 'mistral/mistral-large', label: 'Mistral Large' },
+    { value: 'mistral/mistral-small', label: 'Mistral Small' },
+    { value: 'meta/llama-3-70b', label: 'Llama 3 70B' },
+    { value: 'meta/llama-3-8b', label: 'Llama 3 8B' }
   ];
+
+  const additionalConfig = {
+    streaming_default: true,
+    max_tokens_default: 2048,
+    temperature_default: 0.7,
+    response_format: 'text'
+  };
 
   return (
     <ApiKeyForm
@@ -55,7 +67,8 @@ const RequestyKeyForm: React.FC = () => {
       onVerify={verifyRequestyKey}
       preferredModelOptions={modelOptions}
       initialModel="openai/gpt-4o-mini"
-      footerText="Your API key is stored securely in the database and never exposed to the browser. Visit the Requesty API Keys page to create a new key if needed."
+      footerText="Your API key is stored securely and never exposed to the browser. Visit the Requesty API Keys page to create a new key if needed."
+      additionalConfig={additionalConfig}
     />
   );
 };

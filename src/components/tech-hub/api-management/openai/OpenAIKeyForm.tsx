@@ -35,11 +35,21 @@ const OpenAIKeyForm: React.FC = () => {
   };
 
   const modelOptions = [
-    { value: 'gpt-4o-mini', label: 'GPT-4o Mini' },
+    { value: 'gpt-4o-mini', label: 'GPT-4o Mini (Default)' },
     { value: 'gpt-4o', label: 'GPT-4o' },
+    { value: 'gpt-4-turbo', label: 'GPT-4 Turbo' },
     { value: 'gpt-3.5-turbo', label: 'GPT-3.5 Turbo' },
-    { value: 'gpt-4-turbo', label: 'GPT-4 Turbo' }
+    { value: 'text-embedding-3-large', label: 'Text Embedding 3 Large' },
+    { value: 'text-embedding-3-small', label: 'Text Embedding 3 Small' }
   ];
+
+  const additionalConfig = {
+    organization_id: '',
+    max_tokens_default: 2048,
+    temperature_default: 0.7,
+    frequency_penalty_default: 0,
+    presence_penalty_default: 0,
+  };
 
   return (
     <ApiKeyForm
@@ -52,7 +62,8 @@ const OpenAIKeyForm: React.FC = () => {
       onVerify={verifyOpenAIKey}
       preferredModelOptions={modelOptions}
       initialModel="gpt-4o-mini"
-      footerText="Your API key is stored securely in the database and never exposed to the browser. Visit the OpenAI API Keys page to create a new key if needed."
+      footerText="Your API key is stored securely and never exposed to the browser. Visit the OpenAI API Keys page to create a new key if needed."
+      additionalConfig={additionalConfig}
     />
   );
 };
