@@ -1,71 +1,93 @@
 
-import { useState, useCallback, useRef } from 'react';
-import { callOpenAI } from '@/utils/api-clients/openai/client';
-import { OpenAIResponse } from '@/utils/api-clients/openai/types';
+import { useState, useCallback } from 'react';
+import { callOpenAI, processStream } from '@/utils/api-clients/openai/client';
+import { ChatCompletionResponse } from '@/utils/api-clients/openai/types';
 
-// Types for the hook
-interface UseOpenAIClientOptions<T extends OpenAIResponse> {
-  endpoint: 'chat' | 'embeddings' | 'moderations';
-  payload: any;
-  apiKey?: string;
-  enabled?: boolean;
-}
-
-interface UseOpenAIClientResult<T extends OpenAIResponse> {
-  data: T | null;
-  error: Error | null;
-  isLoading: boolean;
-  abort: () => void;
-  execute: () => Promise<void>;
-}
-
-// Main hook for OpenAI API calls
-export function useOpenAIClient<T extends OpenAIResponse>({
-  endpoint,
-  payload,
-  apiKey,
-  enabled = false
-}: UseOpenAIClientOptions<T>): UseOpenAIClientResult<T> {
-  const [data, setData] = useState<T | null>(null);
+export const useOpenAIClient = () => {
+  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  
-  const abortControllerRef = useRef<AbortController | null>(null);
-  
-  const execute = useCallback(async () => {
-    if (!enabled) return;
-    
+
+  const sendMessage = useCallback(async (
+    content: string,
+    model: string = 'gpt-4o-mini',
+    options: {
+      temperature?: number;
+      maxTokens?: number;
+      systemPrompt?: string;
+    } = {}
+  ) => {
     setIsLoading(true);
     setError(null);
     
     try {
-      // Create abort controller for this request
-      abortControllerRef.current = new AbortController();
+      const messages = [
+        ...(options.systemPrompt ? [{ role: 'system' as const, content: options.systemPrompt }] : []),
+        { role: 'user' as const, content }
+      ];
       
-      // Make the API call
-      const result = await callOpenAI<T>({
-        endpoint,
-        payload,
-        apiKey,
-        signal: abortControllerRef.current.signal
+      const result = await callOpenAI<ChatCompletionResponse>({
+        endpoint: 'chat',
+        payload: {
+          model,
+          messages,
+          temperature: options.temperature,
+          max_tokens: options.maxTokens
+        }
       });
       
-      setData(result);
+      return result.choices[0]?.message.content || '';
     } catch (err) {
-      if (!(err instanceof DOMException && err.name === 'AbortError')) {
-        setError(err instanceof Error ? err : new Error('Unknown error'));
-      }
+      setError(err instanceof Error ? err : new Error('Failed to send message to OpenAI'));
+      throw err;
     } finally {
-      setIsLoading(false);
-    }
-  }, [apiKey, enabled, endpoint, payload]);
-  
-  const abort = useCallback(() => {
-    if (abortControllerRef.current) {
-      abortControllerRef.current.abort();
       setIsLoading(false);
     }
   }, []);
   
-  return { data, error, isLoading, abort, execute };
-}
+  const streamMessage = useCallback(async function* (
+    content: string,
+    model: string = 'gpt-4o-mini',
+    options: {
+      temperature?: number;
+      maxTokens?: number;
+      systemPrompt?: string;
+    } = {}
+  ) {
+    setIsLoading(true);
+    setError(null);
+    
+    try {
+      const messages = [
+        ...(options.systemPrompt ? [{ role: 'system' as const, content: options.systemPrompt }] : []),
+        { role: 'user' as const, content }
+      ];
+      
+      const stream = await callOpenAI({
+        endpoint: 'chat',
+        payload: {
+          model,
+          messages,
+          temperature: options.temperature,
+          max_tokens: options.maxTokens,
+          stream: true
+        }
+      });
+      
+      if (stream && 'getReader' in stream) {
+        yield* processStream(stream as ReadableStream);
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err : new Error('Failed to stream message from OpenAI'));
+      throw err;
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+  
+  return {
+    sendMessage,
+    streamMessage,
+    isLoading,
+    error
+  };
+};

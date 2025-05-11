@@ -9,9 +9,7 @@ const RequestyChatTester: React.FC = () => {
 
   const handleSendMessage = async (prompt: string): Promise<string> => {
     try {
-      return await sendMessage([
-        { role: 'user', content: prompt }
-      ]);
+      return await sendMessage(prompt);
     } catch (error) {
       console.error('Error testing Requesty:', error);
       toast.error('Failed to get response from Requesty');

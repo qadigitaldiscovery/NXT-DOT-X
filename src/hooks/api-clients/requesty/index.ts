@@ -1,6 +1,7 @@
 
 import { sendRequestyMessage, streamRequestyMessage } from '@/utils/api-clients/requesty/client';
 import { RequestyMessage } from '@/utils/api-clients/requesty/types';
+import { useRequestyClient } from './use-requesty-client';
 
 // Re-export the client functions
 export { sendRequestyMessage, streamRequestyMessage };
@@ -9,9 +10,5 @@ export { sendRequestyMessage, streamRequestyMessage };
 export type { RequestyMessage };
 
 // Hook for using Requesty in components
-export const useRequesty = () => {
-  return {
-    sendMessage: sendRequestyMessage,
-    streamMessage: streamRequestyMessage
-  };
-};
+export { useRequestyClient };
+export const useRequesty = useRequestyClient;

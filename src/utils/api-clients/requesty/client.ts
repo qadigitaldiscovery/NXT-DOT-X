@@ -2,95 +2,16 @@
 import { toast } from "sonner";
 import { supabase } from '@/integrations/supabase/client';
 import { RequestyMessage } from './types';
+import { 
+  getApiKey as getProviderApiKey, 
+  tryUseEdgeFunction, 
+  processStreamingResponse,
+  ApiError
+} from '../common/shared-utils';
 
 // Get API key from storage or database
-const getApiKey = async (): Promise<{ key: string | null, model: string | null, config: any | null }> => {
-  // Try to get from localStorage first as it's simpler
-  const localKey = localStorage.getItem('requesty-api-key');
-  const localModel = localStorage.getItem('requesty-preferred-model');
-  const localConfig = localStorage.getItem('requesty-additional-config');
-  
-  if (localKey) {
-    let config = null;
-    try {
-      if (localConfig) {
-        config = JSON.parse(localConfig);
-      }
-    } catch (e) {
-      console.error("Error parsing config from localStorage:", e);
-    }
-    
-    return { 
-      key: localKey,
-      model: localModel || 'openai/gpt-4o-mini',
-      config 
-    };
-  }
-  
-  // Try to get from database if no key in localStorage
-  try {
-    const { data: { session } } = await supabase.auth.getSession();
-    
-    if (session?.user) {
-      try {
-        // First try with config column
-        const { data, error } = await supabase
-          .from('api_provider_settings')
-          .select('api_key, preferred_model, config')
-          .eq('provider_name', 'requesty')
-          .eq('user_id', session.user.id)
-          .maybeSingle();
-          
-        if (error) {
-          // If error mentions missing config column, try simpler query
-          if (error.message?.includes("column 'config' does not exist")) {
-            const { data: simpleData, error: simpleError } = await supabase
-              .from('api_provider_settings')
-              .select('api_key, preferred_model')
-              .eq('provider_name', 'requesty')
-              .eq('user_id', session.user.id)
-              .maybeSingle();
-              
-            if (!simpleError && simpleData && typeof simpleData === 'object') {
-              // Make sure api_key property exists and is a string
-              if ('api_key' in simpleData && typeof simpleData.api_key === 'string') {
-                return { 
-                  key: simpleData.api_key,
-                  model: 'preferred_model' in simpleData && typeof simpleData.preferred_model === 'string' ? 
-                    simpleData.preferred_model : 'openai/gpt-4o-mini',
-                  config: null 
-                };
-              }
-            } else if (simpleError) {
-              console.error("Error fetching API key with simple query:", simpleError);
-            }
-          } else {
-            console.error("Error fetching API key:", error);
-          }
-        } else if (data && typeof data === 'object') {
-          // Make sure api_key property exists and is a string
-          if ('api_key' in data && typeof data.api_key === 'string') {
-            return { 
-              key: data.api_key,
-              model: 'preferred_model' in data && typeof data.preferred_model === 'string' ? 
-                data.preferred_model : 'openai/gpt-4o-mini',
-              config: 'config' in data && data.config !== null ? data.config : null
-            };
-          }
-        }
-      } catch (err) {
-        console.error("Error in database query:", err);
-      }
-    }
-  } catch (err) {
-    console.error("Error fetching API key from database:", err);
-  }
-  
-  return { 
-    key: null, 
-    model: 'openai/gpt-4o-mini',
-    config: null
-  };
+export const getApiKey = async (): Promise<{ key: string | null, model: string | null, config: any | null }> => {
+  return await getProviderApiKey('requesty', 'requesty-api-key');
 };
 
 /**
@@ -137,29 +58,15 @@ export const sendRequestyMessage = async (
       }
     }
     
-    // First try to use our secure proxy if available
-    try {
-      const { data: { session } } = await supabase.auth.getSession();
-      
-      if (session) {
-        // Call via the edge function for better security
-        const { data, error } = await supabase.functions.invoke('api-proxy', {
-          body: {
-            provider: 'requesty',
-            endpoint: 'chat/completions',
-            payload
-          }
-        });
-        
-        if (!error) {
-          return data.choices[0].message.content;
-        }
-        
-        // If the edge function fails, fall back to direct API call
-        console.warn("Edge function failed, falling back to direct API call", error);
-      }
-    } catch (err) {
-      console.warn("Could not use edge function, falling back to direct API call", err);
+    // Try to use our edge function first
+    const edgeResponse = await tryUseEdgeFunction<any>(
+      'requesty',
+      'chat/completions',
+      payload
+    );
+    
+    if (edgeResponse) {
+      return edgeResponse.choices[0].message.content;
     }
 
     // Fallback to direct API call
@@ -174,7 +81,14 @@ export const sendRequestyMessage = async (
 
     if (!response.ok) {
       const errorData = await response.json();
-      throw new Error(errorData.error?.message || "Failed to get response from Requesty");
+      throw new ApiError(
+        errorData.error?.message || "Failed to get response from Requesty", 
+        { 
+          type: errorData.error?.type,
+          code: errorData.error?.code,
+          status: response.status
+        }
+      );
     }
 
     const data = await response.json();
@@ -238,35 +152,17 @@ export async function* streamRequestyMessage(
 
     if (!response.ok) {
       const errorData = await response.json();
-      throw new Error(errorData.error?.message || "Failed to get response from Requesty");
-    }
-
-    const reader = response.body!.getReader();
-    const decoder = new TextDecoder();
-    let buffer = '';
-
-    while (true) {
-      const { done, value } = await reader.read();
-      if (done) break;
-
-      buffer += decoder.decode(value, { stream: true });
-      const lines = buffer.split('\n');
-      buffer = lines.pop() || '';
-
-      for (const line of lines) {
-        if (line.startsWith('data: ') && line !== 'data: [DONE]') {
-          const data = line.substring(6);
-          try {
-            const parsed = JSON.parse(data);
-            if (parsed.choices && parsed.choices[0]?.delta?.content) {
-              yield parsed.choices[0].delta.content;
-            }
-          } catch (e) {
-            console.error('Error parsing stream data:', e);
-          }
+      throw new ApiError(
+        errorData.error?.message || "Failed to get response from Requesty",
+        { 
+          type: errorData.error?.type,
+          code: errorData.error?.code,
+          status: response.status
         }
-      }
+      );
     }
+
+    yield* processStreamingResponse(response.body!);
   } catch (error) {
     console.error("Error streaming from Requesty API:", error);
     toast.error("Failed to stream response from Requesty");

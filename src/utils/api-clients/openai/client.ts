@@ -10,82 +10,18 @@ import {
   NetworkError, 
   OpenAIErrorResponse 
 } from './types';
+import { 
+  getApiKey as getProviderApiKey, 
+  tryUseEdgeFunction, 
+  processStreamingResponse,
+  estimateTokenCount,
+  ApiError
+} from '../common/shared-utils';
 
 // Get API key from storage or database
 export const getApiKey = async (): Promise<{key: string | null, config: any | null}> => {
-  // Try to get from localStorage first as it's simpler
-  const localKey = localStorage.getItem('openai-api-key');
-  const localConfig = localStorage.getItem('openai-additional-config');
-  
-  if (localKey) {
-    let config = null;
-    try {
-      if (localConfig) {
-        config = JSON.parse(localConfig);
-      }
-    } catch (e) {
-      console.error("Error parsing config from localStorage:", e);
-    }
-    
-    return { key: localKey, config };
-  }
-  
-  // If no key in localStorage, try database if user is logged in
-  try {
-    const { data: { session } } = await supabase.auth.getSession();
-    
-    if (session?.user) {
-      // First try with config column
-      try {
-        const { data, error } = await supabase
-          .from('api_provider_settings')
-          .select('api_key, config')
-          .eq('provider_name', 'openai')
-          .eq('user_id', session.user.id)
-          .maybeSingle();
-          
-        if (error) {
-          // If error mentions missing config column, try simpler query
-          if (error.message?.includes("column 'config' does not exist")) {
-            const { data: simpleData, error: simpleError } = await supabase
-              .from('api_provider_settings')
-              .select('api_key')
-              .eq('provider_name', 'openai')
-              .eq('user_id', session.user.id)
-              .maybeSingle();
-              
-            if (!simpleError && simpleData && typeof simpleData === 'object') {
-              // Make sure api_key property exists and is a string
-              if ('api_key' in simpleData && typeof simpleData.api_key === 'string') {
-                return { 
-                  key: simpleData.api_key, 
-                  config: null
-                };
-              }
-            } else if (simpleError) {
-              console.error("Error fetching API key with simple query:", simpleError);
-            }
-          } else {
-            console.error("Error fetching API key:", error);
-          }
-        } else if (data && typeof data === 'object') {
-          // Make sure api_key property exists and is a string
-          if ('api_key' in data && typeof data.api_key === 'string') {
-            return { 
-              key: data.api_key, 
-              config: 'config' in data && data.config !== null ? data.config : null
-            };
-          }
-        }
-      } catch (err) {
-        console.error("Error in database query:", err);
-      }
-    }
-  } catch (err) {
-    console.error("Error fetching API key from database:", err);
-  }
-  
-  return { key: null, config: null };
+  const result = await getProviderApiKey('openai', 'openai-api-key');
+  return { key: result.key, config: result.config };
 };
 
 // Main function to call OpenAI API
@@ -128,30 +64,15 @@ export async function callOpenAI<T extends OpenAIResponse>({
     }
   }
   
-  // First try to use our secure proxy if available
-  try {
-    const { data: { session } } = await supabase.auth.getSession();
-    
-    if (session) {
-      // Call via the edge function for better security
-      const { data, error } = await supabase.functions.invoke('api-proxy', {
-        body: {
-          provider: 'openai',
-          endpoint: endpoint === 'chat' ? 'chat/completions' : endpoint,
-          payload,
-          config
-        }
-      });
-      
-      if (!error) {
-        return data as T;
-      }
-      
-      // If the edge function fails, fall back to direct API call
-      console.warn("Edge function failed, falling back to direct API call", error);
-    }
-  } catch (err) {
-    console.warn("Could not use edge function, falling back to direct API call", err);
+  // Try to use our edge function first
+  const edgeResponse = await tryUseEdgeFunction<T>(
+    'openai', 
+    endpoint === 'chat' ? 'chat/completions' : endpoint,
+    payload
+  );
+  
+  if (edgeResponse) {
+    return edgeResponse;
   }
   
   // Direct API call as fallback
@@ -223,44 +144,7 @@ export async function callOpenAI<T extends OpenAIResponse>({
 
 // Helper function to process streaming responses
 export async function* processStream(stream: ReadableStream) {
-  const reader = stream.getReader();
-  const decoder = new TextDecoder();
-  let buffer = '';
-  
-  try {
-    while (true) {
-      const { done, value } = await reader.read();
-      if (done) break;
-      
-      buffer += decoder.decode(value, { stream: true });
-      
-      // Process complete events from the buffer
-      const lines = buffer.split('\n');
-      buffer = lines.pop() || '';
-      
-      for (const line of lines) {
-        if (line.startsWith('data: ') && line !== 'data: [DONE]') {
-          const data = line.substring(6);
-          try {
-            const parsed = JSON.parse(data);
-            if (parsed.choices && parsed.choices[0]?.delta?.content) {
-              yield parsed.choices[0].delta.content;
-            }
-          } catch (e) {
-            console.error('Error parsing stream data:', e);
-          }
-        }
-      }
-    }
-  } finally {
-    reader.releaseLock();
-  }
-}
-
-// Utility function to estimate token count
-export function estimateTokenCount(text: string): number {
-  // Rough estimate: ~4 chars per token
-  return Math.ceil(text.length / 4);
+  yield* processStreamingResponse(stream);
 }
 
 // Utility function to estimate cost based on model and token count
