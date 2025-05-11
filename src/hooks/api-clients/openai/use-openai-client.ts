@@ -1,6 +1,7 @@
 
 import { useState, useCallback, useRef } from 'react';
-import { callOpenAI, OpenAIResponse } from '@/utils/api-clients/openai/client';
+import { callOpenAI } from '@/utils/api-clients/openai/client';
+import { OpenAIResponse } from '@/utils/api-clients/openai/types';
 
 // Types for the hook
 interface UseOpenAIClientOptions<T extends OpenAIResponse> {

@@ -1,6 +1,7 @@
 
 import { useState, useCallback, useEffect, useRef } from 'react';
-import { callOpenAI, OpenAIResponse } from '@/utils/api-clients/openai/client';
+import { callOpenAI } from '@/utils/api-clients/openai/client';
+import { OpenAIResponse } from '@/utils/api-clients/openai/types';
 
 // Cache for memoizing identical requests
 interface CacheEntry<T> {
