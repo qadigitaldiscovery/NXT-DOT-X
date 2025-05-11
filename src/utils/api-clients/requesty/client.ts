@@ -51,8 +51,9 @@ const getApiKey = async (): Promise<{ key: string | null, model: string | null, 
               .eq('user_id', session.user.id)
               .maybeSingle();
               
-            if (!simpleError && simpleData && typeof simpleData === 'object' && simpleData !== null) {
-              if ('api_key' in simpleData && typeof simpleData.api_key === 'string') {
+            if (!simpleError && simpleData && typeof simpleData === 'object') {
+              // Make sure api_key property exists and is a string
+              if (simpleData && 'api_key' in simpleData && typeof simpleData.api_key === 'string') {
                 return { 
                   key: simpleData.api_key,
                   model: 'preferred_model' in simpleData && typeof simpleData.preferred_model === 'string' ? 
@@ -66,14 +67,14 @@ const getApiKey = async (): Promise<{ key: string | null, model: string | null, 
           } else {
             console.error("Error fetching API key:", error);
           }
-        } else if (data && typeof data === 'object' && data !== null) {
-          // Check if data has the expected properties
+        } else if (data && typeof data === 'object') {
+          // Make sure api_key property exists and is a string
           if ('api_key' in data && typeof data.api_key === 'string') {
             return { 
               key: data.api_key,
               model: 'preferred_model' in data && typeof data.preferred_model === 'string' ? 
                 data.preferred_model : 'openai/gpt-4o-mini',
-              config: 'config' in data ? data.config : null
+              config: 'config' in data && data.config !== null ? data.config : null
             };
           }
         }

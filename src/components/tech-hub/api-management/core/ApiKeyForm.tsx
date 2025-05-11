@@ -1,4 +1,3 @@
-
 import React, { useState, useCallback, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -99,12 +98,14 @@ const ApiKeyForm: React.FC<ApiKeyFormProps> = ({
                 .maybeSingle();
                 
               if (!simpleError && simpleData) {
-                if (typeof simpleData === 'object' && simpleData !== null) {
-                  // Use type guard to safely access properties
+                // Check if simpleData is not null and is an object before accessing properties
+                if (simpleData && typeof simpleData === 'object') {
+                  // Check if api_key property exists and is a string
                   if ('api_key' in simpleData && typeof simpleData.api_key === 'string') {
                     setApiKey(simpleData.api_key);
                     setSavedKey(simpleData.api_key);
                     
+                    // Check if preferred_model property exists and is a string
                     if ('preferred_model' in simpleData && typeof simpleData.preferred_model === 'string') {
                       setModel(simpleData.preferred_model);
                     }
@@ -120,17 +121,20 @@ const ApiKeyForm: React.FC<ApiKeyFormProps> = ({
               toast.error(`Failed to fetch saved API key for ${providerName}`);
             }
           } else if (data) {
-            // Override localStorage values with database values if available
-            if (typeof data === 'object' && data !== null) {
+            // Make sure data is not null before accessing properties
+            if (data && typeof data === 'object') {
+              // Check if api_key property exists and is a string
               if ('api_key' in data && typeof data.api_key === 'string') {
                 setApiKey(data.api_key);
                 setSavedKey(data.api_key);
                 
+                // Check if preferred_model property exists and is a string
                 if ('preferred_model' in data && typeof data.preferred_model === 'string') {
                   setModel(data.preferred_model);
                 }
                 
-                if ('config' in data) {
+                // Check if config property exists
+                if ('config' in data && data.config !== null) {
                   try {
                     const parsedConfig = typeof data.config === 'string' ? JSON.parse(data.config) : data.config;
                     setAdvancedConfig({...additionalConfig, ...parsedConfig});
@@ -174,7 +178,7 @@ const ApiKeyForm: React.FC<ApiKeyFormProps> = ({
             column_name: 'config'
           });
 
-          let upsertData = {
+          let upsertData: Record<string, any> = {
             provider_name: providerName.toLowerCase(),
             api_key: key,
             preferred_model: verifiedModel,
@@ -182,15 +186,9 @@ const ApiKeyForm: React.FC<ApiKeyFormProps> = ({
             updated_at: new Date().toISOString()
           };
           
-          if (columnCheckError || columnExists === false) {
-            console.log("Could not check if config column exists or it doesn't exist:", columnCheckError);
-            // Use basic upsert without config column
-          } else {
+          if (!columnCheckError && columnExists === true) {
             // Config column exists, add config to upsertData
-            upsertData = {
-              ...upsertData,
-              config: advancedConfig
-            };
+            upsertData.config = advancedConfig;
           }
           
           const { error } = await supabase

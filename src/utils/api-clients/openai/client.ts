@@ -54,8 +54,9 @@ export const getApiKey = async (): Promise<{key: string | null, config: any | nu
               .eq('user_id', session.user.id)
               .maybeSingle();
               
-            if (!simpleError && simpleData && typeof simpleData === 'object' && simpleData !== null) {
-              if ('api_key' in simpleData && typeof simpleData.api_key === 'string') {
+            if (!simpleError && simpleData && typeof simpleData === 'object') {
+              // Make sure api_key property exists and is a string
+              if (simpleData && 'api_key' in simpleData && typeof simpleData.api_key === 'string') {
                 return { 
                   key: simpleData.api_key, 
                   config: null
@@ -67,12 +68,12 @@ export const getApiKey = async (): Promise<{key: string | null, config: any | nu
           } else {
             console.error("Error fetching API key:", error);
           }
-        } else if (data && typeof data === 'object' && data !== null) {
-          // Check if data has the expected properties
+        } else if (data && typeof data === 'object') {
+          // Make sure api_key property exists and is a string
           if ('api_key' in data && typeof data.api_key === 'string') {
             return { 
               key: data.api_key, 
-              config: 'config' in data ? data.config : null
+              config: 'config' in data && data.config !== null ? data.config : null
             };
           }
         }
