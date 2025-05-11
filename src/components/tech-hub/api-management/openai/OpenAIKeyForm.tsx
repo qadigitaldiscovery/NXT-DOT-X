@@ -20,7 +20,7 @@ const OpenAIKeyForm: React.FC = () => {
       
       // If no error was thrown, the key is valid
       return true;
-    } catch (error) {
+    } catch (error: any) {
       console.error("API key verification failed:", error);
       
       // Handle quota exceeded error separately

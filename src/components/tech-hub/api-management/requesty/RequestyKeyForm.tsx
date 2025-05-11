@@ -28,7 +28,7 @@ const RequestyKeyForm: React.FC = () => {
       }
       
       return true;
-    } catch (error) {
+    } catch (error: any) {
       console.error("API key verification failed:", error);
       if (error.message === 'quota_exceeded') {
         throw error; // Let the parent component handle this specific error

@@ -2,12 +2,14 @@
 import React from 'react';
 import { toast } from 'sonner';
 import ChatTester from '../core/ChatTester';
-import { sendRequestyMessage } from '@/utils/requestyClient';
+import { useRequesty } from '@/hooks/api-clients/requesty';
 
 const RequestyChatTester: React.FC = () => {
+  const { sendMessage } = useRequesty();
+
   const handleSendMessage = async (prompt: string): Promise<string> => {
     try {
-      return await sendRequestyMessage([
+      return await sendMessage([
         { role: 'user', content: prompt }
       ]);
     } catch (error) {

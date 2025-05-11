@@ -1,5 +1,15 @@
 
-export * from './use-openai-client';
-export * from './use-openai-query';
-export * from './use-openai-stream';
-export * from './use-debounce';
+import { callOpenAI, processStream } from '@/utils/api-clients/openai/client';
+import { OpenAIResponse, ChatCompletionResponse } from '@/utils/api-clients/openai/types';
+
+// Re-export types and functions
+export type { OpenAIResponse, ChatCompletionResponse };
+export { callOpenAI, processStream };
+
+// Hook for easily using OpenAI in components
+export const useOpenAI = () => {
+  return {
+    callAPI: callOpenAI,
+    processStream
+  };
+};
