@@ -1,3 +1,4 @@
+
 import React, { useState, useCallback, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -98,7 +99,6 @@ const ApiKeyForm: React.FC<ApiKeyFormProps> = ({
                 .maybeSingle();
                 
               if (!simpleError && simpleData) {
-                // Check if simpleData is not null and is an object before accessing properties
                 if (simpleData && typeof simpleData === 'object') {
                   // Check if api_key property exists and is a string
                   if ('api_key' in simpleData && typeof simpleData.api_key === 'string') {
@@ -136,7 +136,9 @@ const ApiKeyForm: React.FC<ApiKeyFormProps> = ({
                 // Check if config property exists
                 if ('config' in data && data.config !== null) {
                   try {
-                    const parsedConfig = typeof data.config === 'string' ? JSON.parse(data.config) : data.config;
+                    const parsedConfig = typeof data.config === 'string' 
+                      ? JSON.parse(data.config) 
+                      : data.config;
                     setAdvancedConfig({...additionalConfig, ...parsedConfig});
                   } catch (e) {
                     console.error("Error parsing stored config:", e);
@@ -178,7 +180,19 @@ const ApiKeyForm: React.FC<ApiKeyFormProps> = ({
             column_name: 'config'
           });
 
-          let upsertData: Record<string, any> = {
+          if (columnCheckError) {
+            console.error("Error checking if config column exists:", columnCheckError);
+          }
+
+          // Define the base upsert data
+          const upsertData: {
+            provider_name: string;
+            api_key: string;
+            preferred_model: string;
+            user_id: string;
+            updated_at: string;
+            config?: Record<string, any>;
+          } = {
             provider_name: providerName.toLowerCase(),
             api_key: key,
             preferred_model: verifiedModel,
@@ -186,8 +200,8 @@ const ApiKeyForm: React.FC<ApiKeyFormProps> = ({
             updated_at: new Date().toISOString()
           };
           
+          // Add config only if the column exists
           if (!columnCheckError && columnExists === true) {
-            // Config column exists, add config to upsertData
             upsertData.config = advancedConfig;
           }
           
@@ -243,7 +257,7 @@ const ApiKeyForm: React.FC<ApiKeyFormProps> = ({
         setKeyStatus('invalid');
         toast.error(`Invalid ${providerName} API key or network error`);
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error(`${providerName} API key verification failed:`, error);
       
       // Handle quota exceeded error

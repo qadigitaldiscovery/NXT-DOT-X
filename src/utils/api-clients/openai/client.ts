@@ -56,7 +56,7 @@ export const getApiKey = async (): Promise<{key: string | null, config: any | nu
               
             if (!simpleError && simpleData && typeof simpleData === 'object') {
               // Make sure api_key property exists and is a string
-              if (simpleData && 'api_key' in simpleData && typeof simpleData.api_key === 'string') {
+              if ('api_key' in simpleData && typeof simpleData.api_key === 'string') {
                 return { 
                   key: simpleData.api_key, 
                   config: null
