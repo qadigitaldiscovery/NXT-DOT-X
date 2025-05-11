@@ -51,8 +51,8 @@ export const SharedNavbar = ({
           </div>
         </div>
 
-        <div className="flex items-center space-x-2">
-          {/* Theme Toggle */}
+        <div className="flex items-center space-x-3">
+          {/* Theme Toggle - Explicitly styled to be more visible */}
           <ThemeToggle />
           
           {/* Settings Button */}
