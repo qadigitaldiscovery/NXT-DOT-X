@@ -99,7 +99,7 @@ export const DocumentViewer = ({ document }: DocumentViewerProps) => {
       return;
     }
     
-    if (!document.content) {
+    if (!document?.content) {
       toast.error("No content available for summarization");
       return;
     }
@@ -135,7 +135,13 @@ export const DocumentViewer = ({ document }: DocumentViewerProps) => {
       }
     } catch (error) {
       console.error("Error generating summary:", error);
-      toast.error("Failed to generate summary");
+      
+      if (error instanceof RateLimitError || 
+          (error instanceof OpenAIError && error.code === 'insufficient_quota')) {
+        toast.error("API quota exceeded. Check your OpenAI billing account.");
+      } else {
+        toast.error("Failed to generate summary");
+      }
     } finally {
       setIsSummarizing(false);
     }

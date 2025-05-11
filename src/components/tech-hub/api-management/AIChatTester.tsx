@@ -4,7 +4,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
-import { callOpenAI, ChatCompletionResponse, estimateTokenCount, estimateCost } from '@/utils/openai-client';
+import { callOpenAI, ChatCompletionResponse, estimateTokenCount, estimateCost, RateLimitError, OpenAIError } from '@/utils/openai-client';
 
 const AIChatTester: React.FC = () => {
   const [prompt, setPrompt] = useState<string>('');
@@ -77,7 +77,13 @@ const AIChatTester: React.FC = () => {
     } catch (error) {
       if (!(error instanceof DOMException && error.name === 'AbortError')) {
         console.error("Error generating response:", error);
-        toast.error("Failed to generate response");
+        
+        if (error instanceof RateLimitError || 
+            (error instanceof OpenAIError && error.code === 'insufficient_quota')) {
+          toast.error("API quota exceeded. Check your OpenAI billing account.");
+        } else {
+          toast.error("Failed to generate response");
+        }
       }
     } finally {
       setIsLoading(false);

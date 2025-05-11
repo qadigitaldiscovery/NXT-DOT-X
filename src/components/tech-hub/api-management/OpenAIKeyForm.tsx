@@ -6,13 +6,13 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { toast } from "sonner";
-import { callOpenAI } from '@/utils/openai-client';
+import { callOpenAI, OpenAIError, RateLimitError } from '@/utils/openai-client';
 
 const OpenAIKeyForm: React.FC = () => {
   const [apiKey, setApiKey] = useState<string>('');
   const [savedKey, setSavedKey] = useState<string>('');
   const [isVerifying, setIsVerifying] = useState<boolean>(false);
-  const [keyStatus, setKeyStatus] = useState<'unknown' | 'valid' | 'invalid'>('unknown');
+  const [keyStatus, setKeyStatus] = useState<'unknown' | 'valid' | 'invalid' | 'quota_exceeded'>('unknown');
   const [model, setModel] = useState<string>('gpt-4o-mini');
   
   // Load API key from localStorage on component mount
@@ -52,8 +52,16 @@ const OpenAIKeyForm: React.FC = () => {
       toast.success("API key verified successfully!");
     } catch (error) {
       console.error("API key verification failed:", error);
-      setKeyStatus('invalid');
-      toast.error("Invalid API key or network error");
+      
+      // Handle different error types
+      if (error instanceof RateLimitError || 
+          (error instanceof OpenAIError && error.code === 'insufficient_quota')) {
+        setKeyStatus('quota_exceeded');
+        toast.error("Your API key is valid, but you've exceeded your quota limits. Check your OpenAI account billing.");
+      } else {
+        setKeyStatus('invalid');
+        toast.error("Invalid API key or network error");
+      }
     } finally {
       setIsVerifying(false);
     }
@@ -65,6 +73,30 @@ const OpenAIKeyForm: React.FC = () => {
     setSavedKey('');
     setKeyStatus('unknown');
     toast.info("API key removed");
+  };
+  
+  const renderStatusMessage = () => {
+    switch (keyStatus) {
+      case 'valid':
+        return <p className="text-sm text-green-500 mt-1">✓ Valid API key saved</p>;
+      case 'invalid':
+        return <p className="text-sm text-red-500 mt-1">✗ Invalid API key</p>;
+      case 'quota_exceeded':
+        return (
+          <p className="text-sm text-amber-500 mt-1">
+            ⚠ Valid key, but quota exceeded. <a 
+              href="https://platform.openai.com/account/billing" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="underline hover:text-amber-600"
+            >
+              Check your billing
+            </a>
+          </p>
+        );
+      default:
+        return null;
+    }
   };
   
   return (
@@ -94,12 +126,7 @@ const OpenAIKeyForm: React.FC = () => {
               {isVerifying ? "Verifying..." : "Verify"}
             </Button>
           </div>
-          {keyStatus === 'valid' && (
-            <p className="text-sm text-green-500 mt-1">✓ Valid API key saved</p>
-          )}
-          {keyStatus === 'invalid' && (
-            <p className="text-sm text-red-500 mt-1">✗ Invalid API key</p>
-          )}
+          {renderStatusMessage()}
         </div>
         
         <div className="space-y-2">
