@@ -50,10 +50,10 @@ const getApiKey = async (): Promise<{ key: string | null, model: string | null, 
             .eq('user_id', session.user.id)
             .maybeSingle();
             
-          if (!simpleError && simpleData) {
+          if (!simpleError && simpleData && 'api_key' in simpleData) {
             return { 
               key: simpleData.api_key,
-              model: simpleData.preferred_model || 'openai/gpt-4o-mini',
+              model: 'preferred_model' in simpleData && simpleData.preferred_model ? simpleData.preferred_model : 'openai/gpt-4o-mini',
               config: null 
             };
           } else if (simpleError) {

@@ -98,10 +98,12 @@ const ApiKeyForm: React.FC<ApiKeyFormProps> = ({
                 .eq('user_id', user.id)
                 .maybeSingle();
                 
-              if (!simpleError && simpleData) {
+              if (!simpleError && simpleData && 'api_key' in simpleData) {
                 setApiKey(simpleData.api_key);
                 setSavedKey(simpleData.api_key);
-                if (simpleData.preferred_model) setModel(simpleData.preferred_model);
+                if ('preferred_model' in simpleData && simpleData.preferred_model) {
+                  setModel(simpleData.preferred_model);
+                }
                 setKeyStatus('valid');
               } else if (simpleError) {
                 console.error(`Error in simple fetch for ${providerName} API key:`, simpleError);
@@ -156,9 +158,9 @@ const ApiKeyForm: React.FC<ApiKeyFormProps> = ({
             column_name: 'config'
           });
 
-          let upsertData: any;
+          let upsertData: Record<string, any>;
           
-          if (columnCheckError || !columnExists) {
+          if (columnCheckError || columnExists === false) {
             console.log("Could not check if config column exists or it doesn't exist:", columnCheckError);
             // Use basic upsert without config column
             upsertData = {
