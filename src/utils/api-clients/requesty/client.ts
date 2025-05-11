@@ -20,11 +20,12 @@ const getApiKey = async (): Promise<{ key: string | null, model: string | null }
   try {
     const { data: { session } } = await supabase.auth.getSession();
     
-    if (session) {
+    if (session?.user) {
       const { data, error } = await supabase
         .from('api_provider_settings')
         .select('api_key, preferred_model')
         .eq('provider_name', 'requesty')
+        .eq('user_id', session.user.id)
         .maybeSingle();
         
       if (!error && data?.api_key) {

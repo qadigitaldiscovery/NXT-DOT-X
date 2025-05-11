@@ -117,15 +117,16 @@ const ApiKeyForm: React.FC<ApiKeyFormProps> = ({
       localStorage.setItem(`${providerName.toLowerCase()}-preferred-model`, verifiedModel);
       
       // If authenticated, try to save to Supabase as well
-      if (isAuthenticated) {
+      if (isAuthenticated && user) {
         const { error } = await supabase
           .from('api_provider_settings')
           .upsert({
             provider_name: providerName.toLowerCase(),
             api_key: key,
             preferred_model: verifiedModel,
+            user_id: user.id,  // Add the user_id from the auth context
             updated_at: new Date().toISOString()
-          }, { onConflict: 'provider_name' });
+          }, { onConflict: 'provider_name,user_id' });
         
         if (error) {
           console.error(`Error saving ${providerName} API key to database:`, error);
@@ -191,11 +192,12 @@ const ApiKeyForm: React.FC<ApiKeyFormProps> = ({
       localStorage.removeItem(`${providerName.toLowerCase()}-preferred-model`);
       
       // If authenticated, try to clear from Supabase as well
-      if (isAuthenticated) {
+      if (isAuthenticated && user) {
         const { error } = await supabase
           .from('api_provider_settings')
           .delete()
-          .eq('provider_name', providerName.toLowerCase());
+          .eq('provider_name', providerName.toLowerCase())
+          .eq('user_id', user.id);
         
         if (error) {
           console.error(`Error removing ${providerName} API key from database:`, error);
