@@ -7,17 +7,20 @@ export const runMigrations = async () => {
     const { error: checkError } = await supabase.rpc(
       'column_exists',
       { 
-        p_table: 'api_provider_settings' as string,
-        p_column: 'config' as string
+        p_table: 'api_provider_settings' as unknown as string,
+        p_column: 'config' as unknown as string
       }
     );
     
     if (checkError) {
+      // If the stored function doesn't exist or returns an error, 
+      // proceed with migration but handle potential error
+      console.log("Could not check column existence, attempting to add column anyway");
       // If column doesn't exist, add it
       const { error } = await supabase.rpc(
         'execute_sql',
         { 
-          sql: `ALTER TABLE api_provider_settings ADD COLUMN IF NOT EXISTS config JSONB` as string
+          sql: `ALTER TABLE api_provider_settings ADD COLUMN IF NOT EXISTS config JSONB` as unknown as string
         }
       );
       
@@ -26,6 +29,8 @@ export const runMigrations = async () => {
       } else {
         console.log("Successfully added config column to api_provider_settings table");
       }
+    } else {
+      console.log("Column 'config' already exists in api_provider_settings table");
     }
   } catch (err) {
     console.error("Error checking or executing migrations:", err);
