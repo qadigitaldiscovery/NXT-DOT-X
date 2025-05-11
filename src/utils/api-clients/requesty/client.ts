@@ -2,6 +2,7 @@
 import { toast } from "sonner";
 import { supabase } from '@/integrations/supabase/client';
 import { RequestyMessage } from './types';
+import { useAuth } from '@/context/AuthContext';
 
 // Get API key from storage or database
 const getApiKey = async (): Promise<{ key: string | null, model: string | null }> => {

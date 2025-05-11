@@ -10,6 +10,7 @@ import {
   NetworkError, 
   OpenAIErrorResponse 
 } from './types';
+import { useAuth } from '@/context/AuthContext'; 
 
 // Get API key from storage or database
 export const getApiKey = async (): Promise<string | null> => {

@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/context/AuthContext';
 
 export interface ApiKeyFormProps {
   providerName: string;
@@ -32,6 +33,7 @@ const ApiKeyForm: React.FC<ApiKeyFormProps> = ({
   initialModel,
   footerText
 }) => {
+  const { isAuthenticated, user } = useAuth(); // Use the auth context instead
   const [apiKey, setApiKey] = useState<string>('');
   const [savedKey, setSavedKey] = useState<string>('');
   const [isVerifying, setIsVerifying] = useState<boolean>(false);
@@ -43,9 +45,7 @@ const ApiKeyForm: React.FC<ApiKeyFormProps> = ({
   useEffect(() => {
     const fetchApiKey = async () => {
       try {
-        const { data: { session } } = await supabase.auth.getSession();
-        
-        if (!session) {
+        if (!isAuthenticated || !user) {
           setIsLoading(false);
           return;
         }
@@ -54,7 +54,7 @@ const ApiKeyForm: React.FC<ApiKeyFormProps> = ({
           .from('api_provider_settings')
           .select('api_key, preferred_model')
           .eq('provider_name', providerName.toLowerCase())
-          .eq('user_id', session.user.id)
+          .eq('user_id', user.id)
           .maybeSingle();
         
         if (error) {
@@ -74,14 +74,12 @@ const ApiKeyForm: React.FC<ApiKeyFormProps> = ({
     };
     
     fetchApiKey();
-  }, [providerName]);
+  }, [providerName, isAuthenticated, user]);
   
   // Save API key to database
   const saveApiKey = async (key: string, verifiedModel: string) => {
     try {
-      const { data: { session } } = await supabase.auth.getSession();
-      
-      if (!session) {
+      if (!isAuthenticated || !user) {
         toast.error("You must be logged in to save API keys");
         return false;
       }
@@ -92,7 +90,7 @@ const ApiKeyForm: React.FC<ApiKeyFormProps> = ({
           provider_name: providerName.toLowerCase(),
           api_key: key,
           preferred_model: verifiedModel,
-          user_id: session.user.id,
+          user_id: user.id,
           updated_at: new Date().toISOString()
         }, { onConflict: 'user_id, provider_name' });
       
@@ -155,9 +153,7 @@ const ApiKeyForm: React.FC<ApiKeyFormProps> = ({
   
   const clearApiKey = async () => {
     try {
-      const { data: { session } } = await supabase.auth.getSession();
-      
-      if (!session) {
+      if (!isAuthenticated || !user) {
         toast.error("You must be logged in to remove API keys");
         return;
       }
@@ -166,7 +162,7 @@ const ApiKeyForm: React.FC<ApiKeyFormProps> = ({
         .from('api_provider_settings')
         .delete()
         .eq('provider_name', providerName.toLowerCase())
-        .eq('user_id', session.user.id);
+        .eq('user_id', user.id);
       
       if (error) {
         console.error(`Error removing ${providerName} API key:`, error);
@@ -226,6 +222,21 @@ const ApiKeyForm: React.FC<ApiKeyFormProps> = ({
           <CardTitle>{providerName} API Configuration</CardTitle>
           <CardDescription>Loading...</CardDescription>
         </CardHeader>
+      </Card>
+    );
+  }
+  
+  // Show login message if not authenticated
+  if (!isAuthenticated) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle>{providerName} API Configuration</CardTitle>
+          <CardDescription>Authentication Required</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <p className="text-amber-600">You must be logged in to manage API keys.</p>
+        </CardContent>
       </Card>
     );
   }

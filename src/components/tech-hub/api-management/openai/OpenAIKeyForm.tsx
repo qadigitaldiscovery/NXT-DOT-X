@@ -1,7 +1,8 @@
 
 import React from 'react';
 import ApiKeyForm from '../core/ApiKeyForm';
-import { callOpenAI, ChatCompletionResponse } from '@/utils/openai-client';
+import { callOpenAI } from '@/utils/api-clients/openai/client';
+import { ChatCompletionResponse } from '@/utils/api-clients/openai/types';
 
 const OpenAIKeyForm: React.FC = () => {
   // Verify API key by making a simple call
