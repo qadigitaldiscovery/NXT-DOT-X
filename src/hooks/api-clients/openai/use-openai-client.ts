@@ -74,7 +74,7 @@ export const useOpenAIClient = () => {
       });
       
       if (stream && typeof stream === 'object' && 'getReader' in stream) {
-        yield* processStream(stream as unknown as ReadableStream);
+        yield* processStream(stream as ReadableStream);
       }
     } catch (err) {
       setError(err instanceof Error ? err : new Error('Failed to stream message from OpenAI'));

@@ -172,7 +172,14 @@ export const useApiKey = ({
           .eq('user_id', session.user.id)
           .maybeSingle();
           
-        const settingsData: Record<string, any> = {
+        const settingsData: {
+          api_key: string;
+          preferred_model: string;
+          provider_name: string;
+          user_id: string;
+          updated_at: string;
+          config?: Record<string, any>;
+        } = {
           api_key: key,
           preferred_model: model,
           provider_name: providerName.toLowerCase(),

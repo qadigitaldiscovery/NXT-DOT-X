@@ -62,8 +62,8 @@ export const getApiKey = async (
               
             if (!simpleError && simpleData && typeof simpleData === 'object') {
               // Make sure api_key property exists and is a string
-              if ('api_key' in simpleData && typeof simpleData.api_key === 'string') {
-                const model = 'preferred_model' in simpleData && 
+              if (simpleData && 'api_key' in simpleData && typeof simpleData.api_key === 'string') {
+                const model = simpleData && 'preferred_model' in simpleData && 
                   typeof simpleData.preferred_model === 'string' ? 
                   simpleData.preferred_model : null;
                 
@@ -81,8 +81,8 @@ export const getApiKey = async (
           }
         } else if (data && typeof data === 'object') {
           // Make sure api_key property exists and is a string
-          if ('api_key' in data && typeof data.api_key === 'string') {
-            const model = 'preferred_model' in data && 
+          if (data && 'api_key' in data && typeof data.api_key === 'string') {
+            const model = data && 'preferred_model' in data && 
               typeof data.preferred_model === 'string' ? 
               data.preferred_model : null;
             
