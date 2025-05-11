@@ -36,39 +36,48 @@ export const getApiKey = async (): Promise<{key: string | null, config: any | nu
     
     if (session?.user) {
       // First try with config column
-      const { data, error } = await supabase
-        .from('api_provider_settings')
-        .select('api_key, config')
-        .eq('provider_name', 'openai')
-        .eq('user_id', session.user.id)
-        .maybeSingle();
-        
-      if (error) {
-        // If error mentions missing config column, try simpler query
-        if (error.message?.includes("column 'config' does not exist")) {
-          const { data: simpleData, error: simpleError } = await supabase
-            .from('api_provider_settings')
-            .select('api_key')
-            .eq('provider_name', 'openai')
-            .eq('user_id', session.user.id)
-            .maybeSingle();
-            
-          if (!simpleError && simpleData && 'api_key' in simpleData) {
-            return { 
-              key: simpleData.api_key, 
-              config: null
-            };
-          } else if (simpleError) {
-            console.error("Error fetching API key with simple query:", simpleError);
+      try {
+        const { data, error } = await supabase
+          .from('api_provider_settings')
+          .select('api_key, config')
+          .eq('provider_name', 'openai')
+          .eq('user_id', session.user.id)
+          .maybeSingle();
+          
+        if (error) {
+          // If error mentions missing config column, try simpler query
+          if (error.message?.includes("column 'config' does not exist")) {
+            const { data: simpleData, error: simpleError } = await supabase
+              .from('api_provider_settings')
+              .select('api_key')
+              .eq('provider_name', 'openai')
+              .eq('user_id', session.user.id)
+              .maybeSingle();
+              
+            if (!simpleError && simpleData && typeof simpleData === 'object' && simpleData !== null) {
+              if ('api_key' in simpleData && typeof simpleData.api_key === 'string') {
+                return { 
+                  key: simpleData.api_key, 
+                  config: null
+                };
+              }
+            } else if (simpleError) {
+              console.error("Error fetching API key with simple query:", simpleError);
+            }
+          } else {
+            console.error("Error fetching API key:", error);
           }
-        } else {
-          console.error("Error fetching API key:", error);
+        } else if (data && typeof data === 'object' && data !== null) {
+          // Check if data has the expected properties
+          if ('api_key' in data && typeof data.api_key === 'string') {
+            return { 
+              key: data.api_key, 
+              config: 'config' in data ? data.config : null
+            };
+          }
         }
-      } else if (data) {
-        return { 
-          key: data.api_key, 
-          config: data.config
-        };
+      } catch (err) {
+        console.error("Error in database query:", err);
       }
     }
   } catch (err) {

@@ -32,42 +32,53 @@ const getApiKey = async (): Promise<{ key: string | null, model: string | null, 
     const { data: { session } } = await supabase.auth.getSession();
     
     if (session?.user) {
-      // First try with config column
-      const { data, error } = await supabase
-        .from('api_provider_settings')
-        .select('api_key, preferred_model, config')
-        .eq('provider_name', 'requesty')
-        .eq('user_id', session.user.id)
-        .maybeSingle();
-        
-      if (error) {
-        // If error mentions missing config column, try simpler query
-        if (error.message?.includes("column 'config' does not exist")) {
-          const { data: simpleData, error: simpleError } = await supabase
-            .from('api_provider_settings')
-            .select('api_key, preferred_model')
-            .eq('provider_name', 'requesty')
-            .eq('user_id', session.user.id)
-            .maybeSingle();
-            
-          if (!simpleError && simpleData && 'api_key' in simpleData) {
-            return { 
-              key: simpleData.api_key,
-              model: 'preferred_model' in simpleData && simpleData.preferred_model ? simpleData.preferred_model : 'openai/gpt-4o-mini',
-              config: null 
-            };
-          } else if (simpleError) {
-            console.error("Error fetching API key with simple query:", simpleError);
+      try {
+        // First try with config column
+        const { data, error } = await supabase
+          .from('api_provider_settings')
+          .select('api_key, preferred_model, config')
+          .eq('provider_name', 'requesty')
+          .eq('user_id', session.user.id)
+          .maybeSingle();
+          
+        if (error) {
+          // If error mentions missing config column, try simpler query
+          if (error.message?.includes("column 'config' does not exist")) {
+            const { data: simpleData, error: simpleError } = await supabase
+              .from('api_provider_settings')
+              .select('api_key, preferred_model')
+              .eq('provider_name', 'requesty')
+              .eq('user_id', session.user.id)
+              .maybeSingle();
+              
+            if (!simpleError && simpleData && typeof simpleData === 'object' && simpleData !== null) {
+              if ('api_key' in simpleData && typeof simpleData.api_key === 'string') {
+                return { 
+                  key: simpleData.api_key,
+                  model: 'preferred_model' in simpleData && typeof simpleData.preferred_model === 'string' ? 
+                    simpleData.preferred_model : 'openai/gpt-4o-mini',
+                  config: null 
+                };
+              }
+            } else if (simpleError) {
+              console.error("Error fetching API key with simple query:", simpleError);
+            }
+          } else {
+            console.error("Error fetching API key:", error);
           }
-        } else {
-          console.error("Error fetching API key:", error);
+        } else if (data && typeof data === 'object' && data !== null) {
+          // Check if data has the expected properties
+          if ('api_key' in data && typeof data.api_key === 'string') {
+            return { 
+              key: data.api_key,
+              model: 'preferred_model' in data && typeof data.preferred_model === 'string' ? 
+                data.preferred_model : 'openai/gpt-4o-mini',
+              config: 'config' in data ? data.config : null
+            };
+          }
         }
-      } else if (data) {
-        return { 
-          key: data.api_key,
-          model: data.preferred_model || 'openai/gpt-4o-mini',
-          config: data.config 
-        };
+      } catch (err) {
+        console.error("Error in database query:", err);
       }
     }
   } catch (err) {

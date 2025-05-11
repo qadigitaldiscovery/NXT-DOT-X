@@ -98,13 +98,20 @@ const ApiKeyForm: React.FC<ApiKeyFormProps> = ({
                 .eq('user_id', user.id)
                 .maybeSingle();
                 
-              if (!simpleError && simpleData && 'api_key' in simpleData) {
-                setApiKey(simpleData.api_key);
-                setSavedKey(simpleData.api_key);
-                if ('preferred_model' in simpleData && simpleData.preferred_model) {
-                  setModel(simpleData.preferred_model);
+              if (!simpleError && simpleData) {
+                if (typeof simpleData === 'object' && simpleData !== null) {
+                  // Use type guard to safely access properties
+                  if ('api_key' in simpleData && typeof simpleData.api_key === 'string') {
+                    setApiKey(simpleData.api_key);
+                    setSavedKey(simpleData.api_key);
+                    
+                    if ('preferred_model' in simpleData && typeof simpleData.preferred_model === 'string') {
+                      setModel(simpleData.preferred_model);
+                    }
+                    
+                    setKeyStatus('valid');
+                  }
                 }
-                setKeyStatus('valid');
               } else if (simpleError) {
                 console.error(`Error in simple fetch for ${providerName} API key:`, simpleError);
               }
@@ -114,18 +121,27 @@ const ApiKeyForm: React.FC<ApiKeyFormProps> = ({
             }
           } else if (data) {
             // Override localStorage values with database values if available
-            setApiKey(data.api_key);
-            setSavedKey(data.api_key);
-            if (data.preferred_model) setModel(data.preferred_model);
-            if (data.config) {
-              try {
-                const parsedConfig = typeof data.config === 'string' ? JSON.parse(data.config) : data.config;
-                setAdvancedConfig({...additionalConfig, ...parsedConfig});
-              } catch (e) {
-                console.error("Error parsing stored config:", e);
+            if (typeof data === 'object' && data !== null) {
+              if ('api_key' in data && typeof data.api_key === 'string') {
+                setApiKey(data.api_key);
+                setSavedKey(data.api_key);
+                
+                if ('preferred_model' in data && typeof data.preferred_model === 'string') {
+                  setModel(data.preferred_model);
+                }
+                
+                if ('config' in data) {
+                  try {
+                    const parsedConfig = typeof data.config === 'string' ? JSON.parse(data.config) : data.config;
+                    setAdvancedConfig({...additionalConfig, ...parsedConfig});
+                  } catch (e) {
+                    console.error("Error parsing stored config:", e);
+                  }
+                }
+                
+                setKeyStatus('valid');
               }
             }
-            setKeyStatus('valid');
           }
         }
       } catch (err) {
@@ -158,27 +174,22 @@ const ApiKeyForm: React.FC<ApiKeyFormProps> = ({
             column_name: 'config'
           });
 
-          let upsertData: Record<string, any>;
+          let upsertData = {
+            provider_name: providerName.toLowerCase(),
+            api_key: key,
+            preferred_model: verifiedModel,
+            user_id: user.id,
+            updated_at: new Date().toISOString()
+          };
           
           if (columnCheckError || columnExists === false) {
             console.log("Could not check if config column exists or it doesn't exist:", columnCheckError);
             // Use basic upsert without config column
-            upsertData = {
-              provider_name: providerName.toLowerCase(),
-              api_key: key,
-              preferred_model: verifiedModel,
-              user_id: user.id,
-              updated_at: new Date().toISOString()
-            };
           } else {
-            // Config column exists, use full upsert
+            // Config column exists, add config to upsertData
             upsertData = {
-              provider_name: providerName.toLowerCase(),
-              api_key: key,
-              preferred_model: verifiedModel,
-              config: advancedConfig,
-              user_id: user.id,
-              updated_at: new Date().toISOString()
+              ...upsertData,
+              config: advancedConfig
             };
           }
           
@@ -238,9 +249,10 @@ const ApiKeyForm: React.FC<ApiKeyFormProps> = ({
       console.error(`${providerName} API key verification failed:`, error);
       
       // Handle quota exceeded error
-      if (error.message?.includes('quota') || 
+      if (error instanceof Error && 
+          (error.message?.includes('quota') || 
           error.message?.includes('billing') || 
-          error.message?.includes('rate limit')) {
+          error.message?.includes('rate limit'))) {
         setKeyStatus('quota_exceeded');
         toast.error(`Your API key is valid, but you've exceeded your quota limits. Check your ${providerName} account billing.`);
       } else {
