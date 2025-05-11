@@ -3,10 +3,10 @@ import React, { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import TabsMenu, { TabItem } from '@/components/ui/tabs-menu';
 import { Terminal, MessageSquare } from 'lucide-react';
-import OpenAIKeyForm from "./OpenAIKeyForm";
-import AIChatTester from "./AIChatTester";
-import RequestyKeyForm from "./RequestyKeyForm";
-import RequestyChatTester from "./RequestyChatTester";
+import OpenAIKeyForm from "./openai/OpenAIKeyForm";
+import OpenAIChatTester from "./openai/OpenAIChatTester";
+import RequestyKeyForm from "./requesty/RequestyKeyForm";
+import RequestyChatTester from "./requesty/RequestyChatTester";
 
 const ProvidersSection: React.FC = () => {
   const [activeProvider, setActiveProvider] = useState("openai");
@@ -45,7 +45,7 @@ const ProvidersSection: React.FC = () => {
               <OpenAIKeyForm />
             </TabsContent>
             <TabsContent value="test">
-              <AIChatTester />
+              <OpenAIChatTester />
             </TabsContent>
           </>
         )}

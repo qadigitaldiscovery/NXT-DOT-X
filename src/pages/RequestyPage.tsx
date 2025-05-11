@@ -1,8 +1,8 @@
 
 import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import RequestyKeyForm from '@/components/tech-hub/api-management/RequestyKeyForm';
-import RequestyChatTester from '@/components/tech-hub/api-management/RequestyChatTester';
+import RequestyKeyForm from '@/components/tech-hub/api-management/requesty/RequestyKeyForm';
+import RequestyChatTester from '@/components/tech-hub/api-management/requesty/RequestyChatTester';
 
 const RequestyPage: React.FC = () => {
   return (
