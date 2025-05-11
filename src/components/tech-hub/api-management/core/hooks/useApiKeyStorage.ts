@@ -1,207 +1,250 @@
 
 import { useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
+
+// Types for the local storage API key data
+interface ApiKeyLocalData {
+  key: string;
+  model?: string;
+  config?: Record<string, any>;
+  timestamp: number; 
+}
 
 interface ApiKeyStorageOptions {
   providerName: string;
+  localStorageKey: string;
 }
 
 /**
- * Hook for API key storage operations
+ * Hook for managing API key storage (localStorage and database)
  */
-export const useApiKeyStorage = ({ providerName }: ApiKeyStorageOptions) => {
-  const localStorageKeyName = `${providerName.toLowerCase()}-api-key`;
-  const localStorageModelName = `${providerName.toLowerCase()}-preferred-model`;
-  const localStorageConfigName = `${providerName.toLowerCase()}-additional-config`;
+export const useApiKeyStorage = ({ 
+  providerName,
+  localStorageKey
+}: ApiKeyStorageOptions) => {
+  // Save key to localStorage
+  const saveToLocalStorage = useCallback((
+    apiKey: string, 
+    preferredModel: string,
+    additionalConfig?: Record<string, any>
+  ) => {
+    try {
+      // Format the data for storage
+      const storageData: ApiKeyLocalData = {
+        key: apiKey,
+        model: preferredModel,
+        config: additionalConfig,
+        timestamp: Date.now()
+      };
+      
+      // Save to localStorage
+      localStorage.setItem(localStorageKey, JSON.stringify(storageData));
+      return true;
+    } catch (error) {
+      console.error(`Error saving ${providerName} API key to localStorage:`, error);
+      return false;
+    }
+  }, [localStorageKey, providerName]);
   
-  const saveToLocalStorage = useCallback((key: string, model: string, config?: Record<string, any>) => {
-    localStorage.setItem(localStorageKeyName, key);
-    localStorage.setItem(localStorageModelName, model);
-    
-    if (config) {
-      localStorage.setItem(localStorageConfigName, JSON.stringify(config));
-    }
-  }, [localStorageKeyName, localStorageModelName, localStorageConfigName]);
-
-  const saveToDatabase = useCallback(async (key: string, model: string, config?: Record<string, any>) => {
+  // Load key from localStorage
+  const loadFromLocalStorage = useCallback((
+    defaultModel: string,
+    defaultConfig: Record<string, any> = {}
+  ) => {
     try {
-      const { data: { session } } = await supabase.auth.getSession();
+      // Get from localStorage
+      const savedData = localStorage.getItem(localStorageKey);
       
-      if (session?.user) {
-        // Check if the record exists
-        const { data, error } = await supabase
-          .from('api_provider_settings')
-          .select('id')
-          .eq('provider_name', providerName.toLowerCase())
-          .eq('user_id', session.user.id)
-          .maybeSingle();
-          
-        const settingsData: {
-          api_key: string;
-          preferred_model: string;
-          provider_name: string;
-          user_id: string;
-          updated_at: string;
-          config?: Record<string, any>;
-        } = {
-          api_key: key,
-          preferred_model: model,
-          provider_name: providerName.toLowerCase(),
-          user_id: session.user.id,
-          updated_at: new Date().toISOString()
+      if (!savedData) {
+        return {
+          savedKey: null,
+          savedModel: defaultModel,
+          savedConfig: defaultConfig
         };
-        
-        // Add config if the column exists and we have a value
-        if (config) {
-          try {
-            // Check if the config column exists
-            const { error: checkError } = await supabase.rpc(
-              'column_exists',
-              { 
-                p_table: 'api_provider_settings' as string,
-                p_column: 'config' as string
-              }
-            );
-            
-            if (!checkError) {
-              settingsData.config = config;
-            }
-          } catch (e) {
-            console.error("Error checking if config column exists:", e);
-          }
-        }
-
-        if (!error && data) {
-          // Update existing record
-          const { error: updateError } = await supabase
-            .from('api_provider_settings')
-            .update(settingsData)
-            .eq('id', data.id);
-            
-          if (updateError) {
-            throw updateError;
-          }
-        } else {
-          // Insert new record
-          const { error: insertError } = await supabase
-            .from('api_provider_settings')
-            .insert(settingsData);
-            
-          if (insertError) {
-            throw insertError;
-          }
-        }
-        
-        return true;
       }
-    } catch (err) {
-      console.error(`Error saving ${providerName} API key to database:`, err);
-      throw err;
-    }
-    
-    return false;
-  }, [providerName]);
-
-  const loadFromLocalStorage = useCallback((initialModel: string, initialConfig: Record<string, any>) => {
-    const savedKey = localStorage.getItem(localStorageKeyName);
-    const savedModel = localStorage.getItem(localStorageModelName) || initialModel;
-    let savedConfig = { ...initialConfig };
-    
-    try {
-      const localConfig = localStorage.getItem(localStorageConfigName);
-      if (localConfig) {
-        savedConfig = { ...savedConfig, ...JSON.parse(localConfig) };
-      }
-    } catch (e) {
-      console.error("Error parsing saved config:", e);
-    }
-    
-    return { savedKey, savedModel, savedConfig };
-  }, [localStorageKeyName, localStorageModelName, localStorageConfigName]);
-
-  const loadFromDatabase = useCallback(async (initialModel: string, initialConfig: Record<string, any>) => {
-    try {
-      const { data: { session } } = await supabase.auth.getSession();
       
-      if (session?.user) {
-        try {
-          const { data, error } = await supabase
+      // Parse the data
+      const parsedData = JSON.parse(savedData) as ApiKeyLocalData;
+      
+      return {
+        savedKey: parsedData.key || null,
+        savedModel: parsedData.model || defaultModel,
+        savedConfig: parsedData.config || defaultConfig
+      };
+    } catch (error) {
+      console.error(`Error loading ${providerName} API key from localStorage:`, error);
+      return {
+        savedKey: null,
+        savedModel: defaultModel,
+        savedConfig: defaultConfig
+      };
+    }
+  }, [localStorageKey, providerName]);
+  
+  // Save key to database
+  const saveToDatabase = useCallback(async (
+    apiKey: string, 
+    preferredModel: string, 
+    additionalConfig?: Record<string, any>
+  ) => {
+    try {
+      // Check if user is authenticated
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        console.info(`Not saving ${providerName} API key to database: User not authenticated`);
+        return false;
+      }
+      
+      // Check if record already exists for this user
+      const { data: existing } = await supabase
+        .from('api_provider_settings')
+        .select('id')
+        .eq('provider_name', providerName)
+        .eq('user_id', user.id)
+        .maybeSingle();
+      
+      if (existing) {
+        // Update existing record
+        const { error } = await supabase
+          .from('api_provider_settings')
+          .update({
+            api_key: apiKey,
+            preferred_model: preferredModel,
+            config: additionalConfig || {},
+            updated_at: new Date().toISOString(),
+          })
+          .eq('id', existing.id);
+        
+        if (error) {
+          console.error(`Error updating ${providerName} API key in database:`, error);
+          return false;
+        }
+      } else {
+        // Insert new record
+        const { error } = await supabase
+          .from('api_provider_settings')
+          .insert({
+            provider_name: providerName,
+            api_key: apiKey,
+            preferred_model: preferredModel,
+            config: additionalConfig || {},
+            user_id: user.id,
+          });
+        
+        if (error) {
+          console.error(`Error inserting ${providerName} API key in database:`, error);
+          return false;
+        }
+      }
+      
+      return true;
+    } catch (error) {
+      console.error(`Error saving ${providerName} API key to database:`, error);
+      return false;
+    }
+  }, [providerName]);
+  
+  // Load key from database
+  const loadFromDatabase = useCallback(async (
+    defaultModel: string,
+    defaultConfig: Record<string, any> = {}
+  ) => {
+    try {
+      // Check if user is authenticated
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        console.info(`Not loading ${providerName} API key from database: User not authenticated`);
+        return null;
+      }
+      
+      // Query for the API key
+      const { data, error } = await supabase
+        .from('api_provider_settings')
+        .select('*')
+        .eq('provider_name', providerName)
+        .eq('user_id', user.id)
+        .maybeSingle();
+      
+      if (error) {
+        // If error is about missing column, it might be that the migration hasn't run yet
+        if (error.message.includes('config')) {
+          console.warn(`The 'config' column might be missing. Make sure migrations have run.`);
+          // Try to get data without relying on the config column
+          const { data: basicData } = await supabase
             .from('api_provider_settings')
-            .select('api_key, preferred_model, config')
-            .eq('provider_name', providerName.toLowerCase())
-            .eq('user_id', session.user.id)
+            .select('api_key, preferred_model')
+            .eq('provider_name', providerName)
+            .eq('user_id', user.id)
             .maybeSingle();
-            
-          if (error) {
-            if (error.message?.includes("column 'config' does not exist")) {
-              // If config column doesn't exist, try a simpler query
-              const { data: simpleData, error: simpleError } = await supabase
-                .from('api_provider_settings')
-                .select('api_key, preferred_model')
-                .eq('provider_name', providerName.toLowerCase())
-                .eq('user_id', session.user.id)
-                .maybeSingle();
-                
-              if (!simpleError && simpleData) {
-                // These are type-checked by TypeScript but we use optional chaining and type checking
-                // for safety as we're dealing with potentially unknown data
-                const apiKey = simpleData?.api_key || '';
-                const preferredModel = simpleData?.preferred_model || initialModel;
-                
-                return {
-                  apiKey,
-                  preferredModel,
-                  additionalConfig: { ...initialConfig },
-                  found: Boolean(apiKey)
-                };
-              }
-            }
-            console.error(`Error loading ${providerName} API key:`, error);
-            return null;
-          } else if (data) {
-            // Handle config if it exists in the database
-            let configFromDb = { ...initialConfig };
-            
-            // These are type-checked by TypeScript but we use optional chaining and type checking
-            // for safety as we're dealing with potentially unknown data
-            if (data.config && typeof data.config === 'object') {
-              configFromDb = { ...configFromDb, ...data.config };
-            }
-            
+          
+          if (basicData) {
             return {
-              apiKey: data?.api_key || '',
-              preferredModel: data?.preferred_model || initialModel,
-              additionalConfig: configFromDb,
-              found: Boolean(data?.api_key)
+              apiKey: basicData.api_key,
+              preferredModel: basicData.preferred_model || defaultModel,
+              additionalConfig: defaultConfig,
+              found: true
             };
           }
-        } catch (err) {
-          console.error(`Error fetching ${providerName} API key:`, err);
+        } else {
+          console.error(`Error loading ${providerName} API key from database:`, error);
         }
+        return null;
       }
-    } catch (err) {
-      console.error("Error checking authentication:", err);
+      
+      if (!data) {
+        return null;
+      }
+      
+      return {
+        apiKey: data.api_key,
+        preferredModel: data.preferred_model || defaultModel,
+        additionalConfig: data.config || defaultConfig,
+        found: true
+      };
+    } catch (error) {
+      console.error(`Error loading ${providerName} API key from database:`, error);
+      return null;
     }
-    
-    return null;
   }, [providerName]);
-
-  const clearFromStorage = useCallback(() => {
-    localStorage.removeItem(localStorageKeyName);
-    localStorage.removeItem(localStorageModelName);
-    localStorage.removeItem(localStorageConfigName);
-  }, [localStorageKeyName, localStorageModelName, localStorageConfigName]);
+  
+  // Clear key from localStorage and database
+  const clearSavedKey = useCallback(async () => {
+    try {
+      // Clear from localStorage
+      localStorage.removeItem(localStorageKey);
+      
+      // Check if user is authenticated for database operations
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        return { localCleared: true, dbCleared: false };
+      }
+      
+      // Clear from database
+      const { error } = await supabase
+        .from('api_provider_settings')
+        .delete()
+        .eq('provider_name', providerName)
+        .eq('user_id', user.id);
+      
+      if (error) {
+        console.error(`Error clearing ${providerName} API key from database:`, error);
+        return { localCleared: true, dbCleared: false };
+      }
+      
+      toast.success(`${providerName} API key removed successfully`);
+      return { localCleared: true, dbCleared: true };
+    } catch (error) {
+      console.error(`Error clearing ${providerName} API key:`, error);
+      return { localCleared: false, dbCleared: false };
+    }
+  }, [localStorageKey, providerName]);
   
   return {
     saveToLocalStorage,
-    saveToDatabase,
     loadFromLocalStorage,
+    saveToDatabase,
     loadFromDatabase,
-    clearFromStorage,
-    storageKeys: {
-      localStorageKeyName,
-      localStorageModelName,
-      localStorageConfigName
-    }
+    clearSavedKey
   };
 };

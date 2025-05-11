@@ -7,8 +7,8 @@ export const runMigrations = async () => {
     const { error: checkError } = await supabase.rpc(
       'column_exists',
       { 
-        p_table: 'api_provider_settings' as unknown as string,
-        p_column: 'config' as unknown as string
+        p_table: 'api_provider_settings',
+        p_column: 'config'
       }
     );
     
@@ -20,7 +20,7 @@ export const runMigrations = async () => {
       const { error } = await supabase.rpc(
         'execute_sql',
         { 
-          sql: `ALTER TABLE api_provider_settings ADD COLUMN IF NOT EXISTS config JSONB` as unknown as string
+          sql: `ALTER TABLE api_provider_settings ADD COLUMN IF NOT EXISTS config JSONB`
         }
       );
       
