@@ -3,6 +3,7 @@ import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { useAuth } from '@/context/AuthContext';
+import { ThemeToggle } from '@/components/ui/theme-toggle';
 
 // Import refactored components
 import MasterDashHeader from '@/components/master-dash/MasterDashHeader';
@@ -39,6 +40,11 @@ const MasterDash = () => {
       <div className="relative z-10 flex flex-col flex-grow">
         {/* Header component */}
         <MasterDashHeader user={user} />
+        
+        {/* Add theme toggle in top-right corner */}
+        <div className="fixed top-4 right-4 z-50">
+          <ThemeToggle />
+        </div>
         
         {/* Main content with new layout */}
         <main className="container mx-auto px-4 py-8 flex-grow">
