@@ -8,6 +8,32 @@ interface DocumentViewerProps {
   document: DocumentItem | null;
 }
 
+// Simple markdown renderer function
+const renderMarkdown = (content: string): string => {
+  if (!content) return '';
+  
+  // Basic markdown formatting with regex
+  return content
+    // Headers
+    .replace(/^### (.*$)/gm, '<h3 class="text-xl font-bold my-4">$1</h3>')
+    .replace(/^## (.*$)/gm, '<h2 class="text-2xl font-bold my-4">$1</h2>')
+    .replace(/^# (.*$)/gm, '<h1 class="text-3xl font-bold my-5">$1</h1>')
+    // Bold text
+    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+    // Italic text
+    .replace(/\*(.*?)\*/g, '<em>$1</em>')
+    // Code blocks
+    .replace(/```([\s\S]*?)```/g, '<pre class="bg-gray-100 dark:bg-gray-800 p-4 rounded my-4 overflow-auto"><code>$1</code></pre>')
+    // Inline code
+    .replace(/`(.*?)`/g, '<code class="bg-gray-100 dark:bg-gray-800 px-1 py-0.5 rounded">$1</code>')
+    // Lists
+    .replace(/^\- (.*$)/gm, '<li class="ml-6">$1</li>')
+    // Line breaks and paragraphs
+    .replace(/\n/g, '<br />')
+    // Tables (basic support)
+    .replace(/\|\s*(.*?)\s*\|/g, '<table class="border-collapse w-full my-4"><tr><td class="border border-gray-300 dark:border-gray-700 p-2">$1</td></tr></table>');
+};
+
 export const DocumentViewer = ({ document }: DocumentViewerProps) => {
   if (!document) {
     return (
@@ -32,7 +58,7 @@ export const DocumentViewer = ({ document }: DocumentViewerProps) => {
       case 'markdown':
         return (
           <div className="p-6 prose dark:prose-invert max-w-none">
-            <div dangerouslySetInnerHTML={{ __html: document.content || '' }} />
+            <div dangerouslySetInnerHTML={{ __html: renderMarkdown(document.content || '') }} />
           </div>
         );
       case 'image':

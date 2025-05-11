@@ -3,6 +3,143 @@ import { DocumentCategory, DocumentType } from './types';
 
 export const documentCategories: DocumentCategory[] = [
   {
+    id: 'sys-docs',
+    name: 'SYSTEM DOCUMENTATION',
+    documents: [
+      {
+        id: 'sys-arch-basic',
+        title: 'System Architecture & Design Documentation - Basic',
+        type: 'markdown',
+        content: `# 📘 NXT-DOT-X System Architecture & Design Documentation
+
+## 1. Document Control
+
+| Field | Details |
+| ----- | ------- |
+| Document Title | NXT-DOT-X – Architecture & Design Guide (Basic Version) |
+| Version | 1.0 |
+| Prepared By | System Builder |
+| Date Created | 2025-05-11 |
+| Last Updated | 2025-05-11 |
+| Reviewed By | Pending Review |
+
+## 2. Table of Contents
+
+- [1. Document Control](#1-document-control)
+- [2. Table of Contents](#2-table-of-contents)
+- [3. Executive Summary](#3-executive-summary)
+- [4. High-Level Architecture](#4-high-level-architecture)
+- [5. Module-by-Module Breakdown](#5-module-by-module-breakdown)
+- [6. Data Architecture](#6-data-architecture)
+- [7. User Roles & Permissions](#7-user-roles--permissions)
+- [8. Integrations Overview](#8-integrations-overview)
+- [9. System Flow Diagrams](#9-system-flow-diagrams)
+- [10. Deployment Architecture](#10-deployment-architecture)
+- [11. Known Gaps & Roadmap](#11-known-gaps--roadmap)
+- [12. Glossary of Terms](#12-glossary-of-terms)
+
+## 3. Executive Summary
+
+The NXT-DOT-X platform is a comprehensive business management solution designed to centralize operations, data analysis, and system administration. The platform provides a modular approach to business management, with specialized modules for different business functions.
+
+### Business objectives addressed:
+- Centralized business operations management
+- Data-driven decision making through analytics
+- Cost optimization and analysis
+- Supplier and customer relationship management
+- System configuration and technical management
+
+### Target users and personas:
+- Business administrators
+- Financial analysts
+- Operational managers
+- Technical support staff
+- System administrators
+
+### Current development state: 
+In Progress - Core modules functional with ongoing feature development`,
+        createdAt: '2023-05-09T10:00:00',
+        updatedAt: '2023-05-09T10:00:00',
+        author: 'System Architecture Team'
+      },
+      {
+        id: 'lead-dev-profile',
+        title: 'Lead Developer Profile',
+        type: 'markdown',
+        content: `# Lead Developer Profile
+
+## Role Overview
+
+The Lead Developer is responsible for overseeing the technical implementation of the NXT-DOT-X project, ensuring code quality, architectural integrity, and alignment with business requirements.
+
+## Responsibilities
+
+- Technical leadership and decision making
+- Code quality assurance
+- Architecture design and maintenance
+- Team mentoring and knowledge sharing
+- Sprint planning and task prioritization
+- Technical debt management
+- Integration with external systems
+- Performance optimization
+- Documentation oversight and standards enforcement
+
+## Technical Guidelines
+
+### Code Quality Standards
+
+- All code must be TypeScript with proper typing
+- Components should be small, focused, and reusable
+- Follow the project's naming conventions and file structure
+- Write unit tests for critical functionality
+- Use proper error handling and logging`,
+        createdAt: '2023-01-15T09:30:00',
+        updatedAt: '2023-02-01T14:20:00',
+        author: 'Admin Team'
+      },
+      {
+        id: 'sys-arch-comp',
+        title: 'System Architecture & Design Documentation - Comprehensive',
+        type: 'markdown',
+        content: `# 📘 NXT-DOT-X System Architecture & Design Documentation (Comprehensive)
+
+## 1. Document Control
+
+| Field | Details |
+| ----- | ------- |
+| Document Title | NXT-DOT-X – Comprehensive Architecture & Design Guide |
+| Version | 1.0 |
+| Prepared By | System Builder |
+| Date Created | 2025-05-11 |
+| Last Updated | 2025-05-11 |
+| Reviewed By | Pending Review |
+
+## 2. Table of Contents
+
+- [1. Document Control](#1-document-control)
+- [2. Table of Contents](#2-table-of-contents)
+- [3. Executive Summary](#3-executive-summary)
+- [4. High-Level Architecture](#4-high-level-architecture)
+- [5. Module-by-Module Breakdown](#5-module-by-module-breakdown)
+- [6. Data Architecture](#6-data-architecture)
+- [7. User Roles & Permissions](#7-user-roles--permissions)
+- [8. Integrations Overview](#8-integrations-overview)
+- [9. System Flow Diagrams](#9-system-flow-diagrams)
+- [10. Deployment Architecture](#10-deployment-architecture)
+- [11. Known Gaps & Roadmap](#11-known-gaps--roadmap)
+- [12. Glossary of Terms](#12-glossary-of-terms)
+- [13. Appendices](#13-appendices)
+
+## 3. Executive Summary
+
+The NXT-DOT-X platform represents a sophisticated, comprehensive business management solution designed to unify and streamline diverse operational aspects across an organization. This modular platform serves as a centralized command center, empowering stakeholders with actionable insights, process optimization tools, and integrated management capabilities.`,
+        createdAt: '2023-03-20T11:45:00',
+        updatedAt: '2023-05-15T16:30:00',
+        author: 'Architecture Team'
+      }
+    ]
+  },
+  {
     id: 'sys-projects',
     name: 'SYSTEMS PROJECTS',
     documents: [
@@ -10,8 +147,7 @@ export const documentCategories: DocumentCategory[] = [
         id: 'sysplan-01',
         title: 'SYSPLAN-01: System Architecture & Module Design',
         type: 'markdown',
-        content: `
-# SYSPLAN-01: System Architecture & Module Design
+        content: `# SYSPLAN-01: System Architecture & Module Design
 
 ## Overview
 This document outlines the comprehensive architecture design for the NXT-DOT-X system, detailing module relationships, component interactions, and implementation guidelines.
@@ -22,106 +158,7 @@ This document outlines the comprehensive architecture design for the NXT-DOT-X s
 - **Frontend Layer**: React-based UI components using Tailwind CSS and ShadCN/UI
 - **State Management**: Context API and React Query for data fetching/caching
 - **Backend Services**: RESTful API endpoints with Supabase integration
-- **Data Storage**: PostgreSQL database with normalized schema design
-
-### Architecture Diagram
-
-\`\`\`
-┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
-│                 │     │                 │     │                 │
-│  Presentation   │────▶│    Business     │────▶│     Data        │
-│     Layer       │     │     Layer       │     │     Layer       │
-│                 │     │                 │     │                 │
-└─────────────────┘     └─────────────────┘     └─────────────────┘
-        │                       │                       │
-        ▼                       ▼                       ▼
-┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
-│ UI Components   │     │ Service Modules │     │  Data Access    │
-│ - Dashboard     │     │ - Cost Analysis │     │  - Repositories │
-│ - Documents     │     │ - Documents     │     │  - API Clients  │
-│ - Cost Analysis │     │ - Suppliers     │     │  - Query Hooks  │
-└─────────────────┘     └─────────────────┘     └─────────────────┘
-\`\`\`
-
-## Module Design Details
-
-### Document Management Module
-- Document explorer component for hierarchical browsing
-- Document viewer with support for multiple formats
-- Advanced search functionality with filtering options
-- Version control and document history tracking
-
-### Cost Analysis Module
-- Real-time cost metrics visualization 
-- Trend analysis with historical comparison
-- Supplier cost comparison and evaluation
-- Category-based cost breakdown and variation analysis
-- Cost optimization recommendation engine
-
-### Supplier Management Module
-- Supplier directory with detailed profiles
-- Performance metrics and evaluation system
-- Onboarding workflow and documentation
-- Cost comparison and negotiation tools
-
-## Component Relationships
-
-### Inter-module Dependencies
-- Cost Analysis depends on Supplier data for comparison features
-- Document Management provides storage for Supplier contracts
-- User permissions system governs access across all modules
-
-### Data Flow Diagram
-
-\`\`\`
-                        ┌─────────────────┐
-                        │                 │
-                 ┌─────▶│  Cost Analysis  │◀─────┐
-                 │      │                 │      │
-                 │      └─────────────────┘      │
-                 │                               │
-┌─────────────────┐                     ┌─────────────────┐
-│                 │                     │                 │
-│    Document     │◀───────────────────▶│    Supplier     │
-│   Management    │                     │   Management    │
-│                 │                     │                 │
-└─────────────────┘                     └─────────────────┘
-\`\`\`
-
-## Implementation Guidelines
-
-### Coding Standards
-- TypeScript with strict type checking
-- Component-based architecture with clear separation of concerns
-- Comprehensive test coverage (unit and integration)
-- Documentation for all public APIs and components
-
-### Performance Considerations
-- Lazy loading of large components
-- Optimized rendering with React.memo and useMemo
-- Efficient data fetching with React Query caching
-- Pagination for large data sets
-
-### Security Guidelines
-- Input validation and sanitization
-- Role-based access control
-- Secure API communication
-- Data encryption for sensitive information
-
-## Roadmap and Future Enhancements
-
-### Phase 1: Q2 2023
-- Complete Document Management system
-- Enhance Cost Analysis with optimization features
-
-### Phase 2: Q3 2023
-- Implement Supplier Management system
-- Develop integration between modules
-
-### Phase 3: Q4 2023
-- Add advanced reporting features
-- Implement predictive analytics capabilities
-`,
+- **Data Storage**: PostgreSQL database with normalized schema design`,
         createdAt: '2023-05-09T10:00:00',
         updatedAt: '2023-05-09T10:00:00',
         author: 'System Architecture Team'
