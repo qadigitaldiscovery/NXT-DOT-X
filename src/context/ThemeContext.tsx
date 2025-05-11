@@ -25,13 +25,9 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
   useEffect(() => {
     // Apply theme to document
-    const root = window.document.documentElement;
-    
-    // Remove both theme classes
-    root.classList.remove("light", "dark");
-    
-    // Add the current theme class
-    root.classList.add(theme);
+    // Ensure the theme is applied correctly to the HTML element
+    document.documentElement.classList.remove("light", "dark");
+    document.documentElement.classList.add(theme);
     
     // Save theme preference
     localStorage.setItem("theme", theme);

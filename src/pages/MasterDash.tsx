@@ -27,12 +27,17 @@ const MasterDash = () => {
       toast.error('Please sign in to access this page');
     }
   }, [navigate, user]);
-  return <div className="min-h-screen flex flex-col relative p-4 sm:p-6 md:p-8" style={{
-    backgroundImage: `url(${backgroundImagePath})`,
-    backgroundSize: 'cover',
-    backgroundPosition: 'center',
-    backgroundRepeat: 'no-repeat'
-  }}>
+  
+  return (
+    <div 
+      className="min-h-screen flex flex-col relative p-4 sm:p-6 md:p-8" 
+      style={{
+        backgroundImage: `url(${backgroundImagePath})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat'
+      }}
+    >
       {/* Dark overlay without blur to maintain background image clarity */}
       <div className="absolute inset-0 z-0 bg-inherit"></div>
       
@@ -41,7 +46,7 @@ const MasterDash = () => {
         {/* Header component */}
         <MasterDashHeader user={user} />
         
-        {/* Add theme toggle in top-right corner */}
+        {/* Add theme toggle in top-right corner with improved visibility */}
         <div className="fixed top-4 right-4 z-50">
           <ThemeToggle />
         </div>
@@ -67,6 +72,8 @@ const MasterDash = () => {
         {/* Footer component */}
         <MasterDashFooter />
       </div>
-    </div>;
+    </div>
+  );
 };
+
 export default MasterDash;

@@ -7,8 +7,7 @@ import { useTheme } from "@/context/ThemeContext";
 export function ThemeToggle() {
   const { theme, toggleTheme } = useTheme();
   
-  const handleClick = (e: React.MouseEvent) => {
-    e.preventDefault();
+  const handleClick = () => {
     console.log("Theme toggle clicked, current theme:", theme);
     toggleTheme();
   };
@@ -18,7 +17,7 @@ export function ThemeToggle() {
       variant="outline" 
       size="icon" 
       onClick={handleClick}
-      className="rounded-lg border-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 shadow-sm hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+      className="rounded-lg border-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 shadow-md hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
       title={theme === "light" ? "Switch to dark mode" : "Switch to light mode"}
       aria-label={theme === "light" ? "Switch to dark mode" : "Switch to light mode"}
     >
