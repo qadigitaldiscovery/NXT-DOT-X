@@ -47,6 +47,10 @@ export const useApiKey = ({
     savedSuccessfully: false,
     additionalConfig: additionalConfig
   });
+  
+  const [activeTab, setActiveTab] = useState<string>('basic');
+  const [keyStatus, setKeyStatus] = useState<'unknown' | 'valid' | 'invalid' | 'quota_exceeded'>('unknown');
+  const [savedKey, setSavedKey] = useState<boolean>(false);
 
   const localStorageKeyName = `${providerName.toLowerCase()}-api-key`;
   const localStorageModelName = `${providerName.toLowerCase()}-preferred-model`;
@@ -76,6 +80,7 @@ export const useApiKey = ({
         additionalConfig: savedConfig,
         isLoaded: true
       }));
+      setSavedKey(true);
       return;
     }
     
@@ -109,6 +114,7 @@ export const useApiKey = ({
                   preferredModel: simpleData?.preferred_model || initialModel,
                   isLoaded: true
                 }));
+                setSavedKey(simpleData?.api_key ? true : false);
               }
             }
             console.error(`Error loading ${providerName} API key:`, error);
@@ -127,6 +133,7 @@ export const useApiKey = ({
               additionalConfig: configFromDb,
               isLoaded: true
             }));
+            setSavedKey(data?.api_key ? true : false);
           }
         } catch (err) {
           console.error(`Error fetching ${providerName} API key:`, err);
@@ -207,7 +214,7 @@ export const useApiKey = ({
           // Insert new record
           const { error: insertError } = await supabase
             .from('api_provider_settings')
-            .insert([settingsData]);
+            .insert(settingsData);
             
           if (insertError) {
             throw insertError;
@@ -224,8 +231,8 @@ export const useApiKey = ({
     return false;
   }, [providerName]);
 
-  const handleInputChange = useCallback((field: keyof ApiKeyState, value: string | boolean | Record<string, any>) => {
-    setState(prev => ({ ...prev, [field]: value }));
+  const setApiKey = useCallback((value: string) => {
+    setState(prev => ({ ...prev, apiKey: value }));
   }, []);
 
   const handleConfigChange = useCallback((key: string, value: any) => {
@@ -238,15 +245,33 @@ export const useApiKey = ({
     }));
   }, []);
 
-  const handleToggleConfig = useCallback(() => {
-    setState(prev => ({
-      ...prev,
-      isConfigVisible: !prev.isConfigVisible
-    }));
+  const updateAdvancedConfig = handleConfigChange;
+
+  const handleModelChange = useCallback((value: string) => {
+    setState(prev => ({ ...prev, preferredModel: value }));
   }, []);
 
-  const verifyAndSave = useCallback(async () => {
-    setState(prev => ({ ...prev, isVerifying: true, savedSuccessfully: false }));
+  const clearApiKey = useCallback(() => {
+    localStorage.removeItem(localStorageKeyName);
+    localStorage.removeItem(localStorageModelName);
+    localStorage.removeItem(localStorageConfigName);
+    
+    setState(prev => ({
+      ...prev,
+      apiKey: '',
+      preferredModel: initialModel,
+      additionalConfig: { ...additionalConfig }
+    }));
+    
+    setSavedKey(false);
+    setKeyStatus('unknown');
+    
+    toast.success(`${providerName} API key removed`);
+  }, [localStorageKeyName, localStorageModelName, localStorageConfigName, initialModel, additionalConfig, providerName]);
+
+  const verifyApiKey = useCallback(async () => {
+    setState(prev => ({ ...prev, isVerifying: true }));
+    setKeyStatus('unknown');
     
     try {
       // Verify the key if a verification function is provided
@@ -256,6 +281,7 @@ export const useApiKey = ({
         if (!isValid) {
           toast.error(`Invalid ${providerName} API key. Please check and try again.`);
           setState(prev => ({ ...prev, isVerifying: false }));
+          setKeyStatus('invalid');
           return;
         }
       }
@@ -275,6 +301,8 @@ export const useApiKey = ({
       
       toast.success(`${providerName} API key saved successfully!`);
       setState(prev => ({ ...prev, isSaving: false, savedSuccessfully: true }));
+      setSavedKey(true);
+      setKeyStatus('valid');
       
       // Reset saved success notification after 3 seconds
       setTimeout(() => {
@@ -289,21 +317,45 @@ export const useApiKey = ({
         toast.warning(`Your ${providerName} API key appears valid but has insufficient quota. It has been saved anyway.`);
         saveToLocalStorage(state.apiKey, state.preferredModel, state.additionalConfig);
         setState(prev => ({ ...prev, isVerifying: false, isSaving: false }));
+        setSavedKey(true);
+        setKeyStatus('quota_exceeded');
         return;
       }
       
       console.error(`Error verifying ${providerName} API key:`, error);
       toast.error(`Failed to verify ${providerName} API key. Please check and try again.`);
       setState(prev => ({ ...prev, isVerifying: false, isSaving: false }));
+      setKeyStatus('invalid');
     }
   }, [state.apiKey, state.preferredModel, state.additionalConfig, providerName, onVerify, saveToLocalStorage, saveToDatabase]);
 
   return {
+    apiKey: state.apiKey,
+    setApiKey,
+    savedKey,
+    isVerifying: state.isVerifying,
+    isLoading: !state.isLoaded,
+    keyStatus,
+    model: state.preferredModel,
+    activeTab,
+    setActiveTab,
+    advancedConfig: state.additionalConfig,
+    verifyApiKey,
+    clearApiKey,
+    handleModelChange,
+    updateAdvancedConfig,
     state,
-    handleInputChange,
+    handleInputChange: (field: keyof ApiKeyState, value: string | boolean | Record<string, any>) => {
+      setState(prev => ({ ...prev, [field]: value }));
+    },
     handleConfigChange,
-    handleToggleConfig,
-    verifyAndSave,
+    handleToggleConfig: () => {
+      setState(prev => ({
+        ...prev,
+        isConfigVisible: !prev.isConfigVisible
+      }));
+    },
+    verifyAndSave: verifyApiKey,
     loadApiKey
   };
 };

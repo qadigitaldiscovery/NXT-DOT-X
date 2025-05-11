@@ -89,7 +89,7 @@ export const getApiKey = async (
             return { 
               key: data.api_key,
               model,
-              config: 'config' in data && data.config !== null ? data.config : null
+              config: data.config !== null && data.config !== undefined ? data.config : null
             };
           }
         }
@@ -123,7 +123,7 @@ export const tryUseEdgeFunction = async <T>(
         }
       });
       
-      if (!error) {
+      if (!error && data !== null) {
         return data as T;
       }
       
