@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { MenuIcon, UserCircle, Settings as SettingsIcon, Home } from 'lucide-react';
@@ -6,11 +7,14 @@ import { useNavigate } from 'react-router-dom';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { useAuth } from '@/context/AuthContext';
 import { cn } from '@/lib/utils';
+import { ThemeToggle } from '@/components/ui/theme-toggle';
+
 interface SharedNavbarProps {
   onMenuClick: () => void;
   moduleTitle?: string;
   notificationArea?: React.ReactNode;
 }
+
 export const SharedNavbar = ({
   onMenuClick,
   moduleTitle = "Application",
@@ -22,18 +26,20 @@ export const SharedNavbar = ({
     user,
     logout
   } = useAuth();
+  
   const handleLogout = () => {
     logout();
     navigate('/landing');
   };
 
   // Simple clean styling for header
-  const navbarBgColor = 'bg-white border-b border-gray-200';
-  const textColor = 'text-gray-700';
-  const iconColor = 'text-gray-500';
-  const hoverBgColor = 'hover:bg-gray-100';
+  const navbarBgColor = 'bg-white border-b border-gray-200 dark:bg-gray-800 dark:border-gray-700';
+  const textColor = 'text-gray-700 dark:text-gray-200';
+  const iconColor = 'text-gray-500 dark:text-gray-400';
+  const hoverBgColor = 'hover:bg-gray-100 dark:hover:bg-gray-700';
+  
   return <header className={cn("sticky top-0 z-20 shadow-sm", navbarBgColor)}>
-      <div className="flex items-center justify-between h-16 px-4 bg-gray-400">
+      <div className="flex items-center justify-between h-16 px-4 bg-gray-400 dark:bg-gray-700">
         <div className="flex items-center">
           <Button variant="ghost" size="icon" onClick={onMenuClick} className={cn(iconColor, hoverBgColor, "mr-2")}>
             <MenuIcon className="h-5 w-5" />
@@ -46,6 +52,9 @@ export const SharedNavbar = ({
         </div>
 
         <div className="flex items-center space-x-2">
+          {/* Theme Toggle */}
+          <ThemeToggle />
+          
           {/* Settings Button */}
           <Button variant="ghost" size="icon" onClick={() => navigate('/settings')} className={cn(iconColor, hoverBgColor, "rounded-lg")} title="Settings">
             <SettingsIcon className="h-5 w-5" />
@@ -68,17 +77,17 @@ export const SharedNavbar = ({
                 <UserCircle className="h-6 w-6" />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-56 border-gray-200">
-              <DropdownMenuLabel>{user?.username || 'User'} ({user?.role || 'Unknown'})</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              {user?.role === 'admin' && <DropdownMenuItem onClick={() => navigate('/admin/users')}>
+            <DropdownMenuContent align="end" className="w-56 border-gray-200 dark:border-gray-700 dark:bg-gray-800">
+              <DropdownMenuLabel className="dark:text-gray-200">{user?.username || 'User'} ({user?.role || 'Unknown'})</DropdownMenuLabel>
+              <DropdownMenuSeparator className="dark:border-gray-700" />
+              {user?.role === 'admin' && <DropdownMenuItem onClick={() => navigate('/admin/users')} className="dark:text-gray-200 dark:hover:bg-gray-700">
                   User Management
                 </DropdownMenuItem>}
-              <DropdownMenuItem onClick={() => navigate('/settings')}>
+              <DropdownMenuItem onClick={() => navigate('/settings')} className="dark:text-gray-200 dark:hover:bg-gray-700">
                 Account Settings
               </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={handleLogout} className="text-red-500">
+              <DropdownMenuSeparator className="dark:border-gray-700" />
+              <DropdownMenuItem onClick={handleLogout} className="text-red-500 dark:text-red-400 dark:hover:bg-gray-700">
                 Log out
               </DropdownMenuItem>
             </DropdownMenuContent>
