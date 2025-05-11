@@ -1,4 +1,3 @@
-
 import React, { useState, useCallback, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -87,8 +86,29 @@ const ApiKeyForm: React.FC<ApiKeyFormProps> = ({
             .maybeSingle();
           
           if (error) {
-            console.error(`Error fetching ${providerName} API key:`, error);
-            toast.error(`Failed to fetch saved API key for ${providerName}`);
+            // Handle the specific error for missing column
+            if (error.message?.includes("column 'config' does not exist")) {
+              console.log("Config column doesn't exist yet, using simpler query");
+              // If 'config' column doesn't exist, try again with just api_key and preferred_model
+              const { data: simpleData, error: simpleError } = await supabase
+                .from('api_provider_settings')
+                .select('api_key, preferred_model')
+                .eq('provider_name', providerName.toLowerCase())
+                .eq('user_id', user.id)
+                .maybeSingle();
+                
+              if (!simpleError && simpleData?.api_key) {
+                setApiKey(simpleData.api_key);
+                setSavedKey(simpleData.api_key);
+                if (simpleData.preferred_model) setModel(simpleData.preferred_model);
+                setKeyStatus('valid');
+              } else {
+                console.error(`Error in simple fetch for ${providerName} API key:`, simpleError);
+              }
+            } else {
+              console.error(`Error fetching ${providerName} API key:`, error);
+              toast.error(`Failed to fetch saved API key for ${providerName}`);
+            }
           } else if (data?.api_key) {
             // Override localStorage values with database values if available
             setApiKey(data.api_key);
@@ -128,22 +148,50 @@ const ApiKeyForm: React.FC<ApiKeyFormProps> = ({
       
       // If authenticated, try to save to Supabase as well
       if (isAuthenticated && user) {
-        const { error } = await supabase
-          .from('api_provider_settings')
-          .upsert({
-            provider_name: providerName.toLowerCase(),
-            api_key: key,
-            preferred_model: verifiedModel,
-            config: advancedConfig,
-            user_id: user.id,
-            updated_at: new Date().toISOString()
-          }, { onConflict: 'provider_name,user_id' });
-        
-        if (error) {
-          console.error(`Error saving ${providerName} API key to database:`, error);
-          toast.warning(`Saved API key locally, but failed to save to database: ${error.message}`);
-          console.log("Debug info - user:", user);
-          console.log("Debug info - auth state:", isAuthenticated);
+        try {
+          // First check if the config column exists
+          const { error: columnCheckError } = await supabase.rpc('column_exists', { 
+            table_name: 'api_provider_settings',
+            column_name: 'config'
+          });
+
+          let upsertData;
+          
+          if (columnCheckError) {
+            console.log("Could not check if config column exists or it doesn't exist:", columnCheckError);
+            // Use basic upsert without config column
+            upsertData = {
+              provider_name: providerName.toLowerCase(),
+              api_key: key,
+              preferred_model: verifiedModel,
+              user_id: user.id,
+              updated_at: new Date().toISOString()
+            };
+          } else {
+            // Config column exists, use full upsert
+            upsertData = {
+              provider_name: providerName.toLowerCase(),
+              api_key: key,
+              preferred_model: verifiedModel,
+              config: advancedConfig,
+              user_id: user.id,
+              updated_at: new Date().toISOString()
+            };
+          }
+          
+          const { error } = await supabase
+            .from('api_provider_settings')
+            .upsert(upsertData, { onConflict: 'provider_name,user_id' });
+          
+          if (error) {
+            console.error(`Error saving ${providerName} API key to database:`, error);
+            toast.warning(`Saved API key locally, but failed to save to database: ${error.message}`);
+            console.log("Debug info - user:", user);
+            console.log("Debug info - auth state:", isAuthenticated);
+          }
+        } catch (error) {
+          console.error(`Error during database operations for ${providerName}:`, error);
+          toast.warning(`Saved API key locally, but failed during database operations`);
         }
       } else if (!isAuthenticated) {
         // If not authenticated, just notify that we saved locally only
