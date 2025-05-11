@@ -5,10 +5,15 @@ import { DocumentSearchBar } from "@/components/admin/documentation/DocumentSear
 import { DocumentViewer } from "@/components/admin/documentation/DocumentViewer";
 import { documentCategories } from "@/components/admin/documentation/mockData";
 import { DocumentCategory, DocumentItem } from "@/components/admin/documentation/types";
+import { NavigationMenu } from "@/components/admin/documentation/NavigationMenu";
+import { useNavigate } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
+import { Home } from 'lucide-react';
 
 const DocumentationPage = () => {
   const [selectedDocument, setSelectedDocument] = useState<DocumentItem | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
+  const navigate = useNavigate();
   
   // Filter documents based on search term
   const filteredCategories = useMemo(() => {
@@ -36,7 +41,21 @@ const DocumentationPage = () => {
 
   return (
     <div className="container mx-auto px-4 py-6">
-      <h1 className="text-2xl font-bold mb-6">Documentation</h1>
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-2xl font-bold">Documentation</h1>
+        <div className="flex items-center space-x-4">
+          <NavigationMenu />
+          <Button 
+            variant="outline" 
+            size="sm"
+            className="flex items-center gap-2"
+            onClick={() => navigate('/')}
+          >
+            <Home size={16} />
+            Home
+          </Button>
+        </div>
+      </div>
       
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="md:col-span-1">

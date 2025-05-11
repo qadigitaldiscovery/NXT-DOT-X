@@ -2,6 +2,7 @@
 import React from 'react';
 import { File } from 'lucide-react';
 import { DocumentItem } from './types';
+import { Button } from '@/components/ui/button';
 
 interface DocumentViewerProps {
   document: DocumentItem | null;
@@ -65,14 +66,28 @@ export const DocumentViewer = ({ document }: DocumentViewerProps) => {
         <h3 className="text-lg font-medium truncate">{document.title}</h3>
         <div className="flex space-x-2">
           {document.url && (
-            <a 
-              href={document.url} 
-              download
-              className="text-sm text-blue-500 hover:text-blue-700"
+            <Button
+              variant="outline"
+              size="sm"
+              asChild
+              className="text-sm"
             >
-              Download
-            </a>
+              <a 
+                href={document.url} 
+                download
+              >
+                Download
+              </a>
+            </Button>
           )}
+          <Button
+            variant="ghost"
+            size="sm"
+            className="text-sm"
+            onClick={() => window.print()}
+          >
+            Print
+          </Button>
         </div>
       </div>
       <div className="h-[calc(100%-3.5rem)] overflow-auto">
