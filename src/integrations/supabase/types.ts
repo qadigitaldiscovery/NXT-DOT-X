@@ -123,6 +123,36 @@ export type Database = {
         }
         Relationships: []
       }
+      api_provider_settings: {
+        Row: {
+          api_key: string
+          created_at: string
+          id: string
+          preferred_model: string | null
+          provider_name: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          api_key: string
+          created_at?: string
+          id?: string
+          preferred_model?: string | null
+          provider_name: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          api_key?: string
+          created_at?: string
+          id?: string
+          preferred_model?: string | null
+          provider_name?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       approval_actions: {
         Row: {
           action: string

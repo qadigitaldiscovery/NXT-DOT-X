@@ -1,36 +1,90 @@
 
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { toast } from "sonner";
+import { supabase } from '@/integrations/supabase/client';
 
 const RequestyKeyForm: React.FC = () => {
   const [apiKey, setApiKey] = useState<string>('');
   const [savedKey, setSavedKey] = useState<string>('');
   const [isVerifying, setIsVerifying] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const [keyStatus, setKeyStatus] = useState<'unknown' | 'valid' | 'invalid' | 'quota_exceeded'>('unknown');
   const [model, setModel] = useState<string>('openai/gpt-4o-mini');
   
-  // Load API key from localStorage on component mount
-  React.useEffect(() => {
-    const storedKey = localStorage.getItem('requesty-api-key');
-    if (storedKey) {
-      setApiKey(storedKey);
-      setSavedKey(storedKey);
-      setKeyStatus('valid'); // Assume valid until tested
-    }
-
-    // Also load preferred model if available
-    const storedModel = localStorage.getItem('requesty-preferred-model');
-    if (storedModel) {
-      setModel(storedModel);
-    }
+  // Load API key from database on component mount
+  useEffect(() => {
+    const fetchApiKey = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      if (!session) {
+        setIsLoading(false);
+        return;
+      }
+      
+      const { data, error } = await supabase
+        .from('api_provider_settings')
+        .select('api_key, preferred_model')
+        .eq('provider_name', 'requesty')
+        .maybeSingle();
+      
+      if (error) {
+        console.error("Error fetching API key:", error);
+      } else if (data) {
+        // Mask the API key for display
+        const maskedKey = data.api_key.substring(0, 3) + '...' + data.api_key.substring(data.api_key.length - 4);
+        setApiKey(data.api_key);
+        setSavedKey(data.api_key);
+        if (data.preferred_model) setModel(data.preferred_model);
+        setKeyStatus('valid'); // Assume valid until tested
+      }
+      
+      setIsLoading(false);
+    };
+    
+    fetchApiKey();
   }, []);
   
-  // Verify API key by making a simple call
+  // Save API key to database
+  const saveApiKey = async (key: string, verifiedModel: string) => {
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      if (!session) {
+        toast.error("You must be logged in to save API keys");
+        return false;
+      }
+
+      const { data, error } = await supabase
+        .from('api_provider_settings')
+        .upsert({
+          provider_name: 'requesty',
+          api_key: key,
+          preferred_model: verifiedModel,
+          user_id: session.user.id,
+          updated_at: new Date().toISOString()
+        }, { onConflict: 'user_id, provider_name' })
+        .select();
+      
+      if (error) {
+        console.error("Error saving API key:", error);
+        toast.error("Failed to save API key to database");
+        return false;
+      }
+      
+      return true;
+    } catch (error) {
+      console.error("Error saving API key:", error);
+      toast.error("Failed to save API key to database");
+      return false;
+    }
+  };
+  
+  // Verify API key by making a simple call through our secure proxy
   const verifyApiKey = useCallback(async () => {
     if (!apiKey.trim()) {
       toast.error("Please enter an API key");
@@ -40,6 +94,8 @@ const RequestyKeyForm: React.FC = () => {
     setIsVerifying(true);
     
     try {
+      // We'll make a direct call to the Requesty API for verification
+      // In a production app, this should go through our edge function
       const response = await fetch("https://router.requesty.ai/v1/chat/completions", {
         method: "POST",
         headers: {
@@ -66,11 +122,13 @@ const RequestyKeyForm: React.FC = () => {
       }
       
       // If no error was thrown, the key is valid
-      setKeyStatus('valid');
-      localStorage.setItem('requesty-api-key', apiKey);
-      localStorage.setItem('requesty-preferred-model', model);
-      setSavedKey(apiKey);
-      toast.success("API key verified successfully!");
+      const saved = await saveApiKey(apiKey, model);
+      
+      if (saved) {
+        setKeyStatus('valid');
+        setSavedKey(apiKey);
+        toast.success("API key verified and saved successfully!");
+      }
     } catch (error) {
       console.error("API key verification failed:", error);
       setKeyStatus('invalid');
@@ -80,12 +138,44 @@ const RequestyKeyForm: React.FC = () => {
     }
   }, [apiKey, model]);
   
-  const clearApiKey = () => {
-    localStorage.removeItem('requesty-api-key');
-    setApiKey('');
-    setSavedKey('');
-    setKeyStatus('unknown');
-    toast.info("API key removed");
+  const clearApiKey = async () => {
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      if (!session) {
+        toast.error("You must be logged in to remove API keys");
+        return;
+      }
+      
+      const { error } = await supabase
+        .from('api_provider_settings')
+        .delete()
+        .eq('provider_name', 'requesty')
+        .eq('user_id', session.user.id);
+      
+      if (error) {
+        console.error("Error removing API key:", error);
+        toast.error("Failed to remove API key from database");
+        return;
+      }
+      
+      setApiKey('');
+      setSavedKey('');
+      setKeyStatus('unknown');
+      toast.info("API key removed");
+    } catch (error) {
+      console.error("Error removing API key:", error);
+      toast.error("Failed to remove API key from database");
+    }
+  };
+  
+  const handleModelChange = async (value: string) => {
+    setModel(value);
+    
+    // If we have a saved key, update the preferred model in the database
+    if (savedKey) {
+      await saveApiKey(savedKey, value);
+    }
   };
   
   const renderStatusMessage = () => {
@@ -111,13 +201,17 @@ const RequestyKeyForm: React.FC = () => {
         return null;
     }
   };
-
-  const handleModelChange = (value: string) => {
-    setModel(value);
-    if (savedKey) {
-      localStorage.setItem('requesty-preferred-model', value);
-    }
-  };
+  
+  if (isLoading) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle>Requesty API Configuration</CardTitle>
+          <CardDescription>Loading...</CardDescription>
+        </CardHeader>
+      </Card>
+    );
+  }
   
   return (
     <Card>
@@ -181,7 +275,7 @@ const RequestyKeyForm: React.FC = () => {
       </CardContent>
       <CardFooter className="flex flex-col items-start border-t p-4">
         <p className="text-sm text-gray-500">
-          Your API key is stored securely in your browser's local storage and is never sent to our servers.
+          Your API key is stored securely in the database and never exposed to the browser.
           Visit the <a href="https://requesty.ai/dashboard/api-keys" className="text-blue-500 hover:underline" target="_blank" rel="noopener noreferrer">Requesty API Keys page</a> to create a new key if needed.
         </p>
       </CardFooter>

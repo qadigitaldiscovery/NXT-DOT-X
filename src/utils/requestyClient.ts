@@ -1,7 +1,7 @@
 
-// Requesty API client utility
 import { useState } from "react";
 import { toast } from "sonner";
+import { supabase } from '@/integrations/supabase/client';
 
 // Interface for the chat completion request
 interface RequestyChatCompletionRequest {
@@ -23,28 +23,89 @@ interface RequestyChatCompletionResponse {
   }[];
 }
 
+// Get API key from storage or database
+const getApiKey = async (): Promise<{ key: string | null, model: string | null }> => {
+  // Try to get from database first if user is logged in
+  const { data: { session } } = await supabase.auth.getSession();
+  
+  if (session) {
+    const { data, error } = await supabase
+      .from('api_provider_settings')
+      .select('api_key, preferred_model')
+      .eq('provider_name', 'requesty')
+      .maybeSingle();
+      
+    if (!error && data?.api_key) {
+      return { 
+        key: data.api_key,
+        model: data.preferred_model || 'openai/gpt-4o-mini'
+      };
+    }
+  }
+  
+  // Fallback to localStorage if no key in DB or user not logged in
+  return { 
+    key: localStorage.getItem('requesty-api-key'), 
+    model: localStorage.getItem('requesty-preferred-model') || 'openai/gpt-4o-mini' 
+  };
+};
+
 /**
  * Sends a request to the Requesty API
- * Note: This should ideally be handled server-side through an edge function
- * to avoid exposing API keys in client-side code
  */
 export const sendRequestyMessage = async (
   messages: RequestyChatCompletionRequest["messages"],
-  model: string = "openai/gpt-4o"
+  model?: string
 ): Promise<string> => {
   try {
-    // In a production environment, this should be handled through a backend API or edge function
-    // to avoid exposing the API key on the client side
+    // Get API key from database or local storage
+    const { key: apiKey, model: preferredModel } = await getApiKey();
+    
+    if (!apiKey) {
+      toast.error("Requesty API key not configured. Please add your API key in the settings.");
+      throw new Error("API key not configured");
+    }
+
+    // Use specified model or fallback to preferred model
+    const modelToUse = model || preferredModel || "openai/gpt-4o-mini";
+    
+    // First try to use our secure proxy if available
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      if (session) {
+        // Call via the edge function for better security
+        const { data, error } = await supabase.functions.invoke('api-proxy', {
+          body: {
+            provider: 'requesty',
+            endpoint: 'chat/completions',
+            payload: {
+              model: modelToUse,
+              messages
+            }
+          }
+        });
+        
+        if (!error) {
+          return data.choices[0].message.content;
+        }
+        
+        // If the edge function fails, fall back to direct API call
+        console.warn("Edge function failed, falling back to direct API call", error);
+      }
+    } catch (err) {
+      console.warn("Could not use edge function, falling back to direct API call", err);
+    }
+
+    // Fallback to direct API call
     const response = await fetch("https://router.requesty.ai/v1/chat/completions", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        // API key should be securely stored in a backend environment
-        // This is just for demonstration - DO NOT use API keys directly in frontend code
-        "Authorization": `Bearer ${process.env.REQUESTY_API_KEY || ""}`,
+        "Authorization": `Bearer ${apiKey}`,
       },
       body: JSON.stringify({
-        model,
+        model: modelToUse,
         messages,
       }),
     });

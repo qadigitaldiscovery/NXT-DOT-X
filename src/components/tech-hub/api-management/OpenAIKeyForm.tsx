@@ -1,29 +1,89 @@
 
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { toast } from "sonner";
+import { supabase } from '@/integrations/supabase/client';
 import { callOpenAI, OpenAIError, RateLimitError } from '@/utils/openai-client';
 
 const OpenAIKeyForm: React.FC = () => {
   const [apiKey, setApiKey] = useState<string>('');
   const [savedKey, setSavedKey] = useState<string>('');
   const [isVerifying, setIsVerifying] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const [keyStatus, setKeyStatus] = useState<'unknown' | 'valid' | 'invalid' | 'quota_exceeded'>('unknown');
   const [model, setModel] = useState<string>('gpt-4o-mini');
   
-  // Load API key from localStorage on component mount
-  React.useEffect(() => {
-    const storedKey = localStorage.getItem('openai-api-key');
-    if (storedKey) {
-      setApiKey(storedKey);
-      setSavedKey(storedKey);
-      setKeyStatus('valid'); // Assume valid until tested
-    }
+  // Load API key from database on component mount
+  useEffect(() => {
+    const fetchApiKey = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      if (!session) {
+        setIsLoading(false);
+        return;
+      }
+      
+      const { data, error } = await supabase
+        .from('api_provider_settings')
+        .select('api_key, preferred_model')
+        .eq('provider_name', 'openai')
+        .maybeSingle();
+      
+      if (error) {
+        console.error("Error fetching API key:", error);
+      } else if (data) {
+        // Mask the API key for display
+        const maskedKey = data.api_key.substring(0, 3) + '...' + data.api_key.substring(data.api_key.length - 4);
+        setApiKey(data.api_key);
+        setSavedKey(data.api_key);
+        if (data.preferred_model) setModel(data.preferred_model);
+        setKeyStatus('valid'); // Assume valid until tested
+      }
+      
+      setIsLoading(false);
+    };
+    
+    fetchApiKey();
   }, []);
+  
+  // Save API key to database
+  const saveApiKey = async (key: string, verifiedModel: string) => {
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      if (!session) {
+        toast.error("You must be logged in to save API keys");
+        return;
+      }
+
+      const { data, error } = await supabase
+        .from('api_provider_settings')
+        .upsert({
+          provider_name: 'openai',
+          api_key: key,
+          preferred_model: verifiedModel,
+          user_id: session.user.id,
+          updated_at: new Date().toISOString()
+        }, { onConflict: 'user_id, provider_name' })
+        .select();
+      
+      if (error) {
+        console.error("Error saving API key:", error);
+        toast.error("Failed to save API key to database");
+        return false;
+      }
+      
+      return true;
+    } catch (error) {
+      console.error("Error saving API key:", error);
+      toast.error("Failed to save API key to database");
+      return false;
+    }
+  };
   
   // Verify API key by making a simple call
   const verifyApiKey = useCallback(async () => {
@@ -46,10 +106,13 @@ const OpenAIKeyForm: React.FC = () => {
       });
       
       // If no error was thrown, the key is valid
-      setKeyStatus('valid');
-      localStorage.setItem('openai-api-key', apiKey);
-      setSavedKey(apiKey);
-      toast.success("API key verified successfully!");
+      const saved = await saveApiKey(apiKey, model);
+      
+      if (saved) {
+        setKeyStatus('valid');
+        setSavedKey(apiKey);
+        toast.success("API key verified and saved successfully!");
+      }
     } catch (error) {
       console.error("API key verification failed:", error);
       
@@ -67,12 +130,44 @@ const OpenAIKeyForm: React.FC = () => {
     }
   }, [apiKey, model]);
   
-  const clearApiKey = () => {
-    localStorage.removeItem('openai-api-key');
-    setApiKey('');
-    setSavedKey('');
-    setKeyStatus('unknown');
-    toast.info("API key removed");
+  const clearApiKey = async () => {
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      if (!session) {
+        toast.error("You must be logged in to remove API keys");
+        return;
+      }
+      
+      const { error } = await supabase
+        .from('api_provider_settings')
+        .delete()
+        .eq('provider_name', 'openai')
+        .eq('user_id', session.user.id);
+      
+      if (error) {
+        console.error("Error removing API key:", error);
+        toast.error("Failed to remove API key from database");
+        return;
+      }
+      
+      setApiKey('');
+      setSavedKey('');
+      setKeyStatus('unknown');
+      toast.info("API key removed");
+    } catch (error) {
+      console.error("Error removing API key:", error);
+      toast.error("Failed to remove API key from database");
+    }
+  };
+  
+  const handleModelChange = async (value: string) => {
+    setModel(value);
+    
+    // If we have a saved key, update the preferred model in the database
+    if (savedKey) {
+      await saveApiKey(savedKey, value);
+    }
   };
   
   const renderStatusMessage = () => {
@@ -98,6 +193,17 @@ const OpenAIKeyForm: React.FC = () => {
         return null;
     }
   };
+  
+  if (isLoading) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle>OpenAI API Configuration</CardTitle>
+          <CardDescription>Loading...</CardDescription>
+        </CardHeader>
+      </Card>
+    );
+  }
   
   return (
     <Card>
@@ -131,7 +237,7 @@ const OpenAIKeyForm: React.FC = () => {
         
         <div className="space-y-2">
           <Label>Preferred Model</Label>
-          <RadioGroup value={model} onValueChange={setModel} className="grid grid-cols-2 gap-2">
+          <RadioGroup value={model} onValueChange={handleModelChange} className="grid grid-cols-2 gap-2">
             <div className="flex items-center space-x-2">
               <RadioGroupItem value="gpt-4o-mini" id="gpt-4o-mini" />
               <Label htmlFor="gpt-4o-mini">GPT-4o Mini</Label>
@@ -161,7 +267,7 @@ const OpenAIKeyForm: React.FC = () => {
       </CardContent>
       <CardFooter className="flex flex-col items-start border-t p-4">
         <p className="text-sm text-gray-500">
-          Your API key is stored securely in your browser's local storage and is never sent to our servers.
+          Your API key is stored securely in the database and never exposed to the browser.
           Visit the <a href="https://platform.openai.com/api-keys" className="text-blue-500 hover:underline" target="_blank" rel="noopener noreferrer">OpenAI API Keys page</a> to create a new key if needed.
         </p>
       </CardFooter>

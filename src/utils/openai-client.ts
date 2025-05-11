@@ -1,5 +1,6 @@
 
 import { toast } from "sonner";
+import { supabase } from '@/integrations/supabase/client';
 
 // Types for OpenAI API responses
 export type OpenAIErrorResponse = {
@@ -97,8 +98,29 @@ export class NetworkError extends Error {
 export type CallOptions = {
   endpoint: 'chat' | 'embeddings' | 'moderations';
   payload: any;
-  apiKey: string; 
+  apiKey?: string; 
   signal?: AbortSignal;
+};
+
+// Get API key from storage or database
+const getApiKey = async (): Promise<string | null> => {
+  // Try to get from database first if user is logged in
+  const { data: { session } } = await supabase.auth.getSession();
+  
+  if (session) {
+    const { data, error } = await supabase
+      .from('api_provider_settings')
+      .select('api_key')
+      .eq('provider_name', 'openai')
+      .maybeSingle();
+      
+    if (!error && data?.api_key) {
+      return data.api_key;
+    }
+  }
+  
+  // Fallback to localStorage if no key in DB or user not logged in
+  return localStorage.getItem('openai-api-key');
 };
 
 // Main function to call OpenAI API
@@ -108,6 +130,39 @@ export async function callOpenAI<T extends OpenAIResponse>({
   apiKey,
   signal 
 }: CallOptions): Promise<T> {
+  // Use provided apiKey or fetch from storage
+  const key = apiKey || await getApiKey();
+  
+  if (!key) {
+    throw new Error("No API key available. Please add your OpenAI API key in the settings.");
+  }
+  
+  // First try to use our secure proxy if available
+  try {
+    const { data: { session } } = await supabase.auth.getSession();
+    
+    if (session) {
+      // Call via the edge function for better security
+      const { data, error } = await supabase.functions.invoke('api-proxy', {
+        body: {
+          provider: 'openai',
+          endpoint: endpoint === 'chat' ? 'chat/completions' : endpoint,
+          payload
+        }
+      });
+      
+      if (!error) {
+        return data as T;
+      }
+      
+      // If the edge function fails, fall back to direct API call
+      console.warn("Edge function failed, falling back to direct API call", error);
+    }
+  } catch (err) {
+    console.warn("Could not use edge function, falling back to direct API call", err);
+  }
+  
+  // Direct API call as fallback
   const baseUrl = 'https://api.openai.com/v1';
   const url = `${baseUrl}/${endpoint === 'chat' ? 'chat/completions' : endpoint}`;
   
@@ -116,7 +171,7 @@ export async function callOpenAI<T extends OpenAIResponse>({
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${apiKey}`,
+        'Authorization': `Bearer ${key}`,
         'User-Agent': 'lovable.dev-fe',
         'X-Request-Timestamp': new Date().toISOString(),
       },
