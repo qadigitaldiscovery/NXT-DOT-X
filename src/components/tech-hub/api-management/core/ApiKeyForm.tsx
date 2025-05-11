@@ -33,7 +33,7 @@ const ApiKeyForm: React.FC<ApiKeyFormProps> = ({
   initialModel,
   footerText
 }) => {
-  const { isAuthenticated, user } = useAuth(); // Use the auth context instead
+  const { isAuthenticated, user } = useAuth(); // Use the auth context
   const [apiKey, setApiKey] = useState<string>('');
   const [savedKey, setSavedKey] = useState<string>('');
   const [isVerifying, setIsVerifying] = useState<boolean>(false);
@@ -45,26 +45,59 @@ const ApiKeyForm: React.FC<ApiKeyFormProps> = ({
   useEffect(() => {
     const fetchApiKey = async () => {
       try {
-        if (!isAuthenticated || !user) {
+        // For the mock auth system, we'll use localStorage as a fallback
+        if (!isAuthenticated) {
+          const localKey = localStorage.getItem(`${providerName.toLowerCase()}-api-key`);
+          const localModel = localStorage.getItem(`${providerName.toLowerCase()}-preferred-model`);
+          
+          if (localKey) {
+            setApiKey(localKey);
+            setSavedKey(localKey);
+            if (localModel) setModel(localModel);
+            setKeyStatus('valid');
+          }
+          
           setIsLoading(false);
           return;
         }
         
+        // When authenticated, try to get from Supabase
         const { data, error } = await supabase
           .from('api_provider_settings')
           .select('api_key, preferred_model')
           .eq('provider_name', providerName.toLowerCase())
-          .eq('user_id', user.id)
           .maybeSingle();
         
         if (error) {
           console.error(`Error fetching ${providerName} API key:`, error);
           toast.error(`Failed to fetch saved API key for ${providerName}`);
+          
+          // Fall back to localStorage if Supabase query fails
+          const localKey = localStorage.getItem(`${providerName.toLowerCase()}-api-key`);
+          const localModel = localStorage.getItem(`${providerName.toLowerCase()}-preferred-model`);
+          
+          if (localKey) {
+            setApiKey(localKey);
+            setSavedKey(localKey);
+            if (localModel) setModel(localModel);
+            setKeyStatus('valid');
+          }
         } else if (data?.api_key) {
           setApiKey(data.api_key);
           setSavedKey(data.api_key);
           if (data.preferred_model) setModel(data.preferred_model);
-          setKeyStatus('valid'); // Assume valid until tested
+          setKeyStatus('valid');
+        } else {
+          // Try localStorage as last resort
+          const localKey = localStorage.getItem(`${providerName.toLowerCase()}-api-key`);
+          const localModel = localStorage.getItem(`${providerName.toLowerCase()}-preferred-model`);
+          
+          if (localKey) {
+            setApiKey(localKey);
+            setSavedKey(localKey);
+            if (localModel) setModel(localModel);
+            setKeyStatus('valid');
+          }
         }
       } catch (err) {
         console.error(`Exception while fetching ${providerName} API key:`, err);
@@ -74,37 +107,37 @@ const ApiKeyForm: React.FC<ApiKeyFormProps> = ({
     };
     
     fetchApiKey();
-  }, [providerName, isAuthenticated, user]);
+  }, [providerName, isAuthenticated]);
   
-  // Save API key to database
+  // Save API key to database or localStorage
   const saveApiKey = async (key: string, verifiedModel: string) => {
     try {
-      if (!isAuthenticated || !user) {
-        toast.error("You must be logged in to save API keys");
-        return false;
-      }
-
-      const { error } = await supabase
-        .from('api_provider_settings')
-        .upsert({
-          provider_name: providerName.toLowerCase(),
-          api_key: key,
-          preferred_model: verifiedModel,
-          user_id: user.id,
-          updated_at: new Date().toISOString()
-        }, { onConflict: 'user_id, provider_name' });
+      // Always save to localStorage as a backup
+      localStorage.setItem(`${providerName.toLowerCase()}-api-key`, key);
+      localStorage.setItem(`${providerName.toLowerCase()}-preferred-model`, verifiedModel);
       
-      if (error) {
-        console.error(`Error saving ${providerName} API key:`, error);
-        toast.error(`Failed to save API key to database`);
-        return false;
+      // If authenticated, try to save to Supabase as well
+      if (isAuthenticated) {
+        const { error } = await supabase
+          .from('api_provider_settings')
+          .upsert({
+            provider_name: providerName.toLowerCase(),
+            api_key: key,
+            preferred_model: verifiedModel,
+            updated_at: new Date().toISOString()
+          }, { onConflict: 'provider_name' });
+        
+        if (error) {
+          console.error(`Error saving ${providerName} API key to database:`, error);
+          toast.warning(`Saved API key locally, but failed to save to database`);
+        }
       }
       
       setSavedKey(key);
       return true;
     } catch (error) {
       console.error(`Error saving ${providerName} API key:`, error);
-      toast.error(`Failed to save API key to database`);
+      toast.error(`Failed to save API key`);
       return false;
     }
   };
@@ -153,21 +186,21 @@ const ApiKeyForm: React.FC<ApiKeyFormProps> = ({
   
   const clearApiKey = async () => {
     try {
-      if (!isAuthenticated || !user) {
-        toast.error("You must be logged in to remove API keys");
-        return;
-      }
+      // Always clear from localStorage
+      localStorage.removeItem(`${providerName.toLowerCase()}-api-key`);
+      localStorage.removeItem(`${providerName.toLowerCase()}-preferred-model`);
       
-      const { error } = await supabase
-        .from('api_provider_settings')
-        .delete()
-        .eq('provider_name', providerName.toLowerCase())
-        .eq('user_id', user.id);
-      
-      if (error) {
-        console.error(`Error removing ${providerName} API key:`, error);
-        toast.error(`Failed to remove API key from database`);
-        return;
+      // If authenticated, try to clear from Supabase as well
+      if (isAuthenticated) {
+        const { error } = await supabase
+          .from('api_provider_settings')
+          .delete()
+          .eq('provider_name', providerName.toLowerCase());
+        
+        if (error) {
+          console.error(`Error removing ${providerName} API key from database:`, error);
+          toast.warning(`Removed API key locally, but failed to remove from database`);
+        }
       }
       
       setApiKey('');
@@ -176,14 +209,14 @@ const ApiKeyForm: React.FC<ApiKeyFormProps> = ({
       toast.info(`${providerName} API key removed`);
     } catch (error) {
       console.error(`Error removing ${providerName} API key:`, error);
-      toast.error(`Failed to remove API key from database`);
+      toast.error(`Failed to completely remove API key`);
     }
   };
   
   const handleModelChange = async (value: string) => {
     setModel(value);
     
-    // If we have a saved key, update the preferred model in the database
+    // If we have a saved key, update the preferred model
     if (savedKey) {
       await saveApiKey(savedKey, value);
     }
@@ -222,21 +255,6 @@ const ApiKeyForm: React.FC<ApiKeyFormProps> = ({
           <CardTitle>{providerName} API Configuration</CardTitle>
           <CardDescription>Loading...</CardDescription>
         </CardHeader>
-      </Card>
-    );
-  }
-  
-  // Show login message if not authenticated
-  if (!isAuthenticated) {
-    return (
-      <Card>
-        <CardHeader>
-          <CardTitle>{providerName} API Configuration</CardTitle>
-          <CardDescription>Authentication Required</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <p className="text-amber-600">You must be logged in to manage API keys.</p>
-        </CardContent>
       </Card>
     );
   }
@@ -305,7 +323,7 @@ const ApiKeyForm: React.FC<ApiKeyFormProps> = ({
       </CardContent>
       <CardFooter className="flex flex-col items-start border-t p-4">
         <p className="text-sm text-gray-500">
-          {footerText || `Your API key is stored securely in the database and never exposed to the browser.
+          {footerText || `Your API key is stored securely and never exposed to the browser.
           Visit the ${docsLink ? 
             <a href={docsLink.url} className="text-blue-500 hover:underline" target="_blank" rel="noopener noreferrer">{docsLink.text}</a> : 
             `${providerName} website`} to create a new key if needed.`}

@@ -10,11 +10,16 @@ import {
   NetworkError, 
   OpenAIErrorResponse 
 } from './types';
-import { useAuth } from '@/context/AuthContext'; 
 
 // Get API key from storage or database
 export const getApiKey = async (): Promise<string | null> => {
-  // Try to get from database first if user is logged in
+  // Try to get from localStorage first as it's simpler
+  const localKey = localStorage.getItem('openai-api-key');
+  if (localKey) {
+    return localKey;
+  }
+  
+  // If no key in localStorage, try database if user is logged in
   try {
     const { data: { session } } = await supabase.auth.getSession();
     
@@ -23,7 +28,6 @@ export const getApiKey = async (): Promise<string | null> => {
         .from('api_provider_settings')
         .select('api_key')
         .eq('provider_name', 'openai')
-        .eq('user_id', session.user.id)
         .maybeSingle();
         
       if (!error && data?.api_key) {
@@ -34,8 +38,7 @@ export const getApiKey = async (): Promise<string | null> => {
     console.error("Error fetching API key from database:", err);
   }
   
-  // Fallback to localStorage if no key in DB or user not logged in
-  return localStorage.getItem('openai-api-key');
+  return null;
 };
 
 // Main function to call OpenAI API

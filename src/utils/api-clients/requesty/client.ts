@@ -2,11 +2,21 @@
 import { toast } from "sonner";
 import { supabase } from '@/integrations/supabase/client';
 import { RequestyMessage } from './types';
-import { useAuth } from '@/context/AuthContext';
 
 // Get API key from storage or database
 const getApiKey = async (): Promise<{ key: string | null, model: string | null }> => {
-  // Try to get from database first if user is logged in
+  // Try to get from localStorage first as it's simpler
+  const localKey = localStorage.getItem('requesty-api-key');
+  const localModel = localStorage.getItem('requesty-preferred-model');
+  
+  if (localKey) {
+    return { 
+      key: localKey,
+      model: localModel || 'openai/gpt-4o-mini' 
+    };
+  }
+  
+  // Try to get from database if no key in localStorage
   try {
     const { data: { session } } = await supabase.auth.getSession();
     
@@ -15,13 +25,12 @@ const getApiKey = async (): Promise<{ key: string | null, model: string | null }
         .from('api_provider_settings')
         .select('api_key, preferred_model')
         .eq('provider_name', 'requesty')
-        .eq('user_id', session.user.id)
         .maybeSingle();
         
       if (!error && data?.api_key) {
         return { 
           key: data.api_key,
-          model: data.preferred_model || 'openai/gpt-4o-mini'
+          model: data.preferred_model || 'openai/gpt-4o-mini' 
         };
       }
     }
@@ -29,10 +38,9 @@ const getApiKey = async (): Promise<{ key: string | null, model: string | null }
     console.error("Error fetching API key from database:", err);
   }
   
-  // Fallback to localStorage if no key in DB or user not logged in
   return { 
-    key: localStorage.getItem('requesty-api-key'), 
-    model: localStorage.getItem('requesty-preferred-model') || 'openai/gpt-4o-mini' 
+    key: null, 
+    model: 'openai/gpt-4o-mini' 
   };
 };
 
