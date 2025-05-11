@@ -1,8 +1,9 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { toast } from 'sonner';
 import ChatTester from '../core/ChatTester';
-import { callOpenAI, ChatCompletionResponse } from '@/utils/openai-client';
+import { ChatCompletionResponse } from '@/utils/api-clients/openai/types';
+import { callOpenAI } from '@/utils/api-clients/openai/client';
 import { supabase } from '@/integrations/supabase/client';
 
 const OpenAIChatTester: React.FC = () => {
