@@ -2,14 +2,12 @@
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { FileCode, Cloud, Settings, BrainCircuit, Plus, Trash, Copy } from "lucide-react";
-import { toast } from "sonner";
+import { FileCode, Cloud, Settings, BrainCircuit, Plus, Api } from "lucide-react";
 import ApiKeyForm from "@/components/tech-hub/api-management/ApiKeyForm";
 import ApiEndpointList from "@/components/tech-hub/api-management/ApiEndpointList";
 import ApiPermissionsTable from "@/components/tech-hub/api-management/ApiPermissionsTable";
+import OpenAIKeyForm from "@/components/tech-hub/api-management/OpenAIKeyForm";
+import AIChatTester from "@/components/tech-hub/api-management/AIChatTester";
 import TechHubPersonas from './TechHubPersonas';
 
 const TechHubApiManagement: React.FC = () => {
@@ -29,6 +27,7 @@ const TechHubApiManagement: React.FC = () => {
           <TabsTrigger value="apis"><FileCode className="h-4 w-4 mr-1" />API Endpoints</TabsTrigger>
           <TabsTrigger value="keys"><Cloud className="h-4 w-4 mr-1" />API Keys</TabsTrigger>
           <TabsTrigger value="permissions"><Settings className="h-4 w-4 mr-1" />Permissions</TabsTrigger>
+          <TabsTrigger value="openai"><Api className="h-4 w-4 mr-1" />OpenAI</TabsTrigger>
           <TabsTrigger value="personas"><BrainCircuit className="h-4 w-4 mr-1" />AI Assistance</TabsTrigger>
         </TabsList>
         
@@ -42,6 +41,13 @@ const TechHubApiManagement: React.FC = () => {
         
         <TabsContent value="permissions">
           <ApiPermissionsTable />
+        </TabsContent>
+        
+        <TabsContent value="openai" className="space-y-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <OpenAIKeyForm />
+            <AIChatTester />
+          </div>
         </TabsContent>
         
         <TabsContent value="personas">

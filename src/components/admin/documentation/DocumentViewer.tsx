@@ -1,8 +1,10 @@
 
-import React from 'react';
-import { File } from 'lucide-react';
+import React, { useState } from 'react';
+import { File, FileSearch } from 'lucide-react';
 import { DocumentItem } from './types';
 import { Button } from '@/components/ui/button';
+import { toast } from "sonner";
+import { callOpenAI } from '@/utils/openai-client';
 
 interface DocumentViewerProps {
   document: DocumentItem | null;
@@ -35,6 +37,9 @@ const renderMarkdown = (content: string): string => {
 };
 
 export const DocumentViewer = ({ document }: DocumentViewerProps) => {
+  const [summary, setSummary] = useState<string | null>(null);
+  const [isSummarizing, setIsSummarizing] = useState<boolean>(false);
+
   if (!document) {
     return (
       <div className="flex flex-col items-center justify-center h-full text-gray-400">
@@ -86,6 +91,54 @@ export const DocumentViewer = ({ document }: DocumentViewerProps) => {
     }
   };
 
+  const generateSummary = async () => {
+    const apiKey = localStorage.getItem('openai-api-key');
+    
+    if (!apiKey) {
+      toast.error("Please configure your OpenAI API key in the Tech Hub > API Management section");
+      return;
+    }
+    
+    if (!document.content) {
+      toast.error("No content available for summarization");
+      return;
+    }
+    
+    setIsSummarizing(true);
+    
+    try {
+      const model = localStorage.getItem('openai-preferred-model') || 'gpt-4o-mini';
+      
+      const result = await callOpenAI({
+        endpoint: 'chat',
+        payload: {
+          model,
+          messages: [
+            { 
+              role: "system", 
+              content: "You are a helpful document summarization assistant. Create a concise summary of the provided document." 
+            },
+            { 
+              role: "user", 
+              content: `Please summarize this document in 3-5 key points: ${document.content}` 
+            }
+          ],
+          temperature: 0.5,
+          max_tokens: 500
+        },
+        apiKey
+      });
+      
+      setSummary(result.choices[0].message.content);
+      toast.success("Summary generated successfully");
+    } catch (error) {
+      console.error("Error generating summary:", error);
+      toast.error("Failed to generate summary");
+    } finally {
+      setIsSummarizing(false);
+    }
+  };
+
   return (
     <div className="h-full border rounded-lg overflow-hidden bg-white dark:bg-gray-900">
       <div className="px-4 py-3 border-b flex justify-between items-center bg-gradient-to-r from-nxt-darkRed to-nxt-red text-white">
@@ -106,6 +159,18 @@ export const DocumentViewer = ({ document }: DocumentViewerProps) => {
               </a>
             </Button>
           )}
+          {document.type === 'text' || document.type === 'markdown' ? (
+            <Button
+              variant="ghost"
+              size="sm"
+              className="text-sm text-white hover:bg-white/20"
+              onClick={generateSummary}
+              disabled={isSummarizing}
+            >
+              <FileSearch className="h-4 w-4 mr-1" />
+              {isSummarizing ? 'Summarizing...' : 'Summarize'}
+            </Button>
+          ) : null}
           <Button
             variant="ghost"
             size="sm"
@@ -117,6 +182,25 @@ export const DocumentViewer = ({ document }: DocumentViewerProps) => {
         </div>
       </div>
       <div className="h-[calc(100%-3.5rem)] overflow-auto">
+        {summary ? (
+          <div className="p-6 bg-blue-50 dark:bg-blue-900/20 border-b border-blue-200 dark:border-blue-800">
+            <h4 className="font-bold mb-2 flex items-center">
+              <FileSearch className="h-4 w-4 mr-1" /> AI-Generated Summary
+            </h4>
+            <div className="prose dark:prose-invert max-w-none">
+              <div dangerouslySetInnerHTML={{ __html: renderMarkdown(summary) }} />
+            </div>
+            <div className="mt-4">
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={() => setSummary(null)}
+              >
+                Hide Summary
+              </Button>
+            </div>
+          </div>
+        ) : null}
         {renderContent()}
       </div>
     </div>
