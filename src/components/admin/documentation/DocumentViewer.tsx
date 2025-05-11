@@ -62,7 +62,7 @@ export const DocumentViewer = ({ document }: DocumentViewerProps) => {
 
   return (
     <div className="h-full border rounded-lg overflow-hidden bg-white dark:bg-gray-900">
-      <div className="px-4 py-3 border-b flex justify-between items-center bg-gray-50 dark:bg-gray-800">
+      <div className="px-4 py-3 border-b flex justify-between items-center bg-gradient-to-r from-nxt-darkRed to-nxt-red text-white">
         <h3 className="text-lg font-medium truncate">{document.title}</h3>
         <div className="flex space-x-2">
           {document.url && (
@@ -70,7 +70,7 @@ export const DocumentViewer = ({ document }: DocumentViewerProps) => {
               variant="outline"
               size="sm"
               asChild
-              className="text-sm"
+              className="text-sm bg-white hover:bg-gray-100 text-nxt-darkRed border-white"
             >
               <a 
                 href={document.url} 
@@ -83,7 +83,7 @@ export const DocumentViewer = ({ document }: DocumentViewerProps) => {
           <Button
             variant="ghost"
             size="sm"
-            className="text-sm"
+            className="text-sm text-white hover:bg-white/20"
             onClick={() => window.print()}
           >
             Print
