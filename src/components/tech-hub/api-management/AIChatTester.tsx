@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import { Loader2 } from 'lucide-react';
-import { callOpenAI } from '@/utils/openai-client';
+import { callOpenAI, ChatCompletionResponse } from '@/utils/openai-client';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 
@@ -37,7 +37,7 @@ const AIChatTester = () => {
         }
       }
 
-      const result = await callOpenAI({
+      const result = await callOpenAI<ChatCompletionResponse>({
         endpoint: 'chat',
         payload: {
           model,
