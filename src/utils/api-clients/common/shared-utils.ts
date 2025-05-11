@@ -3,6 +3,18 @@
  * Common utilities shared across API clients
  */
 
+import { supabase } from '@/integrations/supabase/client';
+
+/**
+ * Type for API errors
+ */
+export class ApiError extends Error {
+  constructor(message: string, public details?: any) {
+    super(message);
+    this.name = 'ApiError';
+  }
+}
+
 /**
  * Check if a value is a valid non-empty string
  */
@@ -15,6 +27,105 @@ export const isValidString = (value: unknown): value is string => {
  */
 export const isValidObject = (value: unknown): value is Record<string, unknown> => {
   return value !== null && typeof value === 'object' && !Array.isArray(value);
+};
+
+/**
+ * Get API key from storage or database
+ */
+export const getApiKey = async (
+  providerName: string,
+  storageKey: string
+): Promise<{ key: string | null; config: Record<string, any> | null }> => {
+  // Try to get from localStorage first
+  const localData = localStorage.getItem(storageKey);
+  if (localData) {
+    try {
+      const parsed = JSON.parse(localData);
+      if (parsed && parsed.key) {
+        return {
+          key: parsed.key,
+          config: parsed.config || null
+        };
+      }
+    } catch (err) {
+      console.error('Error parsing local storage data:', err);
+    }
+  }
+
+  // If not found in localStorage, try getting from database
+  try {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (session) {
+      const { data, error } = await supabase
+        .from('api_provider_settings')
+        .select('api_key, preferred_model, config')
+        .eq('provider_name', providerName)
+        .eq('user_id', session.user.id)
+        .maybeSingle();
+
+      if (error) {
+        console.error(`Error fetching ${providerName} API key:`, error);
+        return { key: null, config: null };
+      }
+
+      if (data) {
+        return {
+          key: data.api_key,
+          config: data.config || null
+        };
+      }
+    }
+  } catch (err) {
+    console.error(`Error fetching ${providerName} API key:`, err);
+  }
+
+  return { key: null, config: null };
+};
+
+/**
+ * Try to use an edge function for API call
+ */
+export const tryUseEdgeFunction = async <T>(
+  provider: string,
+  endpoint: string,
+  payload: any
+): Promise<T | null> => {
+  try {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) {
+      return null; // Edge functions require authentication
+    }
+
+    // Check if the user has edge functions enabled
+    const { data: userPrefs } = await supabase
+      .from('user_preferences')
+      .select('use_edge_functions')
+      .eq('user_id', session.user.id)
+      .maybeSingle();
+
+    // Skip if user has explicitly disabled edge functions
+    if (userPrefs && userPrefs.use_edge_functions === false) {
+      return null;
+    }
+
+    // Try to call the edge function
+    const { data, error } = await supabase.functions.invoke(`${provider}-proxy`, {
+      body: {
+        endpoint,
+        payload
+      }
+    });
+
+    if (error) {
+      console.error(`Edge function error (${provider}):`, error);
+      return null;
+    }
+
+    return data as T;
+  } catch (err) {
+    console.error(`Error using edge function for ${provider}:`, err);
+    return null;
+  }
 };
 
 /**
@@ -37,7 +148,7 @@ export const parseProviderSettings = (
   let config: Record<string, any> = {};
   
   // First, check if this is localStorage format
-  if ('key' in data && isValidString(data.key)) {
+  if (data && 'key' in data && isValidString(data.key)) {
     apiKey = data.key;
     model = isValidString(data.model) ? data.model : defaultModel;
     config = isValidObject(data.config) ? data.config : {};
@@ -45,7 +156,7 @@ export const parseProviderSettings = (
   }
   
   // Then check if this is database format
-  if ('api_key' in data && isValidString(data.api_key)) {
+  if (data && 'api_key' in data && isValidString(data.api_key)) {
     apiKey = data.api_key;
     model = isValidString(data.preferred_model) ? data.preferred_model : defaultModel;
     config = isValidObject(data.config) ? data.config : {};
@@ -53,7 +164,7 @@ export const parseProviderSettings = (
   }
   
   // If it's neither format but has necessary data, try to parse it anyway
-  if (isValidString(data.apiKey)) {
+  if (data && isValidString(data.apiKey)) {
     apiKey = data.apiKey;
     model = isValidString(data.model) ? data.model : 
             isValidString(data.preferredModel) ? data.preferredModel : defaultModel;
@@ -63,6 +174,14 @@ export const parseProviderSettings = (
   }
   
   return null;
+};
+
+/**
+ * Estimate token count for a text string
+ */
+export const estimateTokenCount = (text: string): number => {
+  // Simple estimation: ~4 characters per token on average
+  return Math.ceil(text.length / 4);
 };
 
 /**
@@ -92,7 +211,7 @@ export async function streamToString(stream: ReadableStream<Uint8Array>): Promis
 /**
  * Process a streaming response from an API
  */
-export async function* processStream(
+export async function* processStreamingResponse(
   stream: ReadableStream<Uint8Array>
 ): AsyncGenerator<string, void, unknown> {
   const reader = stream.getReader();

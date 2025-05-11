@@ -1,250 +1,218 @@
 
-import { useCallback } from 'react';
+import { useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import { toast } from 'sonner';
 
-// Types for the local storage API key data
-interface ApiKeyLocalData {
-  key: string;
-  model?: string;
-  config?: Record<string, any>;
-  timestamp: number; 
-}
-
-interface ApiKeyStorageOptions {
+export interface ApiKeyStorageOptions {
   providerName: string;
   localStorageKey: string;
 }
 
-/**
- * Hook for managing API key storage (localStorage and database)
- */
-export const useApiKeyStorage = ({ 
-  providerName,
-  localStorageKey
-}: ApiKeyStorageOptions) => {
-  // Save key to localStorage
-  const saveToLocalStorage = useCallback((
+export const useApiKeyStorage = (options: ApiKeyStorageOptions) => {
+  const [isSaving, setIsSaving] = useState(false);
+  const [saveError, setSaveError] = useState<Error | null>(null);
+  
+  // Save API key to localStorage
+  const saveToLocalStorage = (
     apiKey: string, 
-    preferredModel: string,
-    additionalConfig?: Record<string, any>
-  ) => {
+    preferredModel: string, 
+    additionalConfig: Record<string, any> = {}
+  ): boolean => {
     try {
-      // Format the data for storage
-      const storageData: ApiKeyLocalData = {
+      localStorage.setItem(options.localStorageKey, JSON.stringify({
         key: apiKey,
         model: preferredModel,
         config: additionalConfig,
         timestamp: Date.now()
-      };
-      
-      // Save to localStorage
-      localStorage.setItem(localStorageKey, JSON.stringify(storageData));
+      }));
       return true;
     } catch (error) {
-      console.error(`Error saving ${providerName} API key to localStorage:`, error);
+      console.error('Error saving to localStorage:', error);
       return false;
     }
-  }, [localStorageKey, providerName]);
+  };
   
-  // Load key from localStorage
-  const loadFromLocalStorage = useCallback((
+  // Load API key from localStorage
+  const loadFromLocalStorage = (
     defaultModel: string,
     defaultConfig: Record<string, any> = {}
-  ) => {
+  ): { 
+    key: string | null; 
+    model: string; 
+    config: Record<string, any>;
+  } => {
     try {
-      // Get from localStorage
-      const savedData = localStorage.getItem(localStorageKey);
-      
-      if (!savedData) {
-        return {
-          savedKey: null,
-          savedModel: defaultModel,
-          savedConfig: defaultConfig
+      const data = localStorage.getItem(options.localStorageKey);
+      if (data) {
+        const parsed = JSON.parse(data);
+        return { 
+          key: parsed.key || null, 
+          model: parsed.model || defaultModel,
+          config: parsed.config || defaultConfig
         };
       }
-      
-      // Parse the data
-      const parsedData = JSON.parse(savedData) as ApiKeyLocalData;
-      
-      return {
-        savedKey: parsedData.key || null,
-        savedModel: parsedData.model || defaultModel,
-        savedConfig: parsedData.config || defaultConfig
-      };
     } catch (error) {
-      console.error(`Error loading ${providerName} API key from localStorage:`, error);
-      return {
-        savedKey: null,
-        savedModel: defaultModel,
-        savedConfig: defaultConfig
-      };
+      console.error('Error loading from localStorage:', error);
     }
-  }, [localStorageKey, providerName]);
+    
+    return { key: null, model: defaultModel, config: defaultConfig };
+  };
+
+  // Clear API key from localStorage
+  const clearFromLocalStorage = () => {
+    try {
+      localStorage.removeItem(options.localStorageKey);
+      return true;
+    } catch (error) {
+      console.error('Error clearing localStorage:', error);
+      return false;
+    }
+  };
   
-  // Save key to database
-  const saveToDatabase = useCallback(async (
+  // Save API key to database
+  const saveToDatabase = async (
     apiKey: string, 
-    preferredModel: string, 
-    additionalConfig?: Record<string, any>
-  ) => {
+    preferredModel: string,
+    additionalConfig: Record<string, any> = {}
+  ): Promise<boolean> => {
+    setIsSaving(true);
+    setSaveError(null);
+    
     try {
       // Check if user is authenticated
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) {
-        console.info(`Not saving ${providerName} API key to database: User not authenticated`);
-        return false;
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        throw new Error('User is not authenticated');
       }
       
-      // Check if record already exists for this user
-      const { data: existing } = await supabase
+      // Check if record exists
+      const { data: existingData, error: queryError } = await supabase
         .from('api_provider_settings')
         .select('id')
-        .eq('provider_name', providerName)
-        .eq('user_id', user.id)
+        .eq('provider_name', options.providerName)
+        .eq('user_id', session.user.id)
         .maybeSingle();
       
-      if (existing) {
+      if (queryError && !queryError.message.includes('column')) {
+        throw new Error(`Database query error: ${queryError.message}`);
+      }
+      
+      if (existingData) {
         // Update existing record
         const { error } = await supabase
           .from('api_provider_settings')
           .update({
             api_key: apiKey,
             preferred_model: preferredModel,
-            config: additionalConfig || {},
-            updated_at: new Date().toISOString(),
+            config: additionalConfig,
+            updated_at: new Date().toISOString()
           })
-          .eq('id', existing.id);
+          .eq('id', existingData.id);
         
-        if (error) {
-          console.error(`Error updating ${providerName} API key in database:`, error);
-          return false;
-        }
+        if (error) throw new Error(`Database update error: ${error.message}`);
       } else {
         // Insert new record
         const { error } = await supabase
           .from('api_provider_settings')
           .insert({
-            provider_name: providerName,
+            provider_name: options.providerName,
+            user_id: session.user.id,
             api_key: apiKey,
             preferred_model: preferredModel,
-            config: additionalConfig || {},
-            user_id: user.id,
+            config: additionalConfig
           });
         
-        if (error) {
-          console.error(`Error inserting ${providerName} API key in database:`, error);
-          return false;
-        }
+        if (error) throw new Error(`Database insert error: ${error.message}`);
+      }
+      
+      return true;
+    } catch (error: any) {
+      console.error('Error saving to database:', error);
+      setSaveError(error instanceof Error ? error : new Error(error.message || 'Unknown error'));
+      return false;
+    } finally {
+      setIsSaving(false);
+    }
+  };
+  
+  // Load API key from database
+  const loadFromDatabase = async (
+    defaultModel: string,
+    defaultConfig: Record<string, any> = {}
+  ): Promise<{ 
+    key: string | null; 
+    model: string;
+    config: Record<string, any>;
+  }> => {
+    try {
+      // Check if user is authenticated
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        return { key: null, model: defaultModel, config: defaultConfig };
+      }
+      
+      // Query database
+      const { data, error } = await supabase
+        .from('api_provider_settings')
+        .select('api_key, preferred_model, config')
+        .eq('provider_name', options.providerName)
+        .eq('user_id', session.user.id)
+        .maybeSingle();
+      
+      if (error) {
+        console.error('Error loading from database:', error);
+        return { key: null, model: defaultModel, config: defaultConfig };
+      }
+      
+      if (data) {
+        return { 
+          key: data.api_key, 
+          model: data.preferred_model || defaultModel,
+          config: data.config || defaultConfig
+        };
+      }
+    } catch (error) {
+      console.error('Error loading from database:', error);
+    }
+    
+    return { key: null, model: defaultModel, config: defaultConfig };
+  };
+
+  // Delete API key from database
+  const deleteFromDatabase = async (): Promise<boolean> => {
+    try {
+      // Check if user is authenticated
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        return false;
+      }
+      
+      // Delete from database
+      const { error } = await supabase
+        .from('api_provider_settings')
+        .delete()
+        .eq('provider_name', options.providerName)
+        .eq('user_id', session.user.id);
+      
+      if (error) {
+        console.error('Error deleting from database:', error);
+        return false;
       }
       
       return true;
     } catch (error) {
-      console.error(`Error saving ${providerName} API key to database:`, error);
+      console.error('Error deleting from database:', error);
       return false;
     }
-  }, [providerName]);
-  
-  // Load key from database
-  const loadFromDatabase = useCallback(async (
-    defaultModel: string,
-    defaultConfig: Record<string, any> = {}
-  ) => {
-    try {
-      // Check if user is authenticated
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) {
-        console.info(`Not loading ${providerName} API key from database: User not authenticated`);
-        return null;
-      }
-      
-      // Query for the API key
-      const { data, error } = await supabase
-        .from('api_provider_settings')
-        .select('*')
-        .eq('provider_name', providerName)
-        .eq('user_id', user.id)
-        .maybeSingle();
-      
-      if (error) {
-        // If error is about missing column, it might be that the migration hasn't run yet
-        if (error.message.includes('config')) {
-          console.warn(`The 'config' column might be missing. Make sure migrations have run.`);
-          // Try to get data without relying on the config column
-          const { data: basicData } = await supabase
-            .from('api_provider_settings')
-            .select('api_key, preferred_model')
-            .eq('provider_name', providerName)
-            .eq('user_id', user.id)
-            .maybeSingle();
-          
-          if (basicData) {
-            return {
-              apiKey: basicData.api_key,
-              preferredModel: basicData.preferred_model || defaultModel,
-              additionalConfig: defaultConfig,
-              found: true
-            };
-          }
-        } else {
-          console.error(`Error loading ${providerName} API key from database:`, error);
-        }
-        return null;
-      }
-      
-      if (!data) {
-        return null;
-      }
-      
-      return {
-        apiKey: data.api_key,
-        preferredModel: data.preferred_model || defaultModel,
-        additionalConfig: data.config || defaultConfig,
-        found: true
-      };
-    } catch (error) {
-      console.error(`Error loading ${providerName} API key from database:`, error);
-      return null;
-    }
-  }, [providerName]);
-  
-  // Clear key from localStorage and database
-  const clearSavedKey = useCallback(async () => {
-    try {
-      // Clear from localStorage
-      localStorage.removeItem(localStorageKey);
-      
-      // Check if user is authenticated for database operations
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) {
-        return { localCleared: true, dbCleared: false };
-      }
-      
-      // Clear from database
-      const { error } = await supabase
-        .from('api_provider_settings')
-        .delete()
-        .eq('provider_name', providerName)
-        .eq('user_id', user.id);
-      
-      if (error) {
-        console.error(`Error clearing ${providerName} API key from database:`, error);
-        return { localCleared: true, dbCleared: false };
-      }
-      
-      toast.success(`${providerName} API key removed successfully`);
-      return { localCleared: true, dbCleared: true };
-    } catch (error) {
-      console.error(`Error clearing ${providerName} API key:`, error);
-      return { localCleared: false, dbCleared: false };
-    }
-  }, [localStorageKey, providerName]);
+  };
   
   return {
     saveToLocalStorage,
     loadFromLocalStorage,
+    clearFromLocalStorage,
     saveToDatabase,
     loadFromDatabase,
-    clearSavedKey
+    deleteFromDatabase,
+    isSaving,
+    saveError
   };
 };

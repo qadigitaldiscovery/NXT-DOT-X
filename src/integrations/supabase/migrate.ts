@@ -4,7 +4,7 @@ import { supabase } from './client';
 export const runMigrations = async () => {
   try {
     // Check if config column exists in api_provider_settings table
-    const { error: checkError } = await supabase.rpc(
+    const { data, error: checkError } = await supabase.rpc(
       'column_exists',
       { 
         p_table: 'api_provider_settings',
@@ -12,15 +12,16 @@ export const runMigrations = async () => {
       }
     );
     
-    if (checkError) {
-      // If the stored function doesn't exist or returns an error, 
-      // proceed with migration but handle potential error
-      console.log("Could not check column existence, attempting to add column anyway");
-      // If column doesn't exist, add it
+    if (checkError || data === false) {
+      // If the stored function doesn't exist or returns false, 
+      // proceed with migration
+      console.log("Adding config column to api_provider_settings table");
+      
+      // Execute raw SQL to add the column if it doesn't exist
       const { error } = await supabase.rpc(
         'execute_sql',
         { 
-          sql: `ALTER TABLE api_provider_settings ADD COLUMN IF NOT EXISTS config JSONB`
+          sql: `ALTER TABLE api_provider_settings ADD COLUMN IF NOT EXISTS config JSONB DEFAULT '{}'::jsonb`
         }
       );
       

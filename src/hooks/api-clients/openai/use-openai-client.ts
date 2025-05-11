@@ -62,7 +62,7 @@ export const useOpenAIClient = () => {
         { role: 'user' as const, content }
       ];
       
-      const stream = await callOpenAI({
+      const response = await callOpenAI({
         endpoint: 'chat',
         payload: {
           model,
@@ -73,8 +73,10 @@ export const useOpenAIClient = () => {
         }
       });
       
-      if (stream && typeof stream === 'object' && 'getReader' in stream) {
-        yield* processStream(stream as ReadableStream<Uint8Array>);
+      if (response && typeof response === 'object' && 'getReader' in response) {
+        // Cast to ReadableStream after verifying it has the getReader method
+        const stream = response as unknown as ReadableStream<Uint8Array>;
+        yield* processStream(stream);
       }
     } catch (err) {
       setError(err instanceof Error ? err : new Error('Failed to stream message from OpenAI'));
