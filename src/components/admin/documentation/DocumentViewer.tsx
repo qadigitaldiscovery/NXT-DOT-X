@@ -4,7 +4,7 @@ import { File, FileSearch } from 'lucide-react';
 import { DocumentItem } from './types';
 import { Button } from '@/components/ui/button';
 import { toast } from "sonner";
-import { callOpenAI, ChatCompletionResponse } from '@/utils/openai-client';
+import { callOpenAI, ChatCompletionResponse, OpenAIError, RateLimitError } from '@/utils/openai-client';
 
 interface DocumentViewerProps {
   document: DocumentItem | null;
