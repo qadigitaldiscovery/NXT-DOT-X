@@ -1,16 +1,24 @@
 
-import React from "react";
-import { RequestyChat } from "@/components/requesty/RequestyChat";
-import { BrandMarketingLayout } from "@/components/layout/BrandMarketingLayout";
+import React from 'react';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import RequestyKeyForm from '@/components/tech-hub/api-management/RequestyKeyForm';
+import RequestyChatTester from '@/components/tech-hub/api-management/RequestyChatTester';
 
 const RequestyPage: React.FC = () => {
   return (
-    <BrandMarketingLayout>
-      <div className="container mx-auto py-6">
-        <h1 className="text-2xl font-semibold mb-6">Requesty Integration</h1>
-        <RequestyChat />
+    <div className="space-y-8">
+      <div className="flex justify-between items-center">
+        <div>
+          <h1 className="text-3xl font-bold">Requesty API Integration</h1>
+          <p className="text-muted-foreground">Configure and test your Requesty API integration</p>
+        </div>
       </div>
-    </BrandMarketingLayout>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <RequestyKeyForm />
+        <RequestyChatTester />
+      </div>
+    </div>
   );
 };
 
