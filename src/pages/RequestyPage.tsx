@@ -3,7 +3,7 @@ import React from "react";
 import { RequestyChat } from "@/components/requesty/RequestyChat";
 import { BrandMarketingLayout } from "@/components/layout/BrandMarketingLayout";
 
-const RequstyPage: React.FC = () => {
+const RequestyPage: React.FC = () => {
   return (
     <BrandMarketingLayout>
       <div className="container mx-auto py-6">
@@ -14,4 +14,4 @@ const RequstyPage: React.FC = () => {
   );
 };
 
-export default RequstyPage;
+export default RequestyPage;

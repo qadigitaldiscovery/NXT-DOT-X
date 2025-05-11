@@ -9,7 +9,7 @@ import BrandTrust from "@/pages/brand-marketing/BrandTrust";
 import MarketPerception from "@/pages/brand-marketing/MarketPerception";
 import BrandSettings from "@/pages/brand-marketing/BrandSettings";
 import SEOKeywords from "@/pages/brand-marketing/SEOKeywords";
-import RequstyPage from "@/pages/RequstyPage";
+import RequestyPage from "@/pages/RequestyPage";
 
 export const BrandMarketingRoutes = () => {
   return (
@@ -20,7 +20,7 @@ export const BrandMarketingRoutes = () => {
       <Route path="/brand-marketing/market-perception" element={<MarketPerception />} />
       <Route path="/brand-marketing/settings" element={<BrandSettings />} />
       <Route path="/brand-marketing/seo" element={<SEOKeywords />} />
-      <Route path="/brand-marketing/requesty" element={<RequstyPage />} />
+      <Route path="/brand-marketing/requesty" element={<RequestyPage />} />
     </>
   );
 };
