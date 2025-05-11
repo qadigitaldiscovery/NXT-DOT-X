@@ -41,61 +41,39 @@ const ApiKeyForm: React.FC<ApiKeyFormProps> = ({
   const [keyStatus, setKeyStatus] = useState<'unknown' | 'valid' | 'invalid' | 'quota_exceeded'>('unknown');
   const [model, setModel] = useState<string>(initialModel || preferredModelOptions[0]?.value || '');
   
-  // Load API key from database on component mount
+  // Load API key from database or localStorage on component mount
   useEffect(() => {
     const fetchApiKey = async () => {
       try {
-        // For the mock auth system, we'll use localStorage as a fallback
-        if (!isAuthenticated) {
-          const localKey = localStorage.getItem(`${providerName.toLowerCase()}-api-key`);
-          const localModel = localStorage.getItem(`${providerName.toLowerCase()}-preferred-model`);
-          
-          if (localKey) {
-            setApiKey(localKey);
-            setSavedKey(localKey);
-            if (localModel) setModel(localModel);
-            setKeyStatus('valid');
-          }
-          
-          setIsLoading(false);
-          return;
+        // Check localStorage first for any saved keys
+        const localKey = localStorage.getItem(`${providerName.toLowerCase()}-api-key`);
+        const localModel = localStorage.getItem(`${providerName.toLowerCase()}-preferred-model`);
+        
+        // Initialize with localStorage values if available
+        if (localKey) {
+          setApiKey(localKey);
+          setSavedKey(localKey);
+          if (localModel) setModel(localModel);
+          setKeyStatus('valid');
         }
         
-        // When authenticated, try to get from Supabase
-        const { data, error } = await supabase
-          .from('api_provider_settings')
-          .select('api_key, preferred_model')
-          .eq('provider_name', providerName.toLowerCase())
-          .maybeSingle();
-        
-        if (error) {
-          console.error(`Error fetching ${providerName} API key:`, error);
-          toast.error(`Failed to fetch saved API key for ${providerName}`);
+        // If authenticated, also check Supabase
+        if (isAuthenticated && user) {
+          const { data, error } = await supabase
+            .from('api_provider_settings')
+            .select('api_key, preferred_model')
+            .eq('provider_name', providerName.toLowerCase())
+            .eq('user_id', user.id)
+            .maybeSingle();
           
-          // Fall back to localStorage if Supabase query fails
-          const localKey = localStorage.getItem(`${providerName.toLowerCase()}-api-key`);
-          const localModel = localStorage.getItem(`${providerName.toLowerCase()}-preferred-model`);
-          
-          if (localKey) {
-            setApiKey(localKey);
-            setSavedKey(localKey);
-            if (localModel) setModel(localModel);
-            setKeyStatus('valid');
-          }
-        } else if (data?.api_key) {
-          setApiKey(data.api_key);
-          setSavedKey(data.api_key);
-          if (data.preferred_model) setModel(data.preferred_model);
-          setKeyStatus('valid');
-        } else {
-          // Try localStorage as last resort
-          const localKey = localStorage.getItem(`${providerName.toLowerCase()}-api-key`);
-          const localModel = localStorage.getItem(`${providerName.toLowerCase()}-preferred-model`);
-          
-          if (localKey) {
-            setApiKey(localKey);
-            setSavedKey(localKey);
-            if (localModel) setModel(localModel);
+          if (error) {
+            console.error(`Error fetching ${providerName} API key:`, error);
+            toast.error(`Failed to fetch saved API key for ${providerName}`);
+          } else if (data?.api_key) {
+            // Override localStorage values with database values if available
+            setApiKey(data.api_key);
+            setSavedKey(data.api_key);
+            if (data.preferred_model) setModel(data.preferred_model);
             setKeyStatus('valid');
           }
         }
@@ -107,7 +85,7 @@ const ApiKeyForm: React.FC<ApiKeyFormProps> = ({
     };
     
     fetchApiKey();
-  }, [providerName, isAuthenticated]);
+  }, [providerName, isAuthenticated, user]);
   
   // Save API key to database or localStorage
   const saveApiKey = async (key: string, verifiedModel: string) => {
@@ -124,14 +102,19 @@ const ApiKeyForm: React.FC<ApiKeyFormProps> = ({
             provider_name: providerName.toLowerCase(),
             api_key: key,
             preferred_model: verifiedModel,
-            user_id: user.id,  // Add the user_id from the auth context
+            user_id: user.id,
             updated_at: new Date().toISOString()
           }, { onConflict: 'provider_name,user_id' });
         
         if (error) {
           console.error(`Error saving ${providerName} API key to database:`, error);
-          toast.warning(`Saved API key locally, but failed to save to database`);
+          toast.warning(`Saved API key locally, but failed to save to database: ${error.message}`);
+          console.log("Debug info - user:", user);
+          console.log("Debug info - auth state:", isAuthenticated);
         }
+      } else if (!isAuthenticated) {
+        // If not authenticated, just notify that we saved locally only
+        console.log("Not authenticated, saving API key to localStorage only");
       }
       
       setSavedKey(key);
