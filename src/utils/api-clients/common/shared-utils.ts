@@ -134,10 +134,10 @@ export async function getApiKey(
             return { key: null, model: null, config: null };
           }
           
-          // Safe access of properties with null checks
+          // Fixed: Safe access with proper type check
           return { 
-            key: dataNoConfig.api_key ?? null, 
-            model: dataNoConfig.preferred_model ?? null, 
+            key: dataNoConfig?.api_key || null, 
+            model: dataNoConfig?.preferred_model || null, 
             config: null 
           };
         }
@@ -150,11 +150,11 @@ export async function getApiKey(
         return { key: null, model: null, config: null };
       }
       
-      // Safe access with null checks
+      // Fixed: Safe access with proper type check
       return { 
-        key: data.api_key ?? null, 
-        model: data.preferred_model ?? null, 
-        config: data.config ?? null 
+        key: data?.api_key || null, 
+        model: data?.preferred_model || null, 
+        config: data?.config || null 
       };
     } catch (error) {
       console.error('Exception getting API key from database:', error);

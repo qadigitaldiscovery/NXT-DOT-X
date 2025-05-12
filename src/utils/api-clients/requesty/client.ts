@@ -1,12 +1,17 @@
 
 import { toast } from "sonner";
 import { supabase } from '@/integrations/supabase/client';
-import { RequestyMessage } from './types';
 import { 
-  ApiError,
+  CallOptions, 
+  RequestyResponse, 
+  RequestyError
+} from './types';
+import { 
   tryUseEdgeFunction, 
   processStreamingResponse,
-  getApiKey
+  estimateTokenCount,
+  getApiKey,
+  ApiError
 } from '../common/shared-utils';
 
 // Get API key from storage or database
@@ -14,164 +19,156 @@ export async function getRequestyKey(): Promise<{key: string | null; model: stri
   return await getApiKey('requesty', 'requesty-api-key');
 };
 
-/**
- * Sends a request to the Requesty API
- */
-export const sendRequestyMessage = async (
-  messages: RequestyMessage[],
-  model?: string
-): Promise<string> => {
+// Main function to call Requesty API
+export async function callRequesty<T extends RequestyResponse>({ 
+  endpoint, 
+  payload, 
+  apiKey,
+  signal 
+}: CallOptions): Promise<T> {
+  // Use provided apiKey or fetch from storage
+  const result = apiKey ? 
+    { key: apiKey, model: null, config: null } : 
+    await getRequestyKey();
+  
+  const key = result.key;
+  const config = result.config;
+  
+  if (!key) {
+    console.error("No API key available");
+    throw new Error("No API key available. Please add your Requesty API key in the settings.");
+  }
+  
+  console.log("Making Requesty API call with valid key");
+  
+  // Apply any additional config parameters if available
+  if (config && !apiKey && typeof config === 'object') {
+    // Merge the saved config with the provided payload
+    if (config.streaming_default !== undefined && payload.stream === undefined) {
+      payload.stream = config.streaming_default;
+    }
+    
+    if (config.max_tokens_default !== undefined && payload.max_tokens === undefined) {
+      payload.max_tokens = config.max_tokens_default;
+    }
+    
+    if (config.temperature_default !== undefined && payload.temperature === undefined) {
+      payload.temperature = config.temperature_default;
+    }
+    
+    if (config.response_format !== undefined && payload.response_format === undefined) {
+      payload.response_format = config.response_format;
+    }
+  }
+  
+  // Try to use our edge function first
   try {
-    // Get API key from database or local storage
-    const apiKeyResult = await getRequestyKey();
-    const apiKey = apiKeyResult.key;
-    const preferredModel = apiKeyResult.model;
-    const config = apiKeyResult.config;
-    
-    if (!apiKey) {
-      toast.error("Requesty API key not configured. Please add your API key in the settings.");
-      throw new Error("API key not configured");
-    }
-
-    // Use specified model or fallback to preferred model
-    const modelToUse = model || preferredModel || "openai/gpt-4o-mini";
-    
-    // Build the request payload
-    const payload: any = {
-      model: modelToUse,
-      messages,
-    };
-    
-    // Add configuration options if available
-    if (config) {
-      if (config.max_tokens_default) {
-        payload.max_tokens = config.max_tokens_default;
-      }
-      
-      if (config.temperature_default !== undefined) {
-        payload.temperature = config.temperature_default;
-      }
-      
-      if (config.streaming_default !== undefined) {
-        payload.stream = config.streaming_default;
-      }
-      
-      if (config.response_format) {
-        payload.response_format = { type: config.response_format };
-      }
-    }
-    
-    // Try to use our edge function first
-    const edgeResponse = await tryUseEdgeFunction<any>(
-      'requesty',
-      'chat/completions',
+    // Fixed: Remove the fourth argument (config) as it's not expected by tryUseEdgeFunction
+    const edgeResponse = await tryUseEdgeFunction<T>(
+      'requesty', 
+      endpoint,
       payload
     );
     
     if (edgeResponse) {
-      return edgeResponse.choices[0].message.content;
+      console.log("Successfully used edge function for Requesty request");
+      return edgeResponse;
     }
-
-    // Fallback to direct API call
-    const response = await fetch("https://router.requesty.ai/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${apiKey}`,
-      },
-      body: JSON.stringify(payload),
-    });
-
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new ApiError(
-        errorData.error?.message || "Failed to get response from Requesty", 
-        { 
-          type: errorData.error?.type,
-          code: errorData.error?.code,
-          status: response.status
-        }
-      );
-    }
-
-    const data = await response.json();
-    return data.choices[0].message.content;
-  } catch (error) {
-    console.error("Error calling Requesty API:", error);
-    toast.error("Failed to get a response from Requesty");
-    throw error;
+  } catch (err) {
+    console.warn("Edge function attempt failed, using direct API:", err);
+    // Continue to direct API call
   }
-};
-
-/**
- * Stream messages from Requesty API
- */
-export async function* streamRequestyMessage(
-  messages: RequestyMessage[],
-  model?: string
-): AsyncGenerator<string, void, unknown> {
+  
+  // Direct API call as fallback
+  console.log("Attempting direct Requesty API call");
+  const baseUrl = 'https://router.requesty.ai/v1';
+  const url = `${baseUrl}/${endpoint}`;
+  
+  const headers: Record<string, string> = {
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${key}`,
+    'User-Agent': 'lovable.dev-fe',
+    'X-Request-Timestamp': new Date().toISOString()
+  };
+  
   try {
-    // Get API key from database or local storage
-    const apiKeyResult = await getRequestyKey();
-    const apiKey = apiKeyResult.key;
-    const preferredModel = apiKeyResult.model;
-    const config = apiKeyResult.config;
-    
-    if (!apiKey) {
-      toast.error("Requesty API key not configured. Please add your API key in the settings.");
-      throw new Error("API key not configured");
-    }
-
-    // Use specified model or fallback to preferred model
-    const modelToUse = model || preferredModel || "openai/gpt-4o-mini";
-    
-    // Build the request payload
-    const payload: any = {
-      model: modelToUse,
-      messages,
-      stream: true,
-    };
-    
-    // Add configuration options if available
-    if (config) {
-      if (config.max_tokens_default) {
-        payload.max_tokens = config.max_tokens_default;
-      }
-      
-      if (config.temperature_default !== undefined) {
-        payload.temperature = config.temperature_default;
-      }
-      
-      if (config.response_format) {
-        payload.response_format = { type: config.response_format };
-      }
-    }
-
-    const response = await fetch("https://router.requesty.ai/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${apiKey}`,
-      },
+    console.log(`Sending request to ${url}`);
+    const response = await fetch(url, {
+      method: 'POST',
+      headers,
       body: JSON.stringify(payload),
+      signal
     });
 
+    // Handle non-2xx responses
     if (!response.ok) {
       const errorData = await response.json();
-      throw new ApiError(
-        errorData.error?.message || "Failed to get response from Requesty",
-        { 
-          type: errorData.error?.type,
-          code: errorData.error?.code,
-          status: response.status
-        }
-      );
+      console.error("Requesty API error:", errorData);
+      throw new RequestyError(errorData.error?.message || 'Unknown error', errorData.error);
     }
 
-    yield* processStreamingResponse(response.body!);
+    // Handle streaming response
+    if (payload.stream === true) {
+      // Return the readable stream for processing by the caller
+      return response.body as unknown as T;
+    }
+
+    // Regular JSON response
+    const data = await response.json();
+    console.log("Requesty API response received successfully");
+    return data as T;
   } catch (error) {
-    console.error("Error streaming from Requesty API:", error);
-    toast.error("Failed to stream response from Requesty");
-    throw error;
+    console.error("Error in Requesty API call:", error);
+    
+    // Re-throw Requesty specific errors
+    if (error instanceof RequestyError) {
+      throw error;
+    }
+    
+    // Handle abort errors
+    if (error instanceof DOMException && error.name === 'AbortError') {
+      throw error;
+    }
+    
+    // Handle network errors
+    throw new ApiError(`Network error: ${error instanceof Error ? error.message : 'Unknown error'}`);
   }
+}
+
+// Helper function to process streaming responses
+export async function* processStream(stream: ReadableStream) {
+  yield* processStreamingResponse(stream);
+}
+
+// Try to route a request through Requesty API
+export async function routeAIRequest<T extends RequestyResponse>({
+  model,
+  messages,
+  temperature,
+  maxTokens,
+  apiKey,
+  signal
+}: {
+  model: string;
+  messages: Array<{role: string; content: string}>;
+  temperature?: number;
+  maxTokens?: number;
+  apiKey?: string;
+  signal?: AbortSignal;
+}): Promise<T> {
+  // Fixed: Remove the fourth argument (config) as it's not expected by tryUseEdgeFunction
+  const response = await callRequesty<T>({
+    endpoint: 'chat/completions',
+    payload: {
+      model,
+      messages,
+      temperature,
+      max_tokens: maxTokens,
+      stream: false
+    },
+    apiKey,
+    signal
+  });
+  
+  return response;
 }
