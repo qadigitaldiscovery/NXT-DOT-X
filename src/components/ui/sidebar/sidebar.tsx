@@ -1,104 +1,135 @@
 
 import * as React from "react"
+import { cva } from "class-variance-authority"
+import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
-import { Sheet, SheetContent } from "@/components/ui/sheet"
-import { useSidebar, SIDEBAR_WIDTH_MOBILE } from "./sidebar-context"
-import { SidebarProps } from "./types"
+import { ChevronLeft, ChevronRight, Menu } from "lucide-react"
+import { useSidebar } from "./sidebar-context"
 
-const Sidebar = React.forwardRef<
-  HTMLDivElement,
-  SidebarProps
->(
+const sidebarVariants = cva(
+  "group/sidebar peer data-[variant=inset]:bg-sidebar h-screen z-40",
+  {
+    variants: {
+      variant: {
+        default: "border-r border-border",
+        inset: "border-none bg-sidebar",
+      },
+      padding: {
+        default: "p-0",
+        sm: "p-2",
+        md: "p-4",
+        lg: "p-6",
+        xl: "p-8",
+      },
+      state: {
+        expanded: "w-[var(--sidebar-width)]",
+        collapsed: "w-[var(--sidebar-width-icon)]",
+      },
+      position: {
+        default: "sticky top-0 left-0",
+        fixed: "fixed inset-y-0 left-0",
+      },
+      collapsible: {
+        default: "",
+        auto: "",
+        icon: "",
+      },
+    },
+    defaultVariants: {
+      variant: "default",
+      padding: "default",
+      state: "expanded",
+      position: "default",
+      collapsible: "default",
+    },
+  }
+)
+
+export interface SidebarProps
+  extends React.HTMLAttributes<HTMLDivElement>,
+  React.RefAttributes<HTMLDivElement> {
+  variant?: "default" | "inset"
+  padding?: "default" | "sm" | "md" | "lg" | "xl"
+  position?: "default" | "fixed"
+  collapsible?: "default" | "auto" | "icon"
+}
+
+const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
   (
     {
-      side = "left",
-      variant = "sidebar",
-      collapsible = "offcanvas",
+      variant = "default",
+      padding = "default",
+      position = "default",
+      collapsible = "default",
       className,
-      children,
       ...props
     },
     ref
   ) => {
-    const { isMobile, state, openMobile, setOpenMobile } = useSidebar()
+    const {
+      state,
+      open,
+      setOpen,
+      isMobile,
+      openMobile,
+      setOpenMobile,
+      toggleSidebar,
+    } = useSidebar()
 
-    if (collapsible === "none") {
-      return (
-        <div
-          className={cn(
-            "flex h-full w-[--sidebar-width] flex-col bg-sidebar text-sidebar-foreground",
-            className
-          )}
-          ref={ref}
-          {...props}
-        >
-          {children}
-        </div>
-      )
-    }
+    React.useEffect(() => {
+      const handleResize = () => {
+        if (collapsible === "auto" && !isMobile) {
+          setOpen(window.innerWidth > 1024)
+        }
+      }
 
-    if (isMobile) {
-      return (
-        <Sheet open={openMobile} onOpenChange={setOpenMobile} {...props}>
-          <SheetContent
-            data-sidebar="sidebar"
-            data-mobile="true"
-            className="w-[--sidebar-width] bg-sidebar p-0 text-sidebar-foreground [&>button]:hidden"
-            style={
-              {
-                "--sidebar-width": SIDEBAR_WIDTH_MOBILE,
-              } as React.CSSProperties
-            }
-            side={side}
-          >
-            <div className="flex h-full w-full flex-col">{children}</div>
-          </SheetContent>
-        </Sheet>
-      )
-    }
+      if (collapsible === "auto") {
+        window.addEventListener("resize", handleResize)
+        handleResize()
+      }
+
+      return () => {
+        if (collapsible === "auto") {
+          window.removeEventListener("resize", handleResize)
+        }
+      }
+    }, [collapsible, setOpen, isMobile])
 
     return (
-      <div
-        ref={ref}
-        className="group peer hidden md:block text-sidebar-foreground"
-        data-state={state}
-        data-collapsible={state === "collapsed" ? collapsible : ""}
-        data-variant={variant}
-        data-side={side}
-      >
-        {/* This is what handles the sidebar gap on desktop */}
-        <div
+      <>
+        {/* Mobile backdrop */}
+        {isMobile && openMobile && (
+          <div
+            className="fixed inset-0 z-30 bg-background/80 backdrop-blur-sm"
+            onClick={() => setOpenMobile(false)}
+            aria-hidden="true"
+          />
+        )}
+
+        <aside
+          ref={ref}
+          data-sidebar="root"
+          data-variant={variant}
+          data-state={state}
+          data-collapsible={collapsible}
+          data-position={position}
+          data-padding={padding}
           className={cn(
-            "duration-200 relative h-svh w-[--sidebar-width] bg-transparent transition-[width] ease-linear",
-            "group-data-[collapsible=offcanvas]:w-0",
-            "group-data-[side=right]:rotate-180",
-            variant === "floating" || variant === "inset"
-              ? "group-data-[collapsible=icon]:w-[calc(var(--sidebar-width-icon)_+_theme(spacing.4))]"
-              : "group-data-[collapsible=icon]:w-[--sidebar-width-icon]"
-          )}
-        />
-        <div
-          className={cn(
-            "duration-200 fixed inset-y-0 z-10 hidden h-svh w-[--sidebar-width] transition-[left,right,width] ease-linear md:flex",
-            side === "left"
-              ? "left-0 group-data-[collapsible=offcanvas]:left-[calc(var(--sidebar-width)*-1)]"
-              : "right-0 group-data-[collapsible=offcanvas]:right-[calc(var(--sidebar-width)*-1)]",
-            // Adjust the padding for floating and inset variants.
-            variant === "floating" || variant === "inset"
-              ? "p-2 group-data-[collapsible=icon]:w-[calc(var(--sidebar-width-icon)_+_theme(spacing.4)_+2px)]"
-              : "group-data-[collapsible=icon]:w-[--sidebar-width-icon] group-data-[side=left]:border-r group-data-[side=right]:border-l",
+            sidebarVariants({
+              variant,
+              padding,
+              state,
+              position,
+              collapsible,
+            }),
+            // Show and hide on mobile.
+            isMobile && "fixed -left-[var(--sidebar-width)] max-sm:!w-full",
+            isMobile && openMobile && "left-0",
             className
           )}
           {...props}
-        >
-          <div
-            data-sidebar="sidebar"
-            className="flex h-full w-full flex-col bg-sidebar group-data-[variant=floating]:rounded-lg group-data-[variant=floating]:border group-data-[variant=floating]:border-sidebar-border group-data-[variant=floating]:shadow"
-          >
-            {children}
-          </div>
-        </div>
-      </div>
+        />
+      </>
     )
   }
 )

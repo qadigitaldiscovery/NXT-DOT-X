@@ -108,7 +108,7 @@ const MasterDash = () => {
       navCategories={navCategories}
       customFooterContent={navigationFooter}
       showTopLeftToggle={true}
-      removeBottomToggle={true}
+      removeBottomToggle={false}
     >
       <DashboardModules />
     </SharedDashboardLayout>
