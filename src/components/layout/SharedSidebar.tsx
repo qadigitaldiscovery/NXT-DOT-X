@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -8,6 +7,7 @@ import { SidebarNavList } from './sidebar/SidebarNavList';
 import { CollapsedSidebar } from './sidebar/CollapsedSidebar';
 import { NavItem, NavCategory } from './sidebar/types';
 import { NavLink } from 'react-router-dom';
+import { SidebarToggleButton } from './sidebar/SidebarToggleButton';
 
 interface SharedSidebarProps {
   open: boolean;
