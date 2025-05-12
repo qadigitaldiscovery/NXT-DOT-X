@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useMemo } from 'react';
 import { useModules, type Module } from '@/hooks/useModules';
 import { useStatusLogs } from '@/hooks/useStatusLogs';
@@ -91,21 +90,21 @@ const RAGDashboard: React.FC = () => {
   };
   
   const handleAddRule = async (rule: any) => {
-    const result = await addRule(rule);
-    
-    if (result.success) {
+    try {
+      const result = await addRule(rule);
+      
       toast({
         title: "Rule created",
         description: "The threshold rule has been created successfully.",
       });
       return result;
-    } else {
+    } catch (err) {
       toast({
         variant: "destructive",
         title: "Failed to create rule",
         description: "There was an error creating the threshold rule.",
       });
-      throw result.error;
+      throw err;
     }
   };
   

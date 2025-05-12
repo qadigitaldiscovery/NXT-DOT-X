@@ -10,14 +10,6 @@ export type Module = {
   created_at: string;
 }
 
-export type StatusLog = {
-  id: string;
-  module_id: string;
-  status: 'green' | 'orange' | 'red';
-  note: string | null;
-  created_at: string;
-}
-
 export function useModules() {
   const [modules, setModules] = useState<Module[]>([]);
   const [loading, setLoading] = useState(true);
@@ -73,7 +65,7 @@ export function useModules() {
       if (error) throw error;
       setModules(data as Module[]);
       
-      return { success: true };
+      return { success: true, error: null };
     } catch (err) {
       console.error('Error updating module status:', err);
       return { success: false, error: err };

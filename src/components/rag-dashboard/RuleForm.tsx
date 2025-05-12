@@ -10,7 +10,7 @@ import { type ThresholdRule } from '@/hooks/useThresholdRules';
 
 type RuleFormProps = {
   module: Module;
-  onAddRule: (rule: Omit<ThresholdRule, 'id' | 'created_at'>) => Promise<any>;
+  onAddRule: (rule: Omit<ThresholdRule, 'id' | 'created_at' | 'condition' | 'operator'> & { condition: string }) => Promise<any>;
 }
 
 export default function RuleForm({ module, onAddRule }: RuleFormProps) {

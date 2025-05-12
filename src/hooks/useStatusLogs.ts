@@ -1,7 +1,15 @@
 
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import { StatusLog } from './useModules';
+
+export type StatusLog = {
+  id: string;
+  module_id: string;
+  status: 'green' | 'orange' | 'red';
+  note: string | null;
+  created_at: string;
+  recorded_at: string; // Alias for created_at used in the UI
+};
 
 export function useStatusLogs(moduleId?: string) {
   const [logs, setLogs] = useState<StatusLog[]>([]);
@@ -28,7 +36,13 @@ export function useStatusLogs(moduleId?: string) {
         
         if (error) throw error;
         
-        setLogs(data as StatusLog[]);
+        // Map the data to include recorded_at as an alias for created_at
+        const mappedLogs = (data || []).map(log => ({
+          ...log,
+          recorded_at: log.created_at
+        })) as StatusLog[];
+        
+        setLogs(mappedLogs);
       } catch (err) {
         console.error('Error fetching status logs:', err);
         setError(err instanceof Error ? err : new Error('Unknown error occurred'));
