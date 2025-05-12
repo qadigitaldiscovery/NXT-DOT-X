@@ -1,10 +1,23 @@
-
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { useAuth } from '@/context/AuthContext';
 import { ThemeToggle } from '@/components/ui/theme-toggle';
-import { Search, Layout, Key, Users, Settings, FileText, CreditCard } from 'lucide-react';
+import { 
+  Search, 
+  Layout, 
+  Key, 
+  Users, 
+  Settings, 
+  FileText, 
+  CreditCard,
+  Database,
+  Shield,
+  Globe,
+  BarChart3,
+  Building,
+  UserCog
+} from 'lucide-react';
 import { SidebarProvider } from '@/components/ui/sidebar';
 import DashboardModules from '@/components/master-dash/DashboardModules';
 
@@ -34,10 +47,26 @@ const MasterDash = () => {
           <nav className="flex-1 mt-4 space-y-1">
             <SidebarItem icon={<Layout className="w-5 h-5" />} label="All Modules" active />
             <SidebarItem icon={<Key className="w-5 h-5" />} label="API Keys" />
-            <SidebarItem icon={<Users className="w-5 h-5" />} label="Users" />
-            <SidebarItem icon={<CreditCard className="w-5 h-5" />} label="Billing" />
-            <SidebarItem icon={<Settings className="w-5 h-5" />} label="Settings" />
-            <SidebarItem icon={<FileText className="w-5 h-5" />} label="Documentation" />
+            
+            {/* Administration Section */}
+            <div className="py-2 mt-4">
+              <h3 className="px-2 text-xs uppercase tracking-wider text-slate-500 font-semibold mb-2">Administration</h3>
+              <SidebarItem icon={<Users className="w-5 h-5" />} label="User Management" />
+              <SidebarItem icon={<Building className="w-5 h-5" />} label="Customer Management" />
+              <SidebarItem icon={<UserCog className="w-5 h-5" />} label="Roles & Permissions" />
+              <SidebarItem icon={<Shield className="w-5 h-5" />} label="Security" />
+              <SidebarItem icon={<BarChart3 className="w-5 h-5" />} label="Reporting" />
+              <SidebarItem icon={<Globe className="w-5 h-5" />} label="Localization" />
+              <SidebarItem icon={<FileText className="w-5 h-5" />} label="Documentation" />
+              <SidebarItem icon={<Database className="w-5 h-5" />} label="Database Admin" />
+              <SidebarItem icon={<Settings className="w-5 h-5" />} label="System Settings" />
+            </div>
+            
+            {/* Other sections */}
+            <div className="py-2 mt-4">
+              <h3 className="px-2 text-xs uppercase tracking-wider text-slate-500 font-semibold mb-2">Account</h3>
+              <SidebarItem icon={<CreditCard className="w-5 h-5" />} label="Billing" />
+            </div>
           </nav>
         </div>
         

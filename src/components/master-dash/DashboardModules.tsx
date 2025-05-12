@@ -50,9 +50,6 @@ const DashboardModules = () => {
 
       {/* Primary Modules */}
       <PrimaryModules />
-      
-      {/* Administration Modules */}
-      <Administration />
     </div>
   );
 };
