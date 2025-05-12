@@ -1,7 +1,5 @@
 
-// This file now re-exports all the utilities from their new locations
-// for backwards compatibility
-
+// Export all utility functions from their respective files
 export * from './errors';
 export * from './token-utils';
 export * from './stream-utils';

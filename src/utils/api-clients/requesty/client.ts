@@ -15,7 +15,7 @@ import {
   estimateTokenCount,
   getApiKey,
   ApiError
-} from '../common/shared-utils';
+} from '../common';
 
 // Get API key from storage or database
 export async function getRequestyKey(): Promise<{key: string | null; model: string | null; config: any | null}> {
