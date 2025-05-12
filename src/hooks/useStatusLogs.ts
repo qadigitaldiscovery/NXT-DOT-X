@@ -1,14 +1,7 @@
 
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-
-export type StatusLog = {
-  id: string;
-  module_id: string;
-  status: 'green' | 'orange' | 'red';
-  recorded_at: string;
-  note: string | null;
-}
+import { StatusLog } from './useModules';
 
 export function useStatusLogs(moduleId?: string) {
   const [logs, setLogs] = useState<StatusLog[]>([]);
@@ -17,23 +10,25 @@ export function useStatusLogs(moduleId?: string) {
 
   useEffect(() => {
     const fetchLogs = async () => {
+      // If no moduleId is provided, don't fetch
+      if (!moduleId) {
+        setLogs([]);
+        setLoading(false);
+        return;
+      }
+
       try {
         setLoading(true);
-        
-        // Use type assertion to fix the table name issue
-        let query = supabase.from('rag_status_logs' as any).select('*');
-        
-        if (moduleId) {
-          query = query.eq('module_id', moduleId);
-        }
-        
-        query = query.order('recorded_at', { ascending: false });
-        
-        const { data, error } = await query;
+        // Fetch status logs for the specified module
+        const { data, error } = await supabase
+          .from('rag_status_logs')
+          .select('*')
+          .eq('module_id', moduleId)
+          .order('created_at', { ascending: false });
         
         if (error) throw error;
-        // Use type assertion to handle the type mismatch
-        setLogs((data || []) as unknown as StatusLog[]);
+        
+        setLogs(data as StatusLog[]);
       } catch (err) {
         console.error('Error fetching status logs:', err);
         setError(err instanceof Error ? err : new Error('Unknown error occurred'));

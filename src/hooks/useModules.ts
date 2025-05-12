@@ -10,6 +10,14 @@ export type Module = {
   created_at: string;
 }
 
+export type StatusLog = {
+  id: string;
+  module_id: string;
+  status: 'green' | 'orange' | 'red';
+  note: string | null;
+  created_at: string;
+}
+
 export function useModules() {
   const [modules, setModules] = useState<Module[]>([]);
   const [loading, setLoading] = useState(true);
@@ -20,7 +28,9 @@ export function useModules() {
       try {
         setLoading(true);
         // Fetch modules from Supabase
-        const { data, error } = await supabase.from('modules').select('*');
+        const { data, error } = await supabase
+          .from('modules')
+          .select('*');
         
         if (error) throw error;
         

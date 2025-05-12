@@ -628,6 +628,33 @@ export type Database = {
           },
         ]
       }
+      modules: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          id: string
+          name: string
+          status: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          name: string
+          status: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          name?: string
+          status?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       notifications: {
         Row: {
           content: string | null
@@ -824,6 +851,38 @@ export type Database = {
           updated_at?: string | null
         }
         Relationships: []
+      }
+      rag_status_logs: {
+        Row: {
+          created_at: string | null
+          id: string
+          module_id: string
+          note: string | null
+          status: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          module_id: string
+          note?: string | null
+          status: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          module_id?: string
+          note?: string | null
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "rag_status_logs_module_id_fkey"
+            columns: ["module_id"]
+            isOneToOne: false
+            referencedRelation: "modules"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       supplier_column_mappings: {
         Row: {

@@ -5,12 +5,12 @@ import { supabase } from '@/integrations/supabase/client';
 export type CustomerImpact = {
   id: string;
   module_id: string;
-  region: string | null;
-  affected_users: number | null;
-  description: string | null;
+  description: string;
   impact_level: string | null;
+  affected_users: number | null;
+  region: string | null;
   recorded_at: string;
-}
+};
 
 export function useCustomerImpacts(moduleId?: string) {
   const [impacts, setImpacts] = useState<CustomerImpact[]>([]);
@@ -18,33 +18,9 @@ export function useCustomerImpacts(moduleId?: string) {
   const [error, setError] = useState<Error | null>(null);
 
   useEffect(() => {
-    const fetchImpacts = async () => {
-      try {
-        setLoading(true);
-        
-        // Use type assertion to fix the table name issue
-        let query = supabase.from('customer_impacts' as any).select('*');
-        
-        if (moduleId) {
-          query = query.eq('module_id', moduleId);
-        }
-        
-        query = query.order('recorded_at', { ascending: false });
-        
-        const { data, error } = await query;
-        
-        if (error) throw error;
-        // Use type assertion to handle the type mismatch
-        setImpacts((data || []) as unknown as CustomerImpact[]);
-      } catch (err) {
-        console.error('Error fetching customer impacts:', err);
-        setError(err instanceof Error ? err : new Error('Unknown error occurred'));
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchImpacts();
+    // For now, we're returning mock data since we haven't created the customer_impacts table yet
+    setImpacts([]);
+    setLoading(false);
   }, [moduleId]);
 
   return { impacts, loading, error };
