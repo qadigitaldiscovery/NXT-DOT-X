@@ -3,7 +3,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Home, ChevronLeft, ChevronRight, Layers, Settings, Users } from "lucide-react";
+import { Home, ChevronLeft, ChevronRight, Layers, Settings, Users, BarChart3 } from "lucide-react";
 import SharedDashboardLayout from '@/components/layout/SharedDashboardLayout';
 import { NavCategory } from '@/components/layout/sidebar/types';
 
@@ -100,6 +100,22 @@ const Index = () => {
           </CardContent>
           <CardFooter>
             <Button onClick={() => navigate('/brand-marketing')}>View Brand Analytics</Button>
+          </CardFooter>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>RAG Dashboard</CardTitle>
+            <CardDescription>Monitor system health and stability</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <p>Track the status of system modules with a comprehensive Red-Amber-Green dashboard and manage alerts.</p>
+          </CardContent>
+          <CardFooter>
+            <Button onClick={() => navigate('/dashboard/rag')} className="flex items-center">
+              <BarChart3 className="mr-2 h-4 w-4" />
+              View Status Dashboard
+            </Button>
           </CardFooter>
         </Card>
       </div>

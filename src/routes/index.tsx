@@ -19,6 +19,7 @@ import { CustomerManagementRoutes } from "./customerManagementRoutes";
 import { BrandMarketingRoutes } from "./brandMarketingRoutes";
 import { SocialMediaRoutes } from "./socialMediaRoutes";
 import { ProjectManagementRoutes } from "./projectManagementRoutes";
+import { RAGDashboardRoutes } from "./ragDashboardRoutes";
 
 export const AppRoutes = () => {
   return (
@@ -56,6 +57,7 @@ export const AppRoutes = () => {
       {BrandMarketingRoutes()}
       {SocialMediaRoutes()}
       {ProjectManagementRoutes()}
+      {RAGDashboardRoutes()}
       
       {/* 404 Page */}
       <Route path="*" element={<NotFound />} />
