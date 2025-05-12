@@ -38,36 +38,43 @@ export const useApiKeyLoader = ({
   const { setState, setSavedKey } = setStateCallbacks;
   
   const loadApiKey = useCallback(async () => {
-    // First try localStorage
-    const { key: savedKey, model: savedModel, config: savedConfig } = loadFromLocalStorage(initialModel, initialConfig);
-    
-    if (savedKey) {
-      setState({
-        apiKey: savedKey,
-        preferredModel: savedModel,
-        additionalConfig: savedConfig,
-        isLoaded: true
-      });
-      setSavedKey(true);
-      return;
+    try {
+      // Mark as loading
+      setState({ isLoaded: false });
+      
+      // First try localStorage
+      const { key: savedKey, model: savedModel, config: savedConfig } = loadFromLocalStorage(initialModel, initialConfig);
+      
+      if (savedKey) {
+        setState({
+          apiKey: savedKey,
+          preferredModel: savedModel,
+          additionalConfig: savedConfig,
+          isLoaded: true
+        });
+        setSavedKey(true);
+        return;
+      }
+      
+      // Try to load from database if localStorage failed
+      const dbResult = await loadFromDatabase(initialModel, initialConfig);
+      
+      if (dbResult && dbResult.key) {
+        setState({
+          apiKey: dbResult.key,
+          preferredModel: dbResult.model,
+          additionalConfig: dbResult.config,
+          isLoaded: true
+        });
+        setSavedKey(true);
+        return;
+      }
+    } catch (error) {
+      console.error("Error loading API key:", error);
+    } finally {
+      // If no data found anywhere, just set loaded state
+      setState({ isLoaded: true });
     }
-    
-    // Try to load from database if localStorage failed
-    const dbResult = await loadFromDatabase(initialModel, initialConfig);
-    
-    if (dbResult && dbResult.key) {
-      setState({
-        apiKey: dbResult.key,
-        preferredModel: dbResult.model,
-        additionalConfig: dbResult.config,
-        isLoaded: true
-      });
-      setSavedKey(true);
-      return;
-    }
-    
-    // If no data found anywhere, just set loaded state
-    setState({ isLoaded: true });
   }, [initialModel, initialConfig, loadFromLocalStorage, loadFromDatabase, setState, setSavedKey]);
   
   return { loadApiKey };

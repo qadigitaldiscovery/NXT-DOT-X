@@ -37,6 +37,8 @@ export const useApiKey = (options: ApiKeyOptions) => {
   });
 
   const [error, setError] = useState<Error | null>(null);
+  // Track whether we've already tried to load
+  const [hasTriedLoading, setHasTriedLoading] = useState(false);
 
   // Initialize storage methods
   const storageOptions = {
@@ -84,10 +86,16 @@ export const useApiKey = (options: ApiKeyOptions) => {
     }
   });
 
-  // Load API key on component mount
+  // Load API key on component mount - with guard against infinite loops
   useEffect(() => {
-    loadApiKey();
-  }, [loadApiKey]);
+    if (!hasTriedLoading && !state.isLoaded) {
+      setHasTriedLoading(true);
+      loadApiKey().catch(err => {
+        console.error("Failed to load API key:", err);
+        setLoading(true); // Mark as loaded even on error to prevent loading state
+      });
+    }
+  }, [loadApiKey, state.isLoaded, hasTriedLoading, setLoading]);
 
   // Clear API key
   const clearApiKey = useCallback(() => {

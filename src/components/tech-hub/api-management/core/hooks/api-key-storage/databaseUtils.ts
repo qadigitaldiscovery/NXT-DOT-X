@@ -118,26 +118,27 @@ export const loadFromDatabase = async (
       return { key: null, model: defaultModel, config: defaultConfig };
     }
     
-    // Type guard to ensure data is of the expected shape and not null
-    if (data) {
-      // Using safer property access with separate variables
-      const apiKey = data && 'api_key' in data ? (data.api_key as string) : null;
-      const preferredModel = data && 'preferred_model' in data ? (data.preferred_model as string) : defaultModel;
-      const configValue = data && hasConfigColumn && 'config' in data && data.config !== null 
-        ? (data.config as Record<string, any>)
-        : defaultConfig;
-        
-      return { 
-        key: apiKey, 
-        model: preferredModel || defaultModel, 
-        config: configValue
-      };
+    // Type guard to ensure data is of the expected shape
+    if (!data) {
+      return { key: null, model: defaultModel, config: defaultConfig };
     }
+    
+    // Using safer property access with proper null checks
+    const apiKey = 'api_key' in data ? (data.api_key as string) : null;
+    const preferredModel = 'preferred_model' in data ? (data.preferred_model as string || defaultModel) : defaultModel;
+    const configValue = hasConfigColumn && 'config' in data && data.config !== null 
+      ? (data.config as Record<string, any>)
+      : defaultConfig;
+      
+    return { 
+      key: apiKey, 
+      model: preferredModel, 
+      config: configValue
+    };
   } catch (error) {
     console.error('Error loading from database:', error);
+    return { key: null, model: defaultModel, config: defaultConfig };
   }
-  
-  return { key: null, model: defaultModel, config: defaultConfig };
 };
 
 /**
