@@ -4,7 +4,7 @@ import NotFound from "@/pages/NotFound";
 import Landing from "@/pages/Landing";
 import RootHandler from '@/components/RootHandler';
 import Unauthorized from "@/pages/Unauthorized";
-import MasterDash from '@/pages/MasterDash';
+import PrototypeSelector from '@/pages/PrototypeSelector';
 
 // Import module-specific routes
 import { AdminRoutes } from "./adminRoutes";
@@ -22,7 +22,7 @@ export const AppRoutes = () => {
   return (
     <Routes>
       {/* Landing Page (Login) */}
-      <Route index element={<MasterDash />} />
+      <Route index element={<PrototypeSelector />} />
       <Route path="/landing" element={<Landing />} />
       
       {/* Unauthorized Page */}
