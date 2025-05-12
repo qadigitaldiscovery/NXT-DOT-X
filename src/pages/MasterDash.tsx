@@ -21,10 +21,10 @@ import {
   ClipboardList,
   Home,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
+  AlertTriangle
 } from 'lucide-react';
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
 
 const MasterDash = () => {
   const navigate = useNavigate();
@@ -45,7 +45,8 @@ const MasterDash = () => {
       items: [
         { label: "All Modules", path: "/", icon: Layout },
         { label: "API Keys", path: "/tech-hub/api-management", icon: Key },
-        { label: "Project Management", path: "/projects", icon: ClipboardList }
+        { label: "Project Management", path: "/projects", icon: ClipboardList },
+        { label: "RAG Dashboard", path: "/dashboard/rag", icon: AlertTriangle }
       ]
     },
     {

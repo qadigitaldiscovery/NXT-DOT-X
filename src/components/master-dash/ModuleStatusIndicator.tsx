@@ -1,6 +1,9 @@
 
 import React from 'react';
-import { Card, CardHeader, CardContent, CardTitle } from "@/components/ui/card";
+import { Link } from 'react-router-dom';
+import { Card, CardHeader, CardContent, CardTitle, CardFooter } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { BarChart3 } from "lucide-react";
 
 // Define a type for the status of a module
 type ModuleStatus = 'operational' | 'degraded' | 'outage';
@@ -54,8 +57,13 @@ const ModuleStatusIndicator: React.FC = () => {
   return (
     <Card className="bg-slate-900/80 border-slate-800 shadow-md">
       <CardHeader className="pb-2">
-        <CardTitle className="text-white flex items-center gap-2">
+        <CardTitle className="text-white flex items-center justify-between">
           <span>Module Status</span>
+          <Link to="/dashboard/rag">
+            <Button variant="link" size="sm" className="text-blue-300 hover:text-blue-200 p-0">
+              View Full Dashboard
+            </Button>
+          </Link>
         </CardTitle>
       </CardHeader>
       <CardContent>
@@ -72,6 +80,14 @@ const ModuleStatusIndicator: React.FC = () => {
           ))}
         </div>
       </CardContent>
+      <CardFooter className="pt-2 pb-3">
+        <Link to="/dashboard/rag" className="w-full">
+          <Button className="w-full bg-indigo-700 hover:bg-indigo-600 flex items-center justify-center">
+            <BarChart3 className="mr-2 h-4 w-4" />
+            View Detailed Status Dashboard
+          </Button>
+        </Link>
+      </CardFooter>
     </Card>
   );
 };

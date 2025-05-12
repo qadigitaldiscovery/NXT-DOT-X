@@ -3,7 +3,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Home, ChevronLeft, ChevronRight, Layers, Settings, Users, BarChart3 } from "lucide-react";
+import { Home, ChevronLeft, ChevronRight, Layers, Settings, Users, BarChart3, AlertTriangle } from "lucide-react";
 import SharedDashboardLayout from '@/components/layout/SharedDashboardLayout';
 import { NavCategory } from '@/components/layout/sidebar/types';
 
@@ -17,6 +17,7 @@ const Index = () => {
       items: [
         { label: "Dashboard", path: "/", icon: Home },
         { label: "Projects", path: "/projects", icon: Layers },
+        { label: "RAG Dashboard", path: "/dashboard/rag", icon: AlertTriangle },
         { label: "Users", path: "/admin/users", icon: Users, roles: ["admin"] },
         { label: "Settings", path: "/settings", icon: Settings, roles: ["admin", "manager"] }
       ]
@@ -113,7 +114,7 @@ const Index = () => {
           </CardContent>
           <CardFooter>
             <Button onClick={() => navigate('/dashboard/rag')} className="flex items-center">
-              <BarChart3 className="mr-2 h-4 w-4" />
+              <AlertTriangle className="mr-2 h-4 w-4" />
               View Status Dashboard
             </Button>
           </CardFooter>

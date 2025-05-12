@@ -1,5 +1,5 @@
 
-import { Home, FileUp, BarChart3, LineChart, ArrowDownUp, FileDown, Settings, Database, FileArchive, BookOpen, BrainCircuit, Cloud, Server, Users, Truck, UserCog, Shield, Globe, Building } from 'lucide-react';
+import { Home, FileUp, BarChart3, LineChart, ArrowDownUp, FileDown, Settings, Database, FileArchive, BookOpen, BrainCircuit, Cloud, Server, Users, Truck, UserCog, Shield, Globe, Building, AlertTriangle } from 'lucide-react';
 import { NavItem, NavCategory } from './types';
 
 // Top level nav items (not in categories)
@@ -44,7 +44,8 @@ export const navCategories: NavCategory[] = [
       { label: 'Localization', icon: Globe, path: '/admin/localization' },
       { label: 'Documentation', icon: BookOpen, path: '/admin/documentation' },
       { label: 'Database Admin', icon: Database, path: '/admin/database' },
-      { label: 'System Settings', icon: Settings, path: '/admin/system-settings' }
+      { label: 'System Settings', icon: Settings, path: '/admin/system-settings' },
+      { label: 'RAG Dashboard', icon: AlertTriangle, path: '/dashboard/rag' }
     ]
   }
 ];
