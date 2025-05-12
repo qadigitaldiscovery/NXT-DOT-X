@@ -69,10 +69,12 @@ export const useApiKeyLoader = ({
         setSavedKey(true);
         return;
       }
+      
+      // If we reach here, no key was found in either location
+      setState({ isLoaded: true });
     } catch (error) {
       console.error("Error loading API key:", error);
-    } finally {
-      // If no data found anywhere, just set loaded state
+      // Always ensure we set loaded state even on error
       setState({ isLoaded: true });
     }
   }, [initialModel, initialConfig, loadFromLocalStorage, loadFromDatabase, setState, setSavedKey]);

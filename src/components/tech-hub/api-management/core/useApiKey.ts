@@ -88,13 +88,22 @@ export const useApiKey = (options: ApiKeyOptions) => {
 
   // Load API key on component mount - with guard against infinite loops
   useEffect(() => {
-    if (!hasTriedLoading && !state.isLoaded) {
-      setHasTriedLoading(true);
-      loadApiKey().catch(err => {
-        console.error("Failed to load API key:", err);
-        setLoading(true); // Mark as loaded even on error to prevent loading state
-      });
-    }
+    const loadData = async () => {
+      if (!hasTriedLoading && !state.isLoaded) {
+        console.log('Loading API key data...');
+        setHasTriedLoading(true);
+        try {
+          await loadApiKey();
+        } catch (err) {
+          console.error("Failed to load API key:", err);
+        } finally {
+          // Ensure loading state is completed regardless of outcome
+          setLoading(false);
+        }
+      }
+    };
+    
+    loadData();
   }, [loadApiKey, state.isLoaded, hasTriedLoading, setLoading]);
 
   // Clear API key

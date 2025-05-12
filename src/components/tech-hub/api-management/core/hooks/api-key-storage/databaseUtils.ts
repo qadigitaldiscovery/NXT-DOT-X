@@ -118,17 +118,14 @@ export const loadFromDatabase = async (
       return { key: null, model: defaultModel, config: defaultConfig };
     }
     
-    // Type guard to ensure data is of the expected shape
     if (!data) {
       return { key: null, model: defaultModel, config: defaultConfig };
     }
     
-    // Using safer property access with proper null checks
-    const apiKey = 'api_key' in data ? (data.api_key as string) : null;
-    const preferredModel = 'preferred_model' in data ? (data.preferred_model as string || defaultModel) : defaultModel;
-    const configValue = hasConfigColumn && 'config' in data && data.config !== null 
-      ? (data.config as Record<string, any>)
-      : defaultConfig;
+    // Type guard to ensure data is of the expected shape
+    const apiKey = data.api_key ? data.api_key : null;
+    const preferredModel = data.preferred_model ? data.preferred_model : defaultModel;
+    const configValue = hasConfigColumn && data.config ? data.config : defaultConfig;
       
     return { 
       key: apiKey, 

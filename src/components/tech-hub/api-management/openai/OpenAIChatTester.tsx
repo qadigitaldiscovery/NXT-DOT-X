@@ -4,28 +4,15 @@ import { toast } from 'sonner';
 import ChatTester from '../core/ChatTester';
 import { ChatCompletionResponse } from '@/utils/api-clients/openai/types';
 import { callOpenAI } from '@/utils/api-clients/openai/client';
-import { supabase } from '@/integrations/supabase/client';
 
 const OpenAIChatTester: React.FC = () => {
   const handleSendMessage = async (prompt: string): Promise<string> => {
     try {
-      // Get preferred model from database if available
-      let model = 'gpt-4o-mini';
-      const { data: { session } } = await supabase.auth.getSession();
+      console.log("Sending test prompt to OpenAI");
       
-      if (session) {
-        const { data } = await supabase
-          .from('api_provider_settings')
-          .select('preferred_model')
-          .eq('provider_name', 'openai')
-          .eq('user_id', session.user.id)
-          .maybeSingle();
-          
-        if (data?.preferred_model) {
-          model = data.preferred_model;
-        }
-      }
-
+      // Default to gpt-4o-mini
+      const model = 'gpt-4o-mini';
+      
       const result = await callOpenAI<ChatCompletionResponse>({
         endpoint: 'chat',
         payload: {
@@ -37,10 +24,14 @@ const OpenAIChatTester: React.FC = () => {
         }
       });
 
+      if (!result || !result.choices || result.choices.length === 0) {
+        throw new Error("Received empty response from OpenAI");
+      }
+      
       return result.choices[0].message.content;
     } catch (error) {
       console.error('Error testing OpenAI:', error);
-      toast.error('Failed to get response from OpenAI');
+      toast.error('Failed to get response from OpenAI. Please check your API key.');
       throw error;
     }
   };

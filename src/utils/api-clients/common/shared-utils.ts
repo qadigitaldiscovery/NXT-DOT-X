@@ -1,124 +1,175 @@
 
-import { toast } from "sonner";
 import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
 
-// Create a custom ApiError class
+// Type for API errors
 export class ApiError extends Error {
-  type?: string;
-  code?: string;
-  status?: number;
-  
-  constructor(message: string, details?: { type?: string; code?: string; status?: number }) {
+  constructor(message: string) {
     super(message);
     this.name = 'ApiError';
-    this.type = details?.type;
-    this.code = details?.code;
-    this.status = details?.status;
   }
 }
 
-/**
- * Get API key from storage or database for a specific provider
- * @param providerName The name of the provider (e.g., 'openai', 'requesty')
- * @param localStorageKey The key used in localStorage
- * @returns The API key and config if available
- */
+// Estimate token count for text
+export function estimateTokenCount(text: string): number {
+  // Very rough approximation: 4 characters ≈ 1 token
+  return Math.ceil(text.length / 4);
+}
+
+// Function to process streaming responses
+export async function* processStreamingResponse(stream: ReadableStream<Uint8Array>): AsyncGenerator<string> {
+  const reader = stream.getReader();
+  const decoder = new TextDecoder();
+  let partialLine = '';
+  
+  try {
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      
+      const chunk = decoder.decode(value, { stream: true });
+      const lines = (partialLine + chunk).split('\n');
+      partialLine = lines.pop() || '';
+      
+      for (const line of lines) {
+        const trimmedLine = line.trim();
+        if (!trimmedLine || trimmedLine === '[DONE]') continue;
+        
+        if (trimmedLine.startsWith('data: ')) {
+          const jsonData = trimmedLine.slice(6);
+          
+          try {
+            if (jsonData === '[DONE]') continue;
+            
+            const data = JSON.parse(jsonData);
+            
+            // Handle chat completion
+            if (data.choices && data.choices[0]) {
+              const choice = data.choices[0];
+              if (choice.delta && choice.delta.content) {
+                yield choice.delta.content;
+              }
+            }
+          } catch (err) {
+            console.error('Error parsing JSON from stream:', err, jsonData);
+          }
+        }
+      }
+    }
+  } catch (error) {
+    console.error('Error reading from stream:', error);
+    throw error;
+  } finally {
+    try {
+      await reader.cancel();
+    } catch (error) {
+      console.error('Error canceling reader:', error);
+    }
+  }
+}
+
+// Function to get API key from storage
 export async function getApiKey(
   providerName: string, 
   localStorageKey: string
 ): Promise<{key: string | null; model: string | null; config: any | null}> {
-  // Try to get from localStorage first
-  const localData = localStorage.getItem(localStorageKey);
-  
-  if (localData) {
-    try {
-      const parsed = JSON.parse(localData);
-      if (parsed && parsed.key) {
-        return {
-          key: parsed.key,
-          model: parsed.model || null,
-          config: parsed.config || null
-        };
-      }
-    } catch (err) {
-      console.error('Error parsing local storage data:', err);
-    }
-  }
-
-  // If not found in localStorage, try getting from database
   try {
-    const { data: { session } } = await supabase.auth.getSession();
-    if (session) {
-      // Check if config column exists
-      let hasConfigColumn = false;
+    // Check local storage first
+    const localData = localStorage.getItem(localStorageKey);
+    if (localData) {
       try {
-        const { error } = await supabase
-          .from('api_provider_settings' as any)
-          .select('config')
-          .limit(1);
-        
-        hasConfigColumn = !error || !error.message.includes("column 'config' does not exist");
-      } catch (err) {
-        console.error("Error checking if config column exists:", err);
+        const parsed = JSON.parse(localData);
+        if (parsed && parsed.key) {
+          return {
+            key: parsed.key,
+            model: parsed.model || null,
+            config: parsed.config || null
+          };
+        }
+      } catch (e) {
+        console.error('Error parsing local storage:', e);
       }
-      
-      // Select appropriate columns
-      const selectQuery = hasConfigColumn 
-        ? 'api_key, preferred_model, config' 
-        : 'api_key, preferred_model';
-      
+    }
+    
+    // Try database
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) {
+      return { key: null, model: null, config: null };
+    }
+    
+    // Check if config column exists
+    try {
       const { data, error } = await supabase
         .from('api_provider_settings')
-        .select(selectQuery)
+        .select('api_key, preferred_model, config')
         .eq('provider_name', providerName)
         .eq('user_id', session.user.id)
         .maybeSingle();
-
-      if (!error || (error.code !== 'PGRST116' && !error.message.includes("column"))) {
-        // Make sure data exists before accessing it
-        if (data) {
-          // Using safer property access with proper null checks
-          const apiKey = 'api_key' in data ? (data.api_key as string) : null;
-          const preferredModel = 'preferred_model' in data ? (data.preferred_model as string) : null;
-          const configValue = hasConfigColumn && 'config' in data ? data.config : null;
+      
+      if (error) {
+        // If error relates to config column not existing, try without it
+        if (error.message.includes('config')) {
+          const { data: dataNoConfig, error: errorNoConfig } = await supabase
+            .from('api_provider_settings')
+            .select('api_key, preferred_model')
+            .eq('provider_name', providerName)
+            .eq('user_id', session.user.id)
+            .maybeSingle();
+            
+          if (errorNoConfig) {
+            console.error('Error getting API key from database:', errorNoConfig);
+            return { key: null, model: null, config: null };
+          }
           
-          return {
-            key: apiKey,
-            model: preferredModel,
-            config: configValue
+          if (!dataNoConfig) {
+            return { key: null, model: null, config: null };
+          }
+          
+          return { 
+            key: dataNoConfig.api_key || null, 
+            model: dataNoConfig.preferred_model || null, 
+            config: null 
           };
         }
-      } else {
-        console.error("Error fetching API key:", error);
+        
+        console.error('Error getting API key from database:', error);
+        return { key: null, model: null, config: null };
       }
+      
+      if (!data) {
+        return { key: null, model: null, config: null };
+      }
+      
+      return { 
+        key: data.api_key || null, 
+        model: data.preferred_model || null, 
+        config: data.config || null 
+      };
+    } catch (error) {
+      console.error('Exception getting API key from database:', error);
+      return { key: null, model: null, config: null };
     }
-  } catch (err) {
-    console.error("Error fetching API key:", err);
+  } catch (e) {
+    console.error('Error in getApiKey:', e);
+    return { key: null, model: null, config: null };
   }
-
-  return { key: null, model: null, config: null };
 }
 
-/**
- * Try to use an edge function, and return the result if successful
- */
+// Function to try using edge function
 export async function tryUseEdgeFunction<T>(
   provider: string, 
   endpoint: string, 
-  payload: any
+  payload: any,
+  config?: any
 ): Promise<T | null> {
   try {
-    // Check if edge functions are enabled
-    const useEdgeFunctions = true; // For now, always try to use edge functions
-    if (!useEdgeFunctions) {
-      return null;
-    }
-    
-    // Call the edge function
-    const { data, error } = await supabase.functions.invoke(`${provider}-proxy`, {
+    console.log(`Attempting to call ${provider} edge function`);
+    const { data, error } = await supabase.functions.invoke('api-proxy', {
       body: {
+        provider,
         endpoint,
-        payload
+        payload,
+        config
       }
     });
     
@@ -127,63 +178,14 @@ export async function tryUseEdgeFunction<T>(
       return null;
     }
     
+    if (!data) {
+      console.log('No data returned from edge function');
+      return null;
+    }
+    
     return data as T;
-  } catch (err) {
-    console.error(`Error calling ${provider} edge function:`, err);
+  } catch (error) {
+    console.error(`Error calling ${provider} edge function:`, error);
     return null;
   }
-}
-
-/**
- * Process a streaming response from an API
- */
-export async function* processStreamingResponse(
-  body: ReadableStream<Uint8Array>
-): AsyncGenerator<string, void, unknown> {
-  const reader = body.getReader();
-  const decoder = new TextDecoder();
-  
-  try {
-    while (true) {
-      const { done, value } = await reader.read();
-      if (done) break;
-      
-      const chunk = decoder.decode(value);
-      const lines = chunk
-        .split('\n')
-        .filter(line => line.trim() !== '');
-      
-      for (const line of lines) {
-        if (line.startsWith('data: ')) {
-          const data = line.slice(6);
-          
-          // Skip the [DONE] message
-          if (data === '[DONE]') continue;
-          
-          try {
-            const parsed = JSON.parse(data);
-            
-            // Handle different streaming formats
-            if (parsed.choices && parsed.choices.length > 0) {
-              if (parsed.choices[0].delta && parsed.choices[0].delta.content) {
-                yield parsed.choices[0].delta.content;
-              } else if (parsed.choices[0].text) {
-                yield parsed.choices[0].text;
-              }
-            }
-          } catch (error) {
-            console.warn('Error parsing SSE data:', error);
-          }
-        }
-      }
-    }
-  } finally {
-    reader.releaseLock();
-  }
-}
-
-// Token estimation utility function
-export function estimateTokenCount(text: string): number {
-  // A very rough approximation: about 4 chars per token for English text
-  return Math.ceil(text.length / 4);
 }

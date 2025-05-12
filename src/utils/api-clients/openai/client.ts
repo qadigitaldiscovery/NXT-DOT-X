@@ -39,47 +39,56 @@ export async function callOpenAI<T extends OpenAIResponse>({
   const config = result.config;
   
   if (!key) {
+    console.error("No API key available");
     throw new Error("No API key available. Please add your OpenAI API key in the settings.");
   }
   
+  console.log("Making OpenAI API call with valid key");
+  
   // Apply any additional config parameters if available
-  if (config && !apiKey) {
+  if (config && !apiKey && typeof config === 'object') {
     // Merge the saved config with the provided payload
-    if (typeof config === 'object') {
-      // Apply temperature if it exists
-      if (config.temperature_default !== undefined && payload.temperature === undefined) {
-        payload.temperature = config.temperature_default;
-      }
-      
-      // Apply max_tokens if it exists
-      if (config.max_tokens_default !== undefined && payload.max_tokens === undefined) {
-        payload.max_tokens = config.max_tokens_default;
-      }
-      
-      // Apply frequency_penalty if it exists
-      if (config.frequency_penalty_default !== undefined && payload.frequency_penalty === undefined) {
-        payload.frequency_penalty = config.frequency_penalty_default;
-      }
-      
-      // Apply presence_penalty if it exists
-      if (config.presence_penalty_default !== undefined && payload.presence_penalty === undefined) {
-        payload.presence_penalty = config.presence_penalty_default;
-      }
+    // Apply temperature if it exists
+    if (config.temperature_default !== undefined && payload.temperature === undefined) {
+      payload.temperature = config.temperature_default;
+    }
+    
+    // Apply max_tokens if it exists
+    if (config.max_tokens_default !== undefined && payload.max_tokens === undefined) {
+      payload.max_tokens = config.max_tokens_default;
+    }
+    
+    // Apply frequency_penalty if it exists
+    if (config.frequency_penalty_default !== undefined && payload.frequency_penalty === undefined) {
+      payload.frequency_penalty = config.frequency_penalty_default;
+    }
+    
+    // Apply presence_penalty if it exists
+    if (config.presence_penalty_default !== undefined && payload.presence_penalty === undefined) {
+      payload.presence_penalty = config.presence_penalty_default;
     }
   }
   
   // Try to use our edge function first
-  const edgeResponse = await tryUseEdgeFunction<T>(
-    'openai', 
-    endpoint === 'chat' ? 'chat/completions' : endpoint,
-    payload
-  );
-  
-  if (edgeResponse) {
-    return edgeResponse;
+  try {
+    const edgeResponse = await tryUseEdgeFunction<T>(
+      'openai', 
+      endpoint === 'chat' ? 'chat/completions' : endpoint,
+      payload,
+      config
+    );
+    
+    if (edgeResponse) {
+      console.log("Successfully used edge function for OpenAI request");
+      return edgeResponse;
+    }
+  } catch (err) {
+    console.warn("Edge function attempt failed, using direct API:", err);
+    // Continue to direct API call
   }
   
   // Direct API call as fallback
+  console.log("Attempting direct OpenAI API call");
   const baseUrl = 'https://api.openai.com/v1';
   const url = `${baseUrl}/${endpoint === 'chat' ? 'chat/completions' : endpoint}`;
   
@@ -96,6 +105,7 @@ export async function callOpenAI<T extends OpenAIResponse>({
   }
   
   try {
+    console.log(`Sending request to ${url}`);
     const response = await fetch(url, {
       method: 'POST',
       headers,
@@ -106,6 +116,7 @@ export async function callOpenAI<T extends OpenAIResponse>({
     // Handle non-2xx responses
     if (!response.ok) {
       const errorData = await response.json() as OpenAIErrorResponse;
+      console.error("OpenAI API error:", errorData);
       
       // Map to specific error types
       if (errorData.error.type === 'insufficient_quota' || 
@@ -127,8 +138,12 @@ export async function callOpenAI<T extends OpenAIResponse>({
     }
 
     // Regular JSON response
-    return await response.json() as T;
+    const data = await response.json();
+    console.log("OpenAI API response received successfully");
+    return data as T;
   } catch (error) {
+    console.error("Error in OpenAI API call:", error);
+    
     // Re-throw OpenAI specific errors
     if (error instanceof OpenAIError || 
         error instanceof RateLimitError || 
