@@ -33,7 +33,7 @@ const MasterDash = () => {
     backgroundRepeat: 'no-repeat'
   }}>
       {/* Dark overlay without blur to maintain background image clarity */}
-      <div className="absolute inset-0 z-0 bg-slate-950"></div>
+      <div className="absolute inset-0 z-0 bg-zinc-950"></div>
       
       {/* Content needs to be on a higher z-index to appear above the overlay */}
       <div className="relative z-10 flex flex-col flex-grow">
