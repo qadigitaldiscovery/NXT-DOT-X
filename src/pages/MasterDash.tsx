@@ -42,11 +42,11 @@ const MasterDash = () => {
   };
 
   return (
-    <div className="h-screen overflow-hidden bg-[#10121b]">
+    <div className="h-screen overflow-hidden bg-[#10121b] dark:bg-[#0a0b10]">
       {/* Main Layout */}
       <div className="flex h-full">
         {/* Sidebar */}
-        <div className="h-full bg-[#15171f] w-64 p-4 flex flex-col">
+        <div className="h-full bg-[#15171f] dark:bg-[#12141d] w-64 p-4 flex flex-col">
           <div className="py-4 border-b border-slate-800">
             <h2 className="text-lg font-semibold text-white">All Modules</h2>
           </div>
@@ -164,6 +164,7 @@ const MasterDash = () => {
                 </button>
               </div>
               <div className="flex items-center gap-2">
+                <ThemeToggle />
                 <div className="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center text-white">
                   {user?.email?.charAt(0)?.toUpperCase() || 'U'}
                 </div>
