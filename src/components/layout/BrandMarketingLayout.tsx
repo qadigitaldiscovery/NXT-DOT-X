@@ -10,7 +10,6 @@ import {
   Search, 
   Settings,
   MessageCircle,
-  Globe,
   ChevronLeft,
   ChevronRight
 } from "lucide-react";

@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { BarChart3, LineChart, PieChart, TrendingUp } from 'lucide-react';
+import { LineChart, PieChart, BarChart3, TrendingUp } from 'lucide-react';
 
 const BrandAnalytics = () => {
   return (
@@ -13,15 +13,15 @@ const BrandAnalytics = () => {
         </p>
       </div>
       
-      {/* Analytics Cards */}
+      {/* Analytics Grid */}
       <div className="grid gap-6 md:grid-cols-2">
         <Card>
           <CardHeader>
             <CardTitle>Brand Recognition Trends</CardTitle>
             <CardDescription>Monthly recognition metrics over time</CardDescription>
           </CardHeader>
-          <CardContent className="h-[300px] flex items-center justify-center text-muted-foreground">
-            <div className="text-center">
+          <CardContent className="h-[300px] flex items-center justify-center">
+            <div className="text-center text-muted-foreground">
               <LineChart className="h-16 w-16 mx-auto mb-2" />
               <p>Brand recognition trend chart</p>
             </div>
@@ -33,8 +33,8 @@ const BrandAnalytics = () => {
             <CardTitle>Market Share Analysis</CardTitle>
             <CardDescription>Comparison with competitors</CardDescription>
           </CardHeader>
-          <CardContent className="h-[300px] flex items-center justify-center text-muted-foreground">
-            <div className="text-center">
+          <CardContent className="h-[300px] flex items-center justify-center">
+            <div className="text-center text-muted-foreground">
               <PieChart className="h-16 w-16 mx-auto mb-2" />
               <p>Market share distribution</p>
             </div>
@@ -46,8 +46,8 @@ const BrandAnalytics = () => {
             <CardTitle>Audience Demographics</CardTitle>
             <CardDescription>Breakdown of brand audience by demographics</CardDescription>
           </CardHeader>
-          <CardContent className="h-[300px] flex items-center justify-center text-muted-foreground">
-            <div className="text-center">
+          <CardContent className="h-[300px] flex items-center justify-center">
+            <div className="text-center text-muted-foreground">
               <BarChart3 className="h-16 w-16 mx-auto mb-2" />
               <p>Demographic distribution chart</p>
             </div>
@@ -59,10 +59,10 @@ const BrandAnalytics = () => {
             <CardTitle>Brand Growth</CardTitle>
             <CardDescription>Year-over-year growth metrics</CardDescription>
           </CardHeader>
-          <CardContent className="h-[300px] flex items-center justify-center text-muted-foreground">
-            <div className="text-center">
+          <CardContent className="h-[300px] flex items-center justify-center">
+            <div className="text-center text-muted-foreground">
               <TrendingUp className="h-16 w-16 mx-auto mb-2" />
-              <p>Brand growth chart</p>
+              <p>Growth trend visualization</p>
             </div>
           </CardContent>
         </Card>
