@@ -342,6 +342,8 @@ export type Database = {
           created_at: string | null
           description: string | null
           id: string
+          is_public: boolean | null
+          share_id: string | null
           title: string
           type: string
           updated_at: string | null
@@ -354,6 +356,8 @@ export type Database = {
           created_at?: string | null
           description?: string | null
           id?: string
+          is_public?: boolean | null
+          share_id?: string | null
           title: string
           type: string
           updated_at?: string | null
@@ -366,6 +370,8 @@ export type Database = {
           created_at?: string | null
           description?: string | null
           id?: string
+          is_public?: boolean | null
+          share_id?: string | null
           title?: string
           type?: string
           updated_at?: string | null
