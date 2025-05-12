@@ -1,4 +1,3 @@
-
 export interface SocialAccount {
   id: string;
   platform: SocialPlatform;
@@ -23,8 +22,11 @@ export interface SocialPost {
   id: string;
   platform: SocialPlatform;
   accountId: string;
-  content: string;
-  mediaUrls?: string[];
+  content: {
+    text?: string;
+    mediaUrls?: string[];
+    link?: string;
+  };
   scheduledFor?: Date | null;
   publishedAt?: Date | null;
   status: SocialPostStatus;
@@ -101,9 +103,9 @@ export interface SocialMediaPost {
     link?: string;
   };
   status: 'draft' | 'scheduled' | 'published' | 'failed';
-  scheduledFor?: string;
-  publishedAt?: string;
-  metrics?: PostMetrics;
+  scheduledFor?: Date | null;
+  publishedAt?: Date | null;
+  stats?: PostStats;
   createdAt: string;
   updatedAt: string;
 }

@@ -1,4 +1,3 @@
-
 import { toast } from "sonner";
 import { supabase } from '@/integrations/supabase/client';
 import { 
@@ -13,13 +12,13 @@ import {
   tryUseEdgeFunction, 
   processStreamingResponse,
   estimateTokenCount,
-  ApiError
+  ApiError,
+  getApiKey
 } from '../common/shared-utils';
-import { getApiKey } from '../common/api-key-utils';
 
 // Get API key from storage or database
 export async function getRequestyKey(): Promise<{key: string | null; model: string | null; config: any | null}> {
-  return await getApiKey('requesty', 'requesty-api-key');
+  return await getApiKey('requesty');
 };
 
 // Main function to call Requesty API

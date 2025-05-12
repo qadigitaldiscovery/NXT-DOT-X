@@ -1,11 +1,11 @@
-
 import { 
   SocialAccount, 
   SocialPlatform, 
   SocialPost, 
   SocialPostStatus, 
   SocialStats, 
-  SocialStatsTimeframe
+  SocialStatsTimeframe,
+  SocialMediaPost
 } from './types';
 
 const now = new Date().toISOString();
@@ -88,13 +88,15 @@ export const mockAccounts: SocialAccount[] = [
   }
 ];
 
-export const mockPosts: SocialPost[] = [
+export const mockPosts: SocialMediaPost[] = [
   {
     id: '1',
     platform: 'twitter',
     accountId: '1',
-    content: 'Exciting news! Our new product line launches next week. Stay tuned for exclusive deals! #ProductLaunch #Deals',
-    mediaUrls: ['https://placehold.co/600x400?text=Product+Preview'],
+    content: {
+      text: 'Exciting news! Our new product line launches next week. Stay tuned for exclusive deals! #ProductLaunch #Deals',
+      mediaUrls: ['https://placehold.co/600x400?text=Product+Preview'],
+    },
     scheduledFor: new Date('2025-05-15T10:00:00'),
     status: 'scheduled',
     stats: null,
@@ -105,11 +107,13 @@ export const mockPosts: SocialPost[] = [
     id: '2',
     platform: 'instagram',
     accountId: '2',
-    content: 'Behind the scenes look at our new collection. Which color is your favorite? 💙❤️💚',
-    mediaUrls: [
-      'https://placehold.co/600x600?text=Behind+Scenes+1',
-      'https://placehold.co/600x600?text=Behind+Scenes+2'
-    ],
+    content: {
+      text: 'Behind the scenes look at our new collection. Which color is your favorite? 💙❤️💚',
+      mediaUrls: [
+        'https://placehold.co/600x600?text=Behind+Scenes+1',
+        'https://placehold.co/600x600?text=Behind+Scenes+2'
+      ],
+    },
     scheduledFor: new Date('2025-05-16T12:30:00'),
     status: 'scheduled',
     stats: null,
@@ -120,8 +124,10 @@ export const mockPosts: SocialPost[] = [
     id: '3',
     platform: 'facebook',
     accountId: '3',
-    content: "We're hiring! Join our dynamic team and be part of our growth story. Check out available positions at careers.yourbrand.com",
-    mediaUrls: ['https://placehold.co/800x600?text=We+Are+Hiring'],
+    content: {
+      text: "We're hiring! Join our dynamic team and be part of our growth story. Check out available positions at careers.yourbrand.com",
+      mediaUrls: ['https://placehold.co/800x600?text=We+Are+Hiring'],
+    },
     scheduledFor: null,
     publishedAt: new Date('2025-05-01T09:00:00'),
     status: 'published',
@@ -137,8 +143,10 @@ export const mockPosts: SocialPost[] = [
     id: '4',
     platform: 'linkedin',
     accountId: '4',
-    content: "Proud to announce we've been recognized as an industry leader in sustainability for the third consecutive year. Thanks to our dedicated team for making this possible!",
-    mediaUrls: ['https://placehold.co/800x450?text=Award+Ceremony'],
+    content: {
+      text: "Proud to announce we've been recognized as an industry leader in sustainability for the third consecutive year. Thanks to our dedicated team for making this possible!",
+      mediaUrls: ['https://placehold.co/800x450?text=Award+Ceremony'],
+    },
     scheduledFor: null,
     publishedAt: new Date('2025-04-28T14:15:00'),
     status: 'published',
@@ -154,8 +162,9 @@ export const mockPosts: SocialPost[] = [
     id: '5',
     platform: 'twitter',
     accountId: '1',
-    content: 'What features would you like to see in our app? Reply with your suggestions! #ProductFeedback',
-    mediaUrls: [],
+    content: {
+      text: 'What features would you like to see in our app? Reply with your suggestions! #ProductFeedback',
+    },
     scheduledFor: null,
     publishedAt: new Date('2025-05-03T15:45:00'),
     status: 'published',
@@ -171,8 +180,10 @@ export const mockPosts: SocialPost[] = [
     id: '6',
     platform: 'instagram',
     accountId: '2',
-    content: 'Monday motivation from our CEO: "Success isn\'t about how much money you make, it\'s about the difference you make in people\'s lives." #MondayMotivation #Leadership',
-    mediaUrls: ['https://placehold.co/600x600?text=CEO+Quote'],
+    content: {
+      text: 'Monday motivation from our CEO: "Success isn\'t about how much money you make, it\'s about the difference you make in people\'s lives." #MondayMotivation #Leadership',
+      mediaUrls: ['https://placehold.co/600x600?text=CEO+Quote'],
+    },
     scheduledFor: null,
     status: 'draft',
     stats: null,
