@@ -1,261 +1,238 @@
 
 import { 
-  SocialMediaAccount, 
-  SocialMediaPost, 
-  Campaign, 
-  AudienceSegment, 
-  ContentTemplate 
+  SocialAccount, 
+  SocialPlatform, 
+  SocialPost, 
+  SocialPostStatus, 
+  SocialStats, 
+  SocialStatsTimeframe
 } from './types';
 
-export const mockSocialAccounts: SocialMediaAccount[] = [
+export const mockAccounts: SocialAccount[] = [
   {
     id: '1',
     platform: 'twitter',
-    username: 'companybrand',
-    profileUrl: 'https://twitter.com/companybrand',
-    avatarUrl: 'https://via.placeholder.com/50',
-    isConnected: true,
-    lastSyncedAt: new Date().toISOString(),
-    metrics: {
-      followers: 15420,
-      engagementRate: 2.3
+    username: 'YourBrandTwitter',
+    profileImageUrl: 'https://placehold.co/200x200?text=T',
+    accountUrl: 'https://twitter.com/yourbrand',
+    connected: true,
+    lastSynced: new Date('2025-05-01T12:00:00'),
+    stats: {
+      followers: 12500,
+      following: 1200,
+      posts: 2340,
+      engagement: 3.2
     }
   },
   {
     id: '2',
     platform: 'instagram',
-    username: 'company.brand',
-    profileUrl: 'https://instagram.com/company.brand',
-    avatarUrl: 'https://via.placeholder.com/50',
-    isConnected: true,
-    lastSyncedAt: new Date().toISOString(),
-    metrics: {
-      followers: 24680,
-      engagementRate: 3.8
+    username: 'yourbrand_official',
+    profileImageUrl: 'https://placehold.co/200x200?text=I',
+    accountUrl: 'https://instagram.com/yourbrand_official',
+    connected: true,
+    lastSynced: new Date('2025-05-05T14:30:00'),
+    stats: {
+      followers: 45000,
+      following: 800,
+      posts: 750,
+      engagement: 4.8
     }
   },
   {
     id: '3',
     platform: 'facebook',
-    username: 'CompanyBrand',
-    profileUrl: 'https://facebook.com/CompanyBrand',
-    avatarUrl: 'https://via.placeholder.com/50',
-    isConnected: true,
-    lastSyncedAt: new Date().toISOString(),
-    metrics: {
-      followers: 35750,
-      engagementRate: 1.7
+    username: 'YourBrand',
+    profileImageUrl: 'https://placehold.co/200x200?text=F',
+    accountUrl: 'https://facebook.com/yourbrand',
+    connected: true,
+    lastSynced: new Date('2025-05-04T09:15:00'),
+    stats: {
+      followers: 28000,
+      following: 0,
+      posts: 1200,
+      engagement: 2.1
     }
   },
   {
     id: '4',
     platform: 'linkedin',
-    username: 'company-brand',
-    profileUrl: 'https://linkedin.com/company/company-brand',
-    avatarUrl: 'https://via.placeholder.com/50',
-    isConnected: true,
-    lastSyncedAt: new Date().toISOString(),
-    metrics: {
-      followers: 8920,
-      engagementRate: 1.2
+    username: 'yourbrand-inc',
+    profileImageUrl: 'https://placehold.co/200x200?text=L',
+    accountUrl: 'https://linkedin.com/company/yourbrand-inc',
+    connected: true,
+    lastSynced: new Date('2025-05-03T16:45:00'),
+    stats: {
+      followers: 8200,
+      following: 150,
+      posts: 420,
+      engagement: 5.3
     }
   },
   {
     id: '5',
     platform: 'tiktok',
-    username: 'companybrand',
-    profileUrl: 'https://tiktok.com/@companybrand',
-    avatarUrl: 'https://via.placeholder.com/50',
-    isConnected: false,
-    metrics: {
-      followers: 0
+    username: '@yourbrand',
+    profileImageUrl: 'https://placehold.co/200x200?text=TT',
+    accountUrl: 'https://tiktok.com/@yourbrand',
+    connected: false,
+    lastSynced: null,
+    stats: {
+      followers: 0,
+      following: 0,
+      posts: 0,
+      engagement: 0
     }
   }
 ];
 
-export const mockPosts: SocialMediaPost[] = [
+export const mockPosts: SocialPost[] = [
   {
     id: '1',
     platform: 'twitter',
     accountId: '1',
-    content: {
-      text: 'Exciting news coming your way! Stay tuned for our big product announcement this week. #innovation #product',
-      mediaUrls: ['https://via.placeholder.com/500x300'],
-      link: 'https://example.com/announcement'
-    },
+    content: 'Exciting news! Our new product line launches next week. Stay tuned for exclusive deals! #ProductLaunch #Deals',
+    mediaUrls: ['https://placehold.co/600x400?text=Product+Preview'],
+    scheduledFor: new Date('2025-05-15T10:00:00'),
     status: 'scheduled',
-    scheduledFor: new Date(Date.now() + 86400000).toISOString(), // tomorrow
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString()
+    stats: null
   },
   {
     id: '2',
     platform: 'instagram',
     accountId: '2',
-    content: {
-      text: 'Behind the scenes at our photoshoot today! 📸 #BrandLife #BehindTheScenes',
-      mediaUrls: ['https://via.placeholder.com/1080x1080', 'https://via.placeholder.com/1080x1080']
-    },
-    status: 'published',
-    publishedAt: new Date(Date.now() - 172800000).toISOString(), // 2 days ago
-    metrics: {
-      likes: 723,
-      comments: 45,
-      shares: 12,
-      impressions: 5280,
-      engagementRate: 4.2
-    },
-    createdAt: new Date(Date.now() - 259200000).toISOString(), // 3 days ago
-    updatedAt: new Date(Date.now() - 172800000).toISOString() // 2 days ago
+    content: 'Behind the scenes look at our new collection. Which color is your favorite? 💙❤️💚',
+    mediaUrls: [
+      'https://placehold.co/600x600?text=Behind+Scenes+1',
+      'https://placehold.co/600x600?text=Behind+Scenes+2'
+    ],
+    scheduledFor: new Date('2025-05-16T12:30:00'),
+    status: 'scheduled',
+    stats: null
   },
   {
     id: '3',
-    platform: 'linkedin',
-    accountId: '4',
-    content: {
-      text: 'We're proud to announce our new partnership with IndustryLeader Inc. Together we'll be working on sustainable solutions for the future.',
-      link: 'https://example.com/partnership'
-    },
-    status: 'draft',
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString()
+    platform: 'facebook',
+    accountId: '3',
+    content: 'We're hiring! Join our dynamic team and be part of our growth story. Check out available positions at careers.yourbrand.com',
+    mediaUrls: ['https://placehold.co/800x600?text=We+Are+Hiring'],
+    scheduledFor: null,
+    publishedAt: new Date('2025-05-01T09:00:00'),
+    status: 'published',
+    stats: {
+      likes: 124,
+      comments: 45,
+      shares: 67
+    }
   },
   {
     id: '4',
-    platform: 'facebook',
-    accountId: '3',
-    content: {
-      text: 'Friday fun at the office! Our team building activity was a great success. Check out these moments!',
-      mediaUrls: ['https://via.placeholder.com/1200x630', 'https://via.placeholder.com/1200x630', 'https://via.placeholder.com/1200x630']
-    },
+    platform: 'linkedin',
+    accountId: '4',
+    content: 'Proud to announce we've been recognized as an industry leader in sustainability for the third consecutive year. Thanks to our dedicated team for making this possible!',
+    mediaUrls: ['https://placehold.co/800x450?text=Award+Ceremony'],
+    scheduledFor: null,
+    publishedAt: new Date('2025-04-28T14:15:00'),
     status: 'published',
-    publishedAt: new Date(Date.now() - 432000000).toISOString(), // 5 days ago
-    metrics: {
-      likes: 187,
-      comments: 32,
-      shares: 8,
-      impressions: 4120,
-      engagementRate: 3.1
-    },
-    createdAt: new Date(Date.now() - 518400000).toISOString(), // 6 days ago
-    updatedAt: new Date(Date.now() - 432000000).toISOString() // 5 days ago
-  }
-];
-
-export const mockCampaigns: Campaign[] = [
-  {
-    id: '1',
-    name: 'Summer Product Launch',
-    description: 'Campaign for the launch of our new summer collection',
-    status: 'active',
-    startDate: new Date(Date.now() - 604800000).toISOString(), // 1 week ago
-    endDate: new Date(Date.now() + 1209600000).toISOString(), // 2 weeks from now
-    budget: 5000,
-    posts: [mockPosts[0], mockPosts[1]],
-    metrics: {
-      totalReach: 45600,
-      totalImpressions: 62800,
-      totalEngagements: 2340,
-      engagementRate: 3.7,
-      clicks: 890,
-      conversions: 78,
-      roi: 1.8
-    },
-    createdAt: new Date(Date.now() - 1209600000).toISOString(), // 2 weeks ago
-    updatedAt: new Date().toISOString()
+    stats: {
+      likes: 312,
+      comments: 28,
+      shares: 54
+    }
   },
   {
-    id: '2',
-    name: 'Brand Awareness Q3',
-    description: 'Ongoing campaign to increase brand visibility and engagement',
-    status: 'draft',
-    startDate: new Date(Date.now() + 604800000).toISOString(), // 1 week from now
-    budget: 3500,
-    posts: [mockPosts[2]],
-    createdAt: new Date(Date.now() - 259200000).toISOString(), // 3 days ago
-    updatedAt: new Date().toISOString()
-  },
-  {
-    id: '3',
-    name: 'Customer Testimonials',
-    description: 'Showcasing customer success stories and testimonials',
-    status: 'completed',
-    startDate: new Date(Date.now() - 2592000000).toISOString(), // 30 days ago
-    endDate: new Date(Date.now() - 604800000).toISOString(), // 1 week ago
-    budget: 2500,
-    posts: [mockPosts[3]],
-    metrics: {
-      totalReach: 28400,
-      totalImpressions: 42600,
-      totalEngagements: 1860,
-      engagementRate: 4.4,
-      clicks: 720,
-      conversions: 64,
-      roi: 2.2
-    },
-    createdAt: new Date(Date.now() - 3196800000).toISOString(), // 37 days ago
-    updatedAt: new Date(Date.now() - 604800000).toISOString() // 1 week ago
-  }
-];
-
-export const mockAudienceSegments: AudienceSegment[] = [
-  {
-    id: '1',
-    name: 'Young Professionals',
-    description: 'Urban professionals aged 25-34 interested in technology and innovation',
-    criteria: {
-      demographics: {
-        ageRange: [25, 34],
-        locations: ['New York', 'San Francisco', 'Chicago', 'Boston'],
-        genders: ['all']
-      },
-      interests: ['technology', 'innovation', 'career development', 'startups'],
-      behaviors: ['early adopters', 'high engagement']
-    },
-    estimatedSize: 42500,
-    createdAt: new Date(Date.now() - 2592000000).toISOString(), // 30 days ago
-    updatedAt: new Date().toISOString()
-  },
-  {
-    id: '2',
-    name: 'Suburban Parents',
-    description: 'Parents aged 30-45 living in suburban areas interested in family products',
-    criteria: {
-      demographics: {
-        ageRange: [30, 45],
-        locations: ['Suburban Areas'],
-        genders: ['all']
-      },
-      interests: ['parenting', 'family activities', 'education', 'home improvement'],
-      behaviors: ['value shoppers', 'family-focused']
-    },
-    estimatedSize: 38700,
-    createdAt: new Date(Date.now() - 1209600000).toISOString(), // 14 days ago
-    updatedAt: new Date().toISOString()
-  }
-];
-
-export const mockContentTemplates: ContentTemplate[] = [
-  {
-    id: '1',
-    name: 'Product Announcement',
-    description: 'Template for new product announcements',
+    id: '5',
     platform: 'twitter',
-    contentType: 'post',
-    template: 'Exciting news! We just launched [Product Name]. [Key Feature] that helps you [Benefit]. Check it out: [Link] #[Industry] #[ProductType]',
-    previewImageUrl: 'https://via.placeholder.com/500x300',
-    createdAt: new Date(Date.now() - 1209600000).toISOString(), // 14 days ago
-    updatedAt: new Date().toISOString()
+    accountId: '1',
+    content: 'What features would you like to see in our app? Reply with your suggestions! #ProductFeedback',
+    mediaUrls: [],
+    scheduledFor: null,
+    publishedAt: new Date('2025-05-03T15:45:00'),
+    status: 'published',
+    stats: {
+      likes: 89,
+      comments: 76,
+      shares: 12
+    }
   },
   {
-    id: '2',
-    name: 'Instagram Product Showcase',
-    description: 'Carousel template for showcasing product features',
+    id: '6',
     platform: 'instagram',
-    contentType: 'post',
-    template: '✨ [Product Name] is here! ✨\n\nSwipe to see why it's a game-changer:\n1. [Feature One]\n2. [Feature Two]\n3. [Feature Three]\n\nAvailable now at the link in bio! #[Brand] #[Industry]',
-    previewImageUrl: 'https://via.placeholder.com/1080x1080',
-    createdAt: new Date(Date.now() - 864000000).toISOString(), // 10 days ago
-    updatedAt: new Date().toISOString()
+    accountId: '2',
+    content: 'Monday motivation from our CEO: "Success isn't about how much money you make, it's about the difference you make in people's lives." #MondayMotivation #Leadership',
+    mediaUrls: ['https://placehold.co/600x600?text=CEO+Quote'],
+    scheduledFor: null,
+    status: 'draft'
   }
 ];
+
+export const mockPerformanceByPlatform: Record<SocialPlatform, SocialStats> = {
+  twitter: {
+    followers: 12500,
+    following: 1200,
+    posts: 2340,
+    engagement: 3.2
+  },
+  instagram: {
+    followers: 45000,
+    following: 800,
+    posts: 750,
+    engagement: 4.8
+  },
+  facebook: {
+    followers: 28000,
+    following: 0,
+    posts: 1200,
+    engagement: 2.1
+  },
+  linkedin: {
+    followers: 8200,
+    following: 150,
+    posts: 420,
+    engagement: 5.3
+  },
+  tiktok: {
+    followers: 15000,
+    following: 200,
+    posts: 85,
+    engagement: 7.9
+  }
+};
+
+export const mockStatsByTimeframe: Record<SocialStatsTimeframe, {
+  followers: number;
+  engagement: number;
+  posts: number;
+}> = {
+  '7d': {
+    followers: 1250,
+    engagement: 4.2,
+    posts: 12
+  },
+  '30d': {
+    followers: 5400,
+    engagement: 3.8,
+    posts: 45
+  },
+  '90d': {
+    followers: 12800,
+    engagement: 3.5,
+    posts: 120
+  },
+  '12m': {
+    followers: 48500,
+    engagement: 3.2,
+    posts: 480
+  }
+};
+
+export const mockPostStatusCounts: Record<SocialPostStatus, number> = {
+  published: 243,
+  scheduled: 18,
+  draft: 7,
+  failed: 2
+};
+
+export const mockUpcomingPosts: SocialPost[] = mockPosts.filter(post => 
+  post.status === 'scheduled' && post.scheduledFor && post.scheduledFor > new Date()
+);
