@@ -8,6 +8,8 @@ import {
   SocialStatsTimeframe
 } from './types';
 
+const now = new Date().toISOString();
+
 export const mockAccounts: SocialAccount[] = [
   {
     id: '1',
@@ -95,7 +97,9 @@ export const mockPosts: SocialPost[] = [
     mediaUrls: ['https://placehold.co/600x400?text=Product+Preview'],
     scheduledFor: new Date('2025-05-15T10:00:00'),
     status: 'scheduled',
-    stats: null
+    stats: null,
+    createdAt: now,
+    updatedAt: now
   },
   {
     id: '2',
@@ -108,7 +112,9 @@ export const mockPosts: SocialPost[] = [
     ],
     scheduledFor: new Date('2025-05-16T12:30:00'),
     status: 'scheduled',
-    stats: null
+    stats: null,
+    createdAt: now,
+    updatedAt: now
   },
   {
     id: '3',
@@ -123,7 +129,9 @@ export const mockPosts: SocialPost[] = [
       likes: 124,
       comments: 45,
       shares: 67
-    }
+    },
+    createdAt: "2025-05-01T08:00:00Z",
+    updatedAt: "2025-05-01T08:00:00Z"
   },
   {
     id: '4',
@@ -138,7 +146,9 @@ export const mockPosts: SocialPost[] = [
       likes: 312,
       comments: 28,
       shares: 54
-    }
+    },
+    createdAt: "2025-04-28T13:00:00Z",
+    updatedAt: "2025-04-28T13:00:00Z"
   },
   {
     id: '5',
@@ -153,7 +163,9 @@ export const mockPosts: SocialPost[] = [
       likes: 89,
       comments: 76,
       shares: 12
-    }
+    },
+    createdAt: "2025-05-03T14:00:00Z",
+    updatedAt: "2025-05-03T14:00:00Z"
   },
   {
     id: '6',
@@ -163,7 +175,9 @@ export const mockPosts: SocialPost[] = [
     mediaUrls: ['https://placehold.co/600x600?text=CEO+Quote'],
     scheduledFor: null,
     status: 'draft',
-    stats: null
+    stats: null,
+    createdAt: "2025-05-06T09:00:00Z",
+    updatedAt: "2025-05-06T09:00:00Z"
   }
 ];
 
@@ -197,6 +211,18 @@ export const mockPerformanceByPlatform: Record<SocialPlatform, SocialStats> = {
     following: 200,
     posts: 85,
     engagement: 7.9
+  },
+  pinterest: {
+    followers: 5200,
+    following: 320,
+    posts: 430,
+    engagement: 3.7
+  },
+  youtube: {
+    followers: 25000,
+    following: 50,
+    posts: 180,
+    engagement: 6.2
   }
 };
 

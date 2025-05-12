@@ -16,15 +16,24 @@ export interface ApiKeyConfig {
 export async function storeApiKeyInDatabase(
   provider: ApiKeyProvider, 
   apiKey: string, 
-  preferredModel?: string,
-  config?: Record<string, any>
+  preferredModel?: string
 ): Promise<boolean> {
   try {
+    // Get current user
+    const { data: { user }, error: userError } = await supabase.auth.getUser();
+    
+    if (userError || !user) {
+      console.error('User not authenticated:', userError);
+      toast.error('Authentication required to store API keys');
+      return false;
+    }
+    
     // Check if provider already exists
     const { data: existingData, error: checkError } = await supabase
       .from('api_provider_settings')
       .select('id')
       .eq('provider_name', provider)
+      .eq('user_id', user.id)
       .maybeSingle();
 
     if (checkError) {
@@ -40,7 +49,7 @@ export async function storeApiKeyInDatabase(
         .update({
           api_key: apiKey,
           preferred_model: preferredModel,
-          // Only add config if it exists in the table
+          updated_at: new Date().toISOString()
         })
         .eq('id', existingData.id);
 
@@ -60,7 +69,7 @@ export async function storeApiKeyInDatabase(
           provider_name: provider,
           api_key: apiKey,
           preferred_model: preferredModel,
-          // Only add config if it exists in the table
+          user_id: user.id
         });
 
       if (insertError) {
@@ -80,12 +89,21 @@ export async function storeApiKeyInDatabase(
 }
 
 // Function to retrieve API key from database
-export async function getApiKey(provider: ApiKeyProvider, storageKey?: string): Promise<{key: string | null; model: string | null; config: any | null}> {
+export async function getApiKey(provider: ApiKeyProvider): Promise<{key: string | null; model: string | null; config: any | null}> {
   try {
+    // Get current user
+    const { data: { user }, error: userError } = await supabase.auth.getUser();
+    
+    if (userError || !user) {
+      console.error('User not authenticated:', userError);
+      return { key: null, model: null, config: null };
+    }
+    
     const { data, error } = await supabase
       .from('api_provider_settings')
       .select('api_key, preferred_model')
       .eq('provider_name', provider)
+      .eq('user_id', user.id)
       .maybeSingle();
 
     if (error) {
@@ -113,10 +131,20 @@ export async function getApiKey(provider: ApiKeyProvider, storageKey?: string): 
 // Function to delete API key from database
 export async function deleteApiKeyFromDatabase(provider: ApiKeyProvider): Promise<boolean> {
   try {
+    // Get current user
+    const { data: { user }, error: userError } = await supabase.auth.getUser();
+    
+    if (userError || !user) {
+      console.error('User not authenticated:', userError);
+      toast.error('Authentication required to delete API keys');
+      return false;
+    }
+    
     const { error } = await supabase
       .from('api_provider_settings')
       .delete()
-      .eq('provider_name', provider);
+      .eq('provider_name', provider)
+      .eq('user_id', user.id);
 
     if (error) {
       console.error('Error deleting API key:', error);

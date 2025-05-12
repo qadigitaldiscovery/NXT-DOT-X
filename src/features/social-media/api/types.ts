@@ -1,3 +1,4 @@
+
 export interface SocialAccount {
   id: string;
   platform: SocialPlatform;
@@ -28,6 +29,8 @@ export interface SocialPost {
   publishedAt?: Date | null;
   status: SocialPostStatus;
   stats: PostStats | null;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export type SocialPostStatus = 'draft' | 'scheduled' | 'published' | 'failed';
