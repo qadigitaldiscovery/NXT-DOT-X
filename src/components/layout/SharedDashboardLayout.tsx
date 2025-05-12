@@ -14,6 +14,10 @@ interface SharedDashboardLayoutProps {
   children?: React.ReactNode;
   notificationArea?: React.ReactNode;
   homeItem?: NavItem;
+  customFooterContent?: React.ReactNode;
+  sidebarClassName?: string;
+  removeBottomToggle?: boolean;
+  showTopLeftToggle?: boolean;
 }
 
 const SharedDashboardLayout: React.FC<SharedDashboardLayoutProps> = ({
@@ -25,7 +29,11 @@ const SharedDashboardLayout: React.FC<SharedDashboardLayoutProps> = ({
     path: '/',
     label: 'Master Dashboard',
     icon: Home
-  }
+  },
+  customFooterContent,
+  sidebarClassName,
+  removeBottomToggle = false,
+  showTopLeftToggle = false
 }) => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const { user } = useAuth();
@@ -45,6 +53,9 @@ const SharedDashboardLayout: React.FC<SharedDashboardLayoutProps> = ({
           onToggle={toggleSidebar} 
           navItems={navCategories}
           homeItem={homeItem}
+          customFooterContent={customFooterContent}
+          className={sidebarClassName}
+          removeBottomToggle={removeBottomToggle}
         />
         
         {/* Main Content */}
@@ -57,6 +68,7 @@ const SharedDashboardLayout: React.FC<SharedDashboardLayoutProps> = ({
             onMenuClick={toggleSidebar} 
             moduleTitle={moduleTitle}
             notificationArea={notificationArea}
+            showSidebarToggle={showTopLeftToggle}
           />
 
           {/* Dashboard Content */}

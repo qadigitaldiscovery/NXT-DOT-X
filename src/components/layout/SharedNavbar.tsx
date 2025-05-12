@@ -14,12 +14,14 @@ interface SharedNavbarProps {
   onMenuClick: () => void;
   moduleTitle?: string;
   notificationArea?: React.ReactNode;
+  showSidebarToggle?: boolean;
 }
 
 export const SharedNavbar = ({
   onMenuClick,
   moduleTitle = "Application",
-  notificationArea
+  notificationArea,
+  showSidebarToggle = false
 }: SharedNavbarProps) => {
   const isMobile = useIsMobile();
   const navigate = useNavigate();
@@ -43,9 +45,11 @@ export const SharedNavbar = ({
     <header className={cn("sticky top-0 z-20 shadow-sm", navbarBgColor)}>
       <div className="flex items-center justify-between h-16 px-4 bg-gray-400 dark:bg-gray-700">
         <div className="flex items-center">
-          <Button variant="ghost" size="icon" onClick={onMenuClick} className={cn(iconColor, hoverBgColor, "mr-2")}>
-            <MenuIcon className="h-5 w-5" />
-          </Button>
+          {showSidebarToggle && (
+            <Button variant="ghost" size="icon" onClick={onMenuClick} className={cn(iconColor, hoverBgColor, "mr-2")}>
+              <MenuIcon className="h-5 w-5" />
+            </Button>
+          )}
           
           {/* Header text */}
           <div className="flex items-center">

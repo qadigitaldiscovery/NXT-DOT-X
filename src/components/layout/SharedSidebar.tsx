@@ -14,19 +14,25 @@ interface SharedSidebarProps {
   onToggle: () => void;
   navItems: NavCategory[];
   homeItem?: NavItem;
+  customFooterContent?: React.ReactNode;
+  className?: string;
+  removeBottomToggle?: boolean;
 }
 
 export const SharedSidebar = ({
   open,
   onToggle,
   navItems,
-  homeItem
+  homeItem,
+  customFooterContent,
+  className,
+  removeBottomToggle = false
 }: SharedSidebarProps) => {
   const isMobile = useIsMobile();
   const [expandedItems, setExpandedItems] = React.useState<string[]>([]);
 
   // Updated styling with more reasonable sizing
-  const sidebarBgColor = 'bg-gradient-to-b from-indigo-950 via-blue-950 to-slate-950';
+  const sidebarBgColor = className || 'bg-gradient-to-b from-indigo-950 via-blue-950 to-slate-950';
   const textColor = 'text-blue-200';
   const textHoverColor = 'hover:text-blue-300';
   const activeBgColor = 'bg-gradient-to-r from-blue-800 to-indigo-700';
@@ -69,23 +75,19 @@ export const SharedSidebar = ({
           )}
           
           {/* Toggle Button */}
-          <Button 
-            variant="ghost" 
-            size="icon" 
-            onClick={onToggle} 
-            className={cn(
-              "bg-blue-900/30 hover:bg-blue-800/50 text-blue-300 hover:text-blue-200 rounded-lg absolute right-2", 
-              !open && "mx-auto"
-            )}
-          >
-            {isMobile ? (
+          {open && (
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              onClick={onToggle} 
+              className={cn(
+                "bg-blue-900/30 hover:bg-blue-800/50 text-blue-300 hover:text-blue-200 rounded-lg absolute right-2", 
+                !open && "mx-auto"
+              )}
+            >
               <ChevronLeft className="h-5 w-5" />
-            ) : open ? (
-              <ChevronLeft className="h-5 w-5" />
-            ) : (
-              <MenuIcon className="h-5 w-5" />
-            )}
-          </Button>
+            </Button>
+          )}
         </div>
 
         {/* Full Navigation List (Visible when open) */}
@@ -117,26 +119,37 @@ export const SharedSidebar = ({
           />
         )}
 
-        {/* Footer area with Home button */}
-        <div className="p-2 border-t border-blue-900/50">
-          {/* Home button when sidebar is open */}
-          {open && homeItem && (
-            <NavLink 
-              to={homeItem.path} 
-              className={({isActive}) => cn(
-                "flex items-center gap-3 px-4 py-3 rounded-lg transition-colors mx-auto my-1",
-                isActive 
-                  ? `${activeBgColor} ${activeTextColor} shadow-md shadow-indigo-900/50` 
-                  : `${textColor} ${textHoverColor} ${hoverBgColor}`
+        {/* Custom Footer or Default Footer */}
+        {open ? (
+          customFooterContent ? (
+            <div className="mt-auto">{customFooterContent}</div>
+          ) : (
+            <div className="p-2 border-t border-blue-900/50 mt-auto">
+              {/* Home button when sidebar is open */}
+              {homeItem && (
+                <NavLink 
+                  to={homeItem.path} 
+                  className={({isActive}) => cn(
+                    "flex items-center gap-3 px-4 py-3 rounded-lg transition-colors mx-auto my-1",
+                    isActive 
+                      ? `${activeBgColor} ${activeTextColor} shadow-md shadow-indigo-900/50` 
+                      : `${textColor} ${textHoverColor} ${hoverBgColor}`
+                  )}
+                >
+                  <homeItem.icon className="h-5 w-5" />
+                  <span className="font-medium uppercase">{homeItem.label}</span>
+                </NavLink>
               )}
-            >
-              <homeItem.icon className="h-5 w-5" />
-              <span className="font-medium uppercase">{homeItem.label}</span>
-            </NavLink>
-          )}
-          <div className="text-xs text-blue-400 font-mono text-center mt-2">v2.5.8</div>
-        </div>
+              <div className="text-xs text-blue-400 font-mono text-center mt-2">v2.5.8</div>
+            </div>
+          )
+        ) : !customFooterContent && (
+          <div className="text-xs text-blue-400 font-mono text-center mt-auto mb-2">v2.5.8</div>
+        )}
       </aside>
+
+      {/* Bottom sidebar toggle button (if not removed) */}
+      {!removeBottomToggle && <SidebarToggleButton open={open} onToggle={onToggle} />}
     </>
   );
 };
