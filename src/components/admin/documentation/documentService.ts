@@ -1,5 +1,5 @@
 
-import { DocumentCategory, DocumentItem } from './types';
+import { DocumentCategory, DocumentItem, DocumentType } from './types';
 import { documentCategories as initialDocumentCategories } from './mockData';
 
 // Class to manage document data and operations
@@ -64,7 +64,7 @@ class DocumentService {
   }
   
   // Add document from file upload
-  addDocumentFromFile(file: File, type: string, metadata: {
+  addDocumentFromFile(file: File, type: DocumentType, metadata: {
     title: string;
     description?: string;
     author: string;

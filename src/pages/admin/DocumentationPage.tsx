@@ -1,4 +1,3 @@
-
 import React, { useState, useMemo, useEffect } from 'react';
 import { DocumentExplorer } from "@/components/admin/documentation/DocumentExplorer";
 import { DocumentSearchBar } from "@/components/admin/documentation/DocumentSearchBar";
@@ -77,10 +76,7 @@ const DocumentationPage = () => {
 
   const handleAddCategory = (categoryData: { name: string }) => {
     try {
-      documentService.addCategory({
-        ...categoryData,
-        documents: []
-      });
+      documentService.addCategory(categoryData);
       setCategories(documentService.getAllCategories());
       toast.success("Category added successfully");
     } catch (error) {
@@ -110,64 +106,20 @@ const DocumentationPage = () => {
     }
   };
 
-  const handleFileUpload = (file: File, type: DocumentType) => {
-    // In a real app, you'd upload to a server here
-    // For now, just create a document from the file
-    if (categories.length === 0) {
-      toast.error("You need to create a category first");
-      return;
-    }
-    
-    // Read file content
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      const content = e.target?.result?.toString() || '';
-      
-      try {
-        const firstCategoryId = categories[0].id;
-        const newDocument = documentService.addDocument(firstCategoryId, {
-          title: file.name,
-          description: `Uploaded on ${new Date().toLocaleDateString()}`,
-          type,
-          content: type === 'text' || type === 'markdown' ? content : undefined,
-          url: type !== 'text' && type !== 'markdown' ? URL.createObjectURL(file) : undefined,
-          author: 'System User'
-        });
-        
-        setCategories(documentService.getAllCategories());
-        setSelectedDocument(newDocument);
-        toast.success("File uploaded and document created successfully");
-      } catch (error) {
-        console.error("Error creating document from file:", error);
-        toast.error("Failed to create document from file");
-      }
-    };
-    
-    reader.onerror = () => {
-      toast.error("Failed to read file");
-    };
-    
-    if (type === 'text' || type === 'markdown') {
-      reader.readAsText(file);
-    } else {
-      // For other file types, just create a document with the file metadata
-      try {
-        const firstCategoryId = categories[0].id;
-        const newDocument = documentService.addDocument(firstCategoryId, {
-          title: file.name,
-          description: `Uploaded on ${new Date().toLocaleDateString()}`,
-          type,
-          url: URL.createObjectURL(file),
-          author: 'System User'
-        });
-        
-        setCategories(documentService.getAllCategories());
-        setSelectedDocument(newDocument);
-        toast.success("File uploaded and document created successfully");
-      } catch (error) {
-        console.error("Error creating document from file:", error);
-        toast.error("Failed to create document from file");
-      }
+  const handleFileUpload = (file: File, type: DocumentType, metadata: {
+    title: string;
+    description?: string;
+    author: string;
+    categoryId: string;
+  }) => {
+    try {
+      const newDocument = documentService.addDocumentFromFile(file, type, metadata);
+      setCategories(documentService.getAllCategories());
+      setSelectedDocument(newDocument);
+      toast.success("File uploaded and document created successfully");
+    } catch (error) {
+      console.error("Error creating document from file:", error);
+      toast.error("Failed to create document from file");
     }
   };
 
