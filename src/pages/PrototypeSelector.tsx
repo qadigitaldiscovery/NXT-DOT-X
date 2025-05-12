@@ -71,7 +71,7 @@ const PrototypeSelector = () => {
           {modules[activeTab as keyof typeof modules].map((module, index) => (
             <div
               key={index}
-              className={`${module.color} text-white rounded-xl p-8 shadow-lg ${module.hoverColor || `hover:${module.color.replace('bg-', 'bg-')}/90`} transition flex flex-col items-center cursor-pointer`}
+              className={`${module.color} text-white rounded-xl p-8 shadow-lg ${module.hoverColor || `hover:opacity-90`} transition flex flex-col items-center cursor-pointer`}
               onClick={() => navigate(module.route)}
             >
               <span className="text-2xl font-semibold mb-2">{module.title}</span>
