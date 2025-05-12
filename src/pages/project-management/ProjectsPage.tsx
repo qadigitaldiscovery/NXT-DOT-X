@@ -79,7 +79,7 @@ const ProjectsPage = () => {
                 </div>
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">All Statuses</SelectItem>
+                <SelectItem value="all">All Statuses</SelectItem>
                 <SelectItem value="active">Active</SelectItem>
                 <SelectItem value="planned">Planned</SelectItem>
                 <SelectItem value="on-hold">On Hold</SelectItem>
