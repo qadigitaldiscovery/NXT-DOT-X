@@ -20,7 +20,7 @@ export const DocumentSearchBar = ({ onSearch }: DocumentSearchBarProps) => {
       <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-gray-500 dark:text-gray-400" />
       <Input
         type="search"
-        placeholder="Search documents..."
+        placeholder="Search documentation..."
         className="w-full pl-9 bg-white/50 dark:bg-gray-900/50 border border-gray-300 dark:border-gray-700"
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}

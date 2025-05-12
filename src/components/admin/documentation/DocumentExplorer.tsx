@@ -27,8 +27,8 @@ export const DocumentExplorer = ({
   };
 
   return (
-    <ScrollArea className="h-[calc(100vh-12rem)] pr-4">
-      <div className="space-y-1">
+    <ScrollArea className="h-[calc(100vh-16rem)] pr-4">
+      <div className="space-y-1 p-2">
         {categories.map((category) => (
           <div key={category.id} className="select-none">
             <button 

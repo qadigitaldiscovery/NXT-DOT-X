@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
@@ -34,6 +35,11 @@ const MasterDash = () => {
     }
   }, [navigate, user]);
 
+  // Navigation handler for sidebar items
+  const handleNavigation = (path) => {
+    navigate(path);
+  };
+
   return (
     <div className="h-screen overflow-hidden bg-[#10121b]">
       {/* Main Layout */}
@@ -45,27 +51,76 @@ const MasterDash = () => {
           </div>
           
           <nav className="flex-1 mt-4 space-y-1">
-            <SidebarItem icon={<Layout className="w-5 h-5" />} label="All Modules" active />
-            <SidebarItem icon={<Key className="w-5 h-5" />} label="API Keys" />
+            <SidebarItem 
+              icon={<Layout className="w-5 h-5" />} 
+              label="All Modules" 
+              active 
+              onClick={() => handleNavigation('/')}
+            />
+            <SidebarItem 
+              icon={<Key className="w-5 h-5" />} 
+              label="API Keys" 
+              onClick={() => handleNavigation('/tech-hub/api-management')}
+            />
             
             {/* Administration Section */}
             <div className="py-2 mt-4">
               <h3 className="px-2 text-xs uppercase tracking-wider text-slate-500 font-semibold mb-2">Administration</h3>
-              <SidebarItem icon={<Users className="w-5 h-5" />} label="User Management" />
-              <SidebarItem icon={<Building className="w-5 h-5" />} label="Customer Management" />
-              <SidebarItem icon={<UserCog className="w-5 h-5" />} label="Roles & Permissions" />
-              <SidebarItem icon={<Shield className="w-5 h-5" />} label="Security" />
-              <SidebarItem icon={<BarChart3 className="w-5 h-5" />} label="Reporting" />
-              <SidebarItem icon={<Globe className="w-5 h-5" />} label="Localization" />
-              <SidebarItem icon={<FileText className="w-5 h-5" />} label="Documentation" />
-              <SidebarItem icon={<Database className="w-5 h-5" />} label="Database Admin" />
-              <SidebarItem icon={<Settings className="w-5 h-5" />} label="System Settings" />
+              <SidebarItem 
+                icon={<Users className="w-5 h-5" />} 
+                label="User Management" 
+                onClick={() => handleNavigation('/admin/users')}
+              />
+              <SidebarItem 
+                icon={<Building className="w-5 h-5" />} 
+                label="Customer Management" 
+                onClick={() => handleNavigation('/data-management/customers')}
+              />
+              <SidebarItem 
+                icon={<UserCog className="w-5 h-5" />} 
+                label="Roles & Permissions" 
+                onClick={() => handleNavigation('/admin/roles')}
+              />
+              <SidebarItem 
+                icon={<Shield className="w-5 h-5" />} 
+                label="Security" 
+                onClick={() => handleNavigation('/admin/security')}
+              />
+              <SidebarItem 
+                icon={<BarChart3 className="w-5 h-5" />} 
+                label="Reporting" 
+                onClick={() => handleNavigation('/admin/reporting')}
+              />
+              <SidebarItem 
+                icon={<Globe className="w-5 h-5" />} 
+                label="Localization" 
+                onClick={() => handleNavigation('/admin/localization')}
+              />
+              <SidebarItem 
+                icon={<FileText className="w-5 h-5" />} 
+                label="Documentation" 
+                onClick={() => handleNavigation('/admin/documentation')}
+              />
+              <SidebarItem 
+                icon={<Database className="w-5 h-5" />} 
+                label="Database Admin" 
+                onClick={() => handleNavigation('/admin/database')}
+              />
+              <SidebarItem 
+                icon={<Settings className="w-5 h-5" />} 
+                label="System Settings" 
+                onClick={() => handleNavigation('/admin/system-settings')}
+              />
             </div>
             
             {/* Other sections */}
             <div className="py-2 mt-4">
               <h3 className="px-2 text-xs uppercase tracking-wider text-slate-500 font-semibold mb-2">Account</h3>
-              <SidebarItem icon={<CreditCard className="w-5 h-5" />} label="Billing" />
+              <SidebarItem 
+                icon={<CreditCard className="w-5 h-5" />} 
+                label="Billing" 
+                onClick={() => handleNavigation('/settings/billing')}
+              />
             </div>
           </nav>
         </div>
@@ -127,9 +182,12 @@ const MasterDash = () => {
 };
 
 // Sidebar Item Component
-const SidebarItem = ({ icon, label, active = false }) => {
+const SidebarItem = ({ icon, label, active = false, onClick }) => {
   return (
-    <div className={`flex items-center p-2 rounded-md ${active ? 'bg-blue-500/10' : 'hover:bg-slate-800'}`}>
+    <div 
+      className={`flex items-center p-2 rounded-md ${active ? 'bg-blue-500/10' : 'hover:bg-slate-800'} cursor-pointer`}
+      onClick={onClick}
+    >
       <div className={`w-8 h-8 flex items-center justify-center rounded-md ${active ? 'text-blue-400' : 'text-slate-400'}`}>
         {icon}
       </div>
