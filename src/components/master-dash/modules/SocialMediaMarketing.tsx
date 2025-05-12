@@ -1,15 +1,11 @@
-
 import React from 'react';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Share2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-
 export default function SocialMediaMarketing() {
   const navigate = useNavigate();
-
-  return (
-    <Card className="col-span-1">
+  return <Card className="col-span-1 bg-gray-800">
       <CardHeader className="pb-2">
         <CardTitle className="flex items-center space-x-2">
           <Share2 className="w-5 h-5 text-blue-600" />
@@ -36,13 +32,9 @@ export default function SocialMediaMarketing() {
         </div>
       </CardContent>
       <CardFooter>
-        <Button 
-          onClick={() => navigate('/social-media')} 
-          className="w-full"
-        >
+        <Button onClick={() => navigate('/social-media')} className="w-full">
           Open Social Media
         </Button>
       </CardFooter>
-    </Card>
-  );
+    </Card>;
 }

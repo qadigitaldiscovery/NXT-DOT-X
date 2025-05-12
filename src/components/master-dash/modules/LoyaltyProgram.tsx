@@ -1,15 +1,11 @@
-
 import React from 'react';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Award } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-
 export default function LoyaltyProgram() {
   const navigate = useNavigate();
-
-  return (
-    <Card className="col-span-1">
+  return <Card className="col-span-1 bg-slate-800">
       <CardHeader className="pb-2">
         <CardTitle className="flex items-center space-x-2">
           <Award className="w-5 h-5 text-yellow-500" />
@@ -36,13 +32,9 @@ export default function LoyaltyProgram() {
         </div>
       </CardContent>
       <CardFooter>
-        <Button 
-          onClick={() => navigate('/loyalty')} 
-          className="w-full"
-        >
+        <Button onClick={() => navigate('/loyalty')} className="w-full">
           Open Loyalty Program
         </Button>
       </CardFooter>
-    </Card>
-  );
+    </Card>;
 }

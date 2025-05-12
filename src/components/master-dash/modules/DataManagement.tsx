@@ -1,15 +1,11 @@
-
 import React from 'react';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Database } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-
 export default function DataManagement() {
   const navigate = useNavigate();
-
-  return (
-    <Card className="col-span-1">
+  return <Card className="col-span-1 bg-gray-800">
       <CardHeader className="pb-2">
         <CardTitle className="flex items-center space-x-2">
           <Database className="w-5 h-5 text-blue-500" />
@@ -36,13 +32,9 @@ export default function DataManagement() {
         </div>
       </CardContent>
       <CardFooter>
-        <Button 
-          onClick={() => navigate('/data-management')} 
-          className="w-full"
-        >
+        <Button onClick={() => navigate('/data-management')} className="w-full">
           Open Data Management
         </Button>
       </CardFooter>
-    </Card>
-  );
+    </Card>;
 }
