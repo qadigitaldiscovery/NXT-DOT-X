@@ -18,6 +18,7 @@ import { SupplierManagementRoutes } from "./supplierManagementRoutes";
 import { CustomerManagementRoutes } from "./customerManagementRoutes";
 import { BrandMarketingRoutes } from "./brandMarketingRoutes";
 import { SocialMediaRoutes } from "./socialMediaRoutes";
+import { ProjectManagementRoutes } from "./projectManagementRoutes";
 
 export const AppRoutes = () => {
   return (
@@ -54,6 +55,7 @@ export const AppRoutes = () => {
       {CustomerManagementRoutes()}
       {BrandMarketingRoutes()}
       {SocialMediaRoutes()}
+      {ProjectManagementRoutes()}
       
       {/* 404 Page */}
       <Route path="*" element={<NotFound />} />
