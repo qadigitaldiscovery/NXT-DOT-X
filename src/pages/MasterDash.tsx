@@ -19,8 +19,12 @@ import {
   Building,
   UserCog,
   ClipboardList,
-  Home
+  Home,
+  ChevronLeft,
+  ChevronRight
 } from 'lucide-react';
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 const MasterDash = () => {
   const navigate = useNavigate();
@@ -66,11 +70,45 @@ const MasterDash = () => {
     }
   ];
 
+  // Custom footer with navigation controls
+  const navigationFooter = (
+    <div className="flex items-center justify-between p-2 border-t border-gray-700/50 mt-auto">
+      <Button 
+        variant="ghost" 
+        size="icon" 
+        onClick={() => navigate(-1)}
+        className="text-gray-300 hover:text-gray-100 hover:bg-gray-800/50 rounded-lg"
+      >
+        <ChevronLeft className="h-5 w-5" />
+      </Button>
+      
+      <Button 
+        variant="ghost" 
+        size="icon" 
+        onClick={() => navigate('/')}
+        className="text-gray-300 hover:text-gray-100 hover:bg-gray-800/50 rounded-lg"
+      >
+        <Home className="h-5 w-5" />
+      </Button>
+      
+      <Button 
+        variant="ghost" 
+        size="icon" 
+        onClick={() => navigate(1)}
+        className="text-gray-300 hover:text-gray-100 hover:bg-gray-800/50 rounded-lg"
+      >
+        <ChevronRight className="h-5 w-5" />
+      </Button>
+    </div>
+  );
+
   return (
     <SharedDashboardLayout
       moduleTitle="Business Management Platform"
       navCategories={navCategories}
-      homeItem={{ label: "Home", path: "/", icon: Home }}
+      customFooterContent={navigationFooter}
+      showTopLeftToggle={true}
+      removeBottomToggle={true}
     >
       <DashboardModules />
     </SharedDashboardLayout>

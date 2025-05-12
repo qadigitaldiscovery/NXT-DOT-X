@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -26,7 +27,7 @@ export const SharedSidebar = ({
   homeItem,
   customFooterContent,
   className,
-  removeBottomToggle = false
+  removeBottomToggle = true
 }: SharedSidebarProps) => {
   const isMobile = useIsMobile();
   const [expandedItems, setExpandedItems] = React.useState<string[]>([]);
@@ -66,27 +67,12 @@ export const SharedSidebar = ({
         <div className="">
           {/* Only show DOT-X logo when sidebar is open */}
           {open && (
-            <div className="flex flex-col items-center justify-center w-full">
+            <div className="flex flex-col items-center justify-center w-full pt-4 pb-2">
               <div className="flex items-center justify-center">
                 <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-indigo-200">DOT-X</span>
               </div>
               <span className="text-xs text-blue-300 font-medium">NAVIGATION PANEL</span>
             </div>
-          )}
-          
-          {/* Toggle Button */}
-          {open && (
-            <Button 
-              variant="ghost" 
-              size="icon" 
-              onClick={onToggle} 
-              className={cn(
-                "bg-blue-900/30 hover:bg-blue-800/50 text-blue-300 hover:text-blue-200 rounded-lg absolute right-2", 
-                !open && "mx-auto"
-              )}
-            >
-              <ChevronLeft className="h-5 w-5" />
-            </Button>
           )}
         </div>
 

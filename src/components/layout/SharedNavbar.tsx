@@ -21,7 +21,7 @@ export const SharedNavbar = ({
   onMenuClick,
   moduleTitle = "Application",
   notificationArea,
-  showSidebarToggle = false
+  showSidebarToggle = true
 }: SharedNavbarProps) => {
   const isMobile = useIsMobile();
   const navigate = useNavigate();
@@ -36,7 +36,7 @@ export const SharedNavbar = ({
   };
 
   // Clean styling for header
-  const navbarBgColor = 'bg-white border-b border-gray-200 dark:bg-gray-800 dark:border-gray-700';
+  const navbarBgColor = 'bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700';
   const textColor = 'text-gray-700 dark:text-gray-200';
   const iconColor = 'text-gray-500 dark:text-gray-400';
   const hoverBgColor = 'hover:bg-gray-100 dark:hover:bg-gray-700';
@@ -46,7 +46,7 @@ export const SharedNavbar = ({
       <div className="flex items-center justify-between h-16 px-4 bg-gray-400 dark:bg-gray-700">
         <div className="flex items-center">
           {showSidebarToggle && (
-            <Button variant="ghost" size="icon" onClick={onMenuClick} className={cn(iconColor, hoverBgColor, "mr-2")}>
+            <Button variant="ghost" size="icon" onClick={onMenuClick} className={cn("mr-3 text-slate-100 hover:text-white hover:bg-gray-600")}>
               <MenuIcon className="h-5 w-5" />
             </Button>
           )}
@@ -100,9 +100,11 @@ export const SharedNavbar = ({
           </Button>
 
           {/* Module-specific Notification Area */}
-          {notificationArea && <div className={cn(iconColor)}>
+          {notificationArea && (
+            <div className={cn(iconColor)}>
               {notificationArea}
-            </div>}
+            </div>
+          )}
           
           {/* User Account Dropdown */}
           <DropdownMenu>
@@ -114,9 +116,11 @@ export const SharedNavbar = ({
             <DropdownMenuContent align="end" className="w-56 border-gray-200 dark:border-gray-700 dark:bg-gray-800">
               <DropdownMenuLabel className="dark:text-gray-200">{user?.username || 'User'} ({user?.role || 'Unknown'})</DropdownMenuLabel>
               <DropdownMenuSeparator className="dark:border-gray-700" />
-              {user?.role === 'admin' && <DropdownMenuItem onClick={() => navigate('/admin/users')} className="dark:text-gray-200 dark:hover:bg-gray-700">
+              {user?.role === 'admin' && (
+                <DropdownMenuItem onClick={() => navigate('/admin/users')} className="dark:text-gray-200 dark:hover:bg-gray-700">
                   User Management
-                </DropdownMenuItem>}
+                </DropdownMenuItem>
+              )}
               <DropdownMenuItem onClick={() => navigate('/settings')} className="dark:text-gray-200 dark:hover:bg-gray-700">
                 Account Settings
               </DropdownMenuItem>

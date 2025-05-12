@@ -4,9 +4,11 @@ import { Outlet, useLocation } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
 import { SharedNavbar } from './SharedNavbar';
 import { SharedSidebar } from './SharedSidebar';
-import { Home } from 'lucide-react';
+import { Home, ChevronLeft, ChevronRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { NavItem, NavCategory } from './sidebar/types';
+import { Button } from '../ui/button';
+import { useNavigate } from 'react-router-dom';
 
 interface SharedDashboardLayoutProps {
   moduleTitle?: string;
@@ -32,16 +34,49 @@ const SharedDashboardLayout: React.FC<SharedDashboardLayoutProps> = ({
   },
   customFooterContent,
   sidebarClassName,
-  removeBottomToggle = false,
-  showTopLeftToggle = false
+  removeBottomToggle = true, // Default to true to remove bottom toggle
+  showTopLeftToggle = true // Default to true to show top left toggle
 }) => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const { user } = useAuth();
   const location = useLocation();
+  const navigate = useNavigate();
 
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
   };
+
+  // Default navigation footer if none is provided
+  const defaultNavigationFooter = (
+    <div className="flex items-center justify-between p-2 border-t border-slate-700/50 mt-auto">
+      <Button 
+        variant="ghost" 
+        size="icon" 
+        onClick={() => navigate(-1)}
+        className="text-slate-300 hover:text-slate-100 hover:bg-slate-800/50 rounded-lg"
+      >
+        <ChevronLeft className="h-5 w-5" />
+      </Button>
+      
+      <Button 
+        variant="ghost" 
+        size="icon" 
+        onClick={() => navigate('/')}
+        className="text-slate-300 hover:text-slate-100 hover:bg-slate-800/50 rounded-lg"
+      >
+        <Home className="h-5 w-5" />
+      </Button>
+      
+      <Button 
+        variant="ghost" 
+        size="icon" 
+        onClick={() => navigate(1)}
+        className="text-slate-300 hover:text-slate-100 hover:bg-slate-800/50 rounded-lg"
+      >
+        <ChevronRight className="h-5 w-5" />
+      </Button>
+    </div>
+  );
 
   return (
     <div className="h-screen overflow-hidden bg-slate-50 dark:bg-gray-900">
@@ -53,7 +88,7 @@ const SharedDashboardLayout: React.FC<SharedDashboardLayoutProps> = ({
           onToggle={toggleSidebar} 
           navItems={navCategories}
           homeItem={homeItem}
-          customFooterContent={customFooterContent}
+          customFooterContent={customFooterContent || defaultNavigationFooter}
           className={sidebarClassName}
           removeBottomToggle={removeBottomToggle}
         />
