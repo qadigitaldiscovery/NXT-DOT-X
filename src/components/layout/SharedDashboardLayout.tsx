@@ -34,8 +34,8 @@ const SharedDashboardLayout: React.FC<SharedDashboardLayoutProps> = ({
   },
   customFooterContent,
   sidebarClassName,
-  removeBottomToggle = false, // Changed default to false to show bottom toggle
-  showTopLeftToggle = true // Default to true to show top left toggle
+  removeBottomToggle = false,
+  showTopLeftToggle = true
 }) => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const { user } = useAuth();

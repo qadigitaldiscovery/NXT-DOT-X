@@ -92,9 +92,9 @@ export const SharedSidebar = ({
           />
         )}
 
-        {/* Custom Footer Content */}
-        {customFooterContent && (
-          <div className={cn("mt-auto", !open && "md:hidden")}>
+        {/* Custom Footer Content - Ensuring it's visible when sidebar is open */}
+        {customFooterContent && open && (
+          <div className="mt-auto">
             {customFooterContent}
           </div>
         )}
