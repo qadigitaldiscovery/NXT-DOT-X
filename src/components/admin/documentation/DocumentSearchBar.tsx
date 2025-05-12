@@ -1,7 +1,8 @@
 
-import React, { useState } from 'react';
-import { Search } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Search, X } from 'lucide-react';
 import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
 
 interface DocumentSearchBarProps {
   onSearch: (searchTerm: string) => void;
@@ -9,10 +10,25 @@ interface DocumentSearchBarProps {
 
 export const DocumentSearchBar = ({ onSearch }: DocumentSearchBarProps) => {
   const [searchTerm, setSearchTerm] = useState('');
+  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('');
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearchTerm(searchTerm);
+      onSearch(searchTerm);
+    }, 300);
+    
+    return () => clearTimeout(timer);
+  }, [searchTerm, onSearch]);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     onSearch(searchTerm);
+  };
+
+  const clearSearch = () => {
+    setSearchTerm('');
+    onSearch('');
   };
 
   return (
@@ -21,10 +37,22 @@ export const DocumentSearchBar = ({ onSearch }: DocumentSearchBarProps) => {
       <Input
         type="search"
         placeholder="Search documentation..."
-        className="w-full pl-9 bg-white/50 dark:bg-gray-900/50 border border-gray-300 dark:border-gray-700"
+        className="w-full pl-9 pr-10 bg-white/50 dark:bg-gray-900/50 border border-gray-300 dark:border-gray-700"
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
       />
+      {searchTerm && (
+        <Button
+          type="button"
+          variant="ghost"
+          size="icon"
+          className="absolute right-1 top-1 h-7 w-7"
+          onClick={clearSearch}
+        >
+          <X className="h-4 w-4 text-gray-500 dark:text-gray-400" />
+          <span className="sr-only">Clear search</span>
+        </Button>
+      )}
     </form>
   );
 };

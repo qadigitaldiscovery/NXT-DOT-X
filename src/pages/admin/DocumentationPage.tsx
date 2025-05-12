@@ -3,40 +3,48 @@ import React, { useState, useMemo, useEffect } from 'react';
 import { DocumentExplorer } from "@/components/admin/documentation/DocumentExplorer";
 import { DocumentSearchBar } from "@/components/admin/documentation/DocumentSearchBar";
 import { DocumentViewer } from "@/components/admin/documentation/DocumentViewer";
-import { documentCategories } from "@/components/admin/documentation/mockData";
-import { DocumentCategory, DocumentItem } from "@/components/admin/documentation/types";
+import { DocumentToolbar } from "@/components/admin/documentation/DocumentToolbar";
+import { documentService } from "@/components/admin/documentation/documentService";
+import { DocumentCategory, DocumentItem, DocumentType } from "@/components/admin/documentation/types";
 import { NavigationMenu } from "@/components/admin/documentation/NavigationMenu";
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Home, FileText } from 'lucide-react';
+import { Home, FileText, AlertTriangle } from 'lucide-react';
+import { toast } from 'sonner';
 
 const DocumentationPage = () => {
+  const [categories, setCategories] = useState<DocumentCategory[]>([]);
   const [selectedDocument, setSelectedDocument] = useState<DocumentItem | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
   
-  // Simulate loading of documentation
+  // Load initial data
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 800);
+    const loadData = async () => {
+      setIsLoading(true);
+      try {
+        // In a real app, you'd fetch from API here
+        setTimeout(() => {
+          const loadedCategories = documentService.getAllCategories();
+          setCategories(loadedCategories);
+          setIsLoading(false);
+        }, 800);
+      } catch (error) {
+        console.error("Error loading documentation:", error);
+        toast.error("Failed to load documentation");
+        setIsLoading(false);
+      }
+    };
     
-    return () => clearTimeout(timer);
+    loadData();
   }, []);
   
   // Filter documents based on search term
   const filteredCategories = useMemo(() => {
-    if (!searchTerm) return documentCategories;
-    
-    return documentCategories.map(category => ({
-      ...category,
-      documents: category.documents.filter(doc => 
-        doc.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
-        doc.content?.toLowerCase().includes(searchTerm.toLowerCase())
-      )
-    })).filter(category => category.documents.length > 0);
-  }, [searchTerm]);
+    if (!searchTerm) return categories;
+    return documentService.searchDocuments(searchTerm);
+  }, [searchTerm, categories]);
 
   // Set first document as selected if none selected
   useEffect(() => {
@@ -47,6 +55,131 @@ const DocumentationPage = () => {
 
   const handleSearch = (term: string) => {
     setSearchTerm(term);
+  };
+
+  const handleAddDocument = (categoryId: string, documentData: {
+    title: string;
+    description?: string;
+    type: DocumentType;
+    content?: string;
+    author: string;
+  }) => {
+    try {
+      const newDocument = documentService.addDocument(categoryId, documentData);
+      setCategories(documentService.getAllCategories());
+      setSelectedDocument(newDocument);
+      toast.success("Document added successfully");
+    } catch (error) {
+      console.error("Error adding document:", error);
+      toast.error("Failed to add document");
+    }
+  };
+
+  const handleAddCategory = (categoryData: { name: string }) => {
+    try {
+      documentService.addCategory({
+        ...categoryData,
+        documents: []
+      });
+      setCategories(documentService.getAllCategories());
+      toast.success("Category added successfully");
+    } catch (error) {
+      console.error("Error adding category:", error);
+      toast.error("Failed to add category");
+    }
+  };
+
+  const handleDeleteDocument = (documentId: string) => {
+    try {
+      const success = documentService.deleteDocument(documentId);
+      
+      if (success) {
+        // If the deleted document was selected, clear selection
+        if (selectedDocument?.id === documentId) {
+          setSelectedDocument(null);
+        }
+        
+        setCategories(documentService.getAllCategories());
+        toast.success("Document deleted successfully");
+      } else {
+        toast.error("Failed to delete document");
+      }
+    } catch (error) {
+      console.error("Error deleting document:", error);
+      toast.error("Failed to delete document");
+    }
+  };
+
+  const handleFileUpload = (file: File, type: DocumentType) => {
+    // In a real app, you'd upload to a server here
+    // For now, just create a document from the file
+    if (categories.length === 0) {
+      toast.error("You need to create a category first");
+      return;
+    }
+    
+    // Read file content
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const content = e.target?.result?.toString() || '';
+      
+      try {
+        const firstCategoryId = categories[0].id;
+        const newDocument = documentService.addDocument(firstCategoryId, {
+          title: file.name,
+          description: `Uploaded on ${new Date().toLocaleDateString()}`,
+          type,
+          content: type === 'text' || type === 'markdown' ? content : undefined,
+          url: type !== 'text' && type !== 'markdown' ? URL.createObjectURL(file) : undefined,
+          author: 'System User'
+        });
+        
+        setCategories(documentService.getAllCategories());
+        setSelectedDocument(newDocument);
+        toast.success("File uploaded and document created successfully");
+      } catch (error) {
+        console.error("Error creating document from file:", error);
+        toast.error("Failed to create document from file");
+      }
+    };
+    
+    reader.onerror = () => {
+      toast.error("Failed to read file");
+    };
+    
+    if (type === 'text' || type === 'markdown') {
+      reader.readAsText(file);
+    } else {
+      // For other file types, just create a document with the file metadata
+      try {
+        const firstCategoryId = categories[0].id;
+        const newDocument = documentService.addDocument(firstCategoryId, {
+          title: file.name,
+          description: `Uploaded on ${new Date().toLocaleDateString()}`,
+          type,
+          url: URL.createObjectURL(file),
+          author: 'System User'
+        });
+        
+        setCategories(documentService.getAllCategories());
+        setSelectedDocument(newDocument);
+        toast.success("File uploaded and document created successfully");
+      } catch (error) {
+        console.error("Error creating document from file:", error);
+        toast.error("Failed to create document from file");
+      }
+    }
+  };
+
+  const handleRefresh = () => {
+    setIsLoading(true);
+    // In a real app, you'd refetch from API here
+    setTimeout(() => {
+      const refreshedCategories = documentService.getAllCategories();
+      setCategories(refreshedCategories);
+      setIsLoading(false);
+      toast.success("Documentation refreshed");
+    }, 500);
   };
 
   if (isLoading) {
@@ -66,7 +199,7 @@ const DocumentationPage = () => {
 
   return (
     <div className="container mx-auto px-4 py-6">
-      <div className="flex justify-between items-center mb-6">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
         <h1 className="text-2xl font-bold flex items-center">
           <FileText className="mr-2" />
           Documentation
@@ -85,35 +218,59 @@ const DocumentationPage = () => {
         </div>
       </div>
       
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="md:col-span-1">
-          <div className="mb-4">
-            <DocumentSearchBar onSearch={handleSearch} />
-          </div>
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow">
-            <div className="p-4 border-b border-gray-200 dark:border-gray-700">
-              <h2 className="text-lg font-medium">Document Explorer</h2>
-            </div>
-            <DocumentExplorer 
-              categories={filteredCategories} 
-              onSelectDocument={setSelectedDocument} 
-              selectedDocument={selectedDocument} 
-            />
+      {categories.length === 0 ? (
+        <div className="bg-amber-50 border border-amber-200 rounded-lg p-6 text-center">
+          <AlertTriangle className="h-12 w-12 mx-auto text-amber-500 mb-3" />
+          <h3 className="text-lg font-semibold mb-2">No Documentation Found</h3>
+          <p className="mb-4">There are no documentation categories or documents available.</p>
+          <div className="flex flex-wrap justify-center gap-3">
+            <Button onClick={() => handleAddCategory({ name: 'General Documentation' })}>
+              Create First Category
+            </Button>
           </div>
         </div>
-        
-        <div className="md:col-span-2">
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow h-full">
-            {selectedDocument ? (
-              <DocumentViewer document={selectedDocument} />
-            ) : (
-              <div className="p-8 text-center text-gray-500">
-                <p>Select a document to view or search for specific content.</p>
+      ) : (
+        <>
+          <DocumentToolbar 
+            categories={categories}
+            onDocumentAdd={handleAddDocument}
+            onCategoryAdd={handleAddCategory}
+            onFileUpload={handleFileUpload}
+            onRefresh={handleRefresh}
+          />
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="md:col-span-1">
+              <div className="mb-4">
+                <DocumentSearchBar onSearch={handleSearch} />
               </div>
-            )}
+              <div className="bg-white dark:bg-gray-800 rounded-lg shadow">
+                <div className="p-4 border-b border-gray-200 dark:border-gray-700">
+                  <h2 className="text-lg font-medium">Document Explorer</h2>
+                </div>
+                <DocumentExplorer 
+                  categories={filteredCategories} 
+                  onSelectDocument={setSelectedDocument}
+                  selectedDocument={selectedDocument}
+                  onDeleteDocument={handleDeleteDocument}
+                />
+              </div>
+            </div>
+            
+            <div className="md:col-span-2">
+              <div className="bg-white dark:bg-gray-800 rounded-lg shadow h-full">
+                {selectedDocument ? (
+                  <DocumentViewer document={selectedDocument} />
+                ) : (
+                  <div className="p-8 text-center text-gray-500">
+                    <p>Select a document to view or search for specific content.</p>
+                  </div>
+                )}
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
+        </>
+      )}
     </div>
   );
 };
