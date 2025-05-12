@@ -4,6 +4,20 @@ import { documentCategories as initialDocumentCategories } from './mockData';
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
+// Interface that matches Supabase's database column names
+interface DbDocumentItem {
+  id: string;
+  category_id: string;
+  title: string;
+  description?: string;
+  type: string;
+  content?: string;
+  url?: string;
+  author?: string;
+  created_at: string;
+  updated_at: string;
+}
+
 // Class to manage document data and operations with Supabase integration
 class DocumentService {
   // Load initial mock data only for first-time setup
@@ -11,6 +25,21 @@ class DocumentService {
   
   constructor() {
     // We'll load data from Supabase instead of initializing with mock data directly
+  }
+  
+  // Convert a database document to our application's DocumentItem format
+  private mapDbDocumentToDocumentItem(dbDocument: DbDocumentItem): DocumentItem {
+    return {
+      id: dbDocument.id,
+      title: dbDocument.title,
+      description: dbDocument.description || '',
+      type: dbDocument.type as DocumentType,
+      content: dbDocument.content || '',
+      url: dbDocument.url || '',
+      author: dbDocument.author || '',
+      createdAt: dbDocument.created_at,
+      updatedAt: dbDocument.updated_at
+    };
   }
   
   // Get all document categories from Supabase
@@ -45,10 +74,13 @@ class DocumentService {
             };
           }
           
+          // Map database documents to our DocumentItem format
+          const mappedDocuments = documents.map(doc => this.mapDbDocumentToDocumentItem(doc as DbDocumentItem));
+          
           return {
             id: category.id,
             name: category.name,
-            documents: documents as DocumentItem[],
+            documents: mappedDocuments,
           };
         })
       );
@@ -121,7 +153,8 @@ class DocumentService {
         return [];
       }
       
-      return data;
+      // Map database documents to our DocumentItem format
+      return data.map(doc => this.mapDbDocumentToDocumentItem(doc as DbDocumentItem));
     } catch (error) {
       console.error('Error in getAllDocuments:', error);
       return [];
@@ -160,9 +193,9 @@ class DocumentService {
           });
         }
         
-        // Extract just the document data (removing the nested category)
+        // Extract just the document data (removing the nested category) and map to DocumentItem
         const { document_categories, ...documentData } = doc;
-        categoriesMap.get(category.id)?.documents.push(documentData as DocumentItem);
+        categoriesMap.get(category.id)?.documents.push(this.mapDbDocumentToDocumentItem(documentData as DbDocumentItem));
       }
       
       return Array.from(categoriesMap.values());
@@ -186,7 +219,7 @@ class DocumentService {
         return null;
       }
       
-      return data;
+      return this.mapDbDocumentToDocumentItem(data as DbDocumentItem);
     } catch (error) {
       console.error('Error in getDocumentById:', error);
       return null;
@@ -215,7 +248,7 @@ class DocumentService {
         throw new Error(`Failed to add document: ${error.message}`);
       }
       
-      return data;
+      return this.mapDbDocumentToDocumentItem(data as DbDocumentItem);
     } catch (error) {
       console.error('Error in addDocument:', error);
       throw error;
@@ -285,13 +318,20 @@ class DocumentService {
   // Update document
   async updateDocument(id: string, updates: Partial<DocumentItem>): Promise<DocumentItem | null> {
     try {
-      // Remove any properties that shouldn't be sent to Supabase
-      const { createdAt, updatedAt, ...validUpdates } = updates;
+      // Convert from our DocumentItem format to database format
+      const dbUpdates: Partial<DbDocumentItem> = {
+        ...(updates.title !== undefined && { title: updates.title }),
+        ...(updates.description !== undefined && { description: updates.description }),
+        ...(updates.content !== undefined && { content: updates.content }),
+        ...(updates.url !== undefined && { url: updates.url }),
+        ...(updates.author !== undefined && { author: updates.author }),
+        ...(updates.type !== undefined && { type: updates.type }),
+      };
       
       const { data, error } = await supabase
         .from('documents')
         .update({
-          ...validUpdates,
+          ...dbUpdates,
           updated_at: new Date().toISOString(),
         })
         .eq('id', id)
@@ -303,7 +343,7 @@ class DocumentService {
         return null;
       }
       
-      return data;
+      return this.mapDbDocumentToDocumentItem(data as DbDocumentItem);
     } catch (error) {
       console.error('Error in updateDocument:', error);
       return null;
