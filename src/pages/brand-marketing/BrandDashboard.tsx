@@ -4,7 +4,6 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Award, TrendingUp, BarChart3, Globe, Heart, BadgePercent } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
-import { BrandMarketingLayout } from '@/components/layout/BrandMarketingLayout';
 
 const BrandDashboard = () => {
   const navigate = useNavigate();

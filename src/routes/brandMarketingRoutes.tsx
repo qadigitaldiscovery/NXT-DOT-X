@@ -1,7 +1,7 @@
 
 import React from "react";
 import { Route } from "react-router-dom";
-import { BrandMarketingLayout } from "@/components/layout/BrandMarketingLayout";
+import BrandMarketingLayout from "@/components/layout/BrandMarketingLayout";
 
 // Brand Marketing pages
 import BrandDashboard from "@/pages/brand-marketing/BrandDashboard";
