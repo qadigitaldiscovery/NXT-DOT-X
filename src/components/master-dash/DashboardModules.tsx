@@ -78,7 +78,7 @@ const DashboardModules = () => {
   return (
     <div className="space-y-6">
       {/* Search and filtering */}
-      <div className="flex flex-wrap items-center justify-between gap-4">
+      <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
         <div className="flex space-x-2">
           {categories.map(category => (
             <button
@@ -107,6 +107,11 @@ const DashboardModules = () => {
         </div>
       </div>
 
+      {/* System Technical Configuration */}
+      <div className="mb-8">
+        <SystemTechnicalConfig />
+      </div>
+
       {/* Module grid */}
       <div className="space-y-6">
         {moduleRows.map((row, rowIndex) => (
@@ -127,5 +132,8 @@ const DashboardModules = () => {
     </div>
   );
 };
+
+// Import the SystemTechnicalConfig component
+import SystemTechnicalConfig from './modules/SystemTechnicalConfig';
 
 export default DashboardModules;

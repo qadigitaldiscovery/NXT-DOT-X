@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { Search } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 interface ModuleCardProps {
   title: string;
@@ -38,7 +39,7 @@ export const ModuleCard: React.FC<ModuleCardProps> = ({
   };
 
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col h-full rounded-md overflow-hidden">
       <div className="flex items-center justify-between mb-2">
         <h3 className="text-lg font-medium text-white">{title}</h3>
         <button className="text-slate-400 hover:text-white">
@@ -59,7 +60,7 @@ export const ModuleCard: React.FC<ModuleCardProps> = ({
         </div>
         
         {/* Module content */}
-        <div className="relative">
+        <div className="relative text-white">
           <h3 className="text-xl font-bold text-white mb-2">Connected</h3>
           <p className="text-sm text-white/70">{description}</p>
         </div>
@@ -67,9 +68,11 @@ export const ModuleCard: React.FC<ModuleCardProps> = ({
       
       {/* Status button */}
       <div className="mt-3">
-        <button className="w-full py-2 px-4 bg-blue-500 text-white rounded-md flex items-center justify-center">
-          <span className="mr-2">•</span> CONNECTED
-        </button>
+        <Button 
+          className="w-full py-2 px-4 bg-blue-500 hover:bg-blue-600 text-white rounded-md flex items-center justify-center"
+        >
+          <span className="mr-2 text-white">•</span> CONNECTED
+        </Button>
       </div>
     </div>
   );

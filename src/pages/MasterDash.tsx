@@ -35,7 +35,6 @@ const MasterDash = () => {
             <SidebarItem icon={<Layout className="w-5 h-5" />} label="All Modules" active />
             <SidebarItem icon={<Key className="w-5 h-5" />} label="API Keys" />
             <SidebarItem icon={<Users className="w-5 h-5" />} label="Users" />
-            <SidebarItem icon={<Users className="w-5 h-5" />} label="Users" />
             <SidebarItem icon={<CreditCard className="w-5 h-5" />} label="Billing" />
             <SidebarItem icon={<Settings className="w-5 h-5" />} label="Settings" />
             <SidebarItem icon={<FileText className="w-5 h-5" />} label="Documentation" />
