@@ -2,13 +2,13 @@
 import React from 'react';
 import { Navigate } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
-import PrototypeSelector from '@/pages/PrototypeSelector';
+import MasterDash from '@/pages/MasterDash';
 
 const RootHandler: React.FC = () => {
   const { isAuthenticated } = useAuth();
 
   if (isAuthenticated) {
-    return <PrototypeSelector />;
+    return <MasterDash />;
   } else {
     return <Navigate to="/landing" replace />;
   }

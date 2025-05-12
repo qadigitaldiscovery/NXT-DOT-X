@@ -5,6 +5,7 @@ import Landing from "@/pages/Landing";
 import RootHandler from '@/components/RootHandler';
 import Unauthorized from "@/pages/Unauthorized";
 import PrototypeSelector from '@/pages/PrototypeSelector';
+import MasterDash from '@/pages/MasterDash';
 
 // Import module-specific routes
 import { AdminRoutes } from "./adminRoutes";
@@ -29,6 +30,9 @@ export const AppRoutes = () => {
       
       {/* Unauthorized Page */}
       <Route path="/unauthorized" element={<Unauthorized />} />
+      
+      {/* MasterDash Route */}
+      <Route path="/master" element={<MasterDash />} />
       
       {/* Legacy route redirects */}
       <Route path="/prototypes" element={<Navigate to="/" replace />} />
