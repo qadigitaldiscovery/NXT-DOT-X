@@ -1,8 +1,7 @@
 
 import { useState } from "react";
-import { Card, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useNavigate } from "react-router-dom";
 import DataManagement from "./DataManagement";
 import LoyaltyProgram from "./LoyaltyProgram";
@@ -51,8 +50,8 @@ export default function PrimaryModules() {
 
   return (
     <div className="space-y-6">
-      {/* Dashboard Header */}
-      <Card>
+      {/* Dashboard Header - removed border by adding border-0 class */}
+      <Card className="border-0 shadow-none">
         <CardHeader>
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center">
             <div>
@@ -70,14 +69,6 @@ export default function PrimaryModules() {
             </Tabs>
           </div>
         </CardHeader>
-        <CardFooter className="flex justify-between">
-          <Button variant="outline" onClick={() => navigate("/all-modules")}>
-            View All Modules
-          </Button>
-          <Button variant="outline" onClick={() => navigate("/admin/documentation")}>
-            Module Documentation
-          </Button>
-        </CardFooter>
       </Card>
 
       {/* Module Cards */}
