@@ -1,15 +1,29 @@
 
 import React, { useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { useAuth } from '@/context/AuthContext';
-import MasterDashSidebar from '@/components/master-dash/MasterDashSidebar';
-import MasterDashNavbar from '@/components/master-dash/MasterDashNavbar';
 import DashboardModules from '@/components/master-dash/DashboardModules';
+import SharedDashboardLayout from '@/components/layout/SharedDashboardLayout';
+import { 
+  Layout, 
+  Key, 
+  Users, 
+  Settings, 
+  FileText, 
+  CreditCard,
+  Database,
+  Shield,
+  Globe,
+  BarChart3,
+  Building,
+  UserCog,
+  ClipboardList,
+  Home
+} from 'lucide-react';
 
 const MasterDash = () => {
   const navigate = useNavigate();
-  const location = useLocation();
   const { user } = useAuth();
 
   // Check if user is authenticated
@@ -20,25 +34,46 @@ const MasterDash = () => {
     }
   }, [navigate, user]);
 
-  return (
-    <div className="h-screen overflow-hidden bg-[#10121b] dark:bg-[#0a0b10]">
-      {/* Main Layout */}
-      <div className="flex h-full">
-        {/* Sidebar */}
-        <MasterDashSidebar activePath={location.pathname} />
-        
-        {/* Main Content */}
-        <div className="flex-1 overflow-auto">
-          {/* Header */}
-          <MasterDashNavbar user={user} />
+  // Define navigation categories for the sidebar
+  const navCategories = [
+    {
+      name: "Main",
+      items: [
+        { label: "All Modules", path: "/", icon: Layout },
+        { label: "API Keys", path: "/tech-hub/api-management", icon: Key },
+        { label: "Project Management", path: "/projects", icon: ClipboardList }
+      ]
+    },
+    {
+      name: "Administration",
+      items: [
+        { label: "User Management", path: "/admin/users", icon: Users },
+        { label: "Customer Management", path: "/data-management/customers", icon: Building },
+        { label: "Roles & Permissions", path: "/admin/roles", icon: UserCog },
+        { label: "Security", path: "/admin/security", icon: Shield },
+        { label: "Reporting", path: "/admin/reporting", icon: BarChart3 },
+        { label: "Localization", path: "/admin/localization", icon: Globe },
+        { label: "Documentation", path: "/admin/documentation", icon: FileText },
+        { label: "Database Admin", path: "/admin/database", icon: Database },
+        { label: "System Settings", path: "/admin/system-settings", icon: Settings }
+      ]
+    },
+    {
+      name: "Account",
+      items: [
+        { label: "Billing", path: "/settings/billing", icon: CreditCard }
+      ]
+    }
+  ];
 
-          {/* Dashboard Content */}
-          <main className="p-6">
-            <DashboardModules />
-          </main>
-        </div>
-      </div>
-    </div>
+  return (
+    <SharedDashboardLayout
+      moduleTitle="Business Management Platform"
+      navCategories={navCategories}
+      homeItem={{ label: "Home", path: "/", icon: Home }}
+    >
+      <DashboardModules />
+    </SharedDashboardLayout>
   );
 };
 

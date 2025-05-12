@@ -1,13 +1,14 @@
 
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { MenuIcon, UserCircle, Settings as SettingsIcon, Home } from 'lucide-react';
+import { MenuIcon, UserCircle, Settings as SettingsIcon, Home, BellIcon } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useNavigate } from 'react-router-dom';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { useAuth } from '@/context/AuthContext';
 import { cn } from '@/lib/utils';
 import { ThemeToggle } from '@/components/ui/theme-toggle';
+import { Badge } from '@/components/ui/badge';
 
 interface SharedNavbarProps {
   onMenuClick: () => void;
@@ -32,30 +33,57 @@ export const SharedNavbar = ({
     navigate('/landing');
   };
 
-  // Simple clean styling for header
+  // Clean styling for header
   const navbarBgColor = 'bg-white border-b border-gray-200 dark:bg-gray-800 dark:border-gray-700';
   const textColor = 'text-gray-700 dark:text-gray-200';
   const iconColor = 'text-gray-500 dark:text-gray-400';
   const hoverBgColor = 'hover:bg-gray-100 dark:hover:bg-gray-700';
   
-  return <header className={cn("sticky top-0 z-20 shadow-sm", navbarBgColor)}>
+  return (
+    <header className={cn("sticky top-0 z-20 shadow-sm", navbarBgColor)}>
       <div className="flex items-center justify-between h-16 px-4 bg-gray-400 dark:bg-gray-700">
         <div className="flex items-center">
           <Button variant="ghost" size="icon" onClick={onMenuClick} className={cn(iconColor, hoverBgColor, "mr-2")}>
             <MenuIcon className="h-5 w-5" />
           </Button>
           
-          {/* Simple header text */}
+          {/* Header text */}
           <div className="flex items-center">
             <h1 className="text-slate-100 font-bold text-xl">{moduleTitle}</h1>
           </div>
         </div>
 
         <div className="flex items-center space-x-3">
-          {/* Theme Toggle - Making it more prominent */}
+          {/* Theme Toggle */}
           <div className="relative z-10">
             <ThemeToggle />
           </div>
+          
+          {/* Notification Bell */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="icon" className={cn(iconColor, hoverBgColor, "rounded-lg relative")}>
+                <BellIcon className="h-5 w-5" />
+                <Badge variant="destructive" className="h-4 w-4 absolute -top-1 -right-1 flex items-center justify-center p-0 text-xs">2</Badge>
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-64">
+              <DropdownMenuLabel>Notifications</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem>
+                <div className="flex flex-col w-full">
+                  <span className="font-medium">New project created</span>
+                  <span className="text-xs text-muted-foreground">2 minutes ago</span>
+                </div>
+              </DropdownMenuItem>
+              <DropdownMenuItem>
+                <div className="flex flex-col w-full">
+                  <span className="font-medium">System update complete</span>
+                  <span className="text-xs text-muted-foreground">1 hour ago</span>
+                </div>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
           
           {/* Settings Button */}
           <Button variant="ghost" size="icon" onClick={() => navigate('/settings')} className={cn(iconColor, hoverBgColor, "rounded-lg")} title="Settings">
@@ -96,5 +124,6 @@ export const SharedNavbar = ({
           </DropdownMenu>
         </div>
       </div>
-    </header>;
+    </header>
+  );
 };
