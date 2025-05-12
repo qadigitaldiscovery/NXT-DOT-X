@@ -76,11 +76,15 @@ export async function getApiKey(
 
       if (!error || (error.code !== 'PGRST116' && !error.message.includes("column"))) {
         // Type guard to ensure data is of the expected shape and not null
-        if (data && typeof data === 'object' && 'api_key' in data) {
+        if (data && typeof data === 'object') {
+          const apiKey = 'api_key' in data ? (data.api_key as string) : null;
+          const preferredModel = 'preferred_model' in data ? (data.preferred_model as string) : null;
+          const configValue = hasConfigColumn && 'config' in data ? data.config : null;
+          
           return {
-            key: (data.api_key as string) || null,
-            model: (data.preferred_model as string) || null,
-            config: hasConfigColumn && 'config' in data ? data.config : null
+            key: apiKey,
+            model: preferredModel,
+            config: configValue
           };
         }
       } else {

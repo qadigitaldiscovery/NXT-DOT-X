@@ -119,13 +119,17 @@ export const loadFromDatabase = async (
     }
     
     // Type guard to ensure data is of the expected shape and not null
-    if (data && typeof data === 'object' && 'api_key' in data) {
+    if (data && typeof data === 'object') {
+      const apiKey = 'api_key' in data ? (data.api_key as string) : null;
+      const preferredModel = 'preferred_model' in data ? (data.preferred_model as string) : defaultModel;
+      const configValue = hasConfigColumn && 'config' in data && data.config !== null 
+        ? (data.config as Record<string, any>)
+        : defaultConfig;
+        
       return { 
-        key: (data.api_key as string) || null, 
-        model: ((data.preferred_model as string) || defaultModel), 
-        config: (hasConfigColumn && 'config' in data && data.config) 
-          ? (data.config as Record<string, any>)
-          : defaultConfig
+        key: apiKey, 
+        model: preferredModel || defaultModel, 
+        config: configValue
       };
     }
   } catch (error) {
