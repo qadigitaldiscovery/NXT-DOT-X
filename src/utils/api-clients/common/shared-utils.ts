@@ -18,11 +18,83 @@ export class ApiError extends Error {
 }
 
 /**
+ * Get API key from storage or database for a specific provider
+ * @param providerName The name of the provider (e.g., 'openai', 'requesty')
+ * @param localStorageKey The key used in localStorage
+ * @returns The API key and config if available
+ */
+export async function getApiKey(
+  providerName: string, 
+  localStorageKey: string
+): Promise<{key: string | null; model: string | null; config: any | null}> {
+  // Try to get from localStorage first
+  const localData = localStorage.getItem(localStorageKey);
+  
+  if (localData) {
+    try {
+      const parsed = JSON.parse(localData);
+      if (parsed && parsed.key) {
+        return {
+          key: parsed.key,
+          model: parsed.model || null,
+          config: parsed.config || null
+        };
+      }
+    } catch (err) {
+      console.error('Error parsing local storage data:', err);
+    }
+  }
+
+  // If not found in localStorage, try getting from database
+  try {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (session) {
+      // Check if config column exists
+      let hasConfigColumn = false;
+      try {
+        const { error } = await supabase
+          .from('api_provider_settings')
+          .select('config')
+          .limit(1);
+        
+        hasConfigColumn = !error || !error.message.includes("column 'config' does not exist");
+      } catch (err) {
+        console.error("Error checking if config column exists:", err);
+      }
+      
+      // Select appropriate columns
+      const selectQuery = hasConfigColumn 
+        ? 'api_key, preferred_model, config' 
+        : 'api_key, preferred_model';
+      
+      const { data, error } = await supabase
+        .from('api_provider_settings')
+        .select(selectQuery)
+        .eq('provider_name', providerName)
+        .eq('user_id', session.user.id)
+        .maybeSingle();
+
+      if (!error || (error.code !== 'PGRST116' && !error.message.includes("column"))) {
+        if (data) {
+          return {
+            key: data.api_key || null,
+            model: data.preferred_model || null,
+            config: hasConfigColumn && data.config ? data.config : null
+          };
+        }
+      } else {
+        console.error("Error fetching API key:", error);
+      }
+    }
+  } catch (err) {
+    console.error("Error fetching API key:", err);
+  }
+
+  return { key: null, model: null, config: null };
+}
+
+/**
  * Try to use an edge function, and return the result if successful
- * @param provider The provider name (e.g., 'openai')
- * @param endpoint The endpoint path (e.g., 'chat/completions')
- * @param payload The request payload
- * @returns The response from the edge function, or null if it failed
  */
 export async function tryUseEdgeFunction<T>(
   provider: string, 
@@ -31,7 +103,7 @@ export async function tryUseEdgeFunction<T>(
 ): Promise<T | null> {
   try {
     // Check if edge functions are enabled
-    const useEdgeFunctions = await getEdgeFunctionPreference();
+    const useEdgeFunctions = true; // For now, always try to use edge functions
     if (!useEdgeFunctions) {
       return null;
     }
@@ -58,7 +130,6 @@ export async function tryUseEdgeFunction<T>(
 
 /**
  * Process a streaming response from an API
- * @param body The response body to process
  */
 export async function* processStreamingResponse(
   body: ReadableStream<Uint8Array>
@@ -105,10 +176,8 @@ export async function* processStreamingResponse(
   }
 }
 
-/**
- * Check if edge functions should be used
- */
-async function getEdgeFunctionPreference(): Promise<boolean> {
-  // Default to true if not specified
-  return true;
+// Token estimation utility function
+export function estimateTokenCount(text: string): number {
+  // A very rough approximation: about 4 chars per token for English text
+  return Math.ceil(text.length / 4);
 }

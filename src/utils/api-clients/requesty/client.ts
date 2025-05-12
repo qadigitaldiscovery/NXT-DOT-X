@@ -4,77 +4,13 @@ import { RequestyMessage } from './types';
 import { 
   ApiError,
   tryUseEdgeFunction, 
-  processStreamingResponse
+  processStreamingResponse,
+  getApiKey
 } from '../common/shared-utils';
 
 // Get API key from storage or database
 export const getApiKey = async (): Promise<{ key: string | null, model: string | null, config: any | null }> => {
-  // Try to get from localStorage first
-  const localStorageKey = 'requesty-api-key';
-  const localData = localStorage.getItem(localStorageKey);
-  
-  if (localData) {
-    try {
-      const parsed = JSON.parse(localData);
-      if (parsed && parsed.key) {
-        return {
-          key: parsed.key,
-          model: parsed.model || "openai/gpt-4o-mini",
-          config: parsed.config || null
-        };
-      }
-    } catch (err) {
-      console.error('Error parsing local storage data:', err);
-    }
-  }
-
-  // If not found in localStorage, try getting from database
-  try {
-    const { data: { session } } = await supabase.auth.getSession();
-    if (session) {
-      // Check if config column exists
-      let hasConfigColumn = false;
-      try {
-        const { error } = await supabase
-          .from('api_provider_settings')
-          .select('config')
-          .limit(1);
-        
-        hasConfigColumn = !error || !error.message.includes("column 'config' does not exist");
-      } catch (err) {
-        console.error("Error checking if config column exists:", err);
-      }
-      
-      // Select appropriate columns
-      const selectQuery = hasConfigColumn 
-        ? 'api_key, preferred_model, config' 
-        : 'api_key, preferred_model';
-      
-      const { data, error } = await supabase
-        .from('api_provider_settings')
-        .select(selectQuery)
-        .eq('provider_name', 'requesty')
-        .eq('user_id', session.user.id)
-        .maybeSingle();
-
-      if (error && !error.message.includes("column 'config' does not exist")) {
-        console.error("Error fetching Requesty API key:", error);
-        return { key: null, model: null, config: null };
-      }
-
-      if (data) {
-        return {
-          key: data.api_key,
-          model: data.preferred_model || "openai/gpt-4o-mini",
-          config: hasConfigColumn && data.config ? data.config : null
-        };
-      }
-    }
-  } catch (err) {
-    console.error("Error fetching Requesty API key:", err);
-  }
-
-  return { key: null, model: null, config: null };
+  return await getApiKey('requesty', 'requesty-api-key');
 };
 
 /**
@@ -86,7 +22,10 @@ export const sendRequestyMessage = async (
 ): Promise<string> => {
   try {
     // Get API key from database or local storage
-    const { key: apiKey, model: preferredModel, config } = await getApiKey();
+    const apiKeyResult = await getApiKey();
+    const apiKey = apiKeyResult.key;
+    const preferredModel = apiKeyResult.model;
+    const config = apiKeyResult.config;
     
     if (!apiKey) {
       toast.error("Requesty API key not configured. Please add your API key in the settings.");
@@ -172,7 +111,10 @@ export async function* streamRequestyMessage(
 ): AsyncGenerator<string, void, unknown> {
   try {
     // Get API key from database or local storage
-    const { key: apiKey, model: preferredModel, config } = await getApiKey();
+    const apiKeyResult = await getApiKey();
+    const apiKey = apiKeyResult.key;
+    const preferredModel = apiKeyResult.model;
+    const config = apiKeyResult.config;
     
     if (!apiKey) {
       toast.error("Requesty API key not configured. Please add your API key in the settings.");

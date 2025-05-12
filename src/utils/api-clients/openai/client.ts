@@ -11,16 +11,16 @@ import {
   OpenAIErrorResponse 
 } from './types';
 import { 
-  getApiKey as getProviderApiKey, 
   tryUseEdgeFunction, 
   processStreamingResponse,
   estimateTokenCount,
+  getApiKey,
   ApiError
 } from '../common/shared-utils';
 
 // Get API key from storage or database
-export const getApiKey = async (): Promise<{key: string | null, config: any | null}> => {
-  const result = await getProviderApiKey('openai', 'openai-api-key');
+export const getApiKey = async (): Promise<{key: string | null; config: any | null}> => {
+  const result = await getApiKey('openai', 'openai-api-key');
   return { key: result.key, config: result.config };
 };
 
@@ -32,7 +32,12 @@ export async function callOpenAI<T extends OpenAIResponse>({
   signal 
 }: CallOptions): Promise<T> {
   // Use provided apiKey or fetch from storage
-  const { key, config } = apiKey ? { key: apiKey, config: null } : await getApiKey();
+  const result = apiKey ? 
+    { key: apiKey, config: null } : 
+    await getApiKey('openai', 'openai-api-key');
+  
+  const key = result.key;
+  const config = result.config;
   
   if (!key) {
     throw new Error("No API key available. Please add your OpenAI API key in the settings.");

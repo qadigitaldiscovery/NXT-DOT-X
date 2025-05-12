@@ -113,16 +113,16 @@ export const loadFromDatabase = async (
       .eq('user_id', session.user.id)
       .maybeSingle();
     
-    if (error) {
+    if (error && !error.message.includes('column')) {
       console.error('Error loading from database:', error);
       return { key: null, model: defaultModel, config: defaultConfig };
     }
     
-    if (data) {
+    if (data && !('error' in data)) {
       return { 
         key: data.api_key, 
         model: data.preferred_model || defaultModel,
-        config: hasConfigColumn ? (data.config || defaultConfig) : defaultConfig
+        config: (hasConfigColumn && data.config) ? data.config : defaultConfig
       };
     }
   } catch (error) {

@@ -8,7 +8,7 @@ export const columnExists = async (table: string, column: string): Promise<boole
   try {
     // Try a simple query with the column
     const { error } = await supabase
-      .from(table)
+      .from(table as any) // Cast to any to bypass TypeScript's table name checking
       .select(column)
       .limit(1);
     
