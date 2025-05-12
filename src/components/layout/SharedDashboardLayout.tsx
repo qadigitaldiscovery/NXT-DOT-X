@@ -34,7 +34,7 @@ const SharedDashboardLayout: React.FC<SharedDashboardLayoutProps> = ({
   },
   customFooterContent,
   sidebarClassName,
-  removeBottomToggle = true, // Default to true to remove bottom toggle
+  removeBottomToggle = false, // Changed default to false to show bottom toggle
   showTopLeftToggle = true // Default to true to show top left toggle
 }) => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
