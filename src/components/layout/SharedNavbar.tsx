@@ -35,15 +35,15 @@ export const SharedNavbar = ({
     navigate('/landing');
   };
 
-  // Clean styling for header
-  const navbarBgColor = 'bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700';
-  const textColor = 'text-gray-700 dark:text-gray-200';
-  const iconColor = 'text-gray-500 dark:text-gray-400';
-  const hoverBgColor = 'hover:bg-gray-100 dark:hover:bg-gray-700';
+  // Clean styling for header with full width
+  const navbarBgColor = 'bg-gray-400 dark:bg-gray-700';
+  const textColor = 'text-slate-100 dark:text-gray-200';
+  const iconColor = 'text-slate-200 dark:text-gray-300';
+  const hoverBgColor = 'hover:bg-gray-500 dark:hover:bg-gray-600';
   
   return (
-    <header className={cn("sticky top-0 z-20 shadow-sm", navbarBgColor)}>
-      <div className="flex items-center justify-between h-16 px-4 bg-gray-400 dark:bg-gray-700">
+    <header className={cn("sticky top-0 z-20 w-full", navbarBgColor)}>
+      <div className="flex items-center justify-between h-16 px-4">
         <div className="flex items-center">
           {showSidebarToggle && (
             <Button variant="ghost" size="icon" onClick={onMenuClick} className={cn("mr-3 text-slate-100 hover:text-white hover:bg-gray-600")}>

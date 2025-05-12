@@ -81,35 +81,36 @@ const SharedDashboardLayout: React.FC<SharedDashboardLayoutProps> = ({
   return (
     <div className="h-screen overflow-hidden bg-slate-50 dark:bg-gray-900">
       {/* Main Layout */}
-      <div className="flex h-full">
-        {/* Sidebar */}
-        <SharedSidebar 
-          open={sidebarOpen} 
-          onToggle={toggleSidebar} 
-          navItems={navCategories}
-          homeItem={homeItem}
-          customFooterContent={customFooterContent || defaultNavigationFooter}
-          className={sidebarClassName}
-          removeBottomToggle={removeBottomToggle}
+      <div className="flex h-full flex-col">
+        {/* Header - Now positioned above the sidebar and main content */}
+        <SharedNavbar 
+          onMenuClick={toggleSidebar} 
+          moduleTitle={moduleTitle}
+          notificationArea={notificationArea}
+          showSidebarToggle={showTopLeftToggle}
         />
         
-        {/* Main Content */}
-        <div className={cn(
-          "flex-1 flex flex-col overflow-auto transition-all duration-200",
-          !sidebarOpen && "md:ml-16"
-        )}>
-          {/* Header */}
-          <SharedNavbar 
-            onMenuClick={toggleSidebar} 
-            moduleTitle={moduleTitle}
-            notificationArea={notificationArea}
-            showSidebarToggle={showTopLeftToggle}
+        <div className="flex flex-1 overflow-hidden">
+          {/* Sidebar */}
+          <SharedSidebar 
+            open={sidebarOpen} 
+            onToggle={toggleSidebar} 
+            navItems={navCategories}
+            homeItem={homeItem}
+            customFooterContent={customFooterContent || defaultNavigationFooter}
+            className={sidebarClassName}
+            removeBottomToggle={removeBottomToggle}
           />
-
-          {/* Dashboard Content */}
-          <main className="flex-1 overflow-auto p-6">
-            {children || <Outlet />}
-          </main>
+          
+          {/* Main Content */}
+          <div className={cn(
+            "flex-1 overflow-auto transition-all duration-200"
+          )}>
+            {/* Dashboard Content */}
+            <main className="p-6 overflow-auto h-full">
+              {children || <Outlet />}
+            </main>
+          </div>
         </div>
       </div>
     </div>
