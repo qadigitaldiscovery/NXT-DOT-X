@@ -46,9 +46,9 @@ const SharedDashboardLayout: React.FC<SharedDashboardLayoutProps> = ({
     setSidebarOpen(!sidebarOpen);
   };
 
-  // Default navigation footer if none is provided
+  // Default navigation footer - this will be used if no custom footer is provided
   const defaultNavigationFooter = (
-    <div className="flex items-center justify-between p-2 border-t border-slate-700/50 mt-auto bg-indigo-950">
+    <div className="flex items-center justify-between p-2 bg-indigo-950">
       <Button 
         variant="ghost" 
         size="icon" 
@@ -121,4 +121,3 @@ const SharedDashboardLayout: React.FC<SharedDashboardLayoutProps> = ({
 };
 
 export default SharedDashboardLayout;
-

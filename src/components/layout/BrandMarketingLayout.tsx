@@ -45,7 +45,7 @@ const BrandMarketingLayout = () => {
 
   // Custom footer with navigation controls
   const navigationFooter = (
-    <div className="flex items-center justify-between p-2 border-t border-blue-900/50 mt-auto bg-indigo-950">
+    <div className="flex items-center justify-between p-2 bg-indigo-950">
       <Button 
         variant="ghost" 
         size="icon" 
