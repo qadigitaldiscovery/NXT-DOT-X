@@ -25,12 +25,12 @@ const Index = () => {
 
   // Custom navigation footer with back, home, and forward buttons
   const navigationFooter = (
-    <div className="flex items-center justify-between p-2 bg-indigo-950">
+    <div className="flex items-center justify-between w-full">
       <Button 
         variant="ghost" 
         size="icon" 
         onClick={() => navigate(-1)}
-        className="text-blue-200 hover:text-white hover:bg-indigo-900 rounded-lg"
+        className="text-blue-200 hover:text-white hover:bg-indigo-900 rounded-lg w-10 h-10"
       >
         <ChevronLeft className="h-5 w-5" />
       </Button>
@@ -39,7 +39,7 @@ const Index = () => {
         variant="ghost" 
         size="icon" 
         onClick={() => navigate('/')}
-        className="text-blue-200 hover:text-white hover:bg-indigo-900 rounded-lg"
+        className="text-blue-200 hover:text-white hover:bg-indigo-900 rounded-lg w-10 h-10"
       >
         <Home className="h-5 w-5" />
       </Button>
@@ -48,7 +48,7 @@ const Index = () => {
         variant="ghost" 
         size="icon" 
         onClick={() => navigate(1)}
-        className="text-blue-200 hover:text-white hover:bg-indigo-900 rounded-lg"
+        className="text-blue-200 hover:text-white hover:bg-indigo-900 rounded-lg w-10 h-10"
       >
         <ChevronRight className="h-5 w-5" />
       </Button>
