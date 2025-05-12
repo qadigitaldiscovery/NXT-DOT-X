@@ -21,8 +21,10 @@ import { SocialMediaRoutes } from "./socialMediaRoutes";
 export const AppRoutes = () => {
   return (
     <Routes>
+      {/* Root/Index Route */}
+      <Route index element={<RootHandler />} />
+      
       {/* Landing Page (Login) */}
-      <Route index element={<PrototypeSelector />} />
       <Route path="/landing" element={<Landing />} />
       
       {/* Unauthorized Page */}
