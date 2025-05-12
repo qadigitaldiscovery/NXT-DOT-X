@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -14,45 +13,19 @@ import DotX from "./DotX";
 import SupplierManagement from "./SupplierManagement";
 import CustomerManagement from "./CustomerManagement";
 import BrandMarketing from "./BrandMarketing";
-
 export default function PrimaryModules() {
   const [activeTab, setActiveTab] = useState("all");
   const navigate = useNavigate();
 
   // Map of categories to their respective modules
   const modulesByCategory = {
-    all: [
-      <DataManagement key="data" />,
-      <LoyaltyProgram key="loyalty" />,
-      <TradingSystem key="trading" />,
-      <SocialMediaMarketing key="social" />,
-      <TechHub key="tech" />,
-      <DotX key="dotx" />,
-      <SupplierManagement key="supplier" />,
-      <CustomerManagement key="customer" />,
-      <BrandMarketing key="brand" />
-    ],
-    data: [
-      <DataManagement key="data" />,
-      <SupplierManagement key="supplier" />,
-      <CustomerManagement key="customer" />
-    ],
-    marketing: [
-      <LoyaltyProgram key="loyalty" />,
-      <SocialMediaMarketing key="social" />,
-      <BrandMarketing key="brand" />
-    ],
-    tech: [
-      <TechHub key="tech" />,
-      <DotX key="dotx" />
-    ],
-    operations: [
-      <TradingSystem key="trading" />
-    ]
+    all: [<DataManagement key="data" />, <LoyaltyProgram key="loyalty" />, <TradingSystem key="trading" />, <SocialMediaMarketing key="social" />, <TechHub key="tech" />, <DotX key="dotx" />, <SupplierManagement key="supplier" />, <CustomerManagement key="customer" />, <BrandMarketing key="brand" />],
+    data: [<DataManagement key="data" />, <SupplierManagement key="supplier" />, <CustomerManagement key="customer" />],
+    marketing: [<LoyaltyProgram key="loyalty" />, <SocialMediaMarketing key="social" />, <BrandMarketing key="brand" />],
+    tech: [<TechHub key="tech" />, <DotX key="dotx" />],
+    operations: [<TradingSystem key="trading" />]
   };
-
-  return (
-    <Card className="col-span-2">
+  return <Card className="col-span-2">
       <CardHeader>
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center">
           <div>
@@ -70,7 +43,7 @@ export default function PrimaryModules() {
           </Tabs>
         </div>
       </CardHeader>
-      <CardContent>
+      <CardContent className="bg-transparent">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {(modulesByCategory as any)[activeTab]}
         </div>
@@ -83,6 +56,5 @@ export default function PrimaryModules() {
           Module Documentation
         </Button>
       </CardFooter>
-    </Card>
-  );
+    </Card>;
 }
