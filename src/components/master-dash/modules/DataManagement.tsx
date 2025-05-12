@@ -18,7 +18,7 @@ export default function DataManagement() {
       </CardHeader>
       <CardContent className="pb-2">
         <p className="text-sm text-gray-500">
-          Manage your business data, documents, costs and pricing information.
+          Analyze costs, manage documents, and optimize pricing strategies.
         </p>
         <div className="mt-4 space-y-3">
           <div className="flex items-center gap-2">
@@ -31,7 +31,7 @@ export default function DataManagement() {
           </div>
           <div className="flex items-center gap-2">
             <div className="w-2 h-2 rounded-full bg-green-500"></div>
-            <span className="text-sm">Pricing management</span>
+            <span className="text-sm">Price optimization</span>
           </div>
         </div>
       </CardContent>

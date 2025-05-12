@@ -18,7 +18,7 @@ export default function SupplierManagement() {
       </CardHeader>
       <CardContent className="pb-2">
         <p className="text-sm text-gray-500">
-          Manage supplier relationships, costs, and supply chain operations.
+          Manage suppliers, track performance, and optimize procurement processes.
         </p>
         <div className="mt-4 space-y-3">
           <div className="flex items-center gap-2">
@@ -27,11 +27,11 @@ export default function SupplierManagement() {
           </div>
           <div className="flex items-center gap-2">
             <div className="w-2 h-2 rounded-full bg-green-500"></div>
-            <span className="text-sm">Cost tracking</span>
+            <span className="text-sm">Performance tracking</span>
           </div>
           <div className="flex items-center gap-2">
             <div className="w-2 h-2 rounded-full bg-green-500"></div>
-            <span className="text-sm">Supply chain monitoring</span>
+            <span className="text-sm">Contract management</span>
           </div>
         </div>
       </CardContent>

@@ -1,4 +1,5 @@
 
+import React from 'react';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Share2 } from "lucide-react";
@@ -11,30 +12,26 @@ export default function SocialMediaMarketing() {
     <Card className="col-span-1">
       <CardHeader className="pb-2">
         <CardTitle className="flex items-center space-x-2">
-          <Share2 className="w-5 h-5 text-blue-500" />
-          <span>Social Media & Marketing</span>
+          <Share2 className="w-5 h-5 text-blue-600" />
+          <span>Social Media</span>
         </CardTitle>
       </CardHeader>
       <CardContent className="pb-2">
         <p className="text-sm text-gray-500">
-          Manage your social media presence, create marketing campaigns, and analyze performance across platforms.
+          Manage social accounts, schedule posts, and track engagement metrics.
         </p>
         <div className="mt-4 space-y-3">
           <div className="flex items-center gap-2">
             <div className="w-2 h-2 rounded-full bg-green-500"></div>
-            <span className="text-sm">Social account management</span>
+            <span className="text-sm">Account management</span>
           </div>
           <div className="flex items-center gap-2">
             <div className="w-2 h-2 rounded-full bg-green-500"></div>
-            <span className="text-sm">Content creation & scheduling</span>
+            <span className="text-sm">Content calendar</span>
           </div>
           <div className="flex items-center gap-2">
             <div className="w-2 h-2 rounded-full bg-green-500"></div>
-            <span className="text-sm">Performance analytics</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-2 h-2 rounded-full bg-green-500"></div>
-            <span className="text-sm">Campaign management</span>
+            <span className="text-sm">Analytics dashboard</span>
           </div>
         </div>
       </CardContent>
@@ -43,7 +40,7 @@ export default function SocialMediaMarketing() {
           onClick={() => navigate('/social-media')} 
           className="w-full"
         >
-          Open Social Media Dashboard
+          Open Social Media
         </Button>
       </CardFooter>
     </Card>

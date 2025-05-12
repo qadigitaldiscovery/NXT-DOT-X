@@ -18,7 +18,7 @@ export default function LoyaltyProgram() {
       </CardHeader>
       <CardContent className="pb-2">
         <p className="text-sm text-gray-500">
-          Manage customer loyalty programs, rewards, and member engagement.
+          Manage loyalty rewards, member tiers, and customer engagement campaigns.
         </p>
         <div className="mt-4 space-y-3">
           <div className="flex items-center gap-2">
@@ -27,17 +27,17 @@ export default function LoyaltyProgram() {
           </div>
           <div className="flex items-center gap-2">
             <div className="w-2 h-2 rounded-full bg-green-500"></div>
-            <span className="text-sm">Rewards catalog</span>
+            <span className="text-sm">Reward programs</span>
           </div>
           <div className="flex items-center gap-2">
             <div className="w-2 h-2 rounded-full bg-green-500"></div>
-            <span className="text-sm">Analytics dashboard</span>
+            <span className="text-sm">Analytics</span>
           </div>
         </div>
       </CardContent>
       <CardFooter>
         <Button 
-          onClick={() => navigate('/loyalty-rewards')} 
+          onClick={() => navigate('/loyalty')} 
           className="w-full"
         >
           Open Loyalty Program
