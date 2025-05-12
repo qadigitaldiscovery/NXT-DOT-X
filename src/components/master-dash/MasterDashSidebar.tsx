@@ -120,7 +120,7 @@ const MasterDashSidebar: React.FC<MasterDashSidebarProps> = ({ activePath }) => 
             icon={<FileText className="w-5 h-5" />} 
             label="Documentation" 
             active={activePath === '/admin/documentation'}
-            onClick={()={() => handleNavigation('/admin/documentation')}
+            onClick={() => handleNavigation('/admin/documentation')}
           />
           <SidebarItem 
             icon={<Database className="w-5 h-5" />} 
