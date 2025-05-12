@@ -19,10 +19,13 @@ export function useModules() {
     const fetchModules = async () => {
       try {
         setLoading(true);
-        // Use type assertion to fix the table name issue
-        const { data, error } = await supabase.from('modules' as any).select('*');
+        // Fetch modules from Supabase
+        const { data, error } = await supabase.from('modules').select('*');
+        
         if (error) throw error;
-        setModules((data || []) as unknown as Module[]);
+        
+        // Cast the data to our expected Module type
+        setModules(data as Module[]);
       } catch (err) {
         console.error('Error fetching modules:', err);
         setError(err instanceof Error ? err : new Error('Unknown error occurred'));
@@ -36,29 +39,29 @@ export function useModules() {
 
   const updateModuleStatus = async (id: string, status: 'green' | 'orange' | 'red', note?: string) => {
     try {
-      // Update the module status with type assertion
+      // Update the module status
       const { error: updateError } = await supabase
-        .from('modules' as any)
-        .update({ status } as any)
+        .from('modules')
+        .update({ status })
         .eq('id', id);
       
       if (updateError) throw updateError;
 
-      // Log the status change with type assertion
+      // Log the status change
       const { error: logError } = await supabase
-        .from('rag_status_logs' as any)
+        .from('rag_status_logs')
         .insert({
           module_id: id,
           status,
           note: note || `Status changed to ${status}`
-        } as any);
+        });
 
       if (logError) throw logError;
 
-      // Refresh the modules with type assertion
-      const { data, error } = await supabase.from('modules' as any).select('*');
+      // Refresh the modules
+      const { data, error } = await supabase.from('modules').select('*');
       if (error) throw error;
-      setModules((data || []) as unknown as Module[]);
+      setModules(data as Module[]);
       
       return { success: true };
     } catch (err) {
