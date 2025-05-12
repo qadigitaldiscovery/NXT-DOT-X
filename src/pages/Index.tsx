@@ -5,19 +5,20 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Home, ChevronLeft, ChevronRight, Layers, Settings, Users } from "lucide-react";
 import SharedDashboardLayout from '@/components/layout/SharedDashboardLayout';
+import { NavCategory } from '@/components/layout/sidebar/types';
 
 const Index = () => {
   const navigate = useNavigate();
   
   // Define navigation categories for this page
-  const navCategories = [
+  const navCategories: NavCategory[] = [
     {
       name: "Main Navigation",
       items: [
         { label: "Dashboard", path: "/", icon: Home },
         { label: "Projects", path: "/projects", icon: Layers },
-        { label: "Users", path: "/admin/users", icon: Users },
-        { label: "Settings", path: "/settings", icon: Settings }
+        { label: "Users", path: "/admin/users", icon: Users, roles: ["admin"] },
+        { label: "Settings", path: "/settings", icon: Settings, roles: ["admin", "manager"] }
       ]
     }
   ];

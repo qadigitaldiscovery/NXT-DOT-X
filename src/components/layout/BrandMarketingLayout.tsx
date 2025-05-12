@@ -32,13 +32,13 @@ const BrandMarketingLayout = () => {
         { label: "Trust Analysis", path: "/brand-marketing/trust-analysis", icon: BadgePercent },
         { label: "Market Perception", path: "/brand-marketing/market-perception", icon: TrendingUp },
         { label: "SEO & Keywords", path: "/brand-marketing/seo", icon: Search },
-        { label: "Requesty AI", path: "/brand-marketing/requesty", icon: MessageCircle }
+        { label: "Requesty AI", path: "/brand-marketing/requesty", icon: MessageCircle, roles: ["admin", "manager"] }
       ]
     },
     {
       name: "Configuration",
       items: [
-        { label: "Brand Settings", path: "/brand-marketing/settings", icon: Settings }
+        { label: "Brand Settings", path: "/brand-marketing/settings", icon: Settings, roles: ["admin"] }
       ]
     }
   ];

@@ -16,12 +16,13 @@ import {
 import SharedDashboardLayout from "./SharedDashboardLayout";
 import { Button } from "../ui/button";
 import { cn } from "@/lib/utils";
+import { NavCategory } from "./sidebar/types";
 
 const ProjectManagementLayout = ({ children }: { children?: React.ReactNode }) => {
   const navigate = useNavigate();
 
   // Define navigation categories for the Project Management module
-  const navCategories = [
+  const navCategories: NavCategory[] = [
     {
       name: "Project Hub",
       items: [
@@ -33,11 +34,11 @@ const ProjectManagementLayout = ({ children }: { children?: React.ReactNode }) =
       name: "Current Project",
       items: [
         { label: "Overview", path: "#", icon: ListTodo },
-        { label: "Kanban Board", path: "#", icon: ListTodo },
+        { label: "Kanban Board", path: "#", icon: ListTodo, roles: ["admin", "manager"] },
         { label: "Gantt Chart", path: "#", icon: ChartBar },
         { label: "Team Members", path: "#", icon: Users },
-        { label: "Reports & Analytics", path: "#", icon: BarChart4 },
-        { label: "Project Settings", path: "#", icon: Settings }
+        { label: "Reports & Analytics", path: "#", icon: BarChart4, roles: ["admin"] },
+        { label: "Project Settings", path: "#", icon: Settings, roles: ["admin", "manager"] }
       ]
     }
   ];

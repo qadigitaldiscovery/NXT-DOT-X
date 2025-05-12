@@ -1,8 +1,10 @@
 
 import React from 'react';
-import { NavLink } from 'react-router-dom';
+import { useLocation, NavLink } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { NavItem, NavCategory } from './types';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { useAuth } from '@/context/AuthContext';
 
 interface CollapsedSidebarProps {
   navItems: NavCategory[];
@@ -13,53 +15,69 @@ interface CollapsedSidebarProps {
   homeItem?: NavItem;
 }
 
-export const CollapsedSidebar = ({
+export const CollapsedSidebar: React.FC<CollapsedSidebarProps> = ({
   navItems,
   textColor,
   activeBgColor,
   activeTextColor,
   hoverBgColor,
   homeItem
-}: CollapsedSidebarProps) => {
+}) => {
+  const location = useLocation();
+  const { user } = useAuth();
+
+  // Flatten all navigation items
+  const flattenedItems = React.useMemo(() => {
+    const items: NavItem[] = [];
+    
+    // Add home item if provided
+    if (homeItem) {
+      items.push(homeItem);
+    }
+    
+    // Add items from categories
+    navItems.forEach(category => {
+      category.items.forEach(item => {
+        // Only include items that the user has permission to see
+        if (!item.roles || item.roles.includes(user?.role || '')) {
+          items.push(item);
+        }
+      });
+    });
+    
+    return items;
+  }, [navItems, homeItem, user?.role]);
+
   return (
-    <div className="md:flex flex-col items-center py-4 space-y-4 overflow-y-auto h-full">
-      {/* Flattened navigation items */}
-      {navItems.flatMap(category => 
-        category.items.map(item => (
-          <NavLink
-            key={item.path}
-            to={item.path}
-            title={item.label}
-            className={({ isActive }) => cn(
-              "w-10 h-10 flex items-center justify-center rounded-md",
-              isActive 
-                ? `${activeBgColor} ${activeTextColor} shadow-sm shadow-indigo-900/30` 
-                : `${textColor} ${hoverBgColor}`
-            )}
-          >
-            <item.icon className="h-5 w-5" />
-          </NavLink>
-        ))
-      )}
-      
-      {/* Push home to the bottom with flex-grow */}
-      <div className="flex-grow"></div>
-      
-      {/* Home button at the bottom */}
-      {homeItem && (
-        <NavLink
-          to={homeItem.path}
-          title={homeItem.label}
-          className={({ isActive }) => cn(
-            "w-10 h-10 flex items-center justify-center rounded-md mb-2",
-            isActive 
-              ? `${activeBgColor} ${activeTextColor} shadow-sm shadow-indigo-900/30` 
-              : `${textColor} ${hoverBgColor}`
-          )}
-        >
-          <homeItem.icon className="h-5 w-5" />
-        </NavLink>
-      )}
+    <div className="flex flex-col items-center pt-4 space-y-2">
+      {flattenedItems.map(item => {
+        const isActive = location.pathname === item.path;
+        const Icon = item.icon;
+        
+        return (
+          <TooltipProvider key={item.path}>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <NavLink
+                  to={item.path}
+                  className={cn(
+                    "w-10 h-10 rounded-md flex items-center justify-center transition-colors",
+                    textColor,
+                    hoverBgColor,
+                    isActive && activeBgColor,
+                    isActive && activeTextColor
+                  )}
+                >
+                  {Icon && <Icon className="h-5 w-5" />}
+                </NavLink>
+              </TooltipTrigger>
+              <TooltipContent side="right">
+                {item.label}
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        );
+      })}
     </div>
   );
 };

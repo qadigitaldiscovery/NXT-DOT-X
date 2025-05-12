@@ -9,6 +9,7 @@ import { CollapsedSidebar } from './sidebar/CollapsedSidebar';
 import { NavItem, NavCategory } from './sidebar/types';
 import { NavLink } from 'react-router-dom';
 import { SidebarToggleButton } from './sidebar/SidebarToggleButton';
+import { useAuth } from '@/context/AuthContext';
 
 interface SharedSidebarProps {
   open: boolean;
@@ -31,6 +32,7 @@ export const SharedSidebar = ({
 }: SharedSidebarProps) => {
   const isMobile = useIsMobile();
   const [expandedItems, setExpandedItems] = React.useState<string[]>([]);
+  const { user } = useAuth();
 
   // Updated styling with more reasonable sizing
   const sidebarBgColor = className || 'bg-gradient-to-b from-indigo-950 via-blue-950 to-slate-950';
@@ -70,6 +72,7 @@ export const SharedSidebar = ({
         )}>
           <SidebarNavList 
             navItems={navItems}
+            userRole={user?.role}
             expandedItems={expandedItems}
             onToggleExpand={toggleExpanded}
             textColor={textColor}
