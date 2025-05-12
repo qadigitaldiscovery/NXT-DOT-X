@@ -1,4 +1,3 @@
-
 import { useCallback } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
@@ -13,8 +12,8 @@ export const useProjects = (filters?: any) => {
       .from('projects')
       .select(`
         *,
-        member_count: project_members(count),
-        task_count: tasks(count)
+        member_count:project_members(count),
+        task_count:tasks(count)
       `)
       .order('created_at', { ascending: false });
     
@@ -23,7 +22,16 @@ export const useProjects = (filters?: any) => {
       throw new Error(error.message);
     }
     
-    return data as ProjectWithMemberCount[];
+    // Transform the data to match the ProjectWithMemberCount type
+    return data.map(project => ({
+      ...project,
+      member_count: Array.isArray(project.member_count) && project.member_count.length > 0 
+        ? project.member_count[0].count 
+        : 0,
+      task_count: Array.isArray(project.task_count) && project.task_count.length > 0 
+        ? project.task_count[0].count 
+        : 0
+    })) as ProjectWithMemberCount[];
   }, []);
 
   const fetchProjectById = useCallback(async (id: string): Promise<Project> => {

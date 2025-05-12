@@ -6,7 +6,7 @@ import {
   Box, 
   LayoutDashboard, 
   ListTodo, 
-  Gantt, 
+  ChartBar, 
   BarChart4, 
   Settings, 
   Users,
@@ -75,7 +75,7 @@ const ProjectManagementLayout = ({ children }: { children: React.ReactNode }) =>
               />
               <NavItem 
                 to={`${location.pathname.split('/kanban')[0].split('/gantt')[0]}/gantt`}
-                icon={Gantt} 
+                icon={ChartBar} 
                 label="Gantt Chart" 
                 isCollapsed={isCollapsed} 
                 isActive={location.pathname.includes('/gantt')}
