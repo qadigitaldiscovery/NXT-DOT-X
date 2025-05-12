@@ -51,7 +51,7 @@ export function SocialAccountCard({
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-2">
             <Avatar className={`h-8 w-8 ${color}`}>
-              <AvatarImage src={account.avatarUrl} alt={account.username} />
+              <AvatarImage src={account.profileImageUrl} alt={account.username} />
               <AvatarFallback className="text-white">
                 {capitalizedPlatform.slice(0, 2)}
               </AvatarFallback>
@@ -65,25 +65,25 @@ export function SocialAccountCard({
               </CardDescription>
             </div>
           </div>
-          <Badge variant={account.isConnected ? "outline" : "secondary"}>
-            {account.isConnected ? "Connected" : "Not Connected"}
+          <Badge variant={account.connected ? "outline" : "secondary"}>
+            {account.connected ? "Connected" : "Not Connected"}
           </Badge>
         </div>
       </CardHeader>
       <CardContent className="pt-2 pb-3">
-        {account.metrics && (
+        {account.stats && (
           <div className="flex items-center justify-between py-2">
             <div className="flex items-center">
               <Users size={16} className={`mr-1 ${textColor}`} />
               <span className="text-sm font-medium">
-                {account.metrics.followers.toLocaleString()}
+                {account.stats.followers.toLocaleString()}
               </span>
             </div>
-            {account.metrics.engagementRate && (
+            {account.stats.engagement && (
               <div className="flex items-center">
                 <BarChart3 size={16} className={`mr-1 ${textColor}`} />
                 <span className="text-sm font-medium">
-                  {account.metrics.engagementRate}%
+                  {account.stats.engagement}%
                 </span>
               </div>
             )}
@@ -99,7 +99,7 @@ export function SocialAccountCard({
             <Pencil size={14} className="mr-1" />
             Edit
           </Button>
-          {account.isConnected ? (
+          {account.connected ? (
             <Button 
               variant="outline" 
               size="sm" 

@@ -2,53 +2,33 @@
 import { useState } from "react";
 import { SocialAccountCard } from "./SocialAccountCard";
 import { ConnectAccountButton } from "./ConnectAccountButton";
-import { SocialMediaAccount, SocialMediaPlatform } from "../api/types";
-import { mockAccounts } from "../api/mockData";
+import { SocialAccount, SocialMediaAccount, SocialPlatform } from "../api/types";
+import { mockAccounts, mockSocialAccounts } from "../api/mockData";
 import { toast } from "sonner";
 
 export function AccountsOverview() {
-  const [accounts, setAccounts] = useState<SocialMediaAccount[]>(
-    mockAccounts.map(account => ({
-      id: account.id,
-      platform: account.platform as SocialMediaPlatform,
-      username: account.username,
-      profileUrl: account.accountUrl,
-      avatarUrl: account.profileImageUrl,
-      isConnected: account.connected,
-      lastSyncedAt: account.lastSynced?.toISOString(),
-      metrics: {
-        followers: account.stats.followers,
-        engagementRate: account.stats.engagement
-      }
-    }))
-  );
+  const [accounts, setAccounts] = useState<SocialAccount[]>(mockSocialAccounts);
 
-  const handleConnectAccount = (platform: SocialMediaPlatform) => {
+  const handleConnectAccount = (platform: SocialPlatform) => {
     // In a real implementation, this would trigger an OAuth flow
     toast.success(`Starting OAuth flow for ${platform}...`);
     
     // Simulate the connected account being added after OAuth flow
     const newId = (Math.max(...accounts.map(a => parseInt(a.id))) + 1).toString();
     
-    const platformUsernames: Record<SocialMediaPlatform, string> = {
-      twitter: 'new_twitter_handle',
-      facebook: 'New.Facebook.Page',
-      instagram: 'new.instagram',
-      linkedin: 'new-linkedin-company',
-      tiktok: 'newtiktok',
-      pinterest: 'new_pinterest',
-      youtube: 'NewYouTubeChannel'
-    };
-    
-    const newAccount: SocialMediaAccount = {
+    const newAccount: SocialAccount = {
       id: newId,
       platform,
-      username: platformUsernames[platform],
-      profileUrl: `https://${platform}.com/${platformUsernames[platform]}`,
-      isConnected: true,
-      lastSyncedAt: new Date().toISOString(),
-      metrics: {
-        followers: 0
+      username: `yourbrand_${platform}`,
+      profileImageUrl: `https://placehold.co/200x200?text=${platform.charAt(0).toUpperCase()}`,
+      accountUrl: `https://${platform}.com/yourbrand_${platform}`,
+      connected: true,
+      lastSynced: new Date(),
+      stats: {
+        followers: 0,
+        following: 0,
+        posts: 0,
+        engagement: 0
       }
     };
     
@@ -69,7 +49,7 @@ export function AccountsOverview() {
   const handleDisconnectAccount = (accountId: string) => {
     setAccounts(accounts.map(account => 
       account.id === accountId 
-        ? { ...account, isConnected: false, lastSyncedAt: undefined } 
+        ? { ...account, connected: false, lastSynced: null } 
         : account
     ));
     toast.success("Account disconnected successfully");
