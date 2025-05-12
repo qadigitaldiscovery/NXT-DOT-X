@@ -76,10 +76,11 @@ export async function getApiKey(
 
       if (!error || (error.code !== 'PGRST116' && !error.message.includes("column"))) {
         // Type guard to ensure data is of the expected shape and not null
-        if (data && typeof data === 'object') {
-          const apiKey = 'api_key' in data ? (data.api_key as string) : null;
-          const preferredModel = 'preferred_model' in data ? (data.preferred_model as string) : null;
-          const configValue = hasConfigColumn && 'config' in data ? data.config : null;
+        if (data) {
+          // Using safer property access with separate variables
+          const apiKey = data && 'api_key' in data ? (data.api_key as string) : null;
+          const preferredModel = data && 'preferred_model' in data ? (data.preferred_model as string) : null;
+          const configValue = data && hasConfigColumn && 'config' in data ? data.config : null;
           
           return {
             key: apiKey,
