@@ -7,8 +7,6 @@ import TradingSystem from "./TradingSystem";
 import SocialMediaMarketing from "./SocialMediaMarketing";
 import TechHub from "./TechHub";
 import DotX from "./DotX";
-import SupplierManagement from "./SupplierManagement";
-import CustomerManagement from "./CustomerManagement";
 import BrandMarketing from "./BrandMarketing";
 
 export default function PrimaryModules() {
@@ -16,8 +14,8 @@ export default function PrimaryModules() {
   const navigate = useNavigate();
   
   const modulesByCategory = {
-    all: [<DataManagement key="data" />, <LoyaltyProgram key="loyalty" />, <TradingSystem key="trading" />, <SocialMediaMarketing key="social" />, <TechHub key="tech" />, <DotX key="dotx" />, <SupplierManagement key="supplier" />, <CustomerManagement key="customer" />, <BrandMarketing key="brand" />],
-    data: [<DataManagement key="data" />, <SupplierManagement key="supplier" />, <CustomerManagement key="customer" />],
+    all: [<DataManagement key="data" />, <LoyaltyProgram key="loyalty" />, <TradingSystem key="trading" />, <SocialMediaMarketing key="social" />, <TechHub key="tech" />, <DotX key="dotx" />, <BrandMarketing key="brand" />],
+    data: [<DataManagement key="data" />],
     marketing: [<LoyaltyProgram key="loyalty" />, <SocialMediaMarketing key="social" />, <BrandMarketing key="brand" />],
     tech: [<TechHub key="tech" />, <DotX key="dotx" />],
     operations: [<TradingSystem key="trading" />]

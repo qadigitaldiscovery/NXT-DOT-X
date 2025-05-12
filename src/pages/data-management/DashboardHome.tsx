@@ -2,7 +2,7 @@
 import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Database, FileUp, BarChart3, LineChart, FileCog, FileArchive } from "lucide-react";
+import { ArrowRight, Database, FileUp, BarChart3, LineChart, FileCog, FileArchive, Users, Truck } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 const DashboardHome = () => {
@@ -16,6 +16,40 @@ const DashboardHome = () => {
       </header>
       
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-lg font-medium">Supplier Management</CardTitle>
+            <Truck className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <p className="text-sm text-muted-foreground mb-4">Manage suppliers, track performance, and optimize procurement processes.</p>
+            <Button 
+              variant="outline" 
+              className="w-full" 
+              onClick={() => navigate('/supplier-management')}
+            >
+              Access <ArrowRight className="h-4 w-4 ml-2" />
+            </Button>
+          </CardContent>
+        </Card>
+        
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-lg font-medium">Customer Management</CardTitle>
+            <Users className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <p className="text-sm text-muted-foreground mb-4">Manage customer relationships, track interactions, and analyze customer data.</p>
+            <Button 
+              variant="outline" 
+              className="w-full" 
+              onClick={() => navigate('/customer-management')}
+            >
+              Access <ArrowRight className="h-4 w-4 ml-2" />
+            </Button>
+          </CardContent>
+        </Card>
+        
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-lg font-medium">Supplier Costing</CardTitle>
