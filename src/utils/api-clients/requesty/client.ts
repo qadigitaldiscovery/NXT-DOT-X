@@ -1,3 +1,4 @@
+
 import { toast } from "sonner";
 import { supabase } from '@/integrations/supabase/client';
 import { RequestyMessage } from './types';
@@ -9,7 +10,7 @@ import {
 } from '../common/shared-utils';
 
 // Get API key from storage or database
-export const getApiKey = async (): Promise<{ key: string | null, model: string | null, config: any | null }> => {
+export async function getRequestyKey(): Promise<{key: string | null; model: string | null; config: any | null}> {
   return await getApiKey('requesty', 'requesty-api-key');
 };
 
@@ -22,7 +23,7 @@ export const sendRequestyMessage = async (
 ): Promise<string> => {
   try {
     // Get API key from database or local storage
-    const apiKeyResult = await getApiKey();
+    const apiKeyResult = await getRequestyKey();
     const apiKey = apiKeyResult.key;
     const preferredModel = apiKeyResult.model;
     const config = apiKeyResult.config;

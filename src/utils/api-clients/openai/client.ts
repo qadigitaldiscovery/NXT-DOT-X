@@ -19,9 +19,8 @@ import {
 } from '../common/shared-utils';
 
 // Get API key from storage or database
-export const getApiKey = async (): Promise<{key: string | null; config: any | null}> => {
-  const result = await getApiKey('openai', 'openai-api-key');
-  return { key: result.key, config: result.config };
+export async function getOpenAIKey(): Promise<{key: string | null; model: string | null; config: any | null}> {
+  return await getApiKey('openai', 'openai-api-key');
 };
 
 // Main function to call OpenAI API
@@ -33,8 +32,8 @@ export async function callOpenAI<T extends OpenAIResponse>({
 }: CallOptions): Promise<T> {
   // Use provided apiKey or fetch from storage
   const result = apiKey ? 
-    { key: apiKey, config: null } : 
-    await getApiKey('openai', 'openai-api-key');
+    { key: apiKey, model: null, config: null } : 
+    await getOpenAIKey();
   
   const key = result.key;
   const config = result.config;

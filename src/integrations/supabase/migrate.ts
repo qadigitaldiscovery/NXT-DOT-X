@@ -9,7 +9,7 @@ export const runMigrations = async () => {
       
       // Check if the table exists first
       const { data: tableExists, error: tableCheckError } = await supabase
-        .from('api_provider_settings')
+        .from('api_provider_settings' as any)
         .select('id')
         .limit(1);
       
@@ -24,7 +24,7 @@ export const runMigrations = async () => {
         // Since we can't directly use SQL in a type-safe way, we'll use a workaround
         // First check if the column exists
         const { error: columnCheckError } = await supabase
-          .from('api_provider_settings')
+          .from('api_provider_settings' as any)
           .select('config')
           .limit(1);
           

@@ -118,7 +118,7 @@ export const loadFromDatabase = async (
       return { key: null, model: defaultModel, config: defaultConfig };
     }
     
-    if (data && !('error' in data)) {
+    if (data && data.api_key) {
       return { 
         key: data.api_key, 
         model: data.preferred_model || defaultModel,
