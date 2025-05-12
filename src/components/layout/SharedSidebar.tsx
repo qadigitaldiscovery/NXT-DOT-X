@@ -64,17 +64,14 @@ export const SharedSidebar = ({
         )}
       >
         {/* Sidebar Header - Centered Logo */}
-        <div className="">
-          {/* Only show DOT-X logo when sidebar is open */}
-          {open && (
-            <div className="flex flex-col items-center justify-center w-full pt-4 pb-2">
-              <div className="flex items-center justify-center">
-                <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-indigo-200">DOT-X</span>
-              </div>
-              <span className="text-xs text-blue-300 font-medium">NAVIGATION PANEL</span>
+        {open && (
+          <div className="flex flex-col items-center justify-center w-full pt-4 pb-2">
+            <div className="flex items-center justify-center">
+              <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-indigo-200">DOT-X</span>
             </div>
-          )}
-        </div>
+            <span className="text-xs text-blue-300 font-medium">NAVIGATION PANEL</span>
+          </div>
+        )}
 
         {/* Full Navigation List (Visible when open) */}
         <nav className={cn(
