@@ -1,6 +1,6 @@
 
-import React, { useState } from 'react';
-import { File, FileSearch } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { File, FileSearch, AlertTriangle } from 'lucide-react';
 import { DocumentItem } from './types';
 import { Button } from '@/components/ui/button';
 import { toast } from "sonner";
@@ -39,6 +39,17 @@ const renderMarkdown = (content: string): string => {
 export const DocumentViewer = ({ document }: DocumentViewerProps) => {
   const [summary, setSummary] = useState<string | null>(null);
   const [isSummarizing, setIsSummarizing] = useState<boolean>(false);
+  const [debugInfo, setDebugInfo] = useState<string | null>(null);
+
+  useEffect(() => {
+    // Reset debug info when document changes
+    setDebugInfo(null);
+    
+    // Log document details for debugging
+    if (document) {
+      console.log(`Document loaded: ${document.title} (${document.type})`, document);
+    }
+  }, [document]);
 
   if (!document) {
     return (
@@ -49,9 +60,36 @@ export const DocumentViewer = ({ document }: DocumentViewerProps) => {
     );
   }
 
+  const showDebugInfo = () => {
+    const info = `
+    Document ID: ${document.id}
+    Title: ${document.title}
+    Type: ${document.type}
+    Has URL: ${document.url ? 'Yes' : 'No'}
+    URL: ${document.url || 'N/A'}
+    Has Content: ${document.content ? 'Yes' : 'No'}
+    Content Length: ${document.content ? document.content.length : '0'} characters
+    Created: ${new Date(document.createdAt).toLocaleString()}
+    Updated: ${new Date(document.updatedAt).toLocaleString()}
+    Author: ${document.author}
+    `;
+    
+    setDebugInfo(info);
+  };
+
   const renderContent = () => {
     switch (document.type) {
       case 'pdf':
+        if (!document.url) {
+          return (
+            <div className="p-6 flex flex-col items-center justify-center">
+              <AlertTriangle className="h-12 w-12 text-amber-500 mb-4" />
+              <p className="text-lg font-medium">PDF URL is missing</p>
+              <p className="text-gray-500 mt-2">This PDF document doesn't have a valid URL.</p>
+            </div>
+          );
+        }
+        
         return (
           <iframe
             src={document.url}
@@ -59,23 +97,46 @@ export const DocumentViewer = ({ document }: DocumentViewerProps) => {
             title={document.title}
           />
         );
+      
       case 'text':
       case 'markdown':
+        if (!document.content) {
+          return (
+            <div className="p-6 flex flex-col items-center justify-center">
+              <AlertTriangle className="h-12 w-12 text-amber-500 mb-4" />
+              <p className="text-lg font-medium">Document content is empty</p>
+              <p className="text-gray-500 mt-2">This document doesn't contain any text content.</p>
+            </div>
+          );
+        }
+        
         return (
           <div className="p-6 prose dark:prose-invert max-w-none">
-            <div dangerouslySetInnerHTML={{ __html: renderMarkdown(document.content || '') }} />
+            <div dangerouslySetInnerHTML={{ __html: renderMarkdown(document.content) }} />
           </div>
         );
+      
       case 'image':
+        if (!document.url) {
+          return (
+            <div className="p-6 flex flex-col items-center justify-center">
+              <AlertTriangle className="h-12 w-12 text-amber-500 mb-4" />
+              <p className="text-lg font-medium">Image URL is missing</p>
+              <p className="text-gray-500 mt-2">This image document doesn't have a valid URL.</p>
+            </div>
+          );
+        }
+        
         return (
-          <div className="flex items-center justify-center h-full">
-            <img src={document.url} alt={document.title} className="max-h-full max-w-full" />
+          <div className="flex items-center justify-center h-full p-4">
+            <img src={document.url} alt={document.title} className="max-h-full max-w-full object-contain" />
           </div>
         );
+      
       default:
         return (
-          <div className="flex flex-col items-center justify-center h-full">
-            <p className="text-lg text-gray-400">Preview not available</p>
+          <div className="flex flex-col items-center justify-center h-full p-6">
+            <p className="text-lg text-gray-400 mb-4">Preview not available for this document type: {document.type}</p>
             {document.url && (
               <a 
                 href={document.url} 
@@ -167,7 +228,8 @@ export const DocumentViewer = ({ document }: DocumentViewerProps) => {
               </a>
             </Button>
           )}
-          {document.type === 'text' || document.type === 'markdown' ? (
+          
+          {(document.type === 'text' || document.type === 'markdown') && document.content && (
             <Button
               variant="ghost"
               size="sm"
@@ -178,7 +240,17 @@ export const DocumentViewer = ({ document }: DocumentViewerProps) => {
               <FileSearch className="h-4 w-4 mr-1" />
               {isSummarizing ? 'Summarizing...' : 'Summarize'}
             </Button>
-          ) : null}
+          )}
+          
+          <Button
+            variant="ghost"
+            size="sm"
+            className="text-sm text-white hover:bg-white/20"
+            onClick={showDebugInfo}
+          >
+            Debug
+          </Button>
+          
           <Button
             variant="ghost"
             size="sm"
@@ -190,7 +262,25 @@ export const DocumentViewer = ({ document }: DocumentViewerProps) => {
         </div>
       </div>
       <div className="h-[calc(100%-3.5rem)] overflow-auto">
-        {summary ? (
+        {debugInfo && (
+          <div className="p-6 bg-gray-100 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
+            <h4 className="font-bold mb-2">Document Debug Information</h4>
+            <pre className="whitespace-pre-wrap text-xs font-mono bg-white dark:bg-gray-900 p-3 rounded border overflow-auto">
+              {debugInfo}
+            </pre>
+            <div className="mt-4">
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={() => setDebugInfo(null)}
+              >
+                Hide Debug Info
+              </Button>
+            </div>
+          </div>
+        )}
+        
+        {summary && (
           <div className="p-6 bg-blue-50 dark:bg-blue-900/20 border-b border-blue-200 dark:border-blue-800">
             <h4 className="font-bold mb-2 flex items-center">
               <FileSearch className="h-4 w-4 mr-1" /> AI-Generated Summary
@@ -208,7 +298,8 @@ export const DocumentViewer = ({ document }: DocumentViewerProps) => {
               </Button>
             </div>
           </div>
-        ) : null}
+        )}
+        
         {renderContent()}
       </div>
     </div>
