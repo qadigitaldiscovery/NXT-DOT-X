@@ -8,17 +8,18 @@ import SocialMediaMarketing from "./SocialMediaMarketing";
 import TechHub from "./TechHub";
 import DotX from "./DotX";
 import BrandMarketing from "./BrandMarketing";
+import ProjectManagement from "./ProjectManagement";
 
 export default function PrimaryModules() {
   const [activeTab, setActiveTab] = useState("all");
   const navigate = useNavigate();
   
   const modulesByCategory = {
-    all: [<DataManagement key="data" />, <LoyaltyProgram key="loyalty" />, <TradingSystem key="trading" />, <SocialMediaMarketing key="social" />, <TechHub key="tech" />, <DotX key="dotx" />, <BrandMarketing key="brand" />],
+    all: [<DataManagement key="data" />, <LoyaltyProgram key="loyalty" />, <TradingSystem key="trading" />, <SocialMediaMarketing key="social" />, <TechHub key="tech" />, <DotX key="dotx" />, <BrandMarketing key="brand" />, <ProjectManagement key="project" />],
     data: [<DataManagement key="data" />],
     marketing: [<LoyaltyProgram key="loyalty" />, <SocialMediaMarketing key="social" />, <BrandMarketing key="brand" />],
     tech: [<TechHub key="tech" />, <DotX key="dotx" />],
-    operations: [<TradingSystem key="trading" />]
+    operations: [<TradingSystem key="trading" />, <ProjectManagement key="project" />]
   };
   
   // Use the activeTab from the parent component

@@ -17,7 +17,8 @@ import {
   Globe,
   BarChart3,
   Building,
-  UserCog
+  UserCog,
+  ClipboardList
 } from 'lucide-react';
 import { SidebarProvider } from '@/components/ui/sidebar';
 import DashboardModules from '@/components/master-dash/DashboardModules';
@@ -61,6 +62,11 @@ const MasterDash = () => {
               icon={<Key className="w-5 h-5" />} 
               label="API Keys" 
               onClick={() => handleNavigation('/tech-hub/api-management')}
+            />
+            <SidebarItem 
+              icon={<ClipboardList className="w-5 h-5" />} 
+              label="Project Management" 
+              onClick={() => handleNavigation('/projects')}
             />
             
             {/* Administration Section */}
