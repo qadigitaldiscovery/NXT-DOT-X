@@ -4,8 +4,8 @@ import NotFound from "@/pages/NotFound";
 import Landing from "@/pages/Landing";
 import RootHandler from '@/components/RootHandler';
 import Unauthorized from "@/pages/Unauthorized";
-import PrototypeSelector from '@/pages/PrototypeSelector';
 import MasterDash from '@/pages/MasterDash';
+import SharedDocumentPage from '@/pages/SharedDocumentPage';
 
 // Import module-specific routes
 import { AdminRoutes } from "./adminRoutes";
@@ -33,6 +33,9 @@ export const AppRoutes = () => {
       
       {/* MasterDash Route */}
       <Route path="/master" element={<MasterDash />} />
+      
+      {/* Shared Document Route */}
+      <Route path="/shared-document/:shareId" element={<SharedDocumentPage />} />
       
       {/* Legacy route redirects */}
       <Route path="/prototypes" element={<Navigate to="/" replace />} />

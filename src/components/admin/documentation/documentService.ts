@@ -1,4 +1,3 @@
-
 import { DocumentCategory, DocumentItem, DocumentType } from './types';
 import { documentCategories as initialDocumentCategories } from './mockData';
 import { supabase } from "@/integrations/supabase/client";
@@ -16,6 +15,8 @@ interface DbDocumentItem {
   author?: string;
   created_at: string;
   updated_at: string;
+  is_public?: boolean;
+  share_id?: string;
 }
 
 // Class to manage document data and operations with Supabase integration
@@ -38,8 +39,16 @@ class DocumentService {
       url: dbDocument.url || '',
       author: dbDocument.author || '',
       createdAt: dbDocument.created_at,
-      updatedAt: dbDocument.updated_at
+      updatedAt: dbDocument.updated_at,
+      isPublic: dbDocument.is_public || false,
+      shareId: dbDocument.share_id || null
     };
+  }
+
+  // Generate a unique share ID for a document
+  private generateShareId(): string {
+    return Math.random().toString(36).substring(2, 15) + 
+           Math.random().toString(36).substring(2, 15);
   }
   
   // Get all document categories from Supabase
@@ -223,6 +232,84 @@ class DocumentService {
     } catch (error) {
       console.error('Error in getDocumentById:', error);
       return null;
+    }
+  }
+  
+  // Get document by share ID
+  async getDocumentByShareId(shareId: string): Promise<DocumentItem | null> {
+    try {
+      const { data, error } = await supabase
+        .from('documents')
+        .select('*')
+        .eq('share_id', shareId)
+        .eq('is_public', true)
+        .single();
+      
+      if (error) {
+        console.error('Error fetching document by share ID:', error);
+        return null;
+      }
+      
+      return this.mapDbDocumentToDocumentItem(data as DbDocumentItem);
+    } catch (error) {
+      console.error('Error in getDocumentByShareId:', error);
+      return null;
+    }
+  }
+  
+  // Create a shareable link for a document
+  async createShareableLink(documentId: string): Promise<string | null> {
+    try {
+      // Generate a unique share ID
+      const shareId = this.generateShareId();
+      
+      // Update the document with the share ID and make it public
+      const { data, error } = await supabase
+        .from('documents')
+        .update({
+          share_id: shareId,
+          is_public: true,
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', documentId)
+        .select()
+        .single();
+      
+      if (error) {
+        console.error('Error creating shareable link:', error);
+        return null;
+      }
+      
+      // Return the share URL
+      const baseUrl = window.location.origin;
+      return `${baseUrl}/shared-document/${shareId}`;
+    } catch (error) {
+      console.error('Error in createShareableLink:', error);
+      return null;
+    }
+  }
+  
+  // Remove the shareable link from a document
+  async removeShareableLink(documentId: string): Promise<boolean> {
+    try {
+      const { error } = await supabase
+        .from('documents')
+        .update({
+          share_id: null,
+          is_public: false,
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', documentId);
+      
+      if (error) {
+        console.error('Error removing shareable link:', error);
+        return false;
+      }
+      
+      return true;
+    } catch (error) {
+      console.error('Error in removeShareableLink:', error);
+      return false;
     }
   }
   

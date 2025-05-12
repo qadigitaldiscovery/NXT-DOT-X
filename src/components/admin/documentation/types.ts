@@ -11,6 +11,8 @@ export interface DocumentItem {
   createdAt: string;
   updatedAt: string;
   author: string;
+  isPublic?: boolean;
+  shareId?: string | null;
 }
 
 export interface DocumentCategory {
