@@ -106,14 +106,14 @@ const DocumentationPage = () => {
     }
   };
 
-  const handleFileUpload = (file: File, type: DocumentType, metadata: {
+  const handleFileUpload = async (file: File, type: DocumentType, metadata: {
     title: string;
     description?: string;
     author: string;
     categoryId: string;
   }) => {
     try {
-      const newDocument = documentService.addDocumentFromFile(file, type, metadata);
+      const newDocument = await documentService.addDocumentFromFile(file, type, metadata);
       setCategories(documentService.getAllCategories());
       setSelectedDocument(newDocument);
       toast.success("File uploaded and document created successfully");

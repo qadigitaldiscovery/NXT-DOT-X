@@ -100,21 +100,57 @@ export const DocumentViewer = ({ document }: DocumentViewerProps) => {
       
       case 'text':
       case 'markdown':
-        if (!document.content) {
+        // Check if we have content to display
+        if (!document.content && !document.url) {
           return (
             <div className="p-6 flex flex-col items-center justify-center">
               <AlertTriangle className="h-12 w-12 text-amber-500 mb-4" />
               <p className="text-lg font-medium">Document content is empty</p>
-              <p className="text-gray-500 mt-2">This document doesn't contain any text content.</p>
+              <p className="text-gray-500 mt-2">
+                This {document.type} file doesn't contain any content and has no URL source.
+              </p>
             </div>
           );
         }
         
-        return (
-          <div className="p-6 prose dark:prose-invert max-w-none">
-            <div dangerouslySetInnerHTML={{ __html: renderMarkdown(document.content) }} />
-          </div>
-        );
+        // If we have content, render it
+        if (document.content) {
+          return (
+            <div className="p-6 prose dark:prose-invert max-w-none">
+              <div dangerouslySetInnerHTML={{ __html: renderMarkdown(document.content) }} />
+            </div>
+          );
+        }
+        
+        // If we have a URL but no content, try to render from URL
+        if (document.url) {
+          // For markdown with URL but no content, render from URL if possible
+          return (
+            <div className="p-6 flex flex-col h-full">
+              <div className="flex items-center justify-between mb-4 bg-amber-50 dark:bg-amber-900/20 p-3 rounded-lg">
+                <div className="flex items-center">
+                  <AlertTriangle className="h-5 w-5 text-amber-500 mr-2" />
+                  <p className="text-sm">Document is linked to a file but content isn't loaded.</p>
+                </div>
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={() => window.open(document.url, '_blank')}
+                >
+                  View Original
+                </Button>
+              </div>
+              
+              <iframe
+                src={document.url}
+                className="flex-1 w-full rounded border border-gray-200 dark:border-gray-700"
+                title={document.title}
+              />
+            </div>
+          );
+        }
+        
+        return null; // Fallback, should not reach here due to earlier checks
       
       case 'image':
         if (!document.url) {
@@ -255,9 +291,9 @@ export const DocumentViewer = ({ document }: DocumentViewerProps) => {
             variant="ghost"
             size="sm"
             className="text-sm text-white hover:bg-white/20"
-            onClick={() => window.print()}
+            onClick={() => window.open(document.url, '_blank')}
           >
-            Print
+            Open
           </Button>
         </div>
       </div>

@@ -64,22 +64,54 @@ class DocumentService {
   }
   
   // Add document from file upload
-  addDocumentFromFile(file: File, type: DocumentType, metadata: {
+  async addDocumentFromFile(file: File, type: DocumentType, metadata: {
     title: string;
     description?: string;
     author: string;
     categoryId: string;
-  }): DocumentItem {
-    // Create URL for the file (in a real app, this would be a server-side process)
+  }): Promise<DocumentItem> {
+    // Create URL for the file
     const url = URL.createObjectURL(file);
+    
+    // For text or markdown files, try to read the content
+    let content = '';
+    if (type === 'text' || type === 'markdown') {
+      try {
+        content = await this.readFileContent(file);
+        console.log(`Read content from ${metadata.title}, length: ${content.length}`);
+      } catch (error) {
+        console.error("Error reading file content:", error);
+      }
+    }
     
     return this.addDocument(metadata.categoryId, {
       title: metadata.title,
       description: metadata.description || '',
       type: type,
-      content: '', // Content would be extracted from file in a real implementation
+      content: content,
       url: url,
       author: metadata.author
+    });
+  }
+  
+  // Helper method to read file content
+  private readFileContent(file: File): Promise<string> {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      
+      reader.onload = (e) => {
+        if (e.target && typeof e.target.result === 'string') {
+          resolve(e.target.result);
+        } else {
+          reject(new Error('Failed to read file content'));
+        }
+      };
+      
+      reader.onerror = (e) => {
+        reject(new Error('Error reading file: ' + e.target?.error));
+      };
+      
+      reader.readAsText(file);
     });
   }
   
