@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { Search } from 'lucide-react';
 import { ModuleCard } from './ModuleCard';
 import PrimaryModules from './modules/PrimaryModules';
-import SystemTechnicalConfig from './modules/SystemTechnicalConfig';
+import ModuleStatusIndicator from './ModuleStatusIndicator';
 
 const DashboardModules = () => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -44,9 +44,9 @@ const DashboardModules = () => {
         </div>
       </div>
 
-      {/* System Technical Configuration */}
+      {/* Module Status Indicators (RAG) */}
       <div className="mb-8">
-        <SystemTechnicalConfig />
+        <ModuleStatusIndicator />
       </div>
 
       {/* Primary Modules */}
