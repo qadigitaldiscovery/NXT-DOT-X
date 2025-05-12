@@ -32,7 +32,8 @@ export function useAlerts(moduleId?: string) {
         const { data, error } = await query;
         
         if (error) throw error;
-        setAlerts(data as Alert[]);
+        // Use type assertion to handle the type mismatch
+        setAlerts((data || []) as unknown as Alert[]);
       } catch (err) {
         console.error('Error fetching alerts:', err);
         setError(err instanceof Error ? err : new Error('Unknown error occurred'));

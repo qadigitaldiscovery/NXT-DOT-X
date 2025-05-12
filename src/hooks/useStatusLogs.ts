@@ -20,7 +20,8 @@ export function useStatusLogs(moduleId?: string) {
       try {
         setLoading(true);
         
-        let query = supabase.from('rag_status_logs').select('*');
+        // Use type assertion to fix the table name issue
+        let query = supabase.from('rag_status_logs' as any).select('*');
         
         if (moduleId) {
           query = query.eq('module_id', moduleId);
@@ -31,7 +32,8 @@ export function useStatusLogs(moduleId?: string) {
         const { data, error } = await query;
         
         if (error) throw error;
-        setLogs(data as StatusLog[]);
+        // Use type assertion to handle the type mismatch
+        setLogs((data || []) as unknown as StatusLog[]);
       } catch (err) {
         console.error('Error fetching status logs:', err);
         setError(err instanceof Error ? err : new Error('Unknown error occurred'));

@@ -22,7 +22,8 @@ export function useCustomerImpacts(moduleId?: string) {
       try {
         setLoading(true);
         
-        let query = supabase.from('customer_impacts').select('*');
+        // Use type assertion to fix the table name issue
+        let query = supabase.from('customer_impacts' as any).select('*');
         
         if (moduleId) {
           query = query.eq('module_id', moduleId);
@@ -33,7 +34,8 @@ export function useCustomerImpacts(moduleId?: string) {
         const { data, error } = await query;
         
         if (error) throw error;
-        setImpacts(data as CustomerImpact[]);
+        // Use type assertion to handle the type mismatch
+        setImpacts((data || []) as unknown as CustomerImpact[]);
       } catch (err) {
         console.error('Error fetching customer impacts:', err);
         setError(err instanceof Error ? err : new Error('Unknown error occurred'));

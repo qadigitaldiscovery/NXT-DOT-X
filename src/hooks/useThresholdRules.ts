@@ -23,7 +23,8 @@ export function useThresholdRules(moduleId?: string) {
       try {
         setLoading(true);
         
-        let query = supabase.from('threshold_rules').select('*');
+        // Use type assertion to fix the table name issue
+        let query = supabase.from('threshold_rules' as any).select('*');
         
         if (moduleId) {
           query = query.eq('module_id', moduleId);
@@ -32,7 +33,8 @@ export function useThresholdRules(moduleId?: string) {
         const { data, error } = await query;
         
         if (error) throw error;
-        setRules(data as ThresholdRule[]);
+        // Use type assertion to handle the type mismatch
+        setRules((data || []) as unknown as ThresholdRule[]);
       } catch (err) {
         console.error('Error fetching threshold rules:', err);
         setError(err instanceof Error ? err : new Error('Unknown error occurred'));
@@ -46,14 +48,15 @@ export function useThresholdRules(moduleId?: string) {
 
   const addRule = async (rule: Omit<ThresholdRule, 'id' | 'created_at'>) => {
     try {
+      // Use type assertion to fix the table name issue
       const { data, error } = await supabase
-        .from('threshold_rules')
-        .insert(rule)
+        .from('threshold_rules' as any)
+        .insert(rule as any)
         .select();
       
       if (error) throw error;
       
-      setRules(prev => [...prev, data[0] as ThresholdRule]);
+      setRules(prev => [...prev, (data[0] as unknown as ThresholdRule)]);
       return { success: true, data: data[0] };
     } catch (err) {
       console.error('Error adding threshold rule:', err);
@@ -63,8 +66,9 @@ export function useThresholdRules(moduleId?: string) {
 
   const deleteRule = async (id: string) => {
     try {
+      // Use type assertion to fix the table name issue
       const { error } = await supabase
-        .from('threshold_rules')
+        .from('threshold_rules' as any)
         .delete()
         .eq('id', id);
       
