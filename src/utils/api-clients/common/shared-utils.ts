@@ -75,11 +75,11 @@ export async function getApiKey(
         .maybeSingle();
 
       if (!error || (error.code !== 'PGRST116' && !error.message.includes("column"))) {
-        // Type guard to ensure data is of the expected shape
+        // Type guard to ensure data is of the expected shape and not null
         if (data && typeof data === 'object' && 'api_key' in data) {
           return {
-            key: data.api_key as string || null,
-            model: data.preferred_model as string || null,
+            key: (data.api_key as string) || null,
+            model: (data.preferred_model as string) || null,
             config: hasConfigColumn && 'config' in data ? data.config : null
           };
         }
