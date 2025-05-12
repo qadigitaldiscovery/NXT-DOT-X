@@ -122,16 +122,29 @@ export const loadFromDatabase = async (
       return { key: null, model: defaultModel, config: defaultConfig };
     }
     
-    // Type guard to ensure data is of the expected shape
-    const apiKey = data.api_key ? data.api_key : null;
-    const preferredModel = data.preferred_model ? data.preferred_model : defaultModel;
-    const configValue = hasConfigColumn && data.config ? data.config : defaultConfig;
-      
-    return { 
-      key: apiKey, 
-      model: preferredModel, 
-      config: configValue
+    // Type guard to check if data has the expected properties
+    const isValidData = (
+      obj: any
+    ): obj is { api_key: string | null; preferred_model: string | null; config?: any } => {
+      return obj && typeof obj === 'object';
     };
+
+    // Safely extract properties with defaults if they don't exist
+    if (isValidData(data)) {
+      const apiKey = data.api_key ?? null;
+      const preferredModel = data.preferred_model ?? defaultModel;
+      const configValue = hasConfigColumn && 'config' in data ? data.config ?? defaultConfig : defaultConfig;
+        
+      return { 
+        key: apiKey, 
+        model: preferredModel, 
+        config: configValue
+      };
+    }
+
+    // Fallback if data is not in expected format
+    return { key: null, model: defaultModel, config: defaultConfig };
+      
   } catch (error) {
     console.error('Error loading from database:', error);
     return { key: null, model: defaultModel, config: defaultConfig };

@@ -4,9 +4,18 @@ import { toast } from 'sonner';
 
 // Type for API errors
 export class ApiError extends Error {
-  constructor(message: string) {
+  code?: string;
+  status?: number;
+  type?: string;
+
+  constructor(message: string, details?: { code?: string; status?: number; type?: string }) {
     super(message);
     this.name = 'ApiError';
+    if (details) {
+      this.code = details.code;
+      this.status = details.status;
+      this.type = details.type;
+    }
   }
 }
 
@@ -108,7 +117,7 @@ export async function getApiKey(
       
       if (error) {
         // If error relates to config column not existing, try without it
-        if (error.message.includes('config')) {
+        if (error.message && error.message.includes('config')) {
           const { data: dataNoConfig, error: errorNoConfig } = await supabase
             .from('api_provider_settings')
             .select('api_key, preferred_model')
@@ -125,9 +134,10 @@ export async function getApiKey(
             return { key: null, model: null, config: null };
           }
           
+          // Safe access of properties with null checks
           return { 
-            key: dataNoConfig.api_key || null, 
-            model: dataNoConfig.preferred_model || null, 
+            key: dataNoConfig.api_key ?? null, 
+            model: dataNoConfig.preferred_model ?? null, 
             config: null 
           };
         }
@@ -140,10 +150,11 @@ export async function getApiKey(
         return { key: null, model: null, config: null };
       }
       
+      // Safe access with null checks
       return { 
-        key: data.api_key || null, 
-        model: data.preferred_model || null, 
-        config: data.config || null 
+        key: data.api_key ?? null, 
+        model: data.preferred_model ?? null, 
+        config: data.config ?? null 
       };
     } catch (error) {
       console.error('Exception getting API key from database:', error);
@@ -159,8 +170,7 @@ export async function getApiKey(
 export async function tryUseEdgeFunction<T>(
   provider: string, 
   endpoint: string, 
-  payload: any,
-  config?: any
+  payload: any
 ): Promise<T | null> {
   try {
     console.log(`Attempting to call ${provider} edge function`);
@@ -168,8 +178,7 @@ export async function tryUseEdgeFunction<T>(
       body: {
         provider,
         endpoint,
-        payload,
-        config
+        payload
       }
     });
     
