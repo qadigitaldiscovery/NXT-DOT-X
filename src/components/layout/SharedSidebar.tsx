@@ -95,20 +95,30 @@ export const SharedSidebar = ({
           />
         )}
 
-        {/* Custom Footer Content - Always visible regardless of sidebar state */}
+        {/* Custom Footer Content - Updated with your robust layout-safe version */}
         {customFooterContent && (
-          <div className="mt-auto w-full border-t border-indigo-900/30 bg-indigo-950 px-2 py-3 z-40">
-            <div className={cn(
-              "flex w-full items-center justify-between gap-2",
-              open ? "flex-row" : "flex-col space-y-2"
-            )}>
-              {React.Children.map(
-                (customFooterContent as React.ReactElement).props.children,
-                (child: React.ReactElement, index: number) => (
-                  <div key={index} className="flex justify-center">{child}</div>
-                )
-              )}
-            </div>
+          <div className="mt-auto w-full border-t border-indigo-900/30 bg-indigo-950 px-3 py-3 z-40">
+            {open ? (
+              // Expanded Sidebar Footer
+              <div className="flex w-full items-center justify-between gap-2">
+                {React.Children.map(
+                  (customFooterContent as React.ReactElement).props.children,
+                  (child: React.ReactElement, index: number) => (
+                    <div key={index} className="flex justify-center">{child}</div>
+                  )
+                )}
+              </div>
+            ) : (
+              // Collapsed Sidebar Footer
+              <div className="flex flex-col items-center space-y-2">
+                {React.Children.map(
+                  (customFooterContent as React.ReactElement).props.children,
+                  (child: React.ReactElement, index: number) => (
+                    <div key={index} className="flex justify-center">{child}</div>
+                  )
+                )}
+              </div>
+            )}
           </div>
         )}
       </aside>
