@@ -48,12 +48,12 @@ const SharedDashboardLayout: React.FC<SharedDashboardLayoutProps> = ({
 
   // Default navigation footer if none is provided
   const defaultNavigationFooter = (
-    <div className="flex items-center justify-between p-2 border-t border-slate-700/50 mt-auto">
+    <div className="flex items-center justify-between p-2 border-t border-slate-700/50 mt-auto bg-indigo-950">
       <Button 
         variant="ghost" 
         size="icon" 
         onClick={() => navigate(-1)}
-        className="text-slate-300 hover:text-slate-100 hover:bg-slate-800/50 rounded-lg"
+        className="text-slate-300 hover:text-white hover:bg-indigo-900 rounded-lg"
       >
         <ChevronLeft className="h-5 w-5" />
       </Button>
@@ -62,7 +62,7 @@ const SharedDashboardLayout: React.FC<SharedDashboardLayoutProps> = ({
         variant="ghost" 
         size="icon" 
         onClick={() => navigate('/')}
-        className="text-slate-300 hover:text-slate-100 hover:bg-slate-800/50 rounded-lg"
+        className="text-slate-300 hover:text-white hover:bg-indigo-900 rounded-lg"
       >
         <Home className="h-5 w-5" />
       </Button>
@@ -71,7 +71,7 @@ const SharedDashboardLayout: React.FC<SharedDashboardLayoutProps> = ({
         variant="ghost" 
         size="icon" 
         onClick={() => navigate(1)}
-        className="text-slate-300 hover:text-slate-100 hover:bg-slate-800/50 rounded-lg"
+        className="text-slate-300 hover:text-white hover:bg-indigo-900 rounded-lg"
       >
         <ChevronRight className="h-5 w-5" />
       </Button>
@@ -98,7 +98,7 @@ const SharedDashboardLayout: React.FC<SharedDashboardLayoutProps> = ({
             navItems={navCategories}
             homeItem={homeItem}
             customFooterContent={customFooterContent || defaultNavigationFooter}
-            className={sidebarClassName}
+            className={sidebarClassName || "bg-gradient-to-b from-indigo-950 via-blue-950 to-slate-950"}
             removeBottomToggle={removeBottomToggle}
           />
           

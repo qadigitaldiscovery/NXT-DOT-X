@@ -92,9 +92,12 @@ export const SharedSidebar = ({
           />
         )}
 
-        {/* Custom Footer Content - Ensuring it's visible when sidebar is open */}
-        {customFooterContent && open && (
-          <div className="mt-auto">
+        {/* Custom Footer Content - Always visible regardless of sidebar state */}
+        {customFooterContent && (
+          <div className={cn(
+            "mt-auto w-full",
+            !open && !isMobile && "hidden" // Hide only when sidebar is collapsed on desktop
+          )}>
             {customFooterContent}
           </div>
         )}

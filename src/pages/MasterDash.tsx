@@ -72,12 +72,12 @@ const MasterDash = () => {
 
   // Custom footer with navigation controls
   const navigationFooter = (
-    <div className="flex items-center justify-between p-2 border-t border-gray-700/50 mt-auto">
+    <div className="flex items-center justify-between p-2 border-t border-gray-700/50 mt-auto bg-indigo-950">
       <Button 
         variant="ghost" 
         size="icon" 
         onClick={() => navigate(-1)}
-        className="text-gray-300 hover:text-gray-100 hover:bg-gray-800/50 rounded-lg"
+        className="text-gray-300 hover:text-white hover:bg-indigo-900 rounded-lg"
       >
         <ChevronLeft className="h-5 w-5" />
       </Button>
@@ -86,7 +86,7 @@ const MasterDash = () => {
         variant="ghost" 
         size="icon" 
         onClick={() => navigate('/')}
-        className="text-gray-300 hover:text-gray-100 hover:bg-gray-800/50 rounded-lg"
+        className="text-gray-300 hover:text-white hover:bg-indigo-900 rounded-lg"
       >
         <Home className="h-5 w-5" />
       </Button>
@@ -95,7 +95,7 @@ const MasterDash = () => {
         variant="ghost" 
         size="icon" 
         onClick={() => navigate(1)}
-        className="text-gray-300 hover:text-gray-100 hover:bg-gray-800/50 rounded-lg"
+        className="text-gray-300 hover:text-white hover:bg-indigo-900 rounded-lg"
       >
         <ChevronRight className="h-5 w-5" />
       </Button>
