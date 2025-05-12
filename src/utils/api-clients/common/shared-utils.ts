@@ -53,7 +53,7 @@ export async function getApiKey(
       let hasConfigColumn = false;
       try {
         const { error } = await supabase
-          .from('api_provider_settings')
+          .from('api_provider_settings' as any)
           .select('config')
           .limit(1);
         
@@ -75,11 +75,12 @@ export async function getApiKey(
         .maybeSingle();
 
       if (!error || (error.code !== 'PGRST116' && !error.message.includes("column"))) {
-        if (data) {
+        // Type guard to ensure data is of the expected shape
+        if (data && typeof data === 'object' && 'api_key' in data) {
           return {
-            key: data.api_key || null,
-            model: data.preferred_model || null,
-            config: hasConfigColumn && data.config ? data.config : null
+            key: data.api_key as string || null,
+            model: data.preferred_model as string || null,
+            config: hasConfigColumn && 'config' in data ? data.config : null
           };
         }
       } else {

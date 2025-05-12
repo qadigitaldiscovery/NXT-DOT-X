@@ -118,11 +118,12 @@ export const loadFromDatabase = async (
       return { key: null, model: defaultModel, config: defaultConfig };
     }
     
-    if (data && data.api_key) {
+    // Type guard to ensure data is of the expected shape
+    if (data && typeof data === 'object' && 'api_key' in data) {
       return { 
-        key: data.api_key, 
-        model: data.preferred_model || defaultModel,
-        config: (hasConfigColumn && data.config) ? data.config : defaultConfig
+        key: data.api_key as string, 
+        model: (data.preferred_model as string) || defaultModel,
+        config: (hasConfigColumn && 'config' in data && data.config) ? data.config as Record<string, any> : defaultConfig
       };
     }
   } catch (error) {

@@ -112,7 +112,7 @@ export async function* streamRequestyMessage(
 ): AsyncGenerator<string, void, unknown> {
   try {
     // Get API key from database or local storage
-    const apiKeyResult = await getApiKey();
+    const apiKeyResult = await getRequestyKey();
     const apiKey = apiKeyResult.key;
     const preferredModel = apiKeyResult.model;
     const config = apiKeyResult.config;
