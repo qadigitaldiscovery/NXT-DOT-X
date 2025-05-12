@@ -1,3 +1,69 @@
+export interface SocialAccount {
+  id: string;
+  platform: SocialPlatform;
+  username: string;
+  profileImageUrl: string;
+  accountUrl: string;
+  connected: boolean;
+  lastSynced: Date | null;
+  stats: SocialStats;
+}
+
+export type SocialPlatform = 
+  | 'twitter' 
+  | 'facebook' 
+  | 'instagram' 
+  | 'linkedin' 
+  | 'tiktok' 
+  | 'pinterest'
+  | 'youtube';
+
+export interface SocialPost {
+  id: string;
+  platform: SocialPlatform;
+  accountId: string;
+  content: string;
+  mediaUrls?: string[];
+  scheduledFor?: Date | null;
+  publishedAt?: Date | null;
+  status: SocialPostStatus;
+  stats: PostStats | null;
+}
+
+export type SocialPostStatus = 'draft' | 'scheduled' | 'published' | 'failed';
+
+export interface PostStats {
+  likes?: number;
+  comments?: number;
+  shares?: number;
+  impressions?: number;
+  clicks?: number;
+  engagementRate?: number;
+}
+
+export interface SocialStats {
+  followers: number;
+  following: number;
+  posts: number;
+  engagement: number;
+}
+
+export type SocialStatsTimeframe = '7d' | '30d' | '90d' | '12m';
+
+export interface Campaign {
+  id: string;
+  name: string;
+  description?: string;
+  status: 'active' | 'draft' | 'completed' | 'paused';
+  startDate: string;
+  endDate?: string;
+  budget?: number;
+  targetAudience?: AudienceSegment;
+  posts: SocialMediaPost[];
+  metrics?: CampaignMetrics;
+  createdAt: string;
+  updatedAt: string;
+}
 
 export interface SocialMediaAccount {
   id: string;
@@ -46,21 +112,6 @@ export interface PostMetrics {
   impressions?: number;
   clicks?: number;
   engagementRate?: number;
-}
-
-export interface Campaign {
-  id: string;
-  name: string;
-  description?: string;
-  status: 'active' | 'draft' | 'completed' | 'paused';
-  startDate: string;
-  endDate?: string;
-  budget?: number;
-  targetAudience?: AudienceSegment;
-  posts: SocialMediaPost[];
-  metrics?: CampaignMetrics;
-  createdAt: string;
-  updatedAt: string;
 }
 
 export interface CampaignMetrics {

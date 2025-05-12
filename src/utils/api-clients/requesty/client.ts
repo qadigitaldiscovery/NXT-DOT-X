@@ -13,16 +13,16 @@ import {
   tryUseEdgeFunction, 
   processStreamingResponse,
   estimateTokenCount,
-  getApiKey,
   ApiError
-} from '../common';
+} from '../common/shared-utils';
+import { getApiKey } from '../common/api-key-utils';
 
 // Get API key from storage or database
 export async function getRequestyKey(): Promise<{key: string | null; model: string | null; config: any | null}> {
   return await getApiKey('requesty', 'requesty-api-key');
 };
 
-// Main function to call Requesty API - updated with the RequestyResponseOrStream generic type
+// Main function to call Requesty API
 export async function callRequesty<T extends RequestyResponseOrStream>({ 
   endpoint, 
   payload, 

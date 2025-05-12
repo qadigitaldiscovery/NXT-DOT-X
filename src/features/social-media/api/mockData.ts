@@ -162,7 +162,8 @@ export const mockPosts: SocialPost[] = [
     content: 'Monday motivation from our CEO: "Success isn\'t about how much money you make, it\'s about the difference you make in people\'s lives." #MondayMotivation #Leadership',
     mediaUrls: ['https://placehold.co/600x600?text=CEO+Quote'],
     scheduledFor: null,
-    status: 'draft'
+    status: 'draft',
+    stats: null
   }
 ];
 
@@ -236,3 +237,6 @@ export const mockPostStatusCounts: Record<SocialPostStatus, number> = {
 export const mockUpcomingPosts: SocialPost[] = mockPosts.filter(post => 
   post.status === 'scheduled' && post.scheduledFor && post.scheduledFor > new Date()
 );
+
+// Add this to fix the reference in AccountsOverview.tsx
+export const mockSocialAccounts = mockAccounts;

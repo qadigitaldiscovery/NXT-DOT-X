@@ -1,3 +1,4 @@
+
 import { toast } from "sonner";
 import { supabase } from '@/integrations/supabase/client';
 import { 
@@ -13,9 +14,9 @@ import {
   tryUseEdgeFunction, 
   processStreamingResponse,
   estimateTokenCount,
-  getApiKey,
   ApiError
 } from '../common/shared-utils';
+import { getApiKey } from '../common/api-key-utils';
 
 // Get API key from storage or database
 export async function getOpenAIKey(): Promise<{key: string | null; model: string | null; config: any | null}> {

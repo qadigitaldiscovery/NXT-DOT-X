@@ -3,11 +3,25 @@ import { useState } from "react";
 import { SocialAccountCard } from "./SocialAccountCard";
 import { ConnectAccountButton } from "./ConnectAccountButton";
 import { SocialMediaAccount, SocialMediaPlatform } from "../api/types";
-import { mockSocialAccounts } from "../api/mockData";
+import { mockAccounts } from "../api/mockData";
 import { toast } from "sonner";
 
 export function AccountsOverview() {
-  const [accounts, setAccounts] = useState<SocialMediaAccount[]>(mockSocialAccounts);
+  const [accounts, setAccounts] = useState<SocialMediaAccount[]>(
+    mockAccounts.map(account => ({
+      id: account.id,
+      platform: account.platform as SocialMediaPlatform,
+      username: account.username,
+      profileUrl: account.accountUrl,
+      avatarUrl: account.profileImageUrl,
+      isConnected: account.connected,
+      lastSyncedAt: account.lastSynced?.toISOString(),
+      metrics: {
+        followers: account.stats.followers,
+        engagementRate: account.stats.engagement
+      }
+    }))
+  );
 
   const handleConnectAccount = (platform: SocialMediaPlatform) => {
     // In a real implementation, this would trigger an OAuth flow

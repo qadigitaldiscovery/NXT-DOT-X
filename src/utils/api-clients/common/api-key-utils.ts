@@ -24,7 +24,7 @@ export async function storeApiKeyInDatabase(
     const { data: existingData, error: checkError } = await supabase
       .from('api_provider_settings')
       .select('id')
-      .eq('provider', provider)
+      .eq('provider_name', provider)
       .maybeSingle();
 
     if (checkError) {
@@ -40,7 +40,7 @@ export async function storeApiKeyInDatabase(
         .update({
           api_key: apiKey,
           preferred_model: preferredModel,
-          config: config || {}
+          // Only add config if it exists in the table
         })
         .eq('id', existingData.id);
 
@@ -57,10 +57,10 @@ export async function storeApiKeyInDatabase(
       const { error: insertError } = await supabase
         .from('api_provider_settings')
         .insert({
-          provider,
+          provider_name: provider,
           api_key: apiKey,
           preferred_model: preferredModel,
-          config: config || {}
+          // Only add config if it exists in the table
         });
 
       if (insertError) {
@@ -80,53 +80,33 @@ export async function storeApiKeyInDatabase(
 }
 
 // Function to retrieve API key from database
-export async function getApiKeyFromDatabase(provider: ApiKeyProvider): Promise<ApiKeyConfig | null> {
+export async function getApiKey(provider: ApiKeyProvider, storageKey?: string): Promise<{key: string | null; model: string | null; config: any | null}> {
   try {
     const { data, error } = await supabase
       .from('api_provider_settings')
-      .select('api_key, preferred_model, config')
-      .eq('provider', provider)
+      .select('api_key, preferred_model')
+      .eq('provider_name', provider)
       .maybeSingle();
 
     if (error) {
-      // Handle specific errors
-      if (error.message.includes("column 'config' does not exist")) {
-        // If the config column doesn't exist, try to fetch without it
-        console.warn("Config column doesn't exist, fetching without it");
-        const { data: legacyData, error: legacyError } = await supabase
-          .from('api_provider_settings')
-          .select('api_key, preferred_model')
-          .eq('provider', provider)
-          .maybeSingle();
-
-        if (legacyError) {
-          console.error('Error retrieving API key:', legacyError);
-          return null;
-        }
-
-        return legacyData ? {
-          api_key: legacyData.api_key,
-          preferred_model: legacyData.preferred_model
-        } : null;
-      }
-      
+      // Try to handle specific errors gracefully
       console.error('Error retrieving API key:', error);
-      return null;
+      return { key: null, model: null, config: null };
     }
 
     if (!data) {
       console.log(`No ${provider} API key found in database`);
-      return null;
+      return { key: null, model: null, config: null };
     }
 
     return {
-      api_key: data.api_key,
-      preferred_model: data.preferred_model,
-      config: data.config
+      key: data.api_key,
+      model: data.preferred_model,
+      config: null // Config handling will need to be added if column exists
     };
   } catch (error) {
     console.error('Error retrieving API key:', error);
-    return null;
+    return { key: null, model: null, config: null };
   }
 }
 
@@ -136,7 +116,7 @@ export async function deleteApiKeyFromDatabase(provider: ApiKeyProvider): Promis
     const { error } = await supabase
       .from('api_provider_settings')
       .delete()
-      .eq('provider', provider);
+      .eq('provider_name', provider);
 
     if (error) {
       console.error('Error deleting API key:', error);

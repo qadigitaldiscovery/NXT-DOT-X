@@ -12,8 +12,8 @@ export default function SocialMediaDashboard() {
     <div className="container mx-auto py-6 space-y-6">
       <div className="flex justify-between items-center">
         <DashboardHeader 
-          heading="Social Media Dashboard" 
-          subheading="Manage your social media accounts, posts, and campaigns"
+          title="Social Media Dashboard" 
+          description="Manage your social media accounts, posts, and campaigns"
         />
         <div className="flex gap-2">
           <Button 
