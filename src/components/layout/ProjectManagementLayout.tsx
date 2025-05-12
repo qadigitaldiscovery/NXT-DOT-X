@@ -80,7 +80,7 @@ const ProjectManagementLayout = ({ children }: { children?: React.ReactNode }) =
       navCategories={navCategories}
       customFooterContent={navigationFooter}
       sidebarClassName="bg-gradient-to-b from-slate-900 via-slate-800 to-slate-950"
-      removeBottomToggle={true}
+      removeBottomToggle={false}
       showTopLeftToggle={true}
     >
       {children || <Outlet />}

@@ -27,7 +27,7 @@ export const SharedSidebar = ({
   homeItem,
   customFooterContent,
   className,
-  removeBottomToggle = true
+  removeBottomToggle = false
 }: SharedSidebarProps) => {
   const isMobile = useIsMobile();
   const [expandedItems, setExpandedItems] = React.useState<string[]>([]);
@@ -63,19 +63,9 @@ export const SharedSidebar = ({
           isMobile && open && "translate-x-0"
         )}
       >
-        {/* Sidebar Header - Centered Logo */}
-        {open && (
-          <div className="flex flex-col items-center justify-center w-full pt-4 pb-2">
-            <div className="flex items-center justify-center">
-              <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-indigo-200">DOT-X</span>
-            </div>
-            <span className="text-xs text-blue-300 font-medium">NAVIGATION PANEL</span>
-          </div>
-        )}
-
         {/* Full Navigation List (Visible when open) */}
         <nav className={cn(
-          "flex-1 py-4 px-2 overflow-y-auto scrollbar-thin scrollbar-thumb-blue-800/50 scrollbar-track-slate-900/50",
+          "flex-1 pt-4 px-2 overflow-y-auto scrollbar-thin scrollbar-thumb-blue-800/50 scrollbar-track-slate-900/50",
           !open && "hidden" // Hide when sidebar is collapsed
         )}>
           <SidebarNavList 
@@ -91,7 +81,7 @@ export const SharedSidebar = ({
         </nav>
 
         {/* Icon-Only Navigation (Visible when collapsed on desktop) */}
-        {!open && (
+        {!open && !isMobile && (
           <CollapsedSidebar 
             navItems={navItems}
             textColor={textColor}
@@ -102,32 +92,11 @@ export const SharedSidebar = ({
           />
         )}
 
-        {/* Custom Footer or Default Footer */}
-        {open ? (
-          customFooterContent ? (
-            <div className="mt-auto">{customFooterContent}</div>
-          ) : (
-            <div className="p-2 border-t border-blue-900/50 mt-auto">
-              {/* Home button when sidebar is open */}
-              {homeItem && (
-                <NavLink 
-                  to={homeItem.path} 
-                  className={({isActive}) => cn(
-                    "flex items-center gap-3 px-4 py-3 rounded-lg transition-colors mx-auto my-1",
-                    isActive 
-                      ? `${activeBgColor} ${activeTextColor} shadow-md shadow-indigo-900/50` 
-                      : `${textColor} ${textHoverColor} ${hoverBgColor}`
-                  )}
-                >
-                  <homeItem.icon className="h-5 w-5" />
-                  <span className="font-medium uppercase">{homeItem.label}</span>
-                </NavLink>
-              )}
-              <div className="text-xs text-blue-400 font-mono text-center mt-2">v2.5.8</div>
-            </div>
-          )
-        ) : !customFooterContent && (
-          <div className="text-xs text-blue-400 font-mono text-center mt-auto mb-2">v2.5.8</div>
+        {/* Custom Footer Content */}
+        {customFooterContent && (
+          <div className={cn("mt-auto", !open && "md:hidden")}>
+            {customFooterContent}
+          </div>
         )}
       </aside>
 
