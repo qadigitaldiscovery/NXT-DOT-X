@@ -21,7 +21,8 @@ export function useAlerts(moduleId?: string) {
       try {
         setLoading(true);
         
-        let query = supabase.from('alerts').select('*');
+        // Use type assertion for the table name since it exists in the database but not in generated types
+        let query = supabase.from('alerts' as any).select('*');
         
         if (moduleId) {
           query = query.eq('module_id', moduleId);
@@ -32,7 +33,8 @@ export function useAlerts(moduleId?: string) {
         const { data, error } = await query;
         
         if (error) throw error;
-        // Use type assertion to handle the type mismatch
+        
+        // Use explicit type assertion to handle the mismatch
         setAlerts((data || []) as unknown as Alert[]);
       } catch (err) {
         console.error('Error fetching alerts:', err);
@@ -47,9 +49,10 @@ export function useAlerts(moduleId?: string) {
 
   const resolveAlert = async (id: string) => {
     try {
+      // Use type assertion to handle the property mismatch
       const { error } = await supabase
-        .from('alerts')
-        .update({ resolved: true })
+        .from('alerts' as any)
+        .update({ resolved: true } as any)
         .eq('id', id);
       
       if (error) throw error;
