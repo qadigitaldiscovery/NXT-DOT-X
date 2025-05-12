@@ -103,23 +103,31 @@ export const useApiKeyStorage = (options: ApiKeyStorageOptions) => {
           .update({
             api_key: apiKey,
             preferred_model: preferredModel,
-            config: additionalConfig,
-            updated_at: new Date().toISOString()
+            // Only include config if the column exists
+            ...(await columnExists('api_provider_settings', 'config') 
+                ? { config: additionalConfig } 
+                : {})
           })
           .eq('id', existingData.id);
         
         if (error) throw new Error(`Database update error: ${error.message}`);
       } else {
         // Insert new record
+        const insertData: any = {
+          provider_name: options.providerName,
+          user_id: session.user.id,
+          api_key: apiKey,
+          preferred_model: preferredModel
+        };
+
+        // Only add config if the column exists
+        if (await columnExists('api_provider_settings', 'config')) {
+          insertData.config = additionalConfig;
+        }
+        
         const { error } = await supabase
           .from('api_provider_settings')
-          .insert({
-            provider_name: options.providerName,
-            user_id: session.user.id,
-            api_key: apiKey,
-            preferred_model: preferredModel,
-            config: additionalConfig
-          });
+          .insert(insertData);
         
         if (error) throw new Error(`Database insert error: ${error.message}`);
       }
@@ -131,6 +139,28 @@ export const useApiKeyStorage = (options: ApiKeyStorageOptions) => {
       return false;
     } finally {
       setIsSaving(false);
+    }
+  };
+  
+  // Helper function to check if a column exists in a table
+  const columnExists = async (table: string, column: string): Promise<boolean> => {
+    try {
+      // Try a simple query with the column
+      const { error } = await supabase
+        .from(table)
+        .select(column)
+        .limit(1);
+      
+      // If there's an error about the column not existing, return false
+      if (error && error.message.includes(`column '${column}' does not exist`)) {
+        return false;
+      }
+      
+      // If there's no error related to the column not existing, assume it exists
+      return true;
+    } catch (error) {
+      console.error(`Error checking if column ${column} exists in ${table}:`, error);
+      return false;
     }
   };
   
@@ -150,48 +180,31 @@ export const useApiKeyStorage = (options: ApiKeyStorageOptions) => {
         return { key: null, model: defaultModel, config: defaultConfig };
       }
       
-      // Query database
+      // Determine if the config column exists
+      const hasConfigColumn = await columnExists('api_provider_settings', 'config');
+      
+      // Query database with appropriate columns
+      const selectQuery = hasConfigColumn 
+        ? 'api_key, preferred_model, config' 
+        : 'api_key, preferred_model';
+      
       const { data, error } = await supabase
         .from('api_provider_settings')
-        .select('api_key, preferred_model, config')
+        .select(selectQuery)
         .eq('provider_name', options.providerName)
         .eq('user_id', session.user.id)
         .maybeSingle();
       
       if (error) {
-        // Check if the error is related to the 'config' column not existing
-        if (error.message.includes("column 'config' does not exist")) {
-          // Try without the config column
-          const { data: legacyData, error: legacyError } = await supabase
-            .from('api_provider_settings')
-            .select('api_key, preferred_model')
-            .eq('provider_name', options.providerName)
-            .eq('user_id', session.user.id)
-            .maybeSingle();
-            
-          if (legacyError) {
-            console.error('Error loading from database (legacy):', legacyError);
-            return { key: null, model: defaultModel, config: defaultConfig };
-          }
-          
-          if (legacyData) {
-            return {
-              key: legacyData.api_key,
-              model: legacyData.preferred_model || defaultModel,
-              config: defaultConfig
-            };
-          }
-        } else {
-          console.error('Error loading from database:', error);
-          return { key: null, model: defaultModel, config: defaultConfig };
-        }
+        console.error('Error loading from database:', error);
+        return { key: null, model: defaultModel, config: defaultConfig };
       }
       
       if (data) {
         return { 
           key: data.api_key, 
           model: data.preferred_model || defaultModel,
-          config: data.config || defaultConfig
+          config: hasConfigColumn ? (data.config || defaultConfig) : defaultConfig
         };
       }
     } catch (error) {

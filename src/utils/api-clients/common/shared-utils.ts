@@ -56,23 +56,35 @@ export const getApiKey = async (
   try {
     const { data: { session } } = await supabase.auth.getSession();
     if (session) {
-      const { data, error } = await supabase
-        .from('api_provider_settings')
-        .select('api_key, preferred_model, config')
-        .eq('provider_name', providerName)
-        .eq('user_id', session.user.id)
-        .maybeSingle();
+      // Check if config column exists
+      try {
+        const hasConfigColumn = await columnExists('api_provider_settings', 'config');
+        
+        // Select appropriate columns
+        const selectQuery = hasConfigColumn 
+          ? 'api_key, preferred_model, config' 
+          : 'api_key, preferred_model';
+        
+        const { data, error } = await supabase
+          .from('api_provider_settings')
+          .select(selectQuery)
+          .eq('provider_name', providerName)
+          .eq('user_id', session.user.id)
+          .maybeSingle();
 
-      if (error) {
-        console.error(`Error fetching ${providerName} API key:`, error);
-        return { key: null, config: null };
-      }
+        if (error) {
+          console.error(`Error fetching ${providerName} API key:`, error);
+          return { key: null, config: null };
+        }
 
-      if (data) {
-        return {
-          key: data.api_key,
-          config: data.config || null
-        };
+        if (data) {
+          return {
+            key: data.api_key,
+            config: hasConfigColumn ? (data.config || null) : null
+          };
+        }
+      } catch (error) {
+        console.error(`Error checking columns:`, error);
       }
     }
   } catch (err) {
@@ -80,6 +92,25 @@ export const getApiKey = async (
   }
 
   return { key: null, config: null };
+};
+
+// Helper function to check if a column exists
+const columnExists = async (table: string, column: string): Promise<boolean> => {
+  try {
+    const { error } = await supabase
+      .from(table)
+      .select(column)
+      .limit(1);
+    
+    if (error && error.message.includes(`column '${column}' does not exist`)) {
+      return false;
+    }
+    
+    return true;
+  } catch (error) {
+    console.error(`Error checking if column ${column} exists in ${table}:`, error);
+    return false;
+  }
 };
 
 /**
@@ -96,15 +127,35 @@ export const tryUseEdgeFunction = async <T>(
       return null; // Edge functions require authentication
     }
 
-    // Check if the user has edge functions enabled
-    const { data: userPrefs } = await supabase
-      .from('user_preferences')
-      .select('use_edge_functions')
-      .eq('user_id', session.user.id)
-      .maybeSingle();
+    // Check if the user has edge functions enabled - safely
+    let useEdgeFunctions = true; // Default to true
+    
+    try {
+      // Check if user_preferences table exists first
+      const { error: tableError } = await supabase
+        .from('user_preferences')
+        .select('id')
+        .limit(1);
+      
+      // If the table exists and no error, proceed to check preferences
+      if (!tableError) {
+        const { data: userPrefs } = await supabase
+          .from('user_preferences')
+          .select('use_edge_functions')
+          .eq('user_id', session.user.id)
+          .maybeSingle();
 
+        // Only set to false if explicitly set to false
+        if (userPrefs && userPrefs.use_edge_functions === false) {
+          useEdgeFunctions = false;
+        }
+      }
+    } catch (err) {
+      console.log("Error checking user preferences, defaulting to use edge functions:", err);
+    }
+    
     // Skip if user has explicitly disabled edge functions
-    if (userPrefs && userPrefs.use_edge_functions === false) {
+    if (!useEdgeFunctions) {
       return null;
     }
 

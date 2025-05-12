@@ -1,17 +1,80 @@
-
 import { toast } from "sonner";
 import { supabase } from '@/integrations/supabase/client';
 import { RequestyMessage } from './types';
 import { 
-  getApiKey as getProviderApiKey, 
+  ApiError,
   tryUseEdgeFunction, 
-  processStreamingResponse,
-  ApiError
+  processStreamingResponse
 } from '../common/shared-utils';
 
 // Get API key from storage or database
 export const getApiKey = async (): Promise<{ key: string | null, model: string | null, config: any | null }> => {
-  return await getProviderApiKey('requesty', 'requesty-api-key');
+  // Try to get from localStorage first
+  const localStorageKey = 'requesty-api-key';
+  const localData = localStorage.getItem(localStorageKey);
+  
+  if (localData) {
+    try {
+      const parsed = JSON.parse(localData);
+      if (parsed && parsed.key) {
+        return {
+          key: parsed.key,
+          model: parsed.model || "openai/gpt-4o-mini",
+          config: parsed.config || null
+        };
+      }
+    } catch (err) {
+      console.error('Error parsing local storage data:', err);
+    }
+  }
+
+  // If not found in localStorage, try getting from database
+  try {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (session) {
+      // Check if config column exists
+      let hasConfigColumn = false;
+      try {
+        const { error } = await supabase
+          .from('api_provider_settings')
+          .select('config')
+          .limit(1);
+        
+        hasConfigColumn = !error || !error.message.includes("column 'config' does not exist");
+      } catch (err) {
+        console.error("Error checking if config column exists:", err);
+      }
+      
+      // Select appropriate columns
+      const selectQuery = hasConfigColumn 
+        ? 'api_key, preferred_model, config' 
+        : 'api_key, preferred_model';
+      
+      const { data, error } = await supabase
+        .from('api_provider_settings')
+        .select(selectQuery)
+        .eq('provider_name', 'requesty')
+        .eq('user_id', session.user.id)
+        .maybeSingle();
+
+      if (error && !error.message.includes("column 'config' does not exist")) {
+        console.error("Error fetching Requesty API key:", error);
+        return { key: null, model: null, config: null };
+      }
+
+      if (data) {
+        return {
+          key: data.api_key,
+          model: data.preferred_model || "openai/gpt-4o-mini",
+          config: hasConfigColumn && data.config ? data.config : null
+        };
+      }
+    }
+  } catch (err) {
+    console.error("Error fetching Requesty API key:", err);
+  }
+
+  return { key: null, model: null, config: null };
 };
 
 /**

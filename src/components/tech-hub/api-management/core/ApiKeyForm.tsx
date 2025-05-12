@@ -69,6 +69,18 @@ const ApiKeyForm: React.FC<ApiKeyFormProps> = ({
     );
   }
   
+  // Bridge function to handle the parameter type mismatch
+  const handleConfigUpdate = (key: string, value: any) => {
+    // Create a new config object with the updated value
+    const updatedConfig = {
+      ...advancedConfig,
+      [key]: value
+    };
+    
+    // Call the updateAdvancedConfig with the full config object
+    updateAdvancedConfig(updatedConfig);
+  };
+  
   return (
     <Card>
       <CardHeader>
@@ -105,7 +117,7 @@ const ApiKeyForm: React.FC<ApiKeyFormProps> = ({
           <TabsContent value="advanced">
             <AdvancedConfigSection 
               config={advancedConfig} 
-              onConfigUpdate={updateAdvancedConfig} 
+              onConfigUpdate={handleConfigUpdate}
             />
           </TabsContent>
         </Tabs>
