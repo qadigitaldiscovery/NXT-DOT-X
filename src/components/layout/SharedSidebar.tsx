@@ -95,7 +95,19 @@ export const SharedSidebar = ({
         {/* Custom Footer Content - Always visible regardless of sidebar state */}
         {customFooterContent && (
           <div className="mt-auto w-full">
-            {customFooterContent}
+            {open ? (
+              customFooterContent
+            ) : !isMobile ? (
+              <div className="bg-indigo-950 p-2 flex flex-col items-center space-y-2">
+                {React.Children.map(customFooterContent as React.ReactElement, (child) => {
+                  if (child && child.props && child.props.children) {
+                    // Clone the footer but make it display vertically when sidebar is collapsed
+                    return <div className="flex justify-center">{child.props.children}</div>;
+                  }
+                  return child;
+                })}
+              </div>
+            ) : null}
           </div>
         )}
       </aside>
@@ -105,3 +117,4 @@ export const SharedSidebar = ({
     </>
   );
 };
+

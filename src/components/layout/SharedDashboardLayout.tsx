@@ -78,6 +78,9 @@ const SharedDashboardLayout: React.FC<SharedDashboardLayoutProps> = ({
     </div>
   );
 
+  // Always use a navigation footer, either custom or default
+  const navigationFooter = customFooterContent || defaultNavigationFooter;
+
   return (
     <div className="h-screen overflow-hidden bg-slate-50 dark:bg-gray-900">
       {/* Main Layout */}
@@ -97,7 +100,7 @@ const SharedDashboardLayout: React.FC<SharedDashboardLayoutProps> = ({
             onToggle={toggleSidebar} 
             navItems={navCategories}
             homeItem={homeItem}
-            customFooterContent={customFooterContent || defaultNavigationFooter}
+            customFooterContent={navigationFooter}
             className={sidebarClassName || "bg-gradient-to-b from-indigo-950 via-blue-950 to-slate-950"}
             removeBottomToggle={removeBottomToggle}
           />
@@ -118,3 +121,4 @@ const SharedDashboardLayout: React.FC<SharedDashboardLayoutProps> = ({
 };
 
 export default SharedDashboardLayout;
+
