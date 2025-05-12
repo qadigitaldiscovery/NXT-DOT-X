@@ -134,7 +134,7 @@ export async function getApiKey(
             return { key: null, model: null, config: null };
           }
           
-          // Handle dataNoConfig correctly
+          // Handle dataNoConfig correctly with null check
           return { 
             key: typeof dataNoConfig === 'object' && dataNoConfig !== null ? dataNoConfig.api_key || null : null, 
             model: typeof dataNoConfig === 'object' && dataNoConfig !== null ? dataNoConfig.preferred_model || null : null, 
@@ -146,15 +146,16 @@ export async function getApiKey(
         return { key: null, model: null, config: null };
       }
       
+      // Additional null check before accessing data properties
       if (!data) {
         return { key: null, model: null, config: null };
       }
       
-      // Handle data correctly
+      // Handle data correctly with null check
       return { 
-        key: typeof data === 'object' ? data.api_key || null : null, 
-        model: typeof data === 'object' ? data.preferred_model || null : null,
-        config: typeof data === 'object' ? data.config || null : null 
+        key: data && typeof data === 'object' ? data.api_key || null : null, 
+        model: data && typeof data === 'object' ? data.preferred_model || null : null,
+        config: data && typeof data === 'object' ? data.config || null : null 
       };
     } catch (error) {
       console.error('Exception getting API key from database:', error);
