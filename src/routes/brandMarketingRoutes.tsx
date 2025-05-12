@@ -1,6 +1,7 @@
 
 import React from "react";
 import { Route } from "react-router-dom";
+import { BrandMarketingLayout } from "@/components/layout/BrandMarketingLayout";
 
 // Brand Marketing pages
 import BrandDashboard from "@/pages/brand-marketing/BrandDashboard";
@@ -14,13 +15,15 @@ import RequestyPage from "@/pages/RequestyPage";
 export const BrandMarketingRoutes = () => {
   return (
     <>
-      <Route path="/brand-marketing" element={<BrandDashboard />} />
-      <Route path="/brand-marketing/analytics" element={<BrandAnalytics />} />
-      <Route path="/brand-marketing/trust-analysis" element={<BrandTrust />} />
-      <Route path="/brand-marketing/market-perception" element={<MarketPerception />} />
-      <Route path="/brand-marketing/settings" element={<BrandSettings />} />
-      <Route path="/brand-marketing/seo" element={<SEOKeywords />} />
-      <Route path="/brand-marketing/requesty" element={<RequestyPage />} />
+      <Route path="/brand-marketing" element={<BrandMarketingLayout />}>
+        <Route index element={<BrandDashboard />} />
+        <Route path="analytics" element={<BrandAnalytics />} />
+        <Route path="trust-analysis" element={<BrandTrust />} />
+        <Route path="market-perception" element={<MarketPerception />} />
+        <Route path="settings" element={<BrandSettings />} />
+        <Route path="seo" element={<SEOKeywords />} />
+        <Route path="requesty" element={<RequestyPage />} />
+      </Route>
     </>
   );
 };
