@@ -1,19 +1,16 @@
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { toast } from 'sonner';
 import { useAuth } from '@/context/AuthContext';
-import { Search } from 'lucide-react';
-import { SidebarProvider } from '@/components/ui/sidebar';
-import DashboardModules from '@/components/master-dash/DashboardModules';
 import MasterDashSidebar from '@/components/master-dash/MasterDashSidebar';
 import MasterDashNavbar from '@/components/master-dash/MasterDashNavbar';
+import DashboardModules from '@/components/master-dash/DashboardModules';
 
 const MasterDash = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { user } = useAuth();
-  const [searchQuery, setSearchQuery] = useState('');
 
   // Check if user is authenticated
   useEffect(() => {
