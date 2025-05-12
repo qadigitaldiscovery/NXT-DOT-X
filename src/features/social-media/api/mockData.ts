@@ -1,3 +1,4 @@
+
 import { 
   SocialAccount, 
   SocialPlatform, 
@@ -99,7 +100,14 @@ export const mockPosts: SocialMediaPost[] = [
     },
     scheduledFor: new Date('2025-05-15T10:00:00'),
     status: 'scheduled',
-    stats: null,
+    stats: {
+      likes: 0,
+      comments: 0,
+      shares: 0,
+      impressions: 0,
+      clicks: 0,
+      engagementRate: 0
+    },
     createdAt: now,
     updatedAt: now
   },
@@ -116,7 +124,14 @@ export const mockPosts: SocialMediaPost[] = [
     },
     scheduledFor: new Date('2025-05-16T12:30:00'),
     status: 'scheduled',
-    stats: null,
+    stats: {
+      likes: 0,
+      comments: 0,
+      shares: 0,
+      impressions: 0,
+      clicks: 0,
+      engagementRate: 0
+    },
     createdAt: now,
     updatedAt: now
   },
@@ -134,7 +149,10 @@ export const mockPosts: SocialMediaPost[] = [
     stats: {
       likes: 124,
       comments: 45,
-      shares: 67
+      shares: 67,
+      impressions: 2300,
+      clicks: 89,
+      engagementRate: 5.2
     },
     createdAt: "2025-05-01T08:00:00Z",
     updatedAt: "2025-05-01T08:00:00Z"
@@ -153,7 +171,10 @@ export const mockPosts: SocialMediaPost[] = [
     stats: {
       likes: 312,
       comments: 28,
-      shares: 54
+      shares: 54,
+      impressions: 4200,
+      clicks: 76,
+      engagementRate: 6.8
     },
     createdAt: "2025-04-28T13:00:00Z",
     updatedAt: "2025-04-28T13:00:00Z"
@@ -171,7 +192,10 @@ export const mockPosts: SocialMediaPost[] = [
     stats: {
       likes: 89,
       comments: 76,
-      shares: 12
+      shares: 12,
+      impressions: 1500,
+      clicks: 45,
+      engagementRate: 4.2
     },
     createdAt: "2025-05-03T14:00:00Z",
     updatedAt: "2025-05-03T14:00:00Z"
@@ -186,7 +210,14 @@ export const mockPosts: SocialMediaPost[] = [
     },
     scheduledFor: null,
     status: 'draft',
-    stats: null,
+    stats: {
+      likes: 0,
+      comments: 0,
+      shares: 0,
+      impressions: 0,
+      clicks: 0,
+      engagementRate: 0
+    },
     createdAt: "2025-05-06T09:00:00Z",
     updatedAt: "2025-05-06T09:00:00Z"
   }
@@ -273,7 +304,7 @@ export const mockPostStatusCounts: Record<SocialPostStatus, number> = {
 
 export const mockUpcomingPosts: SocialPost[] = mockPosts.filter(post => 
   post.status === 'scheduled' && post.scheduledFor && post.scheduledFor > new Date()
-);
+) as SocialPost[];
 
-// Add this to fix the reference in AccountsOverview.tsx
+// Use the mockAccounts directly as mockSocialAccounts
 export const mockSocialAccounts = mockAccounts;

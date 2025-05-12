@@ -1,3 +1,4 @@
+
 export interface SocialAccount {
   id: string;
   platform: SocialPlatform;
@@ -70,29 +71,12 @@ export interface Campaign {
   updatedAt: string;
 }
 
-export interface SocialMediaAccount {
-  id: string;
-  platform: SocialMediaPlatform;
-  username: string;
-  profileUrl: string;
-  avatarUrl?: string;
-  isConnected: boolean;
-  lastSyncedAt?: string;
-  metrics?: {
-    followers: number;
-    engagementRate?: number;
-  };
-}
+// Consolidate SocialMediaAccount with SocialAccount
+export type SocialMediaAccount = SocialAccount;
 
-export type SocialMediaPlatform = 
-  | 'twitter' 
-  | 'facebook' 
-  | 'instagram' 
-  | 'linkedin' 
-  | 'tiktok' 
-  | 'pinterest'
-  | 'youtube';
+export type SocialMediaPlatform = SocialPlatform;
 
+// Make SocialMediaPost consistent with SocialPost
 export interface SocialMediaPost {
   id: string;
   platform: SocialMediaPlatform;
@@ -105,20 +89,12 @@ export interface SocialMediaPost {
   status: 'draft' | 'scheduled' | 'published' | 'failed';
   scheduledFor?: Date | null;
   publishedAt?: Date | null;
-  stats?: PostStats;
+  stats?: PostStats | null;
   createdAt: string;
   updatedAt: string;
 }
 
-export interface PostMetrics {
-  likes?: number;
-  comments?: number;
-  shares?: number;
-  impressions?: number;
-  clicks?: number;
-  engagementRate?: number;
-}
-
+// Remove redundant PostMetrics as it's the same as PostStats
 export interface CampaignMetrics {
   totalReach: number;
   totalImpressions: number;
