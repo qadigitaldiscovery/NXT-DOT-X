@@ -130,14 +130,18 @@ export async function getApiKey(
             return { key: null, model: null, config: null };
           }
           
+          // Safely handle dataNoConfig with strict null checking
           if (!dataNoConfig) {
             return { key: null, model: null, config: null };
           }
           
-          // Handle dataNoConfig correctly with null check
+          // Extract values safely after confirming dataNoConfig is not null
+          const apiKey = dataNoConfig.api_key || null;
+          const preferredModel = dataNoConfig.preferred_model || null;
+          
           return { 
-            key: typeof dataNoConfig === 'object' && dataNoConfig !== null ? dataNoConfig.api_key || null : null, 
-            model: typeof dataNoConfig === 'object' && dataNoConfig !== null ? dataNoConfig.preferred_model || null : null, 
+            key: apiKey, 
+            model: preferredModel, 
             config: null 
           };
         }
@@ -151,11 +155,16 @@ export async function getApiKey(
         return { key: null, model: null, config: null };
       }
       
-      // Handle data correctly with null check
+      // Extract values safely after confirming data is not null
+      const apiKey = data.api_key || null;
+      const preferredModel = data.preferred_model || null;
+      const configValue = data.config || null;
+      
+      // Return the values after safely extracting them
       return { 
-        key: data && typeof data === 'object' ? data.api_key || null : null, 
-        model: data && typeof data === 'object' ? data.preferred_model || null : null,
-        config: data && typeof data === 'object' ? data.config || null : null 
+        key: apiKey, 
+        model: preferredModel,
+        config: configValue
       };
     } catch (error) {
       console.error('Exception getting API key from database:', error);
