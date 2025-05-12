@@ -6,7 +6,8 @@ import {
   RequestyResponse, 
   RequestyError,
   RequestyMessage,
-  RequestyConfig
+  RequestyConfig,
+  RequestyResponseOrStream
 } from './types';
 import { 
   tryUseEdgeFunction, 
@@ -21,8 +22,8 @@ export async function getRequestyKey(): Promise<{key: string | null; model: stri
   return await getApiKey('requesty', 'requesty-api-key');
 };
 
-// Main function to call Requesty API
-export async function callRequesty<T extends RequestyResponse>({ 
+// Main function to call Requesty API - updated with the RequestyResponseOrStream generic type
+export async function callRequesty<T extends RequestyResponseOrStream>({ 
   endpoint, 
   payload, 
   apiKey,
@@ -175,7 +176,8 @@ export async function* streamRequestyMessage(
   const messageArray = Array.isArray(messages) ? messages : [messages];
   
   try {
-    const stream = await callRequesty<ReadableStream>({
+    // Fix: Properly type the response as ReadableStream instead of RequestyResponse
+    const stream = await callRequesty<ReadableStream<Uint8Array>>({
       endpoint: 'chat/completions',
       payload: {
         model: model || 'openai/gpt-4o-mini',

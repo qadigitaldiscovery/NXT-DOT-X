@@ -134,10 +134,13 @@ export async function getApiKey(
             return { key: null, model: null, config: null };
           }
           
-          // Use optional chaining and nullish coalescing for type safety
+          // Fixed: Use safe optional chaining and nullish coalescing 
+          const apiKey = dataNoConfig?.api_key || null;
+          const preferredModel = dataNoConfig?.preferred_model || null;
+          
           return { 
-            key: dataNoConfig.api_key || null, 
-            model: dataNoConfig.preferred_model || null, 
+            key: apiKey, 
+            model: preferredModel, 
             config: null 
           };
         }
@@ -150,11 +153,15 @@ export async function getApiKey(
         return { key: null, model: null, config: null };
       }
       
-      // Use optional chaining and nullish coalescing for type safety
+      // Fixed: Use safe optional chaining and nullish coalescing
+      const apiKey = data?.api_key || null;
+      const preferredModel = data?.preferred_model || null;
+      const configData = data?.config || null;
+      
       return { 
-        key: data.api_key || null, 
-        model: data.preferred_model || null, 
-        config: data.config || null 
+        key: apiKey, 
+        model: preferredModel, 
+        config: configData
       };
     } catch (error) {
       console.error('Exception getting API key from database:', error);

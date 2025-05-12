@@ -59,3 +59,6 @@ export interface CallOptions {
   apiKey?: string;
   signal?: AbortSignal;
 }
+
+// Helper for TypeScript to allow both RequestyResponse and ReadableStream
+export type RequestyResponseOrStream = RequestyResponse | ReadableStream<Uint8Array>;
