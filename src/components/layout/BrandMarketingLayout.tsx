@@ -13,10 +13,11 @@ import {
   Globe
 } from "lucide-react";
 import SharedDashboardLayout from "./SharedDashboardLayout";
+import { NavCategory } from "./sidebar/types";
 
-const BrandMarketingLayout = ({ children }: { children?: React.ReactNode }) => {
+const BrandMarketingLayout = () => {
   // Define navigation categories for the Brand Marketing module
-  const navCategories = [
+  const navCategories: NavCategory[] = [
     {
       name: "Brand Management",
       items: [
@@ -42,7 +43,7 @@ const BrandMarketingLayout = ({ children }: { children?: React.ReactNode }) => {
       navCategories={navCategories}
       homeItem={{ label: "Master Dashboard", path: "/", icon: Home }}
     >
-      {children || <Outlet />}
+      <Outlet />
     </SharedDashboardLayout>
   );
 };

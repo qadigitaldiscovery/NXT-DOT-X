@@ -16,15 +16,6 @@ const BrandDashboard = () => {
     { name: "Brand Exposure", value: "2.1M", trend: "up", change: "+12%" }
   ];
 
-  // Sample chart data - would connect to real data in production
-  const brandStatsData = [
-    { category: "Trust", value: 82, previous: 76 },
-    { category: "Recognition", value: 76, previous: 72 },
-    { category: "Sentiment", value: 68, previous: 65 },
-    { category: "Engagement", value: 87, previous: 80 },
-    { category: "Loyalty", value: 63, previous: 58 }
-  ];
-
   return (
     <div className="space-y-6">
       <div>
