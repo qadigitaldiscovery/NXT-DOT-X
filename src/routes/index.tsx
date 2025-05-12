@@ -16,6 +16,7 @@ import { DotXRoutes } from "./dotXRoutes";
 import { SupplierManagementRoutes } from "./supplierManagementRoutes";
 import { CustomerManagementRoutes } from "./customerManagementRoutes";
 import { BrandMarketingRoutes } from "./brandMarketingRoutes";
+import { SocialMediaRoutes } from "./socialMediaRoutes";
 
 export const AppRoutes = () => {
   return (
@@ -43,6 +44,7 @@ export const AppRoutes = () => {
       {SupplierManagementRoutes()}
       {CustomerManagementRoutes()}
       {BrandMarketingRoutes()}
+      {SocialMediaRoutes()}
       
       {/* 404 Page */}
       <Route path="*" element={<NotFound />} />

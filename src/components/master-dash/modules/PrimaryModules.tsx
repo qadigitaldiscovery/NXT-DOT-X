@@ -1,125 +1,88 @@
 
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Card, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { toast } from 'sonner';
-import { Bot, BarChart3, Gift, BrainCircuit, Award } from 'lucide-react';
+import { useState } from "react";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useNavigate } from "react-router-dom";
+import { LineChart, TrendingUp } from "lucide-react";
+import DataManagement from "./DataManagement";
+import LoyaltyProgram from "./LoyaltyProgram";
+import TradingSystem from "./TradingSystem";
+import SocialMediaMarketing from "./SocialMediaMarketing";
+import TechHub from "./TechHub";
+import DotX from "./DotX";
+import SupplierManagement from "./SupplierManagement";
+import CustomerManagement from "./CustomerManagement";
+import BrandMarketing from "./BrandMarketing";
 
-interface ModuleItem {
-  id: string;
-  name: string;
-  description: string;
-  path: string;
-  icon: React.ReactElement;
-  bgColor: string;
-  permission: string;
-}
-
-const PrimaryModules: React.FC = () => {
+export default function PrimaryModules() {
+  const [activeTab, setActiveTab] = useState("all");
   const navigate = useNavigate();
 
-  // Primary module prototypes data
-  const primaryModules = [
-    {
-      id: "data-management",
-      name: "Data Management Module",
-      description: "Dashboard with supplier costing and analysis",
-      path: "/data-management",
-      icon: <BarChart3 className="h-16 w-16 text-white" />,
-      bgColor: "from-blue-500 to-blue-700",
-      permission: "modules.data"
-    }, 
-    {
-      id: "loyalty-rewards",
-      name: "Loyalty Rewards Module",
-      description: "Loyalty program management platform",
-      path: "/loyalty-rewards",
-      icon: <Gift className="h-16 w-16 text-white" />,
-      bgColor: "from-purple-500 to-purple-700",
-      permission: "modules.loyalty"
-    }, 
-    {
-      id: "brand-marketing",
-      name: "Brand Marketing Module",
-      description: "Brand management and trust analysis",
-      path: "/brand-marketing",
-      icon: <Award className="h-16 w-16 text-white" />,
-      bgColor: "from-amber-500 to-amber-700",
-      permission: "modules.brand"
-    },
-    {
-      id: "dot-x",
-      name: "DOT-X",
-      description: "The next generation business intelligence platform",
-      path: "/dot-x",
-      icon: <Bot className="h-16 w-16 text-white" />,
-      bgColor: "from-blue-500 to-blue-700",
-      permission: "modules.dotx"
-    }, 
-    {
-      id: "tech-hub",
-      name: "Tech Hub Module",
-      description: "AI personas and technology resources",
-      path: "/tech-hub/personas",
-      icon: <BrainCircuit className="h-16 w-16 text-white" />,
-      bgColor: "from-amber-500 to-amber-700",
-      permission: "modules.tech"
-    }
-  ];
-
-  const handleModuleClick = (moduleId: string, path: string) => {
-    console.log(`Selected module: ${moduleId}`);
-    navigate(path, { replace: true });
-    setTimeout(() => {
-      toast.success(`Welcome to ${moduleId} dashboard`);
-    }, 500);
+  // Map of categories to their respective modules
+  const modulesByCategory = {
+    all: [
+      <DataManagement key="data" />,
+      <LoyaltyProgram key="loyalty" />,
+      <TradingSystem key="trading" />,
+      <SocialMediaMarketing key="social" />,
+      <TechHub key="tech" />,
+      <DotX key="dotx" />,
+      <SupplierManagement key="supplier" />,
+      <CustomerManagement key="customer" />,
+      <BrandMarketing key="brand" />
+    ],
+    data: [
+      <DataManagement key="data" />,
+      <SupplierManagement key="supplier" />,
+      <CustomerManagement key="customer" />
+    ],
+    marketing: [
+      <LoyaltyProgram key="loyalty" />,
+      <SocialMediaMarketing key="social" />,
+      <BrandMarketing key="brand" />
+    ],
+    tech: [
+      <TechHub key="tech" />,
+      <DotX key="dotx" />
+    ],
+    operations: [
+      <TradingSystem key="trading" />
+    ]
   };
 
   return (
-    <section className="mb-12">
-      <h1 className="font-bold mb-2 text-gray-100 text-2xl text-left">PRIMARY MODULES</h1>
-      <p className="text-gray-300 mb-6 text-left">Select one of our core business modules to get started</p>
-      
-      {/* Primary Modules - 2x2 grid with specific order */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {primaryModules.map((module, index) => (
-          <Card 
-            key={module.id} 
-            className="overflow-hidden transition-all duration-300 hover:shadow-xl hover:scale-105 bg-white/15 backdrop-blur-sm border border-white/20 text-white shadow-[0_8px_32px_rgba(0,0,0,0.1)]"
-          >
-            <CardHeader className="pb-2 bg-nxt-darkGray">
-              <div className="flex items-center justify-center mb-4">
-                {/* Enhanced 3D effect dark red frosted icon container */}
-                <div className="p-3 rounded-full bg-gradient-to-br from-[#a51919] to-[#630d0d] shadow-lg border border-white/5 transform-gpu relative">
-                  {/* Enhanced inner shadow and highlight for 3D effect */}
-                  <div className="absolute inset-0 bg-gradient-to-tl from-white/10 to-transparent opacity-60 rounded-full"></div>
-                  {React.cloneElement(module.icon, {
-                    className: `${module.icon.props.className} drop-shadow-lg`
-                  })}
-                </div>
-              </div>
-              <CardTitle className="font-bold text-2xl text-center text-white">
-                {module.name.toUpperCase()}
-              </CardTitle>
-              <CardDescription className="text-base text-slate-300 text-center font-semibold px-0 mx-[43px]">
-                {module.description}
-              </CardDescription>
-            </CardHeader>
-            <CardFooter className="pt-2 pb-6 bg-zinc-900">
-              {/* Enhanced 3D metallic dark grey button with stronger depth effects */}
-              <Button 
-                className="w-full py-6 font-medium text-lg bg-gradient-to-b from-gray-600 to-gray-800 border border-gray-500/30 shadow-[0_4px_10px_rgba(0,0,0,0.3)] hover:from-gray-700 hover:to-gray-900 hover:border-gray-400/50 hover:shadow-[0_6px_12px_rgba(0,0,0,0.4)] text-white transition-all duration-200 transform hover:translate-y-[-2px] active:translate-y-[1px] active:shadow-[0_2px_5px_rgba(0,0,0,0.2)]" 
-                onClick={() => handleModuleClick(module.id, module.path)}
-              >
-                Launch Module
-              </Button>
-            </CardFooter>
-          </Card>
-        ))}
-      </div>
-    </section>
+    <Card className="col-span-2">
+      <CardHeader>
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center">
+          <div>
+            <CardTitle className="mb-1">Modules</CardTitle>
+            <CardDescription>Explore available system modules</CardDescription>
+          </div>
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="mt-3 sm:mt-0">
+            <TabsList>
+              <TabsTrigger value="all">All</TabsTrigger>
+              <TabsTrigger value="data">Data</TabsTrigger>
+              <TabsTrigger value="marketing">Marketing</TabsTrigger>
+              <TabsTrigger value="tech">Tech</TabsTrigger>
+              <TabsTrigger value="operations">Operations</TabsTrigger>
+            </TabsList>
+          </Tabs>
+        </div>
+      </CardHeader>
+      <CardContent>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {(modulesByCategory as any)[activeTab]}
+        </div>
+      </CardContent>
+      <CardFooter className="flex justify-between">
+        <Button variant="outline" onClick={() => navigate("/all-modules")}>
+          View All Modules
+        </Button>
+        <Button variant="outline" onClick={() => navigate("/admin/documentation")}>
+          Module Documentation
+        </Button>
+      </CardFooter>
+    </Card>
   );
-};
-
-export default PrimaryModules;
+}
