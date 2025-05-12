@@ -23,7 +23,12 @@ interface DocumentToolbarProps {
     author: string;
   }) => void;
   onCategoryAdd: (category: { name: string }) => void;
-  onFileUpload: (file: File, type: DocumentType) => void;
+  onFileUpload: (file: File, type: DocumentType, metadata: {
+    title: string;
+    description?: string;
+    author: string;
+    categoryId: string;
+  }) => void;
   onRefresh: () => void;
 }
 
@@ -49,13 +54,16 @@ export const DocumentToolbar = ({
               Upload Document
             </Button>
           </PopoverTrigger>
-          <PopoverContent className="w-96">
+          <PopoverContent className="w-[350px] sm:w-[450px]">
             <div className="font-medium flex items-center gap-2 mb-2">
               <FileText size={16} />
               <h3>Upload Document File</h3>
             </div>
             <Separator className="my-2" />
-            <DocumentUpload onFileUpload={onFileUpload} />
+            <DocumentUpload 
+              onFileUpload={onFileUpload}
+              categories={categories}
+            />
           </PopoverContent>
         </Popover>
       </div>

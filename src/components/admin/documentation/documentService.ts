@@ -63,6 +63,26 @@ class DocumentService {
     return newDoc;
   }
   
+  // Add document from file upload
+  addDocumentFromFile(file: File, type: string, metadata: {
+    title: string;
+    description?: string;
+    author: string;
+    categoryId: string;
+  }): DocumentItem {
+    // Create URL for the file (in a real app, this would be a server-side process)
+    const url = URL.createObjectURL(file);
+    
+    return this.addDocument(metadata.categoryId, {
+      title: metadata.title,
+      description: metadata.description || '',
+      type: type,
+      content: '', // Content would be extracted from file in a real implementation
+      url: url,
+      author: metadata.author
+    });
+  }
+  
   // Update document
   updateDocument(id: string, updates: Partial<DocumentItem>): DocumentItem | null {
     const docIndex = this.documents.findIndex(doc => doc.id === id);
@@ -107,10 +127,11 @@ class DocumentService {
   }
   
   // Add category
-  addCategory(category: Omit<DocumentCategory, 'id'>): DocumentCategory {
+  addCategory(category: Omit<DocumentCategory, 'id' | 'documents'>): DocumentCategory {
     const newCategory: DocumentCategory = {
       ...category,
-      id: `cat-${Date.now()}`
+      id: `cat-${Date.now()}`,
+      documents: []
     };
     
     this.categories.push(newCategory);
