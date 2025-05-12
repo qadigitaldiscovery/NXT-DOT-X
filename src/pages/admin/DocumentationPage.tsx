@@ -16,6 +16,7 @@ const DocumentationPage = () => {
   const [selectedDocument, setSelectedDocument] = useState<DocumentItem | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [isLoading, setIsLoading] = useState(true);
+  const [filteredCategories, setFilteredCategories] = useState<DocumentCategory[]>([]);
   const navigate = useNavigate();
   
   // Load initial data
@@ -23,12 +24,10 @@ const DocumentationPage = () => {
     const loadData = async () => {
       setIsLoading(true);
       try {
-        // In a real app, you'd fetch from API here
-        setTimeout(() => {
-          const loadedCategories = documentService.getAllCategories();
-          setCategories(loadedCategories);
-          setIsLoading(false);
-        }, 800);
+        const loadedCategories = await documentService.getAllCategories();
+        setCategories(loadedCategories);
+        setFilteredCategories(loadedCategories);
+        setIsLoading(false);
       } catch (error) {
         console.error("Error loading documentation:", error);
         toast.error("Failed to load documentation");
@@ -39,10 +38,19 @@ const DocumentationPage = () => {
     loadData();
   }, []);
   
-  // Filter documents based on search term
-  const filteredCategories = useMemo(() => {
-    if (!searchTerm) return categories;
-    return documentService.searchDocuments(searchTerm);
+  // Update filtered categories when search term changes
+  useEffect(() => {
+    const filterDocuments = async () => {
+      if (!searchTerm) {
+        setFilteredCategories(categories);
+        return;
+      }
+      
+      const results = await documentService.searchDocuments(searchTerm);
+      setFilteredCategories(results);
+    };
+    
+    filterDocuments();
   }, [searchTerm, categories]);
 
   // Set first document as selected if none selected
@@ -56,7 +64,7 @@ const DocumentationPage = () => {
     setSearchTerm(term);
   };
 
-  const handleAddDocument = (categoryId: string, documentData: {
+  const handleAddDocument = async (categoryId: string, documentData: {
     title: string;
     description?: string;
     type: DocumentType;
@@ -64,8 +72,9 @@ const DocumentationPage = () => {
     author: string;
   }) => {
     try {
-      const newDocument = documentService.addDocument(categoryId, documentData);
-      setCategories(documentService.getAllCategories());
+      const newDocument = await documentService.addDocument(categoryId, documentData);
+      const refreshedCategories = await documentService.getAllCategories();
+      setCategories(refreshedCategories);
       setSelectedDocument(newDocument);
       toast.success("Document added successfully");
     } catch (error) {
@@ -74,10 +83,11 @@ const DocumentationPage = () => {
     }
   };
 
-  const handleAddCategory = (categoryData: { name: string }) => {
+  const handleAddCategory = async (categoryData: { name: string }) => {
     try {
-      documentService.addCategory(categoryData);
-      setCategories(documentService.getAllCategories());
+      await documentService.addCategory(categoryData);
+      const refreshedCategories = await documentService.getAllCategories();
+      setCategories(refreshedCategories);
       toast.success("Category added successfully");
     } catch (error) {
       console.error("Error adding category:", error);
@@ -85,9 +95,9 @@ const DocumentationPage = () => {
     }
   };
 
-  const handleDeleteDocument = (documentId: string) => {
+  const handleDeleteDocument = async (documentId: string) => {
     try {
-      const success = documentService.deleteDocument(documentId);
+      const success = await documentService.deleteDocument(documentId);
       
       if (success) {
         // If the deleted document was selected, clear selection
@@ -95,7 +105,8 @@ const DocumentationPage = () => {
           setSelectedDocument(null);
         }
         
-        setCategories(documentService.getAllCategories());
+        const refreshedCategories = await documentService.getAllCategories();
+        setCategories(refreshedCategories);
         toast.success("Document deleted successfully");
       } else {
         toast.error("Failed to delete document");
@@ -114,7 +125,8 @@ const DocumentationPage = () => {
   }) => {
     try {
       const newDocument = await documentService.addDocumentFromFile(file, type, metadata);
-      setCategories(documentService.getAllCategories());
+      const refreshedCategories = await documentService.getAllCategories();
+      setCategories(refreshedCategories);
       setSelectedDocument(newDocument);
       toast.success("File uploaded and document created successfully");
     } catch (error) {
@@ -123,15 +135,18 @@ const DocumentationPage = () => {
     }
   };
 
-  const handleRefresh = () => {
+  const handleRefresh = async () => {
     setIsLoading(true);
-    // In a real app, you'd refetch from API here
-    setTimeout(() => {
-      const refreshedCategories = documentService.getAllCategories();
+    try {
+      const refreshedCategories = await documentService.getAllCategories();
       setCategories(refreshedCategories);
       setIsLoading(false);
       toast.success("Documentation refreshed");
-    }, 500);
+    } catch (error) {
+      console.error("Error refreshing documentation:", error);
+      toast.error("Failed to refresh documentation");
+      setIsLoading(false);
+    }
   };
 
   if (isLoading) {

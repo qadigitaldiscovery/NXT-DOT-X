@@ -1,66 +1,225 @@
 
 import { DocumentCategory, DocumentItem, DocumentType } from './types';
 import { documentCategories as initialDocumentCategories } from './mockData';
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
-// Class to manage document data and operations
+// Class to manage document data and operations with Supabase integration
 class DocumentService {
-  private documents: DocumentItem[] = [];
-  private categories: DocumentCategory[] = [];
+  // Load initial mock data only for first-time setup
+  private initialMockDataLoaded = false;
   
   constructor() {
-    // Initialize with mock data
-    this.categories = JSON.parse(JSON.stringify(initialDocumentCategories));
-    this.documents = this.categories.flatMap(category => category.documents);
+    // We'll load data from Supabase instead of initializing with mock data directly
   }
   
-  // Get all document categories
-  getAllCategories(): DocumentCategory[] {
-    return this.categories;
+  // Get all document categories from Supabase
+  async getAllCategories(): Promise<DocumentCategory[]> {
+    try {
+      // Fetch categories from Supabase
+      const { data: categories, error: categoriesError } = await supabase
+        .from('document_categories')
+        .select('*')
+        .order('name');
+      
+      if (categoriesError) {
+        console.error('Error fetching categories:', categoriesError);
+        toast.error('Failed to load document categories');
+        return [];
+      }
+      
+      // For each category, fetch its documents
+      const categoriesWithDocuments: DocumentCategory[] = await Promise.all(
+        categories.map(async (category) => {
+          const { data: documents, error: documentsError } = await supabase
+            .from('documents')
+            .select('*')
+            .eq('category_id', category.id)
+            .order('title');
+          
+          if (documentsError) {
+            console.error(`Error fetching documents for category ${category.id}:`, documentsError);
+            return {
+              ...category,
+              documents: [],
+            };
+          }
+          
+          return {
+            id: category.id,
+            name: category.name,
+            documents: documents as DocumentItem[],
+          };
+        })
+      );
+      
+      // If no categories exist and mock data hasn't been loaded yet, initialize with mock data
+      if (categoriesWithDocuments.length === 0 && !this.initialMockDataLoaded) {
+        console.log('No categories found, initializing with mock data...');
+        await this.initializeWithMockData();
+        this.initialMockDataLoaded = true;
+        return this.getAllCategories();
+      }
+      
+      return categoriesWithDocuments;
+    } catch (error) {
+      console.error('Error in getAllCategories:', error);
+      toast.error('Failed to load document categories');
+      return [];
+    }
   }
   
-  // Get all documents
-  getAllDocuments(): DocumentItem[] {
-    return this.documents;
+  // Initialize the database with mock data (only if empty)
+  private async initializeWithMockData() {
+    try {
+      // First, add categories
+      for (const category of initialDocumentCategories) {
+        const { data: newCategory, error: categoryError } = await supabase
+          .from('document_categories')
+          .insert({ name: category.name })
+          .select()
+          .single();
+        
+        if (categoryError) {
+          console.error('Error inserting mock category:', categoryError);
+          continue;
+        }
+        
+        // Then add documents for this category
+        for (const doc of category.documents) {
+          await supabase
+            .from('documents')
+            .insert({
+              category_id: newCategory.id,
+              title: doc.title,
+              description: doc.description || '',
+              type: doc.type,
+              content: doc.content || '',
+              url: doc.url || '',
+              author: doc.author || 'System',
+            });
+        }
+      }
+      
+      console.log('Mock data initialized successfully');
+    } catch (error) {
+      console.error('Error initializing mock data:', error);
+      toast.error('Failed to initialize document database');
+    }
+  }
+  
+  // Get all documents across all categories
+  async getAllDocuments(): Promise<DocumentItem[]> {
+    try {
+      const { data, error } = await supabase
+        .from('documents')
+        .select('*')
+        .order('title');
+      
+      if (error) {
+        console.error('Error fetching all documents:', error);
+        return [];
+      }
+      
+      return data;
+    } catch (error) {
+      console.error('Error in getAllDocuments:', error);
+      return [];
+    }
   }
   
   // Search documents
-  searchDocuments(searchTerm: string): DocumentCategory[] {
-    if (!searchTerm) return this.categories;
+  async searchDocuments(searchTerm: string): Promise<DocumentCategory[]> {
+    if (!searchTerm) return this.getAllCategories();
     
-    const lowercasedTerm = searchTerm.toLowerCase();
-    
-    return this.categories.map(category => ({
-      ...category,
-      documents: category.documents.filter(doc => 
-        doc.title.toLowerCase().includes(lowercasedTerm) || 
-        doc.content?.toLowerCase().includes(lowercasedTerm) ||
-        doc.description?.toLowerCase().includes(lowercasedTerm)
-      )
-    })).filter(category => category.documents.length > 0);
+    try {
+      const lowercasedTerm = searchTerm.toLowerCase();
+      
+      // Search for documents that match the search term
+      const { data: matchingDocuments, error } = await supabase
+        .from('documents')
+        .select('*, document_categories!inner(id, name)')
+        .or(`title.ilike.%${lowercasedTerm}%,content.ilike.%${lowercasedTerm}%,description.ilike.%${lowercasedTerm}%`);
+      
+      if (error) {
+        console.error('Error searching documents:', error);
+        return [];
+      }
+      
+      // Group documents by category
+      const categoriesMap = new Map<string, DocumentCategory>();
+      
+      for (const doc of matchingDocuments) {
+        const category = doc.document_categories;
+        
+        if (!categoriesMap.has(category.id)) {
+          categoriesMap.set(category.id, {
+            id: category.id,
+            name: category.name,
+            documents: [],
+          });
+        }
+        
+        // Extract just the document data (removing the nested category)
+        const { document_categories, ...documentData } = doc;
+        categoriesMap.get(category.id)?.documents.push(documentData as DocumentItem);
+      }
+      
+      return Array.from(categoriesMap.values());
+    } catch (error) {
+      console.error('Error in searchDocuments:', error);
+      return [];
+    }
   }
   
   // Get document by ID
-  getDocumentById(id: string): DocumentItem | null {
-    return this.documents.find(doc => doc.id === id) || null;
+  async getDocumentById(id: string): Promise<DocumentItem | null> {
+    try {
+      const { data, error } = await supabase
+        .from('documents')
+        .select('*')
+        .eq('id', id)
+        .single();
+      
+      if (error) {
+        console.error('Error fetching document by ID:', error);
+        return null;
+      }
+      
+      return data;
+    } catch (error) {
+      console.error('Error in getDocumentById:', error);
+      return null;
+    }
   }
   
   // Add document
-  addDocument(categoryId: string, document: Omit<DocumentItem, 'id' | 'createdAt' | 'updatedAt'>): DocumentItem {
-    const newDoc: DocumentItem = {
-      ...document,
-      id: `doc-${Date.now()}`,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    };
-    
-    // Find category and add document
-    const category = this.categories.find(c => c.id === categoryId);
-    if (category) {
-      category.documents.push(newDoc);
-      this.documents.push(newDoc);
+  async addDocument(categoryId: string, document: Omit<DocumentItem, 'id' | 'createdAt' | 'updatedAt'>): Promise<DocumentItem> {
+    try {
+      const { data, error } = await supabase
+        .from('documents')
+        .insert({
+          category_id: categoryId,
+          title: document.title,
+          description: document.description || '',
+          type: document.type,
+          content: document.content || '',
+          url: document.url || '',
+          author: document.author || 'Unknown',
+        })
+        .select()
+        .single();
+      
+      if (error) {
+        console.error('Error adding document:', error);
+        throw new Error(`Failed to add document: ${error.message}`);
+      }
+      
+      return data;
+    } catch (error) {
+      console.error('Error in addDocument:', error);
+      throw error;
     }
-    
-    return newDoc;
   }
   
   // Add document from file upload
@@ -70,28 +229,36 @@ class DocumentService {
     author: string;
     categoryId: string;
   }): Promise<DocumentItem> {
-    // Create URL for the file
-    const url = URL.createObjectURL(file);
-    
-    // For text or markdown files, try to read the content
-    let content = '';
-    if (type === 'text' || type === 'markdown') {
-      try {
-        content = await this.readFileContent(file);
-        console.log(`Read content from ${metadata.title}, length: ${content.length}`);
-      } catch (error) {
-        console.error("Error reading file content:", error);
+    try {
+      // Create URL for the file
+      const url = URL.createObjectURL(file);
+      
+      // For text or markdown files, try to read the content
+      let content = '';
+      if (type === 'text' || type === 'markdown') {
+        try {
+          content = await this.readFileContent(file);
+          console.log(`Read content from ${metadata.title}, length: ${content.length}`);
+        } catch (error) {
+          console.error("Error reading file content:", error);
+        }
       }
+      
+      // Store the document in Supabase
+      const document = await this.addDocument(metadata.categoryId, {
+        title: metadata.title,
+        description: metadata.description || '',
+        type: type,
+        content: content,
+        url: url,
+        author: metadata.author
+      });
+      
+      return document;
+    } catch (error) {
+      console.error('Error in addDocumentFromFile:', error);
+      throw error;
     }
-    
-    return this.addDocument(metadata.categoryId, {
-      title: metadata.title,
-      description: metadata.description || '',
-      type: type,
-      content: content,
-      url: url,
-      author: metadata.author
-    });
   }
   
   // Helper method to read file content
@@ -116,58 +283,75 @@ class DocumentService {
   }
   
   // Update document
-  updateDocument(id: string, updates: Partial<DocumentItem>): DocumentItem | null {
-    const docIndex = this.documents.findIndex(doc => doc.id === id);
-    if (docIndex === -1) return null;
-    
-    // Update document
-    const updatedDoc = {
-      ...this.documents[docIndex],
-      ...updates,
-      updatedAt: new Date().toISOString()
-    };
-    
-    this.documents[docIndex] = updatedDoc;
-    
-    // Also update in category
-    this.categories.forEach(category => {
-      const catDocIndex = category.documents.findIndex(doc => doc.id === id);
-      if (catDocIndex !== -1) {
-        category.documents[catDocIndex] = updatedDoc;
+  async updateDocument(id: string, updates: Partial<DocumentItem>): Promise<DocumentItem | null> {
+    try {
+      // Remove any properties that shouldn't be sent to Supabase
+      const { createdAt, updatedAt, ...validUpdates } = updates;
+      
+      const { data, error } = await supabase
+        .from('documents')
+        .update({
+          ...validUpdates,
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', id)
+        .select()
+        .single();
+      
+      if (error) {
+        console.error('Error updating document:', error);
+        return null;
       }
-    });
-    
-    return updatedDoc;
+      
+      return data;
+    } catch (error) {
+      console.error('Error in updateDocument:', error);
+      return null;
+    }
   }
   
   // Delete document
-  deleteDocument(id: string): boolean {
-    const docIndex = this.documents.findIndex(doc => doc.id === id);
-    if (docIndex === -1) return false;
-    
-    this.documents.splice(docIndex, 1);
-    
-    // Remove from category
-    this.categories.forEach(category => {
-      const catDocIndex = category.documents.findIndex(doc => doc.id === id);
-      if (catDocIndex !== -1) {
-        category.documents.splice(catDocIndex, 1);
+  async deleteDocument(id: string): Promise<boolean> {
+    try {
+      const { error } = await supabase
+        .from('documents')
+        .delete()
+        .eq('id', id);
+      
+      if (error) {
+        console.error('Error deleting document:', error);
+        return false;
       }
-    });
-    
-    return true;
+      
+      return true;
+    } catch (error) {
+      console.error('Error in deleteDocument:', error);
+      return false;
+    }
   }
   
   // Add category
-  addCategory(category: Omit<DocumentCategory, 'id' | 'documents'>): DocumentCategory {
-    const newCategory: DocumentCategory = {
-      ...category,
-      id: `cat-${Date.now()}`,
-      documents: []
-    };
-    
-    this.categories.push(newCategory);
-    return newCategory;
+  async addCategory(category: Omit<DocumentCategory, 'id' | 'documents'>): Promise<DocumentCategory> {
+    try {
+      const { data, error } = await supabase
+        .from('document_categories')
+        .insert({ name: category.name })
+        .select()
+        .single();
+      
+      if (error) {
+        console.error('Error adding category:', error);
+        throw new Error(`Failed to add category: ${error.message}`);
+      }
+      
+      return {
+        ...data,
+        documents: [],
+      };
+    } catch (error) {
+      console.error('Error in addCategory:', error);
+      throw error;
+    }
   }
 }
 
