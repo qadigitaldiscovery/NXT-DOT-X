@@ -1,4 +1,3 @@
-
 import { toast } from "sonner";
 import { supabase } from '@/integrations/supabase/client';
 import { 
@@ -71,7 +70,6 @@ export async function callOpenAI<T extends OpenAIResponse>({
   
   // Try to use our edge function first
   try {
-    // Fixed: Remove the fourth argument (config) as it's not expected by tryUseEdgeFunction
     const edgeResponse = await tryUseEdgeFunction<T>(
       'openai', 
       endpoint === 'chat' ? 'chat/completions' : endpoint,

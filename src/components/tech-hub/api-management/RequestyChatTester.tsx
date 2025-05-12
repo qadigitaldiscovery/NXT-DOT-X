@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import { Loader2 } from 'lucide-react';
-import { sendRequestyMessage } from '@/utils/requestyClient';
+import { sendRequestyMessage } from '@/utils/api-clients/requesty/client';
 import { toast } from 'sonner';
 
 const RequestyChatTester = () => {

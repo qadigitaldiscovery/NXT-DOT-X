@@ -4,7 +4,9 @@ import { supabase } from '@/integrations/supabase/client';
 import { 
   CallOptions, 
   RequestyResponse, 
-  RequestyError
+  RequestyError,
+  RequestyMessage,
+  RequestyConfig
 } from './types';
 import { 
   tryUseEdgeFunction, 
@@ -63,7 +65,6 @@ export async function callRequesty<T extends RequestyResponse>({
   
   // Try to use our edge function first
   try {
-    // Fixed: Remove the fourth argument (config) as it's not expected by tryUseEdgeFunction
     const edgeResponse = await tryUseEdgeFunction<T>(
       'requesty', 
       endpoint,
@@ -140,6 +141,57 @@ export async function* processStream(stream: ReadableStream) {
   yield* processStreamingResponse(stream);
 }
 
+// Add the missing exported functions
+export async function sendRequestyMessage(
+  messages: RequestyMessage[] | RequestyMessage,
+  model?: string
+): Promise<string> {
+  // Ensure messages is an array
+  const messageArray = Array.isArray(messages) ? messages : [messages];
+  
+  try {
+    const response = await callRequesty<RequestyResponse>({
+      endpoint: 'chat/completions',
+      payload: {
+        model: model || 'openai/gpt-4o-mini', // Default model
+        messages: messageArray,
+        stream: false
+      }
+    });
+    
+    // Extract text response from the API result
+    return response.choices[0].message?.content || '';
+  } catch (error) {
+    console.error('Error sending message to Requesty:', error);
+    throw error;
+  }
+}
+
+export async function* streamRequestyMessage(
+  messages: RequestyMessage[] | RequestyMessage,
+  model?: string
+): AsyncGenerator<string> {
+  // Ensure messages is an array
+  const messageArray = Array.isArray(messages) ? messages : [messages];
+  
+  try {
+    const stream = await callRequesty<ReadableStream>({
+      endpoint: 'chat/completions',
+      payload: {
+        model: model || 'openai/gpt-4o-mini',
+        messages: messageArray,
+        stream: true
+      }
+    });
+    
+    // Process the stream and yield content chunks
+    yield* processStream(stream);
+  } catch (error) {
+    console.error('Error streaming message from Requesty:', error);
+    throw error;
+  }
+}
+
 // Try to route a request through Requesty API
 export async function routeAIRequest<T extends RequestyResponse>({
   model,
@@ -156,7 +208,6 @@ export async function routeAIRequest<T extends RequestyResponse>({
   apiKey?: string;
   signal?: AbortSignal;
 }): Promise<T> {
-  // Fixed: Remove the fourth argument (config) as it's not expected by tryUseEdgeFunction
   const response = await callRequesty<T>({
     endpoint: 'chat/completions',
     payload: {
