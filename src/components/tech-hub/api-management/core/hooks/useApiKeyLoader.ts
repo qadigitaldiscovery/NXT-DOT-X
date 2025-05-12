@@ -5,16 +5,15 @@ interface ApiKeyLoaderOptions {
   initialModel: string;
   initialConfig: Record<string, any>;
   loadFromLocalStorage: (initialModel: string, initialConfig: Record<string, any>) => { 
-    savedKey: string | null;
-    savedModel: string;
-    savedConfig: Record<string, any>;
+    key: string | null;
+    model: string;
+    config: Record<string, any>;
   };
   loadFromDatabase: (initialModel: string, initialConfig: Record<string, any>) => Promise<{
-    apiKey: string;
-    preferredModel: string;
-    additionalConfig: Record<string, any>;
-    found: boolean;
-  } | null>;
+    key: string | null;
+    model: string;
+    config: Record<string, any>;
+  }>;
   setStateCallbacks: {
     setState: (updates: Partial<{
       apiKey: string;
@@ -40,7 +39,7 @@ export const useApiKeyLoader = ({
   
   const loadApiKey = useCallback(async () => {
     // First try localStorage
-    const { savedKey, savedModel, savedConfig } = loadFromLocalStorage(initialModel, initialConfig);
+    const { key: savedKey, model: savedModel, config: savedConfig } = loadFromLocalStorage(initialModel, initialConfig);
     
     if (savedKey) {
       setState({
@@ -56,14 +55,14 @@ export const useApiKeyLoader = ({
     // Try to load from database if localStorage failed
     const dbResult = await loadFromDatabase(initialModel, initialConfig);
     
-    if (dbResult) {
+    if (dbResult && dbResult.key) {
       setState({
-        apiKey: dbResult.apiKey,
-        preferredModel: dbResult.preferredModel,
-        additionalConfig: dbResult.additionalConfig,
+        apiKey: dbResult.key,
+        preferredModel: dbResult.model,
+        additionalConfig: dbResult.config,
         isLoaded: true
       });
-      setSavedKey(dbResult.found);
+      setSavedKey(true);
       return;
     }
     

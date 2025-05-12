@@ -1,5 +1,5 @@
 
-import { useCallback } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useApiKeyState } from './hooks/useApiKeyState';
 import { useApiKeyStorage } from './hooks/useApiKeyStorage';
 import { useApiKeyVerification } from './hooks/useApiKeyVerification';
@@ -7,36 +7,41 @@ import { useApiKeyLoader } from './hooks/useApiKeyLoader';
 
 export interface ApiKeyOptions {
   providerName: string;
-  localStorageKey: string;
+  localStorageKey?: string;
   initialModel: string;
+  preferredModelOptions: Array<{value: string, label: string}>;
   additionalConfig?: Record<string, any>;
+  onVerify?: (apiKey: string) => Promise<boolean>;
 }
 
 export const useApiKey = (options: ApiKeyOptions) => {
-  // Initialize state management
   const {
-    apiKey,
-    setApiKey,
-    preferredModel,
-    setPreferredModel,
-    additionalConfig,
-    setAdditionalConfig,
-    isLoading,
-    setIsLoading,
-    error,
-    setError,
-    isVerified,
-    setIsVerified,
-    isDbSaved,
-    setIsDbSaved,
-    isSaving,
-    setIsSaving
-  } = useApiKeyState();
+    state,
+    keyStatus,
+    setKeyStatus,
+    activeTab,
+    setActiveTab,
+    savedKey,
+    setSavedKey,
+    setApiKey: stateSetApiKey,
+    handleConfigChange,
+    handleModelChange,
+    handleInputChange,
+    setLoading,
+    setVerifying,
+    setSaving,
+    setSavedSuccessfully
+  } = useApiKeyState({
+    initialModel: options.initialModel,
+    additionalConfig: options.additionalConfig || {}
+  });
+
+  const [error, setError] = useState<Error | null>(null);
 
   // Initialize storage methods
   const storageOptions = {
     providerName: options.providerName,
-    localStorageKey: options.localStorageKey
+    localStorageKey: options.localStorageKey || `api_key_${options.providerName.toLowerCase()}`
   };
   
   const {
@@ -51,135 +56,115 @@ export const useApiKey = (options: ApiKeyOptions) => {
   } = useApiKeyStorage(storageOptions);
 
   // Set up verification
-  const { verifyApiKey, isVerifying, verificationError } = useApiKeyVerification();
+  const { verifyApiKey: verifyKey } = useApiKeyVerification({
+    providerName: options.providerName,
+    onVerify: options.onVerify,
+    saveToLocalStorage,
+    saveToDatabase
+  });
 
   // Set up data loading
   const { loadApiKey } = useApiKeyLoader({
     loadFromLocalStorage,
     loadFromDatabase,
-    setApiKey,
-    setPreferredModel,
-    setAdditionalConfig,
-    setIsLoading,
-    setIsDbSaved,
     initialModel: options.initialModel,
-    initialConfig: options.additionalConfig || {}
+    initialConfig: options.additionalConfig || {},
+    setStateCallbacks: {
+      setState: (updates) => {
+        if (updates.apiKey !== undefined) stateSetApiKey(updates.apiKey);
+        if (updates.preferredModel !== undefined) handleModelChange(updates.preferredModel);
+        if (updates.additionalConfig !== undefined) {
+          Object.entries(updates.additionalConfig).forEach(([key, value]) => {
+            handleConfigChange(key, value);
+          });
+        }
+        if (updates.isLoaded !== undefined) setLoading(!updates.isLoaded);
+      },
+      setSavedKey: setSavedKey
+    }
   });
+
+  // Load API key on component mount
+  useEffect(() => {
+    loadApiKey();
+  }, [loadApiKey]);
 
   // Clear API key
   const clearApiKey = useCallback(() => {
-    setApiKey('');
-    setIsVerified(false);
+    stateSetApiKey('');
+    setKeyStatus('unknown');
     clearFromLocalStorage();
     return deleteFromDatabase();
-  }, [setApiKey, setIsVerified, clearFromLocalStorage, deleteFromDatabase]);
-
-  // Save API key
-  const saveApiKey = useCallback(async (
-    key: string,
-    model: string = options.initialModel,
-    config: Record<string, any> = {}
-  ) => {
-    setIsSaving(true);
-    setError(null);
-    
-    try {
-      // Set state
-      setApiKey(key);
-      setPreferredModel(model);
-      setAdditionalConfig(config);
-      
-      // Save to localStorage
-      saveToLocalStorage(key, model, config);
-      
-      // Try to save to database if available
-      const dbSaved = await saveToDatabase(key, model, config);
-      setIsDbSaved(dbSaved);
-      
-      return true;
-    } catch (err) {
-      setError(err instanceof Error ? err : new Error('Failed to save API key'));
-      return false;
-    } finally {
-      setIsSaving(false);
-    }
-  }, [
-    setApiKey, 
-    setPreferredModel, 
-    setAdditionalConfig, 
-    saveToLocalStorage, 
-    saveToDatabase,
-    setIsDbSaved,
-    options.initialModel,
-    setIsSaving,
-    setError
-  ]);
+  }, [stateSetApiKey, setKeyStatus, clearFromLocalStorage, deleteFromDatabase]);
 
   // Verify and save API key
-  const verifyAndSaveApiKey = useCallback(async (
-    key: string, 
-    model: string = options.initialModel,
-    config: Record<string, any> = {}
-  ) => {
-    setIsLoading(true);
-    setError(null);
-    
-    try {
-      // Verify the API key
-      const verified = await verifyApiKey(key);
-      setIsVerified(verified);
-      
-      if (verified) {
-        // If verified, save the key
-        await saveApiKey(key, model, config);
-        return true;
-      } else {
-        setError(new Error('API key verification failed'));
-        return false;
-      }
-    } catch (err) {
-      const error = err instanceof Error ? err : new Error('API key verification failed');
-      setError(error);
-      setIsVerified(false);
+  const verifyApiKey = useCallback(async () => {
+    if (!state.apiKey) {
+      setError(new Error('API key is required'));
       return false;
-    } finally {
-      setIsLoading(false);
     }
+
+    return await verifyKey(
+      state.apiKey, 
+      state.preferredModel, 
+      state.additionalConfig, 
+      {
+        setVerifying,
+        setSaving,
+        setSavedKey,
+        setKeyStatus,
+        setSavedSuccessfully
+      }
+    );
   }, [
-    verifyApiKey,
-    saveApiKey,
-    setIsVerified,
-    setError,
-    setIsLoading,
-    options.initialModel
+    state.apiKey,
+    state.preferredModel,
+    state.additionalConfig,
+    verifyKey,
+    setVerifying,
+    setSaving,
+    setSavedKey,
+    setKeyStatus,
+    setSavedSuccessfully
   ]);
 
-  return {
-    apiKey,
-    preferredModel,
-    additionalConfig,
-    isLoading: isLoading || isVerifying || isDbSaving,
-    isSaving: isSaving || isDbSaving,
-    error: error || verificationError || dbSaveError,
-    isVerified,
-    isDbSaved,
-    loadApiKey,
-    saveApiKey,
-    verifyApiKey: verifyAndSaveApiKey,
-    clearApiKey,
-    updatePreferredModel: async (model: string) => {
-      setPreferredModel(model);
-      if (apiKey) {
-        return await saveApiKey(apiKey, model, additionalConfig);
-      }
-      return false;
-    },
-    updateAdditionalConfig: async (config: Record<string, any>) => {
-      setAdditionalConfig(config);
-      if (apiKey) {
-        return await saveApiKey(apiKey, preferredModel, config);
-      }
-      return false;
+  // Update model separately
+  const updateModel = useCallback(async (model: string) => {
+    handleModelChange(model);
+    if (state.apiKey) {
+      saveToLocalStorage(state.apiKey, model, state.additionalConfig);
+      await saveToDatabase(state.apiKey, model, state.additionalConfig);
     }
+  }, [state.apiKey, state.additionalConfig, handleModelChange, saveToLocalStorage, saveToDatabase]);
+
+  // Update config separately
+  const updateAdvancedConfig = useCallback(async (config: Record<string, any>) => {
+    Object.entries(config).forEach(([key, value]) => {
+      handleConfigChange(key, value);
+    });
+    
+    if (state.apiKey) {
+      saveToLocalStorage(state.apiKey, state.preferredModel, config);
+      await saveToDatabase(state.apiKey, state.preferredModel, config);
+    }
+  }, [state.apiKey, state.preferredModel, handleConfigChange, saveToLocalStorage, saveToDatabase]);
+
+  return {
+    apiKey: state.apiKey,
+    setApiKey: stateSetApiKey,
+    savedKey,
+    isVerifying: state.isVerifying,
+    isLoading: !state.isLoaded,
+    isSaving: state.isSaving || isDbSaving,
+    error: error || dbSaveError,
+    keyStatus,
+    model: state.preferredModel,
+    advancedConfig: state.additionalConfig,
+    activeTab,
+    setActiveTab,
+    verifyApiKey,
+    clearApiKey,
+    handleModelChange: updateModel,
+    updateAdvancedConfig
   };
 };

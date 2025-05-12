@@ -44,7 +44,7 @@ export const useApiKeyVerification = ({
           toast.error(`Invalid ${providerName} API key. Please check and try again.`);
           setVerifying(false);
           setKeyStatus('invalid');
-          return;
+          return false;
         }
       }
       
@@ -67,6 +67,7 @@ export const useApiKeyVerification = ({
       setSavedSuccessfully(true);
       setSavedKey(true);
       setKeyStatus('valid');
+      return true;
       
     } catch (error: any) {
       // Special handling for quota exceeded errors
@@ -79,7 +80,7 @@ export const useApiKeyVerification = ({
         setSaving(false);
         setSavedKey(true);
         setKeyStatus('quota_exceeded');
-        return;
+        return true;
       }
       
       console.error(`Error verifying ${providerName} API key:`, error);
@@ -87,6 +88,7 @@ export const useApiKeyVerification = ({
       setVerifying(false);
       setSaving(false);
       setKeyStatus('invalid');
+      return false;
     }
   }, [onVerify, providerName, saveToLocalStorage, saveToDatabase]);
   

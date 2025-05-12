@@ -13,8 +13,8 @@ export interface ApiKeyState {
 }
 
 export interface ApiKeyStateOptions {
-  initialModel: string;
-  additionalConfig: Record<string, any>;
+  initialModel?: string;
+  additionalConfig?: Record<string, any>;
 }
 
 /**

@@ -58,7 +58,7 @@ export const useApiKeyStorage = (options: ApiKeyStorageOptions) => {
   };
 
   // Clear API key from localStorage
-  const clearFromLocalStorage = () => {
+  const clearFromLocalStorage = (): boolean => {
     try {
       localStorage.removeItem(options.localStorageKey);
       return true;
@@ -159,8 +159,32 @@ export const useApiKeyStorage = (options: ApiKeyStorageOptions) => {
         .maybeSingle();
       
       if (error) {
-        console.error('Error loading from database:', error);
-        return { key: null, model: defaultModel, config: defaultConfig };
+        // Check if the error is related to the 'config' column not existing
+        if (error.message.includes("column 'config' does not exist")) {
+          // Try without the config column
+          const { data: legacyData, error: legacyError } = await supabase
+            .from('api_provider_settings')
+            .select('api_key, preferred_model')
+            .eq('provider_name', options.providerName)
+            .eq('user_id', session.user.id)
+            .maybeSingle();
+            
+          if (legacyError) {
+            console.error('Error loading from database (legacy):', legacyError);
+            return { key: null, model: defaultModel, config: defaultConfig };
+          }
+          
+          if (legacyData) {
+            return {
+              key: legacyData.api_key,
+              model: legacyData.preferred_model || defaultModel,
+              config: defaultConfig
+            };
+          }
+        } else {
+          console.error('Error loading from database:', error);
+          return { key: null, model: defaultModel, config: defaultConfig };
+        }
       }
       
       if (data) {
