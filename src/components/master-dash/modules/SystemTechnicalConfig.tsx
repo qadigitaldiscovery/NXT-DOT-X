@@ -1,91 +1,55 @@
 
 import React from 'react';
-import { Settings, Shield, Database, Server } from 'lucide-react';
-import { Card, CardContent } from '@/components/ui/card';
-import { HoverCard, HoverCardTrigger, HoverCardContent } from '@/components/ui/hover-card';
-import { useNavigate } from 'react-router-dom';
-import { toast } from 'sonner';
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Shield, Database, Server } from 'lucide-react';
 
-interface ConfigItem {
-  id: string;
-  name: string;
-  icon: React.ReactElement;
-  path: string;
-  description: string;
-}
-
-const SystemTechnicalConfig: React.FC = () => {
-  const navigate = useNavigate();
-  
-  // Technical configuration items with descriptions
-  const configItems = [
+export default function SystemTechnicalConfig() {
+  // System components data
+  const systemComponents = [
     { 
-      id: "security", 
-      name: "Security", 
-      icon: <Shield className="h-5 w-5" />, 
-      path: "/admin/security",
-      description: "Manage system security settings and permissions"
+      id: 'system-security', 
+      name: 'System Security', 
+      icon: <Shield className="h-5 w-5 text-green-500" />, 
+      status: 'Online'
     },
     { 
-      id: "api-management", 
-      name: "API Management", 
-      icon: <Server className="h-5 w-5" />, 
-      path: "/tech-hub/api-management",
-      description: "Configure and manage API integrations"
+      id: 'database', 
+      name: 'Database', 
+      icon: <Database className="h-5 w-5 text-green-500" />, 
+      status: 'Online'
     },
     { 
-      id: "database", 
-      name: "Database", 
-      icon: <Database className="h-5 w-5" />, 
-      path: "/admin/database",
-      description: "Database configuration and management"
-    },
-    { 
-      id: "system-settings", 
-      name: "System Settings", 
-      icon: <Settings className="h-5 w-5" />, 
-      path: "/admin/system-settings",
-      description: "Configure core system settings and preferences"
-    },
+      id: 'server', 
+      name: 'Server Status', 
+      icon: <Server className="h-5 w-5 text-green-500" />, 
+      status: 'Online'
+    }
   ];
 
-  const handleConfigClick = (configId: string, path: string) => {
-    toast.info(`Navigating to ${configId} configuration`);
-    navigate(path);
-  };
-
   return (
-    <section>
-      <h2 className="text-2xl font-bold mb-2 text-gray-100 mt-8">SYSTEM TECHNICAL CONFIGURATION</h2>
-      <p className="text-gray-300 mb-6">Manage system security, APIs, databases, and integrations</p>
-      
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 mb-12">
-        {configItems.map(item => (
-          <HoverCard key={item.id}>
-            <HoverCardTrigger asChild>
-              <Card 
-                className="overflow-hidden transition-all duration-200 hover:shadow-md cursor-pointer backdrop-blur-sm bg-black/50 border-white/20"
-                onClick={() => handleConfigClick(item.id, item.path)}
-              >
-                <CardContent className="p-4 flex flex-col items-center justify-center text-center">
-                  <div className="p-3 rounded-full bg-blue-500/30 mb-3">
-                    {React.cloneElement(item.icon, { className: `${item.icon.props.className} text-white` })}
-                  </div>
-                  <p className="text-sm font-medium text-white">{item.name.toUpperCase()}</p>
-                </CardContent>
-              </Card>
-            </HoverCardTrigger>
-            <HoverCardContent className="backdrop-blur-md bg-black/80 border-slate-700 text-white">
-              <div className="text-sm">
-                <p className="font-semibold">{item.name}</p>
-                <p className="text-slate-300">{item.description}</p>
+    <Card className="mt-8 bg-black/20 border-slate-800">
+      <CardHeader>
+        <CardTitle className="text-white">System Technical Configuration</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {systemComponents.map(component => (
+            <div key={component.id} 
+                 className="flex items-center p-4 rounded-md bg-gradient-to-r from-slate-800 to-slate-700 border border-slate-700">
+              <div className="p-2 mr-4 bg-slate-900 rounded-md">
+                {component.icon}
               </div>
-            </HoverCardContent>
-          </HoverCard>
-        ))}
-      </div>
-    </section>
+              <div>
+                <h3 className="font-medium text-white">{component.name}</h3>
+                <div className="flex items-center mt-1">
+                  <div className="w-2 h-2 rounded-full bg-green-500 mr-2"></div>
+                  <span className="text-xs text-green-400">{component.status}</span>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </CardContent>
+    </Card>
   );
-};
-
-export default SystemTechnicalConfig;
+}
