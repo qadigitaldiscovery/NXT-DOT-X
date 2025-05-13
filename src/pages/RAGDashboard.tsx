@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { useModules, type Module } from '@/hooks/useModules';
 import { useStatusLogs } from '@/hooks/useStatusLogs';
 import { useAlerts } from '@/hooks/useAlerts';
@@ -11,8 +11,9 @@ import SharedDashboardLayout from '@/components/layout/SharedDashboardLayout';
 import NotificationsPopover from '@/components/rag-dashboard/NotificationsPopover';
 import { NavCategory } from '@/components/layout/sidebar/types';
 import { Home, LineChart, BarChart3, Settings, AlertTriangle } from 'lucide-react';
+import RAGDashboardGrid from '@/components/rag-dashboard/RAGDashboardGrid';
 
-// Import the new components
+// Import the components created in our refactoring
 import DashboardHeader from '@/components/rag-dashboard/dashboard/DashboardHeader';
 import DashboardFilters from '@/components/rag-dashboard/dashboard/DashboardFilters';
 import ModulesGrid from '@/components/rag-dashboard/dashboard/ModulesGrid';
@@ -20,7 +21,7 @@ import DashboardDialogs from '@/components/rag-dashboard/dashboard/DashboardDial
 
 const RAGDashboard: React.FC = () => {
   const { toast } = useToast();
-  const { modules, loading: modulesLoading, error: modulesError, updateModuleStatus } = useModules();
+  const { modules, loading: modulesLoading, error: modulesError, updateModuleStatus, refreshModules } = useModules();
   const { alerts, loading: alertsLoading, error: alertsError, resolveAlert } = useAlerts();
   
   // State for filtering and search
@@ -34,10 +35,14 @@ const RAGDashboard: React.FC = () => {
   // State for batch operations dialog
   const [isBatchOperationsOpen, setIsBatchOperationsOpen] = useState(false);
   
+  // State for refresh operation
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  
   // Fetch data for selected module
   const { logs, loading: logsLoading } = useStatusLogs(selectedModule?.id);
   const { rules, loading: rulesLoading, addRule, deleteRule } = useThresholdRules(selectedModule?.id);
   const { impacts, loading: impactsLoading } = useCustomerImpacts(selectedModule?.id);
+  
   const moduleAlerts = useMemo(() => {
     return alerts.filter(alert => alert.module_id === selectedModule?.id);
   }, [alerts, selectedModule]);
@@ -130,6 +135,25 @@ const RAGDashboard: React.FC = () => {
     }
   };
 
+  const handleRefresh = useCallback(async () => {
+    setIsRefreshing(true);
+    try {
+      await refreshModules();
+      toast({
+        title: "Dashboard refreshed",
+        description: "The dashboard data has been refreshed.",
+      });
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Refresh failed",
+        description: "There was an error refreshing the dashboard data.",
+      });
+    } finally {
+      setIsRefreshing(false);
+    }
+  }, [refreshModules, toast]);
+
   // Define navigation categories for this module
   const navCategories: NavCategory[] = [
     {
@@ -156,10 +180,20 @@ const RAGDashboard: React.FC = () => {
       notificationArea={notificationArea}
     >
       <div className="container mx-auto py-6 max-w-7xl">
-        <DashboardHeader onBatchOperationsOpen={() => setIsBatchOperationsOpen(true)} />
+        <DashboardHeader 
+          onBatchOperationsOpen={() => setIsBatchOperationsOpen(true)} 
+          onRefresh={handleRefresh}
+          isRefreshing={isRefreshing}
+        />
         
         {/* Overview Stats */}
         <OverviewStats modules={modules} alerts={alerts} />
+        
+        {/* KPI Dashboard Grid */}
+        <div className="mb-8">
+          <h2 className="text-xl font-semibold mb-4">Key Performance Indicators</h2>
+          <RAGDashboardGrid />
+        </div>
         
         {/* Filters */}
         <DashboardFilters
