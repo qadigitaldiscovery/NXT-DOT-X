@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -55,14 +56,14 @@ const Landing = () => {
       {/* Content with z-index to appear above the background */}
       <div className="relative z-10 text-white flex-1 flex flex-col">
         {/* Logo centered at the top with width set to 65% of the page */}
-        <div className="container mx-auto flex justify-center pt-16 pb-10">
+        <div className="container mx-auto flex justify-center pt-16 pb-6">
           <div className="w-[65%]">
             <img src="/lovable-uploads/80f9379c-254b-4238-9d1c-bb90577397d9.png" alt="NXT DOT X" className="w-full" />
           </div>
         </div>
 
-        {/* Login form moved lower */}
-        <div className="flex-grow flex justify-center items-center pt-32">
+        {/* Login form moved closer to logo by removing pt-32 class */}
+        <div className="flex-grow flex justify-center items-start">
           <div className="w-full max-w-md">
             <Card className="border-0 shadow-xl backdrop-blur-sm bg-black/50" id="login">
               <CardContent className="pt-6">
