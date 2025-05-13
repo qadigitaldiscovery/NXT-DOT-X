@@ -24,14 +24,22 @@ export function callMcpTool(options: McpToolCallOptions): void {
   console.log(`This would invoke <use_mcp_tool> with server_name: ${serverName}, tool_name: ${toolName}, and the provided arguments.`);
 }
 
-// Simulates a call to the OpenAI API
+/**
+ * Simulates a call to the OpenAI API
+ * @param prompt The prompt to send to OpenAI
+ * @returns A promise that resolves to a simulated OpenAI response
+ */
 export function callOpenAI(prompt: string): Promise<string> {
   return new Promise((resolve) => {
     setTimeout(() => resolve(`OpenAI Response for prompt: "${prompt}"`), 500);
   });
 }
 
-// Analyzes sentiment based on sample brand data
+/**
+ * Analyzes sentiment in text data
+ * @param data Array of text strings to analyze
+ * @returns Object containing counts of positive, neutral, and negative sentiments
+ */
 export function analyzeBrandSentiment(data: string[]): { positive: number; neutral: number; negative: number } {
   const sentimentCount = { positive: 0, neutral: 0, negative: 0 };
   data.forEach(text => {
@@ -42,7 +50,11 @@ export function analyzeBrandSentiment(data: string[]): { positive: number; neutr
   return sentimentCount;
 }
 
-// Generates SEO keyword suggestions based on topic
+/**
+ * Generates SEO keyword suggestions based on topic
+ * @param topic The main topic for keyword generation
+ * @returns Array of SEO keyword suggestions
+ */
 export function generateSEOKeywords(topic: string): string[] {
   return [
     `${topic} tips`,
@@ -53,7 +65,11 @@ export function generateSEOKeywords(topic: string): string[] {
   ];
 }
 
-// Analyzes trust-related feedback
+/**
+ * Analyzes trust-related feedback from reviews
+ * @param reviews Array of review objects with rating and content
+ * @returns Average trust score (0-5)
+ */
 export function analyzeBrandTrust(reviews: { rating: number; content: string }[]): number {
   const total = reviews.length;
   const trustScore = reviews.reduce((acc, review) => acc + review.rating, 0);
