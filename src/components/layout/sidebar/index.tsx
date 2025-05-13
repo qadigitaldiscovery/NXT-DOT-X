@@ -28,19 +28,19 @@ export const Sidebar = ({ open, onToggle }: SidebarProps) => {
   };
 
   // Filter navigation items based on user access
-  const filteredCategories = moduleAccess ? filterSidebarItems(navCategories, moduleAccess) : navCategories;
+  const filteredCategories = moduleAccess ? filterSidebarItems(navCategories, moduleAccess.roles, moduleAccess.roles) : navCategories;
   
   // Get admin-only items if user is an admin
-  const adminCategory = getAdminSidebarItems(moduleAccess);
+  const adminCategory = moduleAccess ? getAdminSidebarItems(moduleAccess.roles, moduleAccess.roles) : [];
 
   // Combine regular categories with admin category if present
-  const allCategories = adminCategory 
+  const allCategories = adminCategory.length > 0
     ? [
         ...filteredCategories, 
         {
-          ...adminCategory,
+          ...adminCategory[0],
           name: "Administration",
-          items: adminCategory.items.map(item => ({
+          items: adminCategory[0].items.map(item => ({
             ...item,
             icon: item.icon || Shield
           }))

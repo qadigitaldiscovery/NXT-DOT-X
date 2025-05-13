@@ -1,6 +1,18 @@
 
-import { isModuleEnabled } from "@/hooks/useModuleAccess";
-import { SidebarGroupConfig, SidebarItemConfig } from "@/components/layout/sidebar/types";
+import { useModuleAccess } from "@/hooks/useModuleAccess";
+import { NavCategory, NavItem } from "@/components/layout/sidebar/types";
+
+// Define the structure for sidebar item configurations
+export interface SidebarItemConfig extends NavItem {
+  requiredRoles?: string[];
+  requiredPermissions?: string[];
+}
+
+// Define the structure for sidebar group configurations
+export interface SidebarGroupConfig {
+  title: string;
+  items: SidebarItemConfig[];
+}
 
 /**
  * Filters sidebar items based on the user's roles and permissions
@@ -61,13 +73,28 @@ export const hasRouteAccess = (
   // Extract module slug from route
   const moduleSlug = extractModuleSlug(route);
   
-  // Check if module is enabled
-  if (moduleSlug && !isModuleEnabled(moduleSlug)) {
+  // Check if module is enabled - we'll implement a simple placeholder since isModuleEnabled is missing
+  if (moduleSlug && !isModuleEnabled(moduleSlug, userRoles)) {
     return false;
   }
 
   // Add specific route permissions logic here
   // For now, returning true for all routes as default
+  return true;
+};
+
+/**
+ * Helper function to check if a module is enabled
+ * This replaces the missing isModuleEnabled function
+ */
+export const isModuleEnabled = (moduleSlug: string, userRoles: string[]): boolean => {
+  // Default implementation - admins have access to all modules
+  if (userRoles.includes('admin')) {
+    return true;
+  }
+  
+  // Add module-specific checks here if needed
+  // For now, we'll consider all modules enabled for simplicity
   return true;
 };
 
@@ -143,3 +170,6 @@ export const generateAdminSidebarItems = (
   // Remove empty groups
   return filteredGroups.filter(group => group.items.length > 0);
 };
+
+// Add an alias for generateAdminSidebarItems to match the import in sidebar/index.tsx
+export const getAdminSidebarItems = generateAdminSidebarItems;

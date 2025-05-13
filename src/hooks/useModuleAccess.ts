@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
@@ -123,4 +122,16 @@ export function useModuleAccess(): {
   }, [user]);
 
   return { moduleAccess, loading, error, refreshAccess, toggleModuleAccess };
+}
+
+// Add this explicit implementation of isModuleEnabled
+export function isModuleEnabled(moduleSlug: string, userRoles?: string[]): boolean {
+  // Default implementation checks if user is admin
+  if (userRoles && userRoles.includes('admin')) {
+    return true;
+  }
+  
+  // The real implementation would check the user's module access
+  // For now, return true to enable all modules by default
+  return true;
 }

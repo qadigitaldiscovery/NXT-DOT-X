@@ -2,8 +2,9 @@
 import { ReactElement } from 'react';
 
 export interface NavItem {
-  label: string;
-  icon: React.ElementType;
+  label?: string;
+  title?: string;
+  icon?: React.ElementType;
   path: string;
   roles?: string[]; // Optional: allowed roles for visibility
 }
