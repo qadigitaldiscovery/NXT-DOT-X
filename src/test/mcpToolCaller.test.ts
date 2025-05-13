@@ -1,4 +1,6 @@
 
+/// <reference types="jest" />
+
 import {
   callOpenAI,
   analyzeBrandSentiment,
