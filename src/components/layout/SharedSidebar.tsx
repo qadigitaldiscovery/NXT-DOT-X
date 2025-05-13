@@ -95,32 +95,18 @@ export const SharedSidebar = ({
           />
         )}
 
-        {/* Custom Footer Content - Updated with your robust layout-safe version */}
-        {customFooterContent && (
-          <div className="mt-auto w-full border-t border-indigo-900/30 bg-indigo-950 px-3 py-3 z-40">
-            {open ? (
-              // Expanded Sidebar Footer
-              <div className="flex w-full items-center justify-between gap-2">
-                {React.Children.map(
-                  (customFooterContent as React.ReactElement).props.children,
-                  (child: React.ReactElement, index: number) => (
-                    <div key={index} className="flex justify-center">{child}</div>
-                  )
-                )}
-              </div>
-            ) : (
-              // Collapsed Sidebar Footer
-              <div className="flex flex-col items-center space-y-2">
-                {React.Children.map(
-                  (customFooterContent as React.ReactElement).props.children,
-                  (child: React.ReactElement, index: number) => (
-                    <div key={index} className="flex justify-center">{child}</div>
-                  )
-                )}
-              </div>
-            )}
-          </div>
-        )}
+        {/* Navigation buttons at bottom */}
+        <div className="flex justify-center space-x-2 bg-indigo-950/80 border-t border-indigo-900/50 py-3">
+          <Button variant="ghost" size="icon" className="w-10 h-10 rounded-lg bg-indigo-800/30 text-blue-200 hover:text-white hover:bg-indigo-700">
+            1
+          </Button>
+          <Button variant="ghost" size="icon" className="w-10 h-10 rounded-lg bg-indigo-800/30 text-blue-200 hover:text-white hover:bg-indigo-700">
+            2
+          </Button>
+          <Button variant="ghost" size="icon" className="w-10 h-10 rounded-lg bg-indigo-800/30 text-blue-200 hover:text-white hover:bg-indigo-700">
+            3
+          </Button>
+        </div>
       </aside>
 
       {/* Bottom sidebar toggle button (if not removed) */}

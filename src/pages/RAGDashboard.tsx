@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useMemo } from 'react';
 import { useModules, type Module } from '@/hooks/useModules';
 import { useStatusLogs } from '@/hooks/useStatusLogs';
@@ -11,12 +12,9 @@ import ModuleDetailsDialog from '@/components/rag-dashboard/ModuleDetailsDialog'
 import OverviewStats from '@/components/rag-dashboard/OverviewStats';
 import SharedDashboardLayout from '@/components/layout/SharedDashboardLayout';
 import { NavCategory } from '@/components/layout/sidebar/types';
-import { ChevronLeft, ChevronRight, Home, LineChart, BarChart3, Settings, AlertTriangle } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
+import { Home, LineChart, BarChart3, Settings, AlertTriangle } from 'lucide-react';
 
 const RAGDashboard: React.FC = () => {
-  const navigate = useNavigate();
   const { toast } = useToast();
   const { modules, loading: modulesLoading, error: modulesError, updateModuleStatus } = useModules();
   const { alerts, loading: alertsLoading, error: alertsError, resolveAlert } = useAlerts();
@@ -138,45 +136,12 @@ const RAGDashboard: React.FC = () => {
     }
   ];
 
-  // Custom navigation footer with back, home, and forward buttons
-  const navigationFooter = (
-    <div className="flex items-center justify-between w-full">
-      <Button 
-        variant="ghost" 
-        size="icon" 
-        onClick={() => navigate(-1)}
-        className="text-blue-200 hover:text-white hover:bg-indigo-900 rounded-lg w-10 h-10"
-      >
-        <ChevronLeft className="h-5 w-5" />
-      </Button>
-      
-      <Button 
-        variant="ghost" 
-        size="icon" 
-        onClick={() => navigate('/')}
-        className="text-blue-200 hover:text-white hover:bg-indigo-900 rounded-lg w-10 h-10"
-      >
-        <Home className="h-5 w-5" />
-      </Button>
-      
-      <Button 
-        variant="ghost" 
-        size="icon" 
-        onClick={() => navigate(1)}
-        className="text-blue-200 hover:text-white hover:bg-indigo-900 rounded-lg w-10 h-10"
-      >
-        <ChevronRight className="h-5 w-5" />
-      </Button>
-    </div>
-  );
-
   return (
     <SharedDashboardLayout
       moduleTitle="RAG Dashboard"
       navCategories={navCategories}
-      customFooterContent={navigationFooter}
       sidebarClassName="bg-gradient-to-b from-indigo-950 via-blue-950 to-slate-950"
-      removeBottomToggle={false}
+      removeBottomToggle={true}
       showTopLeftToggle={true}
     >
       <div className="container mx-auto py-6 max-w-7xl">
