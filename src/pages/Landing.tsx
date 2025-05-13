@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -18,14 +19,7 @@ const Landing = () => {
   // Check if user is already logged in
   React.useEffect(() => {
     if (isAuthenticated) {
-      // TODO: Determine the appropriate route for authenticated users.
-      // For now, let's prevent the loop by navigating to a placeholder or a specific module.
-      // Example: navigate('/data-management'); 
-      // Or, if there's no specific dashboard yet, maybe just don't redirect from landing if already auth,
-      // or redirect to a generic authenticated user home page if one exists.
-      // Temporarily commenting out to stop the loop.
-      // navigate('/prototypes');
-      navigate('/'); // Redirect to root for MasterDash
+      navigate('/');
     }
   }, [navigate, isAuthenticated]);
 
@@ -44,7 +38,7 @@ const Landing = () => {
     const success = await login(username, password);
     
     if (success) {
-      navigate('/'); // Redirect to root for MasterDash
+      navigate('/');
     }
     
     setIsLoading(false);
@@ -66,84 +60,73 @@ const Landing = () => {
       </div>
 
       {/* Content with z-index to appear above the background */}
-      <header className="relative z-10 text-white flex-1">
-        <div className="container mx-auto px-4 py-8">
-          <nav className="flex justify-between items-center mb-8 bg-transparent">
-            <div className="flex flex-col">
-              {/* NXT DOT-X title and subtitle with improved styling */}
-              <h1 className="font-bold tracking-wider text-7xl">NXT DOT-X</h1>
-              <p className="font-medium tracking-wide mt-1 text-white/90 text-xl">
-                BUSINESS MANAGEMENT PLATFORM
-              </p>
-            </div>
-            <div className="flex items-center">
-              {/* NXT LEVEL TECH logo */}
-              <img
-                src="/lovable-uploads/f39ef88d-7664-4c92-8f4a-44368177dfde.png"
-                alt="NXT LEVEL TECH"
-                className="h-10"
-              />
-            </div>
-          </nav>
+      <div className="relative z-10 text-white flex-1 flex flex-col">
+        {/* Logo/Image centered at the top with more space */}
+        <div className="container mx-auto flex justify-center pt-20 pb-10">
+          <img
+            src="/lovable-uploads/f39ef88d-7664-4c92-8f4a-44368177dfde.png"
+            alt="NXT LEVEL TECH"
+            className="h-20" // Increased size
+          />
+        </div>
 
-          {/* Center the login form */}
-          <div className="flex justify-center items-center py-10">
-            <div className="w-full max-w-md">
-              <Card className="border-0 shadow-xl backdrop-blur-sm bg-black/50" id="login">
-                <CardHeader>
-                  <CardTitle className="text-2xl text-white">Sign in to your account</CardTitle>
-                  <CardDescription className="text-gray-300">
-                    Enter your credentials to access the platform
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <form onSubmit={handleLogin} className="space-y-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="username" className="text-white">
-                        Username or Email
-                      </Label>
-                      <Input
-                        id="username"
-                        type="text"
-                        placeholder="admin@example.com"
-                        value={username}
-                        onChange={e => setUsername(e.target.value)}
-                        required
-                        className="bg-black/30 text-white border-gray-600 focus:border-[#c01c1c]"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="password" className="text-white">
-                        Password
-                      </Label>
-                      <Input
-                        id="password"
-                        type="password"
-                        placeholder="••••••••"
-                        value={password}
-                        onChange={e => setPassword(e.target.value)}
-                        required
-                        className="bg-black/30 text-white border-gray-600 focus:border-[#c01c1c]"
-                      />
-                    </div>
-                    <Button
-                      type="submit"
-                      className="w-full bg-[#c01c1c] hover:bg-[#a51919]"
-                      disabled={isLoading}
-                    >
-                      <LogIn className="w-4 h-4 mr-2" />
-                      {isLoading ? 'Signing in...' : 'Sign In'}
-                    </Button>
-                    <p className="text-sm text-center text-gray-300">
-                      Demo credentials: admin@example.com / admin1 or user@example.com / user1
-                    </p>
-                  </form>
-                </CardContent>
-              </Card>
-            </div>
+        {/* Login form moved lower */}
+        <div className="flex-grow flex justify-center items-center pt-20"> {/* Added padding to push login form down */}
+          <div className="w-full max-w-md">
+            <Card className="border-0 shadow-xl backdrop-blur-sm bg-black/50" id="login">
+              <CardHeader>
+                <CardTitle className="text-2xl text-white">Sign in to your account</CardTitle>
+                <CardDescription className="text-gray-300">
+                  Enter your credentials to access the platform
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <form onSubmit={handleLogin} className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="username" className="text-white">
+                      Username or Email
+                    </Label>
+                    <Input
+                      id="username"
+                      type="text"
+                      placeholder="admin@example.com"
+                      value={username}
+                      onChange={e => setUsername(e.target.value)}
+                      required
+                      className="bg-black/30 text-white border-gray-600 focus:border-[#c01c1c]"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="password" className="text-white">
+                      Password
+                    </Label>
+                    <Input
+                      id="password"
+                      type="password"
+                      placeholder="••••••••"
+                      value={password}
+                      onChange={e => setPassword(e.target.value)}
+                      required
+                      className="bg-black/30 text-white border-gray-600 focus:border-[#c01c1c]"
+                    />
+                  </div>
+                  <Button
+                    type="submit"
+                    className="w-full bg-[#c01c1c] hover:bg-[#a51919]"
+                    disabled={isLoading}
+                  >
+                    <LogIn className="w-4 h-4 mr-2" />
+                    {isLoading ? 'Signing in...' : 'Sign In'}
+                  </Button>
+                  <p className="text-sm text-center text-gray-300">
+                    Demo credentials: admin@example.com / admin1 or user@example.com / user1
+                  </p>
+                </form>
+              </CardContent>
+            </Card>
           </div>
         </div>
-      </header>
+      </div>
 
       <footer className="relative z-10 text-white py-4 bg-black/80">
         <div className="container mx-auto px-4">

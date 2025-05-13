@@ -8,7 +8,7 @@ import { useNavigate } from "react-router-dom";
 export default function DataManagement() {
   const navigate = useNavigate();
   return (
-    <Card className="col-span-1 bg-gray-800">
+    <Card className="col-span-1 bg-gray-800 hover:bg-gray-700 transition-colors">
       <CardHeader className="pb-2">
         <CardTitle className="flex items-center space-x-2">
           <Database className="w-5 h-5 text-blue-500" />
