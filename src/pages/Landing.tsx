@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -8,13 +7,15 @@ import { toast } from 'sonner';
 import { Card, CardContent } from '@/components/ui/card';
 import { LogIn } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
-
 const Landing = () => {
   const [username, setUsername] = React.useState('');
   const [password, setPassword] = React.useState('');
   const [isLoading, setIsLoading] = React.useState(false);
   const navigate = useNavigate();
-  const { login, isAuthenticated } = useAuth();
+  const {
+    login,
+    isAuthenticated
+  } = useAuth();
 
   // Check if user is already logged in
   React.useEffect(() => {
@@ -22,7 +23,6 @@ const Landing = () => {
       navigate('/');
     }
   }, [navigate, isAuthenticated]);
-
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
@@ -36,26 +36,19 @@ const Landing = () => {
 
     // Authenticate user
     const success = await login(username, password);
-    
     if (success) {
       navigate('/');
     }
-    
     setIsLoading(false);
   };
-
-  return (
-    <div className="min-h-screen flex flex-col relative">
+  return <div className="min-h-screen flex flex-col relative">
       {/* Background image with overlay */}
-      <div
-        className="absolute inset-0 z-0"
-        style={{
-          backgroundImage: `url('/lovable-uploads/1d1d5f91-49b0-479f-bffe-41a4438de356.png')`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          backgroundRepeat: 'no-repeat'
-        }}
-      >
+      <div className="absolute inset-0 z-0" style={{
+      backgroundImage: `url('/lovable-uploads/1d1d5f91-49b0-479f-bffe-41a4438de356.png')`,
+      backgroundSize: 'cover',
+      backgroundPosition: 'center',
+      backgroundRepeat: 'no-repeat'
+    }}>
         <div className="absolute inset-0 bg-black/50"></div>
       </div>
 
@@ -64,11 +57,7 @@ const Landing = () => {
         {/* Logo centered at the top with width set to 65% of the page */}
         <div className="container mx-auto flex justify-center pt-16 pb-10">
           <div className="w-[65%]">
-            <img
-              src="/lovable-uploads/80f9379c-254b-4238-9d1c-bb90577397d9.png"
-              alt="NXT DOT X"
-              className="w-full" 
-            />
+            <img src="/lovable-uploads/80f9379c-254b-4238-9d1c-bb90577397d9.png" alt="NXT DOT X" className="w-full" />
           </div>
         </div>
 
@@ -82,35 +71,15 @@ const Landing = () => {
                     <Label htmlFor="username" className="text-white">
                       Username or Email
                     </Label>
-                    <Input
-                      id="username"
-                      type="text"
-                      placeholder="admin@example.com"
-                      value={username}
-                      onChange={e => setUsername(e.target.value)}
-                      required
-                      className="bg-black/30 text-white border-gray-600 focus:border-[#c01c1c]"
-                    />
+                    <Input id="username" type="text" placeholder="admin@example.com" value={username} onChange={e => setUsername(e.target.value)} required className="bg-black/30 text-white border-gray-600 focus:border-[#c01c1c]" />
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="password" className="text-white">
                       Password
                     </Label>
-                    <Input
-                      id="password"
-                      type="password"
-                      placeholder="••••••••"
-                      value={password}
-                      onChange={e => setPassword(e.target.value)}
-                      required
-                      className="bg-black/30 text-white border-gray-600 focus:border-[#c01c1c]"
-                    />
+                    <Input id="password" type="password" placeholder="••••••••" value={password} onChange={e => setPassword(e.target.value)} required className="bg-black/30 text-white border-gray-600 focus:border-[#c01c1c]" />
                   </div>
-                  <Button
-                    type="submit"
-                    className="w-full bg-[#c01c1c] hover:bg-[#a51919]"
-                    disabled={isLoading}
-                  >
+                  <Button type="submit" className="w-full bg-[#c01c1c] hover:bg-[#a51919]" disabled={isLoading}>
                     <LogIn className="w-4 h-4 mr-2" />
                     {isLoading ? 'Signing in...' : 'Sign In'}
                   </Button>
@@ -128,11 +97,7 @@ const Landing = () => {
         <div className="container mx-auto px-4">
           <div className="flex justify-between items-center">
             <div>
-              <img
-                src="/lovable-uploads/80f9379c-254b-4238-9d1c-bb90577397d9.png"
-                alt="NXT DOT X"
-                className="h-8"
-              />
+              <img src="/lovable-uploads/80f9379c-254b-4238-9d1c-bb90577397d9.png" alt="NXT DOT X" className="h-8" />
             </div>
             <div>
               <p className="text-right">© 2025 NXT DOT X. All rights reserved.</p>
@@ -140,8 +105,6 @@ const Landing = () => {
           </div>
         </div>
       </footer>
-    </div>
-  );
+    </div>;
 };
-
 export default Landing;
