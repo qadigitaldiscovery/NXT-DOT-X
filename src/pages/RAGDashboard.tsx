@@ -11,8 +11,12 @@ import ModuleStatusFilter from '@/components/rag-dashboard/ModuleStatusFilter';
 import ModuleDetailsDialog from '@/components/rag-dashboard/ModuleDetailsDialog';
 import OverviewStats from '@/components/rag-dashboard/OverviewStats';
 import SharedDashboardLayout from '@/components/layout/SharedDashboardLayout';
+import NotificationsPopover from '@/components/rag-dashboard/NotificationsPopover';
+import BatchOperationsDialog from '@/components/rag-dashboard/BatchOperationsDialog';
+import PermissionGuard from '@/components/rag-dashboard/PermissionGuard';
 import { NavCategory } from '@/components/layout/sidebar/types';
 import { Home, LineChart, BarChart3, Settings, AlertTriangle } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 const RAGDashboard: React.FC = () => {
   const { toast } = useToast();
@@ -26,6 +30,9 @@ const RAGDashboard: React.FC = () => {
   // State for module details dialog
   const [selectedModule, setSelectedModule] = useState<Module | null>(null);
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
+  
+  // State for batch operations dialog
+  const [isBatchOperationsOpen, setIsBatchOperationsOpen] = useState(false);
   
   // Fetch data for selected module
   const { logs, loading: logsLoading } = useStatusLogs(selectedModule?.id);
@@ -136,6 +143,9 @@ const RAGDashboard: React.FC = () => {
     }
   ];
 
+  // Notifications area component
+  const notificationArea = <NotificationsPopover />;
+
   return (
     <SharedDashboardLayout
       moduleTitle="RAG Dashboard"
@@ -143,9 +153,18 @@ const RAGDashboard: React.FC = () => {
       sidebarClassName="bg-gradient-to-b from-indigo-950 via-blue-950 to-slate-950"
       removeBottomToggle={true}
       showTopLeftToggle={true}
+      notificationArea={notificationArea}
     >
       <div className="container mx-auto py-6 max-w-7xl">
-        <h1 className="text-3xl font-bold mb-6">System Status Dashboard</h1>
+        <div className="flex justify-between items-center mb-6">
+          <h1 className="text-3xl font-bold">System Status Dashboard</h1>
+          
+          <PermissionGuard requiredPermission={['modules.edit', 'modules.all']}>
+            <Button onClick={() => setIsBatchOperationsOpen(true)}>
+              Batch Operations
+            </Button>
+          </PermissionGuard>
+        </div>
         
         {/* Overview Stats */}
         <OverviewStats modules={modules} alerts={alerts} />
@@ -195,6 +214,12 @@ const RAGDashboard: React.FC = () => {
           onResolveAlert={handleResolveAlert}
           onAddRule={handleAddRule}
           onDeleteRule={handleDeleteRule}
+        />
+        
+        {/* Batch Operations Dialog */}
+        <BatchOperationsDialog
+          isOpen={isBatchOperationsOpen}
+          onClose={() => setIsBatchOperationsOpen(false)}
         />
       </div>
     </SharedDashboardLayout>
