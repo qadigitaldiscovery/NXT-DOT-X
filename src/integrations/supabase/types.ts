@@ -387,6 +387,33 @@ export type Database = {
           },
         ]
       }
+      kpi_indicators: {
+        Row: {
+          id: string
+          kpi_title: string
+          kpi_value: number
+          module_name: string
+          rag_status: string
+          updated_at: string | null
+        }
+        Insert: {
+          id?: string
+          kpi_title: string
+          kpi_value: number
+          module_name: string
+          rag_status: string
+          updated_at?: string | null
+        }
+        Update: {
+          id?: string
+          kpi_title?: string
+          kpi_value?: number
+          module_name?: string
+          rag_status?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       landed_cost_components: {
         Row: {
           applies_to: string[] | null

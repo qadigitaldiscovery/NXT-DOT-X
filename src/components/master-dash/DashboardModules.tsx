@@ -22,7 +22,7 @@ const DashboardModules = () => {
 
       {/* Module Status Indicators (RAG) */}
       <div className="mb-8">
-        <ModuleStatusIndicator />
+        <ModuleStatusIndicator status="green" size="md" />
       </div>
 
       {/* Primary Modules */}
