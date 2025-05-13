@@ -113,6 +113,9 @@ const RAGDashboard: React.FC = () => {
             alertsLoading={alertsLoading}
             rulesLoading={rulesLoading}
             impactsLoading={impactsLoading}
+            onResolveAlert={resolveAlert}
+            onAddRule={addRule}
+            onDeleteRule={deleteRule}
             isBatchOperationsOpen={isBatchOperationsOpen}
             onBatchOperationsClose={() => setIsBatchOperationsOpen(false)}
           />

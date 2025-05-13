@@ -16,12 +16,15 @@ const DashboardFilters: React.FC<DashboardFiltersProps> = ({
   onSearchChange
 }) => {
   return (
-    <ModuleStatusFilter
-      selectedStatus={selectedStatus}
-      onStatusSelect={onStatusSelect}
-      searchQuery={searchQuery}
-      onSearchChange={onSearchChange}
-    />
+    <div className="mb-6">
+      <h2 className="text-xl font-semibold mb-4">System Modules</h2>
+      <ModuleStatusFilter
+        selectedStatus={selectedStatus}
+        onStatusSelect={onStatusSelect}
+        searchQuery={searchQuery}
+        onSearchChange={onSearchChange}
+      />
+    </div>
   );
 };
 
