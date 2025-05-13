@@ -61,13 +61,15 @@ const Landing = () => {
 
       {/* Content with z-index to appear above the background */}
       <div className="relative z-10 text-white flex-1 flex flex-col">
-        {/* Logo centered at the top with more space and increased size */}
+        {/* Logo centered at the top with width set to 65% of the page */}
         <div className="container mx-auto flex justify-center pt-16 pb-10">
-          <img
-            src="/lovable-uploads/80f9379c-254b-4238-9d1c-bb90577397d9.png"
-            alt="NXT DOT X"
-            className="h-48" // Increased size significantly from h-32 to h-48
-          />
+          <div className="w-[65%]">
+            <img
+              src="/lovable-uploads/80f9379c-254b-4238-9d1c-bb90577397d9.png"
+              alt="NXT DOT X"
+              className="w-full" 
+            />
+          </div>
         </div>
 
         {/* Login form moved lower */}
