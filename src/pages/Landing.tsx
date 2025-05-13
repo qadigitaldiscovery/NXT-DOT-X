@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { LogIn } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 
@@ -61,17 +61,17 @@ const Landing = () => {
 
       {/* Content with z-index to appear above the background */}
       <div className="relative z-10 text-white flex-1 flex flex-col">
-        {/* Logo centered at the top with more space */}
-        <div className="container mx-auto flex justify-center pt-24 pb-10">
+        {/* Logo centered at the top with more space and increased size */}
+        <div className="container mx-auto flex justify-center pt-16 pb-10">
           <img
             src="/lovable-uploads/80f9379c-254b-4238-9d1c-bb90577397d9.png"
             alt="NXT DOT X"
-            className="h-32" // Increased size for better visibility
+            className="h-48" // Increased size significantly from h-32 to h-48
           />
         </div>
 
         {/* Login form moved lower */}
-        <div className="flex-grow flex justify-center items-center pt-32"> {/* Added padding to push login form down */}
+        <div className="flex-grow flex justify-center items-center pt-32">
           <div className="w-full max-w-md">
             <Card className="border-0 shadow-xl backdrop-blur-sm bg-black/50" id="login">
               <CardContent className="pt-6">
