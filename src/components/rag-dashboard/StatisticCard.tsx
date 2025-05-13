@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
 interface StatisticCardProps {
   value: string | number;
   label: string;
-  trend?: 'up' | 'down' | 'neutral';
+  trend?: 'up' | 'down' | 'neutral' | 'stable';
   trendValue?: string | number;
   valueColor?: 'default' | 'success' | 'warning' | 'danger';
   icon?: ReactNode;
@@ -37,7 +37,7 @@ const StatisticCard: React.FC<StatisticCardProps> = ({
   const getTrendIcon = () => {
     if (trend === 'up') return <span className="text-emerald-500">↑</span>;
     if (trend === 'down') return <span className="text-red-500">↓</span>;
-    return <span className="text-gray-500">→</span>;
+    return <span className="text-gray-500">→</span>; // Used for both 'neutral' and 'stable'
   };
 
   return (
