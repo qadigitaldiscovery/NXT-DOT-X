@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 
 export interface KpiIndicator {
@@ -16,28 +16,35 @@ export const useKpiIndicators = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<Error | null>(null);
 
-  useEffect(() => {
-    const fetchKpis = async () => {
-      try {
-        setLoading(true);
-        const { data, error } = await supabase
-          .from('kpi_indicators')
-          .select('*')
-          .order('module_name', { ascending: true });
+  const fetchKpis = useCallback(async () => {
+    try {
+      setLoading(true);
+      // Using any type here since the table might not exist yet
+      const { data, error } = await supabase
+        .from('kpi_indicators')
+        .select('*')
+        .order('module_name', { ascending: true }) as any;
 
-        if (error) throw error;
-
-        setKpis(data || []);
-      } catch (err) {
-        console.error('Error fetching KPI indicators:', err);
-        setError(err instanceof Error ? err : new Error('Unknown error fetching KPIs'));
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchKpis();
+      if (error) throw error;
+      
+      // Explicitly cast the data to our KpiIndicator type to ensure type safety
+      setKpis(data as KpiIndicator[] || []);
+    } catch (err) {
+      console.error('Error fetching KPI indicators:', err);
+      setError(err instanceof Error ? err : new Error('Unknown error fetching KPIs'));
+    } finally {
+      setLoading(false);
+    }
   }, []);
 
-  return { kpis, loading, error };
+  useEffect(() => {
+    fetchKpis();
+  }, [fetchKpis]);
+
+  const refreshKpis = useCallback(async () => {
+    await fetchKpis();
+    return { success: true };
+  }, [fetchKpis]);
+
+  return { kpis, loading, error, refreshKpis };
 };

@@ -1,93 +1,83 @@
 
 import React from 'react';
-import { Link } from 'react-router-dom';
-import { Card, CardHeader, CardContent, CardTitle, CardFooter } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { BarChart3, AlertCircle } from "lucide-react";
-import { useModules, type Module } from '@/hooks/useModules';
+import { Badge } from '@/components/ui/badge';
+import { cn } from '@/lib/utils';
 
-// Define a type for the status of a module
-type ModuleStatus = 'green' | 'orange' | 'red';
+type ModuleStatus = 'active' | 'inactive' | 'maintenance' | 'deprecated' | 'beta' | 'green' | 'orange' | 'red';
 
-const getStatusColor = (status: ModuleStatus) => {
+interface ModuleStatusIndicatorProps {
+  status: ModuleStatus | string;
+  size?: 'sm' | 'md' | 'lg';
+  className?: string;
+}
+
+const getStatusColor = (status: ModuleStatus | string): string => {
   switch (status) {
+    case 'active':
     case 'green':
-      return 'bg-green-500';
+      return 'bg-green-500/15 text-green-500 border-green-500/30';
+    case 'beta':
     case 'orange':
-      return 'bg-amber-500';
+    case 'maintenance':
+      return 'bg-amber-500/15 text-amber-500 border-amber-500/30';
+    case 'deprecated':
     case 'red':
-      return 'bg-red-500';
+    case 'inactive':
+      return 'bg-red-500/15 text-red-500 border-red-500/30';
     default:
-      return 'bg-gray-500';
+      return 'bg-slate-500/15 text-slate-500 border-slate-500/30';
   }
 };
 
-const getStatusText = (status: ModuleStatus) => {
+const getStatusText = (status: ModuleStatus | string): string => {
   switch (status) {
+    case 'active':
+    case 'inactive':
+    case 'maintenance':
+    case 'deprecated':
+    case 'beta':
+      return status.charAt(0).toUpperCase() + status.slice(1);
     case 'green':
       return 'Operational';
     case 'orange':
-      return 'Degraded Performance';
+      return 'Degraded';
     case 'red':
-      return 'Service Outage';
+      return 'Critical';
     default:
-      return 'Unknown';
+      return status.charAt(0).toUpperCase() + status.slice(1);
   }
 };
 
-const ModuleStatusIndicator: React.FC = () => {
-  const { modules, loading, error } = useModules();
+const getSizingClasses = (size: 'sm' | 'md' | 'lg'): string => {
+  switch (size) {
+    case 'sm':
+      return 'text-xs px-1.5 py-0.5';
+    case 'md':
+      return 'text-sm px-2 py-1';
+    case 'lg':
+      return 'text-base px-3 py-1.5';
+    default:
+      return 'text-sm px-2 py-1';
+  }
+};
 
+const ModuleStatusIndicator: React.FC<ModuleStatusIndicatorProps> = ({
+  status,
+  size = 'md',
+  className,
+}) => {
   return (
-    <Card className="bg-slate-900/80 border-slate-800 shadow-md">
-      <CardHeader className="pb-2">
-        <CardTitle className="text-white flex items-center justify-between">
-          <span>Module Status</span>
-          <Link to="/dashboard/rag">
-            <Button variant="link" size="sm" className="text-blue-300 hover:text-blue-200 p-0">
-              View Full Dashboard
-            </Button>
-          </Link>
-        </CardTitle>
-      </CardHeader>
-      <CardContent>
-        {loading ? (
-          <div className="flex justify-center py-6">
-            <div className="animate-pulse text-slate-400">Loading module status...</div>
-          </div>
-        ) : error ? (
-          <div className="flex items-center justify-center gap-2 py-6 text-red-400">
-            <AlertCircle size={16} />
-            <span>Error loading module statuses</span>
-          </div>
-        ) : modules.length === 0 ? (
-          <div className="py-6 text-center text-slate-400">No module status information available</div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-            {modules.map((moduleStatus) => (
-              <div key={moduleStatus.id} className="flex items-center gap-3 bg-slate-800/50 p-3 rounded-md">
-                <div className={`w-3 h-3 rounded-full ${getStatusColor(moduleStatus.status)}`}></div>
-                <div>
-                  <div className="text-sm text-white font-medium">{moduleStatus.name}</div>
-                  <div className="text-xs text-slate-400">{getStatusText(moduleStatus.status)}</div>
-                  {moduleStatus.description && (
-                    <div className="text-xs text-slate-500 mt-1">{moduleStatus.description}</div>
-                  )}
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-      </CardContent>
-      <CardFooter className="pt-2 pb-3">
-        <Link to="/dashboard/rag" className="w-full">
-          <Button className="w-full bg-indigo-700 hover:bg-indigo-600 flex items-center justify-center">
-            <BarChart3 className="mr-2 h-4 w-4" />
-            View Detailed Status Dashboard
-          </Button>
-        </Link>
-      </CardFooter>
-    </Card>
+    <Badge
+      variant="outline"
+      className={cn(
+        'rounded-full font-medium border',
+        getStatusColor(status as ModuleStatus | string),
+        getSizingClasses(size),
+        className
+      )}
+    >
+      {getStatusText(status as ModuleStatus | string)}
+    </Badge>
   );
 };
 
