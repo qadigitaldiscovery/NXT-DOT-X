@@ -1489,6 +1489,51 @@ export type Database = {
           },
         ]
       }
+      user_module_access: {
+        Row: {
+          category: string | null
+          id: string
+          is_enabled: boolean
+          module_slug: string
+          submenu_slug: string | null
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          category?: string | null
+          id?: string
+          is_enabled?: boolean
+          module_slug: string
+          submenu_slug?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          category?: string | null
+          id?: string
+          is_enabled?: boolean
+          module_slug?: string
+          submenu_slug?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          role: string
+          user_id: string
+        }
+        Insert: {
+          role: string
+          user_id: string
+        }
+        Update: {
+          role?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       validation_rules: {
         Row: {
           applies_to: Json | null
@@ -1539,7 +1584,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: { check_user_id: string; check_role: string }
+        Returns: boolean
+      }
     }
     Enums: {
       [_ in never]: never

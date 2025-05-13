@@ -10,9 +10,13 @@ import { SidebarToggleButton } from './SidebarToggleButton';
 import { SidebarProps } from './types';
 import { topLevelNavItems, navCategories, settingsItem } from './NavigationConfig';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { useModuleAccess } from '@/hooks/useModuleAccess';
+import { filterSidebarItems, getAdminSidebarItems } from '@/utils/rbac';
+import { Shield } from 'lucide-react';
 
 export const Sidebar = ({ open, onToggle }: SidebarProps) => {
   const isMobile = useIsMobile();
+  const { moduleAccess } = useModuleAccess();
   const [openCategories, setOpenCategories] = React.useState<string[]>(["Cost Management"]);
 
   const handleCategoryToggle = (category: string) => {
@@ -22,6 +26,27 @@ export const Sidebar = ({ open, onToggle }: SidebarProps) => {
         : [...prev, category]
     );
   };
+
+  // Filter navigation items based on user access
+  const filteredCategories = moduleAccess ? filterSidebarItems(navCategories, moduleAccess) : navCategories;
+  
+  // Get admin-only items if user is an admin
+  const adminCategory = getAdminSidebarItems(moduleAccess);
+
+  // Combine regular categories with admin category if present
+  const allCategories = adminCategory 
+    ? [
+        ...filteredCategories, 
+        {
+          ...adminCategory,
+          name: "Administration",
+          items: adminCategory.items.map(item => ({
+            ...item,
+            icon: item.icon || Shield
+          }))
+        }
+      ] 
+    : filteredCategories;
 
   return (
     <>
@@ -58,7 +83,7 @@ export const Sidebar = ({ open, onToggle }: SidebarProps) => {
           
           {/* Categorized navigation items */}
           <SidebarCategoryMenu 
-            categories={navCategories}
+            categories={allCategories}
             openCategories={openCategories}
             onCategoryToggle={handleCategoryToggle}
           />
@@ -68,7 +93,7 @@ export const Sidebar = ({ open, onToggle }: SidebarProps) => {
         {!open && (
           <CompactSidebar
             topLevelItems={topLevelNavItems}
-            categoriesItems={navCategories}
+            categoriesItems={allCategories}
             footerItem={settingsItem}
           />
         )}

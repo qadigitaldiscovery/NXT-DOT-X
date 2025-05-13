@@ -4,3 +4,7 @@ app_id = "1"
 
 [functions.threshold-checker]
 verify_jwt = false
+
+[functions.init-admin-access]
+verify_jwt = false
+
