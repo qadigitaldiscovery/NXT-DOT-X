@@ -4,7 +4,7 @@ import { useModules } from '@/hooks/useModules';
 import { useModuleMetrics, useSystemHealthScore } from '@/hooks/useModuleMetrics';
 import SharedDashboardLayout from '@/components/layout/SharedDashboardLayout';
 import { NavCategory } from '@/components/layout/sidebar/types';
-import { BarChart3, Home, LineChart, AlertTriangle, Settings } from 'lucide-react';
+import { BarChart3, Home, LineChart as LineChartIcon, AlertTriangle, Settings } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
@@ -41,7 +41,7 @@ const RAGAnalytics: React.FC = () => {
       name: "RAG Dashboard",
       items: [
         { label: "Overview", path: "/dashboard/rag", icon: BarChart3 },
-        { label: "Analytics", path: "/dashboard/rag/analytics", icon: LineChart },
+        { label: "Analytics", path: "/dashboard/rag/analytics", icon: LineChartIcon },
         { label: "Alerts", path: "/dashboard/rag/alerts", icon: AlertTriangle },
         { label: "Settings", path: "/dashboard/rag/settings", icon: Settings, roles: ["admin"] }
       ]
