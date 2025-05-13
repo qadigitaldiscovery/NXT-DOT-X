@@ -11,6 +11,7 @@ export type Alert = {
   created_at: string;
   resolved: boolean;
   resolved_at: string | null;
+  triggered_at: string;  // Added this property
 };
 
 export function useAlerts() {
@@ -29,7 +30,8 @@ export function useAlerts() {
         severity: 'high',
         created_at: new Date(Date.now() - 3600000).toISOString(),
         resolved: false,
-        resolved_at: null
+        resolved_at: null,
+        triggered_at: new Date(Date.now() - 3600000).toISOString()
       },
       {
         id: '2',
@@ -39,7 +41,8 @@ export function useAlerts() {
         severity: 'critical',
         created_at: new Date(Date.now() - 7200000).toISOString(),
         resolved: false,
-        resolved_at: null
+        resolved_at: null,
+        triggered_at: new Date(Date.now() - 7200000).toISOString()
       },
       {
         id: '3',
@@ -49,7 +52,8 @@ export function useAlerts() {
         severity: 'medium',
         created_at: new Date(Date.now() - 86400000).toISOString(),
         resolved: true,
-        resolved_at: new Date(Date.now() - 43200000).toISOString()
+        resolved_at: new Date(Date.now() - 43200000).toISOString(),
+        triggered_at: new Date(Date.now() - 86400000).toISOString()
       }
     ];
     

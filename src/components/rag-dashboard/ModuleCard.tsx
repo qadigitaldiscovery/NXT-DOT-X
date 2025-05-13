@@ -50,7 +50,7 @@ const ModuleCard: React.FC<ModuleCardProps> = ({ module, alertCount, onViewDetai
       
       <CardContent className="pb-0">
         <div className="flex items-center justify-between">
-          <StatusGauge status={module.status} size={80} />
+          <StatusGauge status={module.status} size="md" />
           
           {alertCount > 0 && (
             <div className="flex items-center text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-900/20 px-3 py-1 rounded-full">

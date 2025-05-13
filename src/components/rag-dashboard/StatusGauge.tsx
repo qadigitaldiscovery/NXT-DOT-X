@@ -1,68 +1,72 @@
 
 import React from 'react';
-import { cn } from '@/lib/utils';
 
-type StatusGaugeProps = {
-  status: 'green' | 'orange' | 'red';
-  size?: 'sm' | 'md' | 'lg';
-  animate?: boolean;
-  className?: string;
-  showLabel?: boolean;
+interface StatusGaugeProps {
+  status: string;
+  size: "sm" | "md" | "lg";
 }
 
-export default function StatusGauge({ 
-  status, 
-  size = 'md', 
-  animate = true,
-  className,
-  showLabel = false
-}: StatusGaugeProps) {
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'green':
-        return 'bg-green-500';
-      case 'orange':
-        return 'bg-amber-500';
-      case 'red':
-        return 'bg-red-500';
-      default:
-        return 'bg-gray-500';
-    }
-  };
-  
-  const getStatusLabel = (status: string) => {
-    switch (status) {
-      case 'green':
-        return 'Operational';
-      case 'orange':
-        return 'Degraded';
-      case 'red':
-        return 'Outage';
-      default:
-        return 'Unknown';
-    }
-  };
-  
+const StatusGauge: React.FC<StatusGaugeProps> = ({ status, size = "md" }) => {
   const sizeClasses = {
-    sm: 'w-3 h-3',
-    md: 'w-4 h-4',
-    lg: 'w-6 h-6',
+    sm: "w-16 h-16",
+    md: "w-20 h-20",
+    lg: "w-24 h-24"
   };
+  
+  const getStatusColor = (status: string): string => {
+    switch (status.toLowerCase()) {
+      case 'green': return '#10b981';
+      case 'orange': return '#f59e0b';
+      case 'red': return '#ef4444';
+      default: return '#9ca3af';
+    }
+  };
+
+  const color = getStatusColor(status);
+  const sizeClass = sizeClasses[size];
   
   return (
-    <div className="flex items-center gap-2">
+    <div className={`relative ${sizeClass}`}>
+      <svg className="w-full h-full" viewBox="0 0 100 100">
+        {/* Background circle */}
+        <circle
+          cx="50"
+          cy="50"
+          r="45"
+          fill="none"
+          stroke="#e5e7eb"
+          strokeWidth="8"
+          className="dark:stroke-gray-700"
+        />
+        {/* Colored status circle */}
+        <circle
+          cx="50"
+          cy="50"
+          r="45"
+          fill="none"
+          stroke={color}
+          strokeWidth="8"
+          strokeDasharray="283"
+          strokeDashoffset="0"
+          className="transition-all duration-500 ease-in-out"
+        />
+      </svg>
+      {/* Status dot in the center */}
       <div 
-        className={cn(
-          "rounded-full",
-          getStatusColor(status),
-          sizeClasses[size],
-          animate && "animate-pulse",
-          className
-        )}
-      />
-      {showLabel && (
-        <span className="text-sm font-medium">{getStatusLabel(status)}</span>
-      )}
+        className="absolute inset-0 flex items-center justify-center"
+        style={{ color }}
+      >
+        <div 
+          className="rounded-full"
+          style={{ 
+            backgroundColor: color,
+            width: size === 'sm' ? '24px' : size === 'md' ? '32px' : '40px',
+            height: size === 'sm' ? '24px' : size === 'md' ? '32px' : '40px'
+          }}
+        />
+      </div>
     </div>
   );
-}
+};
+
+export default StatusGauge;

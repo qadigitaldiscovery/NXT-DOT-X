@@ -9,6 +9,10 @@ export type CustomerImpact = {
   severity: 'low' | 'medium' | 'high';
   created_at: string;
   resolved: boolean;
+  impact_level?: string;      // Added this property
+  recorded_at: string;        // Added this property
+  region?: string;            // Added this property
+  affected_users?: number;    // Added this property
 };
 
 export function useCustomerImpacts(moduleId?: string) {
@@ -33,7 +37,11 @@ export function useCustomerImpacts(moduleId?: string) {
         affected_count: 157,
         severity: 'high',
         created_at: new Date(Date.now() - 7200000).toISOString(),
-        resolved: false
+        resolved: false,
+        impact_level: 'high',
+        recorded_at: new Date(Date.now() - 7200000).toISOString(),
+        region: 'North America',
+        affected_users: 157
       },
       {
         id: '2',
@@ -42,7 +50,11 @@ export function useCustomerImpacts(moduleId?: string) {
         affected_count: 423,
         severity: 'medium',
         created_at: new Date(Date.now() - 86400000).toISOString(),
-        resolved: true
+        resolved: true,
+        impact_level: 'medium',
+        recorded_at: new Date(Date.now() - 86400000).toISOString(),
+        region: 'Europe',
+        affected_users: 423
       }
     ];
     
