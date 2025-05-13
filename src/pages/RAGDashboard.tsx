@@ -6,17 +6,17 @@ import { useAlerts } from '@/hooks/useAlerts';
 import { useThresholdRules } from '@/hooks/useThresholdRules';
 import { useCustomerImpacts } from '@/hooks/useCustomerImpacts';
 import { useToast } from '@/components/ui/use-toast';
-import ModuleCard from '@/components/rag-dashboard/ModuleCard';
-import ModuleStatusFilter from '@/components/rag-dashboard/ModuleStatusFilter';
-import ModuleDetailsDialog from '@/components/rag-dashboard/ModuleDetailsDialog';
 import OverviewStats from '@/components/rag-dashboard/OverviewStats';
 import SharedDashboardLayout from '@/components/layout/SharedDashboardLayout';
 import NotificationsPopover from '@/components/rag-dashboard/NotificationsPopover';
-import BatchOperationsDialog from '@/components/rag-dashboard/BatchOperationsDialog';
-import PermissionGuard from '@/components/rag-dashboard/PermissionGuard';
 import { NavCategory } from '@/components/layout/sidebar/types';
 import { Home, LineChart, BarChart3, Settings, AlertTriangle } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+
+// Import the new components
+import DashboardHeader from '@/components/rag-dashboard/dashboard/DashboardHeader';
+import DashboardFilters from '@/components/rag-dashboard/dashboard/DashboardFilters';
+import ModulesGrid from '@/components/rag-dashboard/dashboard/ModulesGrid';
+import DashboardDialogs from '@/components/rag-dashboard/dashboard/DashboardDialogs';
 
 const RAGDashboard: React.FC = () => {
   const { toast } = useToast();
@@ -156,57 +156,37 @@ const RAGDashboard: React.FC = () => {
       notificationArea={notificationArea}
     >
       <div className="container mx-auto py-6 max-w-7xl">
-        <div className="flex justify-between items-center mb-6">
-          <h1 className="text-3xl font-bold">System Status Dashboard</h1>
-          
-          <PermissionGuard requiredPermission={['modules.edit', 'modules.all']}>
-            <Button onClick={() => setIsBatchOperationsOpen(true)}>
-              Batch Operations
-            </Button>
-          </PermissionGuard>
-        </div>
+        <DashboardHeader onBatchOperationsOpen={() => setIsBatchOperationsOpen(true)} />
         
         {/* Overview Stats */}
         <OverviewStats modules={modules} alerts={alerts} />
         
         {/* Filters */}
-        <ModuleStatusFilter
+        <DashboardFilters
           selectedStatus={selectedStatus}
           onStatusSelect={setSelectedStatus}
           searchQuery={searchQuery}
           onSearchChange={setSearchQuery}
         />
         
-        {modulesLoading ? (
-          <div className="py-8 text-center">Loading modules...</div>
-        ) : modulesError ? (
-          <div className="py-8 text-center text-red-500">
-            Error loading modules. Please refresh and try again.
-          </div>
-        ) : filteredModules.length === 0 ? (
-          <div className="py-8 text-center">No modules match the current filters.</div>
-        ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredModules.map((module) => (
-              <ModuleCard
-                key={module.id}
-                module={module}
-                alertCount={alertCountByModule[module.id] || 0}
-                onViewDetails={handleViewDetails}
-              />
-            ))}
-          </div>
-        )}
+        {/* Modules Grid */}
+        <ModulesGrid
+          modules={filteredModules}
+          isLoading={modulesLoading}
+          hasError={Boolean(modulesError)}
+          alertCountByModule={alertCountByModule}
+          onViewDetails={handleViewDetails}
+        />
         
-        {/* Module Details Dialog */}
-        <ModuleDetailsDialog
-          isOpen={isDetailsOpen}
-          onClose={() => setIsDetailsOpen(false)}
-          module={selectedModule}
-          statusLogs={logs}
-          alerts={moduleAlerts}
+        {/* Dialogs */}
+        <DashboardDialogs
+          isDetailsOpen={isDetailsOpen}
+          onDetailsClose={() => setIsDetailsOpen(false)}
+          selectedModule={selectedModule}
+          logs={logs}
+          moduleAlerts={moduleAlerts}
           rules={rules}
-          customerImpacts={impacts}
+          impacts={impacts}
           logsLoading={logsLoading}
           alertsLoading={alertsLoading}
           rulesLoading={rulesLoading}
@@ -214,12 +194,8 @@ const RAGDashboard: React.FC = () => {
           onResolveAlert={handleResolveAlert}
           onAddRule={handleAddRule}
           onDeleteRule={handleDeleteRule}
-        />
-        
-        {/* Batch Operations Dialog */}
-        <BatchOperationsDialog
-          isOpen={isBatchOperationsOpen}
-          onClose={() => setIsBatchOperationsOpen(false)}
+          isBatchOperationsOpen={isBatchOperationsOpen}
+          onBatchOperationsClose={() => setIsBatchOperationsOpen(false)}
         />
       </div>
     </SharedDashboardLayout>
