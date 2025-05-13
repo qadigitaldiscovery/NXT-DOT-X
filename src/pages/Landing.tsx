@@ -61,26 +61,20 @@ const Landing = () => {
 
       {/* Content with z-index to appear above the background */}
       <div className="relative z-10 text-white flex-1 flex flex-col">
-        {/* Logo/Image centered at the top with more space */}
-        <div className="container mx-auto flex justify-center pt-20 pb-10">
+        {/* Logo centered at the top with more space */}
+        <div className="container mx-auto flex justify-center pt-24 pb-10">
           <img
-            src="/lovable-uploads/f39ef88d-7664-4c92-8f4a-44368177dfde.png"
-            alt="NXT LEVEL TECH"
-            className="h-20" // Increased size
+            src="/lovable-uploads/80f9379c-254b-4238-9d1c-bb90577397d9.png"
+            alt="NXT DOT X"
+            className="h-32" // Increased size for better visibility
           />
         </div>
 
         {/* Login form moved lower */}
-        <div className="flex-grow flex justify-center items-center pt-20"> {/* Added padding to push login form down */}
+        <div className="flex-grow flex justify-center items-center pt-32"> {/* Added padding to push login form down */}
           <div className="w-full max-w-md">
             <Card className="border-0 shadow-xl backdrop-blur-sm bg-black/50" id="login">
-              <CardHeader>
-                <CardTitle className="text-2xl text-white">Sign in to your account</CardTitle>
-                <CardDescription className="text-gray-300">
-                  Enter your credentials to access the platform
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
+              <CardContent className="pt-6">
                 <form onSubmit={handleLogin} className="space-y-4">
                   <div className="space-y-2">
                     <Label htmlFor="username" className="text-white">
@@ -133,13 +127,13 @@ const Landing = () => {
           <div className="flex justify-between items-center">
             <div>
               <img
-                src="/lovable-uploads/f39ef88d-7664-4c92-8f4a-44368177dfde.png"
-                alt="NXT LEVEL TECH"
+                src="/lovable-uploads/80f9379c-254b-4238-9d1c-bb90577397d9.png"
+                alt="NXT DOT X"
                 className="h-8"
               />
             </div>
             <div>
-              <p className="text-right">© 2025 NXT LEVEL TECH. All rights reserved.</p>
+              <p className="text-right">© 2025 NXT DOT X. All rights reserved.</p>
             </div>
           </div>
         </div>

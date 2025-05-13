@@ -37,14 +37,7 @@ export const Sidebar = ({ open, onToggle }: SidebarProps) => {
   const allCategories = adminCategory.length > 0
     ? [
         ...filteredCategories, 
-        {
-          ...adminCategory[0],
-          name: "Administration",
-          items: adminCategory[0].items.map(item => ({
-            ...item,
-            icon: item.icon || Shield
-          }))
-        }
+        adminCategory[0]
       ] 
     : filteredCategories;
 

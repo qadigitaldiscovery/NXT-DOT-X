@@ -22,10 +22,17 @@ export const SidebarHeader = ({ open, onToggle }: SidebarHeaderProps) => {
         "flex items-center space-x-2",
         !open && "md:hidden"
       )}>
-        <div className="h-8 w-8 rounded-full bg-sidebar-primary flex items-center justify-center">
-          <span className="text-white font-bold">NX</span>
-        </div>
-        <h1 className="text-lg font-bold text-white truncate">NXT LEVEL TECH</h1>
+        {open ? (
+          <img
+            src="/lovable-uploads/80f9379c-254b-4238-9d1c-bb90577397d9.png"
+            alt="NXT DOT X"
+            className="h-8"
+          />
+        ) : (
+          <div className="h-8 w-8 rounded-full bg-sidebar-primary flex items-center justify-center">
+            <span className="text-white font-bold">NX</span>
+          </div>
+        )}
       </div>
       
       {isMobile && (

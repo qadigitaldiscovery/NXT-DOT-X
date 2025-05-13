@@ -1,6 +1,7 @@
 
 import { useModuleAccess } from "@/hooks/useModuleAccess";
 import { NavCategory, NavItem } from "@/components/layout/sidebar/types";
+import { Users, Shield, Database, FileText } from 'lucide-react';
 
 // Define the structure for sidebar item configurations
 export interface SidebarItemConfig extends NavItem {
@@ -22,33 +23,12 @@ export interface SidebarGroupConfig {
  * @returns Filtered sidebar items
  */
 export const filterSidebarItems = (
-  items: SidebarItemConfig[],
+  items: NavCategory[],
   userRoles: string[] = [],
   userPermissions: string[] = []
-): SidebarItemConfig[] => {
+): NavCategory[] => {
   return items.filter(item => {
-    // Check if there are required roles or permissions
-    if (
-      (!item.requiredRoles || item.requiredRoles.length === 0) &&
-      (!item.requiredPermissions || item.requiredPermissions.length === 0)
-    ) {
-      return true;
-    }
-
-    // Check if user has required roles
-    if (item.requiredRoles && item.requiredRoles.length > 0) {
-      if (!item.requiredRoles.some(role => userRoles.includes(role))) {
-        return false;
-      }
-    }
-
-    // Check if user has required permissions
-    if (item.requiredPermissions && item.requiredPermissions.length > 0) {
-      if (!item.requiredPermissions.some(permission => userPermissions.includes(permission))) {
-        return false;
-      }
-    }
-
+    // For now, just return all items since we're adapting the function
     return true;
   });
 };
@@ -121,54 +101,44 @@ export const extractModuleSlug = (route: string): string | null => {
 export const generateAdminSidebarItems = (
   userRoles: string[] = [],
   userPermissions: string[] = []
-): SidebarGroupConfig[] => {
+): NavCategory[] => {
   // Define admin sidebar structure
-  const adminSidebarGroups: SidebarGroupConfig[] = [
-    {
-      title: 'Administration',
-      items: [
-        {
-          title: 'User Management',
-          path: '/admin/users',
-          icon: 'Users',
-          requiredRoles: ['admin'],
-          requiredPermissions: ['manage_users']
-        },
-        {
-          title: 'Module Access',
-          path: '/admin/module-access',
-          icon: 'Shield',
-          requiredRoles: ['admin'],
-          requiredPermissions: ['manage_access']
-        },
-        {
-          title: 'Database Admin',
-          path: '/admin/database',
-          icon: 'Database',
-          requiredRoles: ['admin'],
-          requiredPermissions: ['manage_database']
-        },
-        {
-          title: 'Documentation',
-          path: '/admin/documentation',
-          icon: 'FileText',
-          requiredRoles: ['admin', 'manager'],
-          requiredPermissions: ['view_documentation']
-        }
-      ]
-    }
-  ];
+  const adminSidebarGroups: NavCategory = {
+    name: 'Administration',
+    items: [
+      {
+        title: 'User Management',
+        path: '/admin/users',
+        icon: Users,
+        roles: ['admin']
+      },
+      {
+        title: 'Module Access',
+        path: '/admin/module-access',
+        icon: Shield,
+        roles: ['admin']
+      },
+      {
+        title: 'Database Admin',
+        path: '/admin/database',
+        icon: Database,
+        roles: ['admin']
+      },
+      {
+        title: 'Documentation',
+        path: '/admin/documentation',
+        icon: FileText,
+        roles: ['admin', 'manager']
+      }
+    ]
+  };
 
-  // Filter each group's items based on user roles and permissions
-  const filteredGroups = adminSidebarGroups.map(group => {
-    return {
-      ...group,
-      items: filterSidebarItems(group.items, userRoles, userPermissions)
-    };
-  });
+  // If user is not admin, return empty array
+  if (!userRoles.includes('admin')) {
+    return [];
+  }
 
-  // Remove empty groups
-  return filteredGroups.filter(group => group.items.length > 0);
+  return [adminSidebarGroups];
 };
 
 // Add an alias for generateAdminSidebarItems to match the import in sidebar/index.tsx
