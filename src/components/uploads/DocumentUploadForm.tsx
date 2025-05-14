@@ -155,7 +155,7 @@ export function DocumentUploadForm({ supplierId, onUploadComplete }: DocumentUpl
               }
             }, 2000);
           }, 2000);
-        } catch (zipError) {
+        } catch (zipError: any) {
           console.error("Error processing ZIP file:", zipError);
           toast.error(`ZIP processing failed: ${zipError.message || 'Unknown error'}`);
           clearInterval(progressInterval);
@@ -188,7 +188,7 @@ export function DocumentUploadForm({ supplierId, onUploadComplete }: DocumentUpl
           }
         }, 200);
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Upload error:', error);
       toast.error(`Upload failed: ${error.message || 'Unknown error'}`);
       setIsUploading(false);
