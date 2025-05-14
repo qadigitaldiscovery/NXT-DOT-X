@@ -1,6 +1,6 @@
 
 import { ReactNode } from 'react';
-import { toast as sonnerToast } from 'sonner';
+import { toast as sonnerToast, Toaster, Toast as SonnerToast } from 'sonner';
 
 export type ToastProps = {
   title?: ReactNode;
@@ -28,6 +28,8 @@ export const useToast = () => {
         description: props.description as string,
       });
     }) as ExtendedToastFunction,
+    // Add a dummy toasts array for compatibility with the Toaster component
+    toasts: [] as any[]
   };
 };
 
@@ -81,4 +83,4 @@ toast.error = (message: string | ToastProps) => {
 };
 
 // Export types for components
-export type { ToastProps as Toast };
+export type { SonnerToast as Toast };

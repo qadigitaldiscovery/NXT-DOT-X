@@ -1,4 +1,3 @@
-
 import { useToast } from "@/hooks/use-toast"
 import {
   ToastClose,
@@ -6,29 +5,36 @@ import {
   ToastProvider,
   ToastTitle,
   ToastViewport,
-  type Toast,
 } from "@/components/ui/toast"
+import { Toaster as SonnerToaster } from "sonner"
 
 export function Toaster() {
+  // We're not actually using the toasts array as we're using sonner directly
   const { toasts } = useToast()
 
   return (
-    <ToastProvider>
-      {toasts.map(function ({ id, title, description, action, ...props }) {
-        return (
-          <div key={id} {...props}>
-            <div className="grid gap-1">
-              {title && <ToastTitle>{title}</ToastTitle>}
-              {description && (
-                <ToastDescription>{description}</ToastDescription>
-              )}
+    <>
+      {/* Use the sonner toaster component */}
+      <SonnerToaster />
+      
+      {/* Keep the shadcn structure for compatibility */}
+      <ToastProvider>
+        {toasts.map(function ({ id, title, description, action, ...props }) {
+          return (
+            <div key={id} {...props}>
+              <div className="grid gap-1">
+                {title && <ToastTitle>{title}</ToastTitle>}
+                {description && (
+                  <ToastDescription>{description}</ToastDescription>
+                )}
+              </div>
+              {action}
+              <ToastClose />
             </div>
-            {action}
-            <ToastClose />
-          </div>
-        )
-      })}
-      <ToastViewport />
-    </ToastProvider>
+          )
+        })}
+        <ToastViewport />
+      </ToastProvider>
+    </>
   )
 }
