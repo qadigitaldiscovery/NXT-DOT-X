@@ -1,5 +1,5 @@
 
-export type DocumentType = 'pdf' | 'text' | 'markdown' | 'image' | 'other';
+export type DocumentType = 'pdf' | 'text' | 'markdown' | 'image' | 'zip' | 'other';
 
 export interface DocumentItem {
   id: string;
