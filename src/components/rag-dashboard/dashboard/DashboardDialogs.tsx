@@ -27,7 +27,7 @@ interface DashboardDialogsProps {
   onBatchOperationsClose: () => void;
 }
 
-const DashboardDialogs: React.FC<DashboardDialogsProps> = ({
+export const DashboardDialogs: React.FC<DashboardDialogsProps> = ({
   isDetailsOpen,
   onDetailsClose,
   selectedModule,

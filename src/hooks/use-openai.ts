@@ -1,3 +1,3 @@
 
 // Re-export from the refactored location
-export * from './api-clients/openai';
+export * from '@/hooks/api-clients/openai';
