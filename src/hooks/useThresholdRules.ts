@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 
 export type ThresholdRule = {
@@ -19,25 +19,37 @@ export function useThresholdRules(moduleId?: string) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 
-  useEffect(() => {
-    // For now, we're returning mock data since we haven't created the threshold_rules table yet
-    const mockRules: ThresholdRule[] = moduleId ? [
-      {
-        id: '1',
-        module_id: moduleId,
-        metric: 'CPU Usage',
-        operator: '>',
-        condition: '>', // Alias for operator
-        threshold: 90,
-        duration_seconds: 300,
-        resulting_status: 'orange',
-        created_at: new Date().toISOString()
-      }
-    ] : [];
+  const fetchRules = useCallback(async () => {
+    setLoading(true);
+    setError(null);
     
-    setRules(mockRules);
-    setLoading(false);
+    try {
+      // For now, we're returning mock data since we haven't created the threshold_rules table yet
+      const mockRules: ThresholdRule[] = moduleId ? [
+        {
+          id: '1',
+          module_id: moduleId,
+          metric: 'CPU Usage',
+          operator: '>',
+          condition: '>', // Alias for operator
+          threshold: 90,
+          duration_seconds: 300,
+          resulting_status: 'orange',
+          created_at: new Date().toISOString()
+        }
+      ] : [];
+      
+      setRules(mockRules);
+    } catch (err: any) {
+      setError(err instanceof Error ? err : new Error('Unknown error'));
+    } finally {
+      setLoading(false);
+    }
   }, [moduleId]);
+
+  useEffect(() => {
+    fetchRules();
+  }, [fetchRules]);
 
   const addRule = async (rule: Omit<ThresholdRule, 'id' | 'created_at' | 'condition' | 'operator'> & { condition: string }) => {
     // In a real implementation, this would insert into the database
@@ -59,5 +71,12 @@ export function useThresholdRules(moduleId?: string) {
     return { success: true, error: null };
   };
 
-  return { rules, loading, error, addRule, deleteRule };
+  // Add the missing getRulesByModuleId function
+  const getRulesByModuleId = useCallback((moduleId: string) => {
+    return Promise.resolve(
+      rules.filter(rule => rule.module_id === moduleId)
+    );
+  }, [rules]);
+
+  return { rules, loading, error, addRule, deleteRule, getRulesByModuleId };
 }

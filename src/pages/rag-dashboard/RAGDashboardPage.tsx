@@ -20,7 +20,7 @@ import { useCustomerImpacts, type CustomerImpact } from '@/hooks/useCustomerImpa
  */
 const RAGDashboardPage = () => {
   // Fetch data and methods from hooks
-  const { modules, refreshModules, isLoading: modulesLoading, error: modulesError, updateModuleStatus } = useModules();
+  const { modules, loading: modulesLoading, error: modulesError, updateModuleStatus, refreshModules } = useModules();
   const { alerts, resolveAlert, getAlertsByModuleId } = useAlerts();
   const { rules, addRule, deleteRule, getRulesByModuleId } = useThresholdRules();
   const { logs, getLogsByModuleId } = useStatusLogs();

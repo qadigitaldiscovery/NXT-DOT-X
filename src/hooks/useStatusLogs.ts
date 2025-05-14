@@ -8,6 +8,8 @@ export interface StatusLog {
   status: string;
   message: string;
   metadata?: Record<string, any>;
+  recorded_at: string; // Added this field to match what StatusTimeline.tsx expects
+  note?: string; // Added this field to match what StatusTimeline.tsx expects
 }
 
 export const useStatusLogs = () => {
@@ -26,22 +28,28 @@ export const useStatusLogs = () => {
           id: '1',
           module_id: 'module-1',
           timestamp: new Date(Date.now() - 3600000).toISOString(),
+          recorded_at: new Date(Date.now() - 3600000).toISOString(), // Added recorded_at
           status: 'green',
-          message: 'System operating normally'
+          message: 'System operating normally',
+          note: 'System operating normally' // Added note
         },
         {
           id: '2',
           module_id: 'module-1',
           timestamp: new Date(Date.now() - 7200000).toISOString(),
+          recorded_at: new Date(Date.now() - 7200000).toISOString(), // Added recorded_at
           status: 'orange',
-          message: 'Latency increased above threshold'
+          message: 'Latency increased above threshold',
+          note: 'Latency increased above threshold' // Added note
         },
         {
           id: '3',
           module_id: 'module-2',
           timestamp: new Date(Date.now() - 86400000).toISOString(),
+          recorded_at: new Date(Date.now() - 86400000).toISOString(), // Added recorded_at
           status: 'red',
-          message: 'Service unavailable'
+          message: 'Service unavailable',
+          note: 'Service unavailable' // Added note
         }
       ];
       

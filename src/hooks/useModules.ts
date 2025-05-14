@@ -67,5 +67,5 @@ export const useModules = () => {
     return { success: true };
   }, [fetchModules]);
 
-  return { modules, loading, error, updateModuleStatus, refreshModules };
+  return { modules, loading, error, isLoading: loading, updateModuleStatus, refreshModules };
 };
