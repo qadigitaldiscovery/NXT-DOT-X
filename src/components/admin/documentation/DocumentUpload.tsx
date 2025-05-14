@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -15,6 +14,7 @@ import {
 import { UploadCloud, File, AlertCircle } from 'lucide-react';
 import { isZipFile, uploadDocument } from '@/utils/upload-service';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { tryUseEdgeFunction } from '@/utils/api-clients/common/edge-function-utils';
 
 interface DocumentUploadProps {
   categories: DocumentCategory[];
@@ -76,6 +76,27 @@ export const DocumentUpload = ({ categories, onFileUpload }: DocumentUploadProps
     setIsUploading(true);
     setUploadProgress(0);
     setUploadError(null);
+    
+    // First, ensure the storage bucket exists
+    try {
+      setProcessingMessage("Checking storage configuration...");
+      
+      // Call the edge function to ensure bucket exists
+      const bucketResult = await tryUseEdgeFunction<{
+        success: boolean;
+        message: string;
+      }>('storage', 'create-bucket', { 
+        action: 'create-bucket',
+        bucketName: 'documents'
+      });
+      
+      if (!bucketResult?.success) {
+        setProcessingMessage("Storage setup in progress...");
+      }
+    } catch (bucketError) {
+      console.warn("Error checking bucket:", bucketError);
+      // Continue anyway, the uploadDocument function will handle errors
+    }
     
     try {
       // If it's a ZIP file, use our utility for zip extraction

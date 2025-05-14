@@ -13,6 +13,38 @@ export type UploadDocumentParams = {
 };
 
 /**
+ * Ensures documents bucket exists by calling the edge function
+ */
+async function ensureDocumentsBucketExists(): Promise<boolean> {
+  try {
+    onProcessingMessage?.("Setting up storage...");
+    
+    // Call our edge function to ensure the bucket exists
+    const result = await tryUseEdgeFunction<{
+      success: boolean;
+      message: string;
+      bucketName: string;
+    }>('storage', 'create-bucket', {
+      action: 'create-bucket',
+      bucketName: 'documents'
+    }, {
+      timeout: 5000 // 5 second timeout
+    });
+    
+    if (result?.success) {
+      console.log("Storage bucket check successful:", result.message);
+      return true;
+    } else {
+      console.warn("Storage bucket check failed or returned no result");
+      return false;
+    }
+  } catch (error) {
+    console.error("Error ensuring documents bucket exists:", error);
+    return false;
+  }
+}
+
+/**
  * Checks if documents bucket exists and returns true if it does
  */
 async function checkDocumentsBucketExists(): Promise<boolean> {
@@ -33,22 +65,21 @@ async function checkDocumentsBucketExists(): Promise<boolean> {
 }
 
 /**
- * Instead of creating buckets (which requires admin permissions),
- * we'll just check if it exists and proceed with upload
+ * Prepares the storage for document upload
  */
-async function prepareForUpload(): Promise<boolean> {
+async function prepareForUpload(onProcessingMessage?: (message: string) => void): Promise<boolean> {
   try {
     // Check if bucket exists first
+    onProcessingMessage?.("Checking storage configuration...");
     const bucketExists = await checkDocumentsBucketExists();
     
     if (bucketExists) {
       console.log("Documents bucket already exists");
       return true;
     } else {
-      // If bucket doesn't exist, log this but allow upload attempt anyway
-      // The user might have permissions to upload to an existing bucket but not create one
-      console.log("Documents bucket doesn't exist. Upload may fail if you don't have proper permissions.");
-      return false;
+      // If bucket doesn't exist, try to create it via edge function
+      onProcessingMessage?.("Setting up storage bucket...");
+      return await ensureDocumentsBucketExists();
     }
   } catch (error) {
     console.error("Error preparing for upload:", error);
@@ -70,8 +101,8 @@ export const uploadDocument = async ({
     onProgress?.(5);
     onProcessingMessage?.("Initializing upload...");
     
-    // Check if bucket exists, but don't try to create it
-    await prepareForUpload();
+    // Ensure the bucket exists
+    await prepareForUpload(onProcessingMessage);
     onProgress?.(10);
     
     // Determine file path
@@ -92,9 +123,13 @@ export const uploadDocument = async ({
       if (storageError) {
         console.error('Storage upload error:', storageError);
         
-        // If the error is about the bucket not existing, provide a clearer message
+        // If the error is about the bucket not existing or RLS policy
         if (storageError.message?.includes('bucket') && storageError.message?.includes('not found')) {
-          throw new Error('The documents storage bucket does not exist. Please contact your administrator to create it.');
+          throw new Error('The documents storage bucket does not exist. Please try refreshing the page or contact your administrator.');
+        }
+        
+        if (storageError.statusCode === '403') {
+          throw new Error('Permission denied. You may not have rights to upload documents.');
         }
         
         throw storageError;
@@ -158,7 +193,7 @@ export const uploadDocument = async ({
       }
       
       onProgress?.(100);
-      toast.success({
+      toast({
         title: 'Document uploaded',
         description: `${documentName} has been uploaded successfully`
       });
@@ -166,7 +201,8 @@ export const uploadDocument = async ({
       return true;
     } catch (uploadError) {
       console.error('Upload exception:', uploadError);
-      toast.error({
+      toast({
+        variant: "destructive",
         title: 'Upload failed',
         description: `${uploadError instanceof Error ? uploadError.message : 'Unknown error'}`
       });
@@ -174,7 +210,8 @@ export const uploadDocument = async ({
     }
   } catch (error) {
     console.error('Document upload error:', error);
-    toast.error({
+    toast({
+      variant: "destructive",
       title: 'Upload failed',
       description: error instanceof Error ? error.message : 'An unknown error occurred'
     });
