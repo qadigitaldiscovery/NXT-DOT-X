@@ -1,5 +1,4 @@
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Upload, File, X, Archive } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -40,6 +39,44 @@ export const DocumentUpload = ({
   const [author, setAuthor] = useState('');
   const [isProcessingZip, setIsProcessingZip] = useState(false);
   const [extractionProgress, setExtractionProgress] = useState(0);
+  const [isBucketReady, setIsBucketReady] = useState(false);
+
+  useEffect(() => {
+    // Check if the documents bucket exists and create it if it doesn't
+    const checkAndCreateBucket = async () => {
+      try {
+        // Try to list files in the bucket to see if it exists
+        const { error } = await supabase.storage.from('documents').list('');
+        
+        if (error) {
+          console.log('Documents bucket not found, attempting to create it...');
+          // Call our edge function to create the bucket
+          const { data, error: funcError } = await supabase.functions.invoke('create-documents-bucket');
+          
+          if (funcError) {
+            console.error('Error creating documents bucket:', funcError);
+            toast.error('Error setting up document storage. Please try again later.');
+            return;
+          }
+          
+          console.log('Bucket creation response:', data);
+          if (data.success) {
+            toast.success('Document storage initialized successfully');
+            setIsBucketReady(true);
+          } else {
+            toast.error('Failed to initialize document storage');
+          }
+        } else {
+          console.log('Documents bucket exists');
+          setIsBucketReady(true);
+        }
+      } catch (error) {
+        console.error('Error checking bucket:', error);
+      }
+    };
+    
+    checkAndCreateBucket();
+  }, []);
 
   const getDocumentType = (file: File): DocumentType => {
     const extension = file.name.split('.').pop()?.toLowerCase() || '';
@@ -136,6 +173,7 @@ export const DocumentUpload = ({
       setExtractionProgress(90);
 
       if (error) {
+        console.error('Error invoking extract-zip function:', error);
         toast.error(`Error extracting ZIP file: ${error.message}`);
         setIsProcessingZip(false);
         return false;
@@ -143,7 +181,7 @@ export const DocumentUpload = ({
 
       setExtractionProgress(100);
       
-      if (data.success) {
+      if (data && data.success) {
         toast.success(`Successfully extracted ${data.totalFiles} files from ZIP archive`);
         if (data.hasErrors) {
           toast.warning(`Failed to process ${data.errors.length} files from the ZIP archive`);
@@ -151,7 +189,8 @@ export const DocumentUpload = ({
         setIsProcessingZip(false);
         return true;
       } else {
-        toast.error(`Failed to extract ZIP file: ${data.error}`);
+        const errorMsg = data?.error || 'Unknown error';
+        toast.error(`Failed to extract ZIP file: ${errorMsg}`);
         setIsProcessingZip(false);
         return false;
       }
@@ -166,6 +205,11 @@ export const DocumentUpload = ({
   const handleUpload = async () => {
     if (!file || !title || !categoryId || !author) {
       toast.error('Please fill in all required fields');
+      return;
+    }
+    
+    if (!isBucketReady) {
+      toast.error('Document storage is not ready yet. Please try again in a moment.');
       return;
     }
     
