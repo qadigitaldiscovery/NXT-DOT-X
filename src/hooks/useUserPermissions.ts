@@ -41,11 +41,19 @@ export function useUserPermissions() {
 
   // Check if the user has a specific permission
   const hasPermission = (permissionId: string): boolean => {
+    // Admin users have all permissions
+    if (user?.role === 'admin') {
+      return true;
+    }
     return permissions.includes(permissionId) || permissions.includes('modules.all');
   };
 
   // Check if the user has any of the given permissions
   const hasAnyPermission = (permissionIds: string[]): boolean => {
+    // Admin users have all permissions
+    if (user?.role === 'admin') {
+      return true;
+    }
     return permissionIds.some(p => hasPermission(p)) || permissions.includes('modules.all');
   };
 

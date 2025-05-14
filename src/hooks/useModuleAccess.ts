@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
@@ -45,8 +46,14 @@ export function useModuleAccess(): {
 
       if (rolesError) throw rolesError;
 
-      const roles = rolesData.map(r => r.role);
-      const isAdmin = roles.includes('admin');
+      // Determine roles, defaulting to admin for the pre-defined admin user
+      let roles = rolesData?.map(r => r.role) || [];
+      const isAdmin = roles.includes('admin') || user.role === 'admin';
+      
+      // If user is admin in AuthContext but not in database, add admin role
+      if (user.role === 'admin' && !roles.includes('admin')) {
+        roles.push('admin');
+      }
 
       // Fetch user module access
       const { data: modulesData, error: modulesError } = await supabase
@@ -126,7 +133,7 @@ export function useModuleAccess(): {
 
 // Add this explicit implementation of isModuleEnabled
 export function isModuleEnabled(moduleSlug: string, userRoles?: string[]): boolean {
-  // Default implementation checks if user is admin
+  // Admin users have access to all modules
   if (userRoles && userRoles.includes('admin')) {
     return true;
   }

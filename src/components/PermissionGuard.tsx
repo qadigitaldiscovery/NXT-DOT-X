@@ -14,7 +14,7 @@ const PermissionGuard: React.FC<PermissionGuardProps> = ({
   children, 
   fallbackPath = '/landing'
 }) => {
-  const { isAuthenticated, hasPermission } = useAuth();
+  const { isAuthenticated, hasPermission, user } = useAuth();
   
   // Improved logging for debugging
   console.log(`Permission check - Auth: ${isAuthenticated}, Required: ${requiredPermission}`);
@@ -24,12 +24,16 @@ const PermissionGuard: React.FC<PermissionGuardProps> = ({
     return <Navigate to={fallbackPath} replace />;
   }
 
-  // For now, bypass permission check to ensure unified access
-  // This can be adjusted later to implement proper role-based access
-  // if (requiredPermission && !hasPermission(requiredPermission)) {
-  //   console.log("Missing permission:", requiredPermission);
-  //   return <Navigate to="/unauthorized" replace />;
-  // }
+  // Admin users bypass all permission checks
+  if (user?.role === 'admin') {
+    return <>{children}</>;
+  }
+  
+  // For others, check specific permissions
+  if (requiredPermission && !hasPermission(requiredPermission)) {
+    console.log("Missing permission:", requiredPermission);
+    return <Navigate to="/unauthorized" replace />;
+  }
 
   return <>{children}</>;
 };

@@ -1,4 +1,3 @@
-
 import { useModuleAccess } from "@/hooks/useModuleAccess";
 import { NavCategory, NavItem } from "@/components/layout/sidebar/types";
 import { Users, Shield, Database, FileText } from 'lucide-react';
@@ -27,6 +26,12 @@ export const filterSidebarItems = (
   userRoles: string[] = [],
   userPermissions: string[] = []
 ): NavCategory[] => {
+  // If user is admin, return all items
+  if (userRoles.includes('admin')) {
+    return items;
+  }
+  
+  // Otherwise, filter based on permissions
   return items.filter(item => {
     // For now, just return all items since we're adapting the function
     return true;
@@ -53,7 +58,7 @@ export const hasRouteAccess = (
   // Extract module slug from route
   const moduleSlug = extractModuleSlug(route);
   
-  // Check if module is enabled - we'll implement a simple placeholder since isModuleEnabled is missing
+  // Check if module is enabled
   if (moduleSlug && !isModuleEnabled(moduleSlug, userRoles)) {
     return false;
   }
@@ -65,10 +70,9 @@ export const hasRouteAccess = (
 
 /**
  * Helper function to check if a module is enabled
- * This replaces the missing isModuleEnabled function
  */
 export const isModuleEnabled = (moduleSlug: string, userRoles: string[]): boolean => {
-  // Default implementation - admins have access to all modules
+  // Admin users have access to all modules
   if (userRoles.includes('admin')) {
     return true;
   }

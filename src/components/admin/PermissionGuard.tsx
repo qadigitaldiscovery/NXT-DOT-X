@@ -2,6 +2,7 @@
 import React from 'react';
 import { Navigate } from 'react-router-dom';
 import { useModuleAccess } from '@/hooks/useModuleAccess';
+import { useAuth } from '@/context/AuthContext';
 import { AlertTriangle } from 'lucide-react';
 
 interface PermissionGuardProps {
@@ -20,6 +21,7 @@ const PermissionGuard: React.FC<PermissionGuardProps> = ({
   fallbackPath = '/unauthorized'
 }) => {
   const { moduleAccess, loading } = useModuleAccess();
+  const { user } = useAuth();
   
   if (loading) {
     return (
@@ -28,6 +30,11 @@ const PermissionGuard: React.FC<PermissionGuardProps> = ({
         <p className="text-gray-500">Checking permissions...</p>
       </div>
     );
+  }
+  
+  // If user is admin, allow access to all areas
+  if (user?.role === 'admin') {
+    return <>{children}</>;
   }
   
   // Check if user has the required role

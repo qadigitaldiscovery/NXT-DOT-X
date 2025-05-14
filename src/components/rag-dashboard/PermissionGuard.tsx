@@ -2,6 +2,7 @@
 import React from 'react';
 import { useUserPermissions } from '@/hooks/useUserPermissions';
 import { AlertOctagon } from 'lucide-react';
+import { useAuth } from '@/context/AuthContext';
 
 interface PermissionGuardProps {
   requiredPermission: string | string[];
@@ -15,6 +16,12 @@ const PermissionGuard: React.FC<PermissionGuardProps> = ({
   fallback
 }) => {
   const { hasPermission, hasAnyPermission } = useUserPermissions();
+  const { user } = useAuth();
+  
+  // Admin users bypass all permission checks
+  if (user?.role === 'admin') {
+    return <>{children}</>;
+  }
   
   // Check permissions
   const hasAccess = Array.isArray(requiredPermission)
