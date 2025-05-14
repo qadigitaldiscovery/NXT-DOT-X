@@ -31,7 +31,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       email: 'admin@example.com',
       password: 'pass1',
       role: 'admin',
-      permissions: ['users.view', 'users.create', 'users.edit', 'users.delete', 'settings.access', 'modules.all']
+      permissions: ['users.view', 'users.create', 'users.edit', 'users.delete', 'settings.access', 'modules.all', 'modules.rag']
     },
     {
       id: '2',
@@ -89,7 +89,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const hasPermission = (permission: string): boolean => {
     if (!user) return false;
-    return user.permissions.includes(permission);
+    
+    // Admin always has all permissions
+    if (user.role === 'admin') return true;
+    
+    return user.permissions.includes(permission) || user.permissions.includes('modules.all');
   };
 
   return (

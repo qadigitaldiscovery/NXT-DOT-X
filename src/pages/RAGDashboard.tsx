@@ -1,4 +1,4 @@
 
-import RAGDashboard from './rag-dashboard/RAGDashboardPage';
+import RAGDashboardPage from './rag-dashboard/RAGDashboardPage';
 
-export default RAGDashboard;
+export default RAGDashboardPage;
