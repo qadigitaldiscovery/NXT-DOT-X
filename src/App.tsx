@@ -21,8 +21,8 @@ const App = () => {
             <Toaster />
             <Sonner />
           </TooltipProvider>
-        </AuthProvider>
-      </ThemeProvider>
+        </ThemeProvider>
+      </AuthProvider>
     </QueryClientProvider>
   );
 };
