@@ -8,7 +8,7 @@ import { LogIn } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 
 const Landing = () => {
-  const [username, setUsername] = useState('');
+  const [usernameOrEmail, setUsernameOrEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
@@ -26,14 +26,14 @@ const Landing = () => {
     setIsLoading(true);
 
     // Simple validation
-    if (!username || !password) {
-      toast.error('Please enter both username and password');
+    if (!usernameOrEmail || !password) {
+      toast.error('Please enter both username/email and password');
       setIsLoading(false);
       return;
     }
 
     // Authenticate user
-    const success = await login(username, password);
+    const success = await login(usernameOrEmail, password);
     if (success) {
       navigate('/');
     }
@@ -74,11 +74,11 @@ const Landing = () => {
                 <div className="space-y-2">
                   <div className="relative">
                     <Input 
-                      id="username" 
+                      id="usernameOrEmail" 
                       type="text" 
-                      placeholder="IDENTIFICATION" 
-                      value={username} 
-                      onChange={e => setUsername(e.target.value)} 
+                      placeholder="USERNAME OR EMAIL" 
+                      value={usernameOrEmail} 
+                      onChange={e => setUsernameOrEmail(e.target.value)} 
                       required 
                       className="bg-gray-900/70 border-gray-700 focus:border-red-500 ring-offset-red-900 h-12 placeholder:text-gray-500 text-gray-200 pl-4"
                     />
@@ -90,7 +90,7 @@ const Landing = () => {
                     <Input 
                       id="password" 
                       type="password" 
-                      placeholder="SECURE CODE" 
+                      placeholder="PASSWORD" 
                       value={password} 
                       onChange={e => setPassword(e.target.value)} 
                       required 
@@ -110,7 +110,7 @@ const Landing = () => {
                 
                 <div className="text-xs text-center text-gray-400">
                   <p>
-                    Demo credentials: admin@example.com / admin1
+                    Demo credentials: admin / pass1
                   </p>
                   <p className="mt-1">
                     or user@example.com / user1
