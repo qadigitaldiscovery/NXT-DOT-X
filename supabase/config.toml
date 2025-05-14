@@ -129,8 +129,12 @@ enabled = true
 # Configure Edge Functions
 [edge_functions]
 enabled = true
+
 [edge_functions.archive]
 verify_jwt = true
 
 [edge_functions.storage]
-verify_jwt = true
+verify_jwt = false
+
+[edge_functions.extract-zip]
+verify_jwt = false

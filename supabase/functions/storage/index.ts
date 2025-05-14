@@ -6,155 +6,166 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2.29.0";
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-  'Access-Control-Allow-Methods': 'POST, OPTIONS',
+  'Content-Type': 'application/json'
 };
 
 serve(async (req: Request) => {
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
-    return new Response(null, { headers: corsHeaders });
+    return new Response(null, { headers: corsHeaders, status: 204 });
   }
+  
+  console.log("Starting storage management function");
 
-  try {
-    // Parse request body
-    const requestBody = await req.json();
-    const { action, bucketName = "documents" } = requestBody;
+  const supabaseUrl = Deno.env.get("SUPABASE_URL") as string;
+  const supabaseServiceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") as string;
 
-    if (!action) {
-      return new Response(
-        JSON.stringify({ success: false, message: "Missing action parameter" }),
-        { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 400 }
-      );
-    }
-
-    // Initialize Supabase client with admin credentials
-    const supabaseAdmin = createClient(
-      Deno.env.get("SUPABASE_URL") as string,
-      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") as string
+  if (!supabaseUrl || !supabaseServiceRoleKey) {
+    console.error("Missing environment variables");
+    return new Response(
+      JSON.stringify({
+        success: false,
+        message: "Server configuration error",
+      }),
+      { status: 500, headers: corsHeaders }
     );
-
+  }
+  
+  const supabase = createClient(supabaseUrl, supabaseServiceRoleKey);
+  
+  try {
+    const { action, bucketName, filePath } = await req.json();
+    
     if (action === 'create-bucket') {
-      console.log(`Starting create-bucket action for ${bucketName}`);
+      console.log(`Checking if bucket exists: ${bucketName}`);
       
-      // Check if bucket exists
-      const { data: buckets, error: listError } = await supabaseAdmin.storage.listBuckets();
+      // First check if bucket already exists
+      const { data: buckets, error: listError } = await supabase.storage.listBuckets();
       
       if (listError) {
         console.error("Error listing buckets:", listError);
         return new Response(
-          JSON.stringify({ success: false, message: "Failed to list buckets", error: listError.message }),
-          { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 500 }
+          JSON.stringify({
+            success: false,
+            message: "Failed to check if bucket exists",
+            error: listError.message
+          }),
+          { status: 500, headers: corsHeaders }
         );
       }
       
-      const bucketExists = buckets?.some(bucket => bucket.name === bucketName);
+      const bucketExists = buckets?.some(bucket => bucket.name === bucketName) || false;
+      console.log("Bucket exists:", bucketExists);
       
       if (bucketExists) {
-        console.log(`Bucket ${bucketName} already exists`);
+        console.log("Bucket already exists, no action needed");
         return new Response(
-          JSON.stringify({ success: true, message: "Bucket already exists", bucketName }),
-          { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 200 }
+          JSON.stringify({
+            success: true,
+            message: "Bucket already exists",
+            bucketName
+          }),
+          { status: 200, headers: corsHeaders }
         );
       }
       
-      // Create bucket if it doesn't exist
-      console.log(`Creating bucket ${bucketName}`);
-      const { data: createData, error: createError } = await supabaseAdmin.storage.createBucket(
-        bucketName, 
-        { public: true, fileSizeLimit: 52428800 } // 50MB limit
+      // Create the bucket if it doesn't exist
+      console.log(`Creating bucket: ${bucketName}`);
+      const { data: bucketData, error: bucketError } = await supabase.storage.createBucket(
+        bucketName,
+        { public: true, fileSizeLimit: 52428800 }
       );
       
-      if (createError) {
-        console.error("Error creating bucket:", createError);
+      if (bucketError) {
+        console.error("Error creating bucket:", bucketError);
         return new Response(
-          JSON.stringify({ success: false, message: "Failed to create bucket", error: createError.message }),
-          { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 500 }
+          JSON.stringify({
+            success: false,
+            message: "Failed to create bucket",
+            error: bucketError.message
+          }),
+          { status: 500, headers: corsHeaders }
         );
       }
       
-      // After creating the bucket, set public access policy
-      try {
-        // Creating public access policy for the bucket
-        const { error: policyError } = await supabaseAdmin.storage.from(bucketName).createPolicy('public-read', {
-          name: `${bucketName}_public_read`,
-          definition: {
-            role: '*', // Allow all roles
-            operations: ['SELECT'] // Allow read operations
-          }
-        });
-        
-        if (policyError) {
-          console.error("Error creating bucket policy:", policyError);
-          // Don't fail the request, just log the error
-        } else {
-          console.log(`Policy created for ${bucketName}`);
-        }
-        
-        // Create upload policy for authenticated users
-        const { error: uploadPolicyError } = await supabaseAdmin.storage.from(bucketName).createPolicy('authenticated-upload', {
-          name: `${bucketName}_auth_upload`,
-          definition: {
-            role: 'authenticated', // Authenticated users
-            operations: ['INSERT', 'UPDATE'] // Allow upload operations
-          }
-        });
-        
-        if (uploadPolicyError) {
-          console.error("Error creating upload policy:", uploadPolicyError);
-          // Don't fail the request, just log the error
-        } else {
-          console.log(`Upload policy created for ${bucketName}`);
-        }
-      } catch (policyError) {
-        console.error("Error setting bucket policies:", policyError);
+      console.log("Bucket created successfully");
+      
+      // Create public policy for the bucket
+      const policyName = `${bucketName}_public_access`;
+      const { error: policyError } = await supabase.rpc('create_storage_policy', {
+        bucket_name: bucketName,
+        policy_name: policyName
+      });
+      
+      if (policyError && !policyError.message.includes('already exists')) {
+        console.warn("Error setting policy:", policyError);
       }
       
       return new Response(
-        JSON.stringify({ 
-          success: true, 
-          message: "Bucket created successfully", 
-          bucketName 
+        JSON.stringify({
+          success: true,
+          message: "Bucket created successfully",
+          bucketName
         }),
-        { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 200 }
+        { status: 200, headers: corsHeaders }
       );
-    } else if (action === 'get-upload-url') {
-      const { filePath } = requestBody;
-      
-      if (!filePath) {
+    } 
+    else if (action === 'get-upload-url') {
+      if (!filePath || !bucketName) {
         return new Response(
-          JSON.stringify({ success: false, message: "Missing filePath parameter" }),
-          { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 400 }
+          JSON.stringify({
+            success: false,
+            message: "Missing filePath or bucketName",
+          }),
+          { status: 400, headers: corsHeaders }
         );
       }
       
-      const { data, error } = await supabaseAdmin
-        .storage
+      console.log(`Getting upload URL for ${bucketName}/${filePath}`);
+      
+      // Generate a signed URL for uploading
+      const { data, error } = await supabase.storage
         .from(bucketName)
         .createSignedUploadUrl(filePath);
       
       if (error) {
         console.error("Error creating signed URL:", error);
         return new Response(
-          JSON.stringify({ success: false, message: "Failed to create signed URL", error: error.message }),
-          { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 500 }
+          JSON.stringify({
+            success: false,
+            message: "Failed to create upload URL",
+            error: error.message
+          }),
+          { status: 500, headers: corsHeaders }
         );
       }
       
       return new Response(
-        JSON.stringify({ success: true, data }),
-        { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 200 }
+        JSON.stringify({
+          success: true,
+          data,
+        }),
+        { status: 200, headers: corsHeaders }
       );
     }
-    
+    else {
+      return new Response(
+        JSON.stringify({
+          success: false,
+          message: "Invalid action",
+        }),
+        { status: 400, headers: corsHeaders }
+      );
+    }
+  } catch (error: any) {
+    console.error("Unexpected error:", error);
     return new Response(
-      JSON.stringify({ success: false, message: "Invalid action" }),
-      { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 400 }
-    );
-  } catch (error) {
-    console.error("Error processing storage request:", error);
-    return new Response(
-      JSON.stringify({ success: false, error: error.message }),
-      { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 500 }
+      JSON.stringify({
+        success: false,
+        message: "An unexpected error occurred",
+        error: error.message
+      }),
+      { status: 500, headers: corsHeaders }
     );
   }
 });

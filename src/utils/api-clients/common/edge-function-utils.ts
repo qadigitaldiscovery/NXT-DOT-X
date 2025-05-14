@@ -1,65 +1,59 @@
 
 import { supabase } from '@/integrations/supabase/client';
 
-type EdgeFunctionOptions = {
-  timeout?: number; // Timeout in milliseconds
+interface EdgeFunctionOptions {
+  timeout?: number;
   headers?: Record<string, string>;
-};
+}
 
 /**
- * Try to use a Supabase Edge Function with improved error handling.
- * @param functionName The name of the Edge Function.
- * @param functionData The data to pass to the Edge Function.
- * @param options Additional options like timeout.
- * @returns The response from the Edge Function, or null if it fails.
+ * Safely invoke an edge function with error handling
+ * 
+ * @param functionName Name of the edge function to invoke
+ * @param payload Data to send to the function
+ * @param options Optional configuration
+ * @returns The function result or null if there was an error
  */
-export async function tryUseEdgeFunction<T = any>(
-  functionName: string,
-  action: string, 
-  functionData: any,
+export async function tryUseEdgeFunction<T>(
+  functionName: string, 
+  payload: any, 
   options: EdgeFunctionOptions = {}
 ): Promise<T | null> {
-  const { timeout = 30000, headers = {} } = options;
-  
   try {
-    // Create an abort controller with the specified timeout
+    // Set default timeout to 20 seconds
+    const timeout = options.timeout || 20000;
+    
+    // Create an AbortController to handle timeouts
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), timeout);
     
-    // Include the action in the function data
-    const fullFunctionData = {
-      ...functionData,
-      action
-    };
-
-    // Call the Supabase Edge Function
-    // Remove the signal property as it's not supported in FunctionInvokeOptions
-    const { data, error } = await supabase.functions.invoke(functionName, {
-      body: fullFunctionData,
-      headers
-      // signal is not supported in the Supabase JS client
-    });
+    // Call the edge function with the payload
+    const { data, error } = await supabase.functions.invoke<T>(
+      functionName, 
+      {
+        body: payload,
+        headers: options.headers,
+        signal: controller.signal
+      }
+    );
     
     // Clear the timeout
     clearTimeout(timeoutId);
     
     if (error) {
-      if (error.message.includes('aborted')) {
-        console.error(`Edge function ${functionName} timed out after ${timeout}ms`);
-        throw new Error(`Request to ${functionName} timed out. Please try again.`);
-      } else {
-        console.error(`Error calling edge function ${functionName}:`, error);
-        throw error;
-      }
+      console.error(`Edge function ${functionName} error:`, error);
+      return null;
     }
     
-    return data as T;
-  } catch (error: any) {
-    if (error.name === 'AbortError') {
-      console.error(`Edge function ${functionName} timed out after ${timeout}ms`);
-      throw new Error(`Request to ${functionName} timed out. Please try again.`);
+    return data;
+  } catch (err: any) {
+    // Handle timeouts
+    if (err.name === 'AbortError') {
+      console.error(`Edge function ${functionName} timed out`);
+      return null;
     }
-    console.error(`Exception in edge function ${functionName}:`, error);
+    
+    console.error(`Error calling edge function ${functionName}:`, err);
     return null;
   }
 }

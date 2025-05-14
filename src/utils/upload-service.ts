@@ -24,7 +24,7 @@ async function ensureDocumentsBucketExists(onProcessingMessage?: (message: strin
       success: boolean;
       message: string;
       bucketName: string;
-    }>('storage', 'create-bucket', {
+    }>('storage', {
       action: 'create-bucket',
       bucketName: 'documents'
     }, {
@@ -96,7 +96,7 @@ async function getSignedUploadUrl(filePath: string): Promise<string | null> {
     const result = await tryUseEdgeFunction<{
       success: boolean;
       data: { signedURL: string; path: string; token: string };
-    }>('storage', 'get-upload-url', {
+    }>('storage', {
       action: 'get-upload-url',
       filePath,
       bucketName: 'documents'
@@ -106,6 +106,65 @@ async function getSignedUploadUrl(filePath: string): Promise<string | null> {
   } catch (error) {
     console.error("Error getting signed URL:", error);
     return null;
+  }
+}
+
+/**
+ * Process a ZIP file by extracting its contents
+ */
+async function processZipFile(publicUrl: string, documentType: string, documentName: string, onProcessingMessage?: (message: string) => void): Promise<boolean> {
+  try {
+    onProcessingMessage?.("Extracting ZIP contents...");
+    console.log("Starting ZIP extraction for:", publicUrl);
+    
+    const extractResult = await tryUseEdgeFunction<{
+      success: boolean;
+      totalFiles: number;
+      processedFiles: number;
+      hasErrors: boolean;
+      extractedFiles?: Array<{
+        fileName: string;
+        publicUrl: string;
+        fileType: string;
+      }>;
+      errors?: Array<{
+        fileName: string;
+        error: string;
+      }>;
+    }>('extract-zip', {
+      zipFileUrl: publicUrl,
+      categoryId: documentType,
+      author: 'System Upload'
+    });
+    
+    if (extractResult?.success) {
+      const { totalFiles, processedFiles, hasErrors, extractedFiles, errors } = extractResult;
+      
+      console.log("ZIP extraction result:", extractResult);
+      onProcessingMessage?.(`Extracted ${processedFiles} of ${totalFiles} files from ZIP`);
+      
+      // Show success/failure toast with detailed information
+      if (hasErrors) {
+        const failedCount = (errors?.length || 0);
+        toast({
+          title: "ZIP extraction completed with issues",
+          description: `Successfully extracted ${processedFiles} files. ${failedCount} files had errors.`,
+          duration: 5000,
+        });
+      } else {
+        toast.success(`Successfully extracted all ${processedFiles} files from ${documentName}`);
+      }
+      
+      return true;
+    } else {
+      console.error("ZIP extraction failed:", extractResult?.errors || "Unknown error");
+      toast.error("Failed to extract ZIP contents");
+      return false;
+    }
+  } catch (extractError: any) {
+    console.error("Error during ZIP extraction:", extractError);
+    toast.error(`ZIP extraction error: ${extractError.message || "Unknown error"}`);
+    return false;
   }
 }
 
@@ -202,63 +261,69 @@ export const uploadDocument = async ({
       onProgress?.(60);
       onProcessingMessage?.("Processing document...");
       
-      // Create database record
-      const documentData = {
-        title: documentName,
-        document_type: documentType,
-        file_path: filePath,
-        url: publicUrl,
-        expiry_date: expiryDate || null,
-        file_size: file.size,
-        file_type: file.type
-      };
+      // Create database record for the document
+      const { data: docData, error: docError } = await supabase
+        .from('documents')
+        .insert({
+          title: documentName,
+          type: isZipFile(file) ? 'archive' : file.type,
+          category_id: documentType,
+          url: publicUrl,
+          expiry_date: expiryDate || null
+        })
+        .select()
+        .single();
+      
+      if (docError) {
+        console.error('Error creating document record:', docError);
+        throw new Error(`Failed to register document: ${docError.message}`);
+      }
       
       onProgress?.(80);
       onProcessingMessage?.("Finalizing upload...");
       
-      // Log the document data before inserting
-      console.log("Document uploaded successfully:", documentData);
+      // Log the document data
+      console.log("Document uploaded successfully:", {
+        id: docData.id,
+        title: documentName,
+        url: publicUrl
+      });
       
-      try {
-        // If this is a ZIP file, attempt extraction
-        if (file.type === 'application/zip' || file.name.toLowerCase().endsWith('.zip')) {
-          onProcessingMessage?.("Extracting ZIP contents...");
-          
-          const extractResult = await tryUseEdgeFunction<{
-            success: boolean;
-            totalFiles: number;
-            processedFiles: number;
-            hasErrors: boolean;
-          }>('archive', 'extract-zip', {
-            zipFileUrl: publicUrl,
-            categoryId: documentType,
-            author: 'System Upload'
-          });
-          
-          if (extractResult?.success) {
-            onProcessingMessage?.(`Extracted ${extractResult.processedFiles} of ${extractResult.totalFiles} files from ZIP`);
-          } else {
-            console.log("ZIP extraction returned no result or failed");
-            // Continue with regular upload
-          }
+      // If this is a ZIP file, attempt extraction
+      let extractionSuccess = false;
+      if (isZipFile(file)) {
+        onProcessingMessage?.("Processing ZIP archive...");
+        onProgress?.(85);
+        
+        // Validate the public URL before calling extract-zip
+        if (!publicUrl || !publicUrl.includes('supabase.co')) {
+          console.error("Invalid public URL for ZIP extraction:", publicUrl);
+          toast.error("ZIP extraction failed: Invalid URL");
+        } else {
+          extractionSuccess = await processZipFile(publicUrl, documentType, documentName, onProcessingMessage);
         }
-      } catch (extractError) {
-        console.error("Error during ZIP extraction:", extractError);
-        // Continue with regular upload
       }
       
       onProgress?.(100);
-      toast(`${documentName} has been uploaded successfully`);
+      
+      // Show toast based on file type and extraction result
+      if (isZipFile(file)) {
+        if (!extractionSuccess) {
+          toast.warning(`${documentName} has been uploaded, but extraction failed or was incomplete.`);
+        }
+      } else {
+        toast.success(`${documentName} has been uploaded successfully`);
+      }
       
       return true;
     } catch (uploadError: any) {
       console.error('Upload exception:', uploadError);
-      toast(uploadError instanceof Error ? uploadError.message : 'Unknown error');
+      toast.error(uploadError instanceof Error ? uploadError.message : 'Unknown error');
       return false;
     }
   } catch (error: any) {
     console.error('Document upload error:', error);
-    toast(error instanceof Error ? error.message : 'An unknown error occurred');
+    toast.error(error instanceof Error ? error.message : 'An unknown error occurred');
     return false;
   }
 };

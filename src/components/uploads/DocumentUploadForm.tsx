@@ -18,9 +18,11 @@ import {
 } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { toast } from "@/hooks/use-toast";
-import { UploadCloud, FileText } from 'lucide-react';
-import { uploadDocument } from '@/utils/upload-service';
+import { toast } from "sonner";
+import { UploadCloud, FileText, Archive } from 'lucide-react';
+import { isZipFile, uploadDocument } from '@/utils/upload-service';
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { InfoIcon } from "lucide-react";
 
 // Document types
 const DOCUMENT_TYPES = [
@@ -92,18 +94,11 @@ export function DocumentUploadForm({ supplierId, onUploadComplete }: DocumentUpl
     }
   };
   
-  const isZipFile = (file: File) => {
-    return file.name.toLowerCase().endsWith('.zip') || file.type === 'application/zip';
-  };
-  
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     
     if (!selectedFile || !documentName || !documentType) {
-      toast.error({
-        title: "Missing information",
-        description: "Please fill all required fields"
-      });
+      toast.error("Please fill all required fields");
       return;
     }
     
@@ -135,10 +130,7 @@ export function DocumentUploadForm({ supplierId, onUploadComplete }: DocumentUpl
       }
     } catch (error: any) {
       console.error('Upload error:', error);
-      toast.error({
-        title: "Upload failed",
-        description: error.message || 'Unknown error'
-      });
+      toast.error(error.message || 'Unknown error');
     } finally {
       setIsUploading(false);
       setProcessingMessage("");
@@ -154,9 +146,9 @@ export function DocumentUploadForm({ supplierId, onUploadComplete }: DocumentUpl
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Upload Supplier Document</CardTitle>
+        <CardTitle>Upload Document</CardTitle>
         <CardDescription>
-          Upload contract documents, specifications, or other supplier files
+          Upload documents, specifications, or ZIP archives containing multiple files
         </CardDescription>
       </CardHeader>
       <form onSubmit={handleSubmit}>
@@ -170,6 +162,7 @@ export function DocumentUploadForm({ supplierId, onUploadComplete }: DocumentUpl
               onChange={(e) => setDocumentName(e.target.value)}
               placeholder="Enter document name"
               required
+              disabled={isUploading}
             />
           </div>
           
@@ -178,6 +171,7 @@ export function DocumentUploadForm({ supplierId, onUploadComplete }: DocumentUpl
             <Select
               value={documentType}
               onValueChange={setDocumentType}
+              disabled={isUploading}
               required
             >
               <SelectTrigger id="document-type">
@@ -200,6 +194,7 @@ export function DocumentUploadForm({ supplierId, onUploadComplete }: DocumentUpl
               type="date"
               value={expiryDate}
               onChange={(e) => setExpiryDate(e.target.value)}
+              disabled={isUploading}
             />
           </div>
           
@@ -215,7 +210,11 @@ export function DocumentUploadForm({ supplierId, onUploadComplete }: DocumentUpl
               onDrop={handleDrop}
             >
               <div className="flex flex-col items-center justify-center text-center">
-                <FileText className="h-10 w-10 text-muted-foreground mb-2" />
+                {selectedFile && isZipFile(selectedFile) ? (
+                  <Archive className="h-10 w-10 text-amber-500 mb-2" />
+                ) : (
+                  <FileText className="h-10 w-10 text-muted-foreground mb-2" />
+                )}
                 <p className="text-sm text-muted-foreground mb-2">
                   Drag and drop your document here, or click to browse
                 </p>
@@ -244,20 +243,46 @@ export function DocumentUploadForm({ supplierId, onUploadComplete }: DocumentUpl
               </div>
               {selectedFile && (
                 <div className="mt-4 p-2 bg-muted rounded-md">
-                  <p className="text-sm flex items-center gap-2">
-                    <span className="font-medium">Selected:</span>
-                    {selectedFile.name}
-                    <span className="text-muted-foreground">
-                      ({Math.round(selectedFile.size / 1024)} KB)
-                    </span>
-                    {isZipFile(selectedFile) && (
-                      <span className="text-blue-500 text-xs">(ZIP file)</span>
-                    )}
-                  </p>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <span className="font-medium">Selected:</span>
+                      {selectedFile.name}
+                      <span className="text-muted-foreground">
+                        ({Math.round(selectedFile.size / 1024)} KB)
+                      </span>
+                      {isZipFile(selectedFile) && (
+                        <span className="text-amber-600 text-xs font-medium px-2 py-0.5 rounded bg-amber-100 dark:bg-amber-900 dark:text-amber-300">
+                          ZIP
+                        </span>
+                      )}
+                    </div>
+                    <Button 
+                      type="button"
+                      variant="ghost" 
+                      size="sm" 
+                      onClick={removeFile}
+                      disabled={isUploading}
+                    >
+                      Remove
+                    </Button>
+                  </div>
                 </div>
               )}
             </div>
           </div>
+
+          {selectedFile && isZipFile(selectedFile) && (
+            <Alert className="bg-blue-50 border-blue-200 dark:bg-blue-950 dark:border-blue-900">
+              <InfoIcon className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+              <AlertTitle className="text-blue-800 dark:text-blue-300">
+                ZIP Archive Detected
+              </AlertTitle>
+              <AlertDescription className="text-blue-700 dark:text-blue-400">
+                The contents of this ZIP file will be automatically extracted and registered
+                as individual documents after upload.
+              </AlertDescription>
+            </Alert>
+          )}
 
           {isUploading && (
             <div className="space-y-2 bg-slate-50 dark:bg-slate-800 p-3 rounded-md border">
