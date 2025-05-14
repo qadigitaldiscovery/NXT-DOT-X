@@ -5,10 +5,7 @@ import { componentTagger } from 'lovable-tagger';
 
 export default defineConfig(({ mode }) => ({
   plugins: [
-    react({
-      jsxImportSource: 'react',
-      jsxRuntime: 'automatic',
-    }),
+    react(), // ✅ keep this simple — no jsxRuntime
     mode === 'development' && componentTagger(),
   ].filter(Boolean),
   build: {
