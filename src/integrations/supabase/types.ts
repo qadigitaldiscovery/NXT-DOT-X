@@ -1522,6 +1522,33 @@ export type Database = {
         }
         Relationships: []
       }
+      user_preferences: {
+        Row: {
+          id: string
+          key: string
+          module: string
+          updated_at: string | null
+          user_id: string | null
+          value: Json | null
+        }
+        Insert: {
+          id?: string
+          key: string
+          module: string
+          updated_at?: string | null
+          user_id?: string | null
+          value?: Json | null
+        }
+        Update: {
+          id?: string
+          key?: string
+          module?: string
+          updated_at?: string | null
+          user_id?: string | null
+          value?: Json | null
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           role: string

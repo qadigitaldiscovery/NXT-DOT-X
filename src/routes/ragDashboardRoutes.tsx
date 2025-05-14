@@ -1,36 +1,44 @@
 
-import { Route } from "react-router-dom";
-import RAGDashboard from "@/pages/RAGDashboard";
-import RAGAnalytics from "@/pages/RAGAnalytics";
-import PermissionGuard from "@/components/rag-dashboard/PermissionGuard";
+import React from 'react';
+import { Route } from 'react-router-dom';
+import RAGDashboardPage from '@/pages/rag-dashboard/RAGDashboardPage';
+import { RAGAnalytics } from '@/pages/RAGAnalytics';
+import PermissionGuard from '@/components/admin/PermissionGuard';
 
 export const RAGDashboardRoutes = () => {
   return (
     <>
-      <Route path="/dashboard/rag" element={<RAGDashboard />} />
+      <Route 
+        path="/dashboard/rag" 
+        element={
+          <PermissionGuard moduleSlug="modules">
+            <RAGDashboardPage />
+          </PermissionGuard>
+        } 
+      />
       <Route 
         path="/dashboard/rag/analytics" 
         element={
-          <PermissionGuard requiredPermission="rag.view_analytics">
+          <PermissionGuard moduleSlug="modules">
             <RAGAnalytics />
           </PermissionGuard>
         } 
       />
       <Route 
-        path="/dashboard/rag/alerts"
+        path="/dashboard/rag/alerts" 
         element={
-          <PermissionGuard requiredPermission="rag.view_alerts">
-            <div>Alerts Page</div>
+          <PermissionGuard moduleSlug="modules">
+            <RAGDashboardPage />
           </PermissionGuard>
-        }
+        } 
       />
-      <Route
-        path="/dashboard/rag/settings"
+      <Route 
+        path="/dashboard/rag/settings" 
         element={
-          <PermissionGuard requiredPermission="rag.manage_settings">
-            <div>Settings Page</div>
+          <PermissionGuard moduleSlug="modules" requiredRole="admin">
+            <RAGDashboardPage />
           </PermissionGuard>
-        }
+        } 
       />
     </>
   );

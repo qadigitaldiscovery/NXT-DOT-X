@@ -29,6 +29,11 @@ import { Button } from "@/components/ui/button";
 const MasterDash = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { preferences, setPreferences, loading: prefsLoading } = useUserPreferences({
+    module: 'dashboard',
+    key: 'layout_state',
+    defaultValue: { sidebar: "expanded", theme: "dark" }
+  });
 
   // Check if user is authenticated
   useEffect(() => {
@@ -103,12 +108,21 @@ const MasterDash = () => {
     </div>
   );
 
+  // If preferences are loading, show a loading spinner
+  if (prefsLoading) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-gray-900"></div>
+      </div>
+    );
+  }
+
   return (
     <SharedDashboardLayout
       moduleTitle="Business Management Platform"
       navCategories={navCategories}
       customFooterContent={navigationFooter}
-      showTopLeftToggle={true}
+      showTopLeftToggle={preferences ? preferences.sidebar !== "collapsed" : true}
       removeBottomToggle={false}
     >
       <DashboardModules />

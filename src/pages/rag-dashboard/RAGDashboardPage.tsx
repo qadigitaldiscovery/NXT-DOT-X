@@ -1,153 +1,175 @@
 
-import React, { useState, useEffect } from 'react';
-import RAGDashboardGrid from '@/components/rag-dashboard/RAGDashboardGrid';
+import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { AlertTriangle, BarChart3, Settings } from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { PlatformLayout } from '@/components/layouts/PlatformLayout';
 import { DashboardProvider } from '@/components/rag-dashboard/providers/DashboardProvider';
-import DashboardHeader from '@/components/rag-dashboard/dashboard/DashboardHeader';
-import DashboardFilters from '@/components/rag-dashboard/dashboard/DashboardFilters';
-import ModulesGrid from '@/components/rag-dashboard/dashboard/ModulesGrid';
-import DashboardDialogs from '@/components/rag-dashboard/dashboard/DashboardDialogs';
-import { useModules, type Module } from '@/hooks/useModules';
-import { useAlerts, type Alert } from '@/hooks/useAlerts';
+import { ragDashboardNavigation } from '@/components/rag-dashboard/config/dashboardNavigation';
+import { RAGDashboardGrid } from '@/components/rag-dashboard/RAGDashboardGrid';
+import { OverviewStats } from '@/components/rag-dashboard/OverviewStats';
+import { AlertsList } from '@/components/rag-dashboard/AlertsList';
+import { ThresholdRulesList } from '@/components/rag-dashboard/ThresholdRulesList';
+import { useModules } from '@/hooks/useModules';
+import { useAlerts } from '@/hooks/useAlerts';
 import { useThresholdRules } from '@/hooks/useThresholdRules';
-import { useStatusLogs, type StatusLog } from '@/hooks/useStatusLogs';
-import { useCustomerImpacts, type CustomerImpact } from '@/hooks/useCustomerImpacts';
+import { useUserPermissions } from '@/hooks/useUserPermissions';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from '@/hooks/use-toast';
 
-/**
- * RAG Dashboard Page Component
- * 
- * Main page for the RAG Dashboard displaying system status
- * and module performance metrics
- */
-const RAGDashboardPage = () => {
-  // Fetch data and methods from hooks
-  const { modules, loading: modulesLoading, error: modulesError, updateModuleStatus, refreshModules } = useModules();
-  const { alerts, resolveAlert, getAlertsByModuleId } = useAlerts();
-  const { rules, addRule, deleteRule, getRulesByModuleId } = useThresholdRules();
-  const { logs, getLogsByModuleId } = useStatusLogs();
-  const { impacts, getImpactsByModuleId } = useCustomerImpacts();
+const RAGDashboardPage: React.FC = () => {
+  const navigate = useNavigate();
+  const { hasPermission } = useUserPermissions();
+  const [userPreferences, setUserPreferences] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
 
-  // Local state for filtering and module details
-  const [selectedStatus, setSelectedStatus] = useState<string | null>(null);
-  const [searchQuery, setSearchQuery] = useState<string>('');
-  const [selectedModule, setSelectedModule] = useState<Module | null>(null);
-  const [isDetailsOpen, setIsDetailsOpen] = useState<boolean>(false);
-  const [isBatchOperationsOpen, setIsBatchOperationsOpen] = useState<boolean>(false);
-  
-  // Filtered modules based on status and search query
-  const filteredModules = modules.filter(module => {
-    // Filter by status if selected
-    if (selectedStatus && module.status !== selectedStatus) {
-      return false;
-    }
-    
-    // Filter by search query
-    if (searchQuery && !module.name.toLowerCase().includes(searchQuery.toLowerCase())) {
-      return false;
-    }
-    
-    return true;
-  });
+  const { 
+    modules,
+    loading: modulesLoading, 
+    error: modulesError,
+    refreshModules,
+    updateModuleStatus
+  } = useModules();
 
-  // Calculate alert counts by module
-  const alertCountByModule = React.useMemo(() => {
-    const counts: Record<string, number> = {};
-    alerts.forEach(alert => {
-      if (!alert.resolved) {
-        counts[alert.module_id] = (counts[alert.module_id] || 0) + 1;
+  const { 
+    alerts, 
+    loading: alertsLoading, 
+    error: alertsError,
+    resolveAlert 
+  } = useAlerts();
+
+  const {
+    rules,
+    loading: rulesLoading,
+    error: rulesError,
+    addRule,
+    deleteRule
+  } = useThresholdRules();
+
+  useEffect(() => {
+    const fetchUserPreferences = async () => {
+      try {
+        const { data: authUser } = await supabase.auth.getUser();
+        if (authUser?.user) {
+          const { data, error } = await supabase
+            .from('user_preferences')
+            .select('*')
+            .eq('user_id', authUser.user.id)
+            .eq('module', 'rag_dashboard')
+            .single();
+
+          if (error && error.code !== 'PGRST116') {
+            console.error('Error fetching user preferences:', error);
+          }
+          
+          setUserPreferences(data || { sidebar: "expanded", theme: "dark" });
+        }
+      } catch (err) {
+        console.error('Error checking user state:', err);
+      } finally {
+        setLoading(false);
       }
-    });
-    return counts;
-  }, [alerts]);
+    };
 
-  // State for selected module details
-  const [moduleAlerts, setModuleAlerts] = useState<Alert[]>([]);
-  const [moduleRules, setModuleRules] = useState([]);
-  const [moduleLogs, setModuleLogs] = useState<StatusLog[]>([]);
-  const [moduleImpacts, setModuleImpacts] = useState<CustomerImpact[]>([]);
-  const [detailsLoading, setDetailsLoading] = useState({
-    alerts: false,
-    rules: false,
-    logs: false,
-    impacts: false
-  });
-  
-  // Handle opening module details
-  const handleViewModuleDetails = (module: Module) => {
-    setSelectedModule(module);
-    setIsDetailsOpen(true);
-    
-    // Load module-specific data
-    if (module?.id) {
-      // Alerts
-      setDetailsLoading(prev => ({ ...prev, alerts: true }));
-      getAlertsByModuleId(module.id)
-        .then(setModuleAlerts)
-        .finally(() => setDetailsLoading(prev => ({ ...prev, alerts: false })));
-      
-      // Rules
-      setDetailsLoading(prev => ({ ...prev, rules: true }));
-      getRulesByModuleId(module.id)
-        .then(setModuleRules)
-        .finally(() => setDetailsLoading(prev => ({ ...prev, rules: false })));
-      
-      // Status logs
-      setDetailsLoading(prev => ({ ...prev, logs: true }));
-      getLogsByModuleId(module.id)
-        .then(setModuleLogs)
-        .finally(() => setDetailsLoading(prev => ({ ...prev, logs: false })));
-      
-      // Customer impacts
-      setDetailsLoading(prev => ({ ...prev, impacts: true }));
-      getImpactsByModuleId(module.id)
-        .then(setModuleImpacts)
-        .finally(() => setDetailsLoading(prev => ({ ...prev, impacts: false })));
+    fetchUserPreferences();
+  }, []);
+
+  // Save user preferences
+  const saveUserPreferences = async (preferences: any) => {
+    try {
+      const { data: authUser } = await supabase.auth.getUser();
+      if (authUser?.user) {
+        const { error } = await supabase
+          .from('user_preferences')
+          .upsert({
+            user_id: authUser.user.id,
+            module: 'rag_dashboard',
+            key: 'layout_state',
+            value: preferences
+          });
+
+        if (error) {
+          throw error;
+        }
+        
+        setUserPreferences(preferences);
+      }
+    } catch (err) {
+      console.error('Error saving preferences:', err);
+      toast({
+        title: 'Error',
+        description: 'Failed to save your preferences',
+        variant: 'destructive'
+      });
     }
   };
-  
+
+  if (loading || modulesLoading || alertsLoading || rulesLoading) {
+    return (
+      <PlatformLayout>
+        <div className="flex items-center justify-center h-full">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-gray-900"></div>
+        </div>
+      </PlatformLayout>
+    );
+  }
+
+  if (modulesError || alertsError || rulesError) {
+    return (
+      <PlatformLayout>
+        <Card className="m-4">
+          <CardHeader>
+            <CardTitle className="text-red-600">Error Loading Dashboard</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-muted-foreground">
+              There was an error loading the dashboard data. Please try again later.
+            </p>
+            <button 
+              onClick={() => navigate(0)} 
+              className="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+            >
+              Refresh
+            </button>
+          </CardContent>
+        </Card>
+      </PlatformLayout>
+    );
+  }
+
   return (
-    <DashboardProvider 
-      refreshModules={refreshModules} 
-      resolveAlert={resolveAlert} 
-      addRule={addRule} 
-      deleteRule={deleteRule}
-    >
-      <div className="container mx-auto px-4 py-6 space-y-6">
-        <DashboardHeader 
-          onBatchOperationsOpen={() => setIsBatchOperationsOpen(true)} 
-        />
-        <DashboardFilters 
-          selectedStatus={selectedStatus}
-          onStatusSelect={setSelectedStatus}
-          searchQuery={searchQuery}
-          onSearchChange={setSearchQuery}
-        />
-        <ModulesGrid 
-          modules={filteredModules}
-          isLoading={modulesLoading}
-          hasError={!!modulesError}
-          alertCountByModule={alertCountByModule}
-          onViewDetails={handleViewModuleDetails}
-        />
-        <DashboardDialogs 
-          isDetailsOpen={isDetailsOpen}
-          onDetailsClose={() => setIsDetailsOpen(false)}
-          selectedModule={selectedModule}
-          logs={moduleLogs}
-          moduleAlerts={moduleAlerts}
-          rules={moduleRules}
-          impacts={moduleImpacts}
-          logsLoading={detailsLoading.logs}
-          alertsLoading={detailsLoading.alerts}
-          rulesLoading={detailsLoading.rules}
-          impactsLoading={detailsLoading.impacts}
-          onResolveAlert={resolveAlert}
-          onAddRule={addRule}
-          onDeleteRule={deleteRule}
-          isBatchOperationsOpen={isBatchOperationsOpen}
-          onBatchOperationsClose={() => setIsBatchOperationsOpen(false)}
-        />
-      </div>
-    </DashboardProvider>
+    <PlatformLayout>
+      <DashboardProvider
+        refreshModules={refreshModules}
+        resolveAlert={resolveAlert}
+        addRule={addRule}
+        deleteRule={deleteRule}
+      >
+        <div className="space-y-6 p-6">
+          <OverviewStats
+            modules={modules}
+            alerts={alerts}
+          />
+          
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div className="lg:col-span-2">
+              <RAGDashboardGrid 
+                modules={modules}
+                onUpdateStatus={updateModuleStatus}
+              />
+            </div>
+            
+            <div className="space-y-6">
+              <AlertsList alerts={alerts} />
+              
+              {hasPermission('modules.configure') && (
+                <ThresholdRulesList rules={rules} />
+              )}
+            </div>
+          </div>
+        </div>
+      </DashboardProvider>
+    </PlatformLayout>
   );
 };
 
