@@ -58,15 +58,15 @@ const Landing = () => {
       </div>
 
       <div className="relative z-10 w-full max-w-md px-6 flex flex-col items-center">
-        {/* Logo */}
-        <div className="mb-10 flex justify-center">
-          <div className="relative">
-            <div className="absolute -inset-1 bg-gradient-to-r from-red-500 to-red-800 rounded-lg blur opacity-75"></div>
-            <div className="px-8 py-3 bg-gray-900 rounded-lg relative">
+        {/* Logo - Updated to be larger and match the width of the login box */}
+        <div className="mb-10 flex justify-center w-full">
+          <div className="relative w-full">
+            <div className="absolute -inset-1 bg-gradient-to-r from-red-500 to-red-800 rounded-lg blur opacity-75 w-full"></div>
+            <div className="px-8 py-5 bg-gray-900 rounded-lg relative w-full flex justify-center">
               <img 
                 src="/lovable-uploads/8b4ed002-cfe2-4c82-b0a8-bccf404be22c.png" 
                 alt="NXT DOTX Logo" 
-                className="h-16 w-auto"
+                className="h-auto w-full max-w-[320px]"
               />
             </div>
           </div>
