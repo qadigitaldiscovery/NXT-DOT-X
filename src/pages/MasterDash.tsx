@@ -1,3 +1,4 @@
+
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
@@ -29,7 +30,7 @@ import { useUserPreferences } from '@/hooks/useUserPreferences';
 const MasterDash = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
-  const { preferences, loading: prefsLoading } = useUserPreferences({
+  const { preferences, loading: prefsLoading, error } = useUserPreferences({
     module: 'dashboard',
     key: 'layout_state',
     defaultValue: { sidebar: "expanded", theme: "dark" }
@@ -108,17 +109,35 @@ const MasterDash = () => {
     </div>
   );
 
-  // If preferences are loading, show a loading spinner
+  // If there's an error loading preferences, show fallback
+  if (error) {
+    return (
+      <SharedDashboardLayout
+        moduleTitle="Business Management Platform"
+        navCategories={navCategories}
+        customFooterContent={navigationFooter}
+        showTopLeftToggle={true}
+        removeBottomToggle={false}
+      >
+        <DashboardModules />
+      </SharedDashboardLayout>
+    );
+  }
+
+  // If preferences are loading, render a more stable loading state
   if (prefsLoading) {
     return (
-      <div className="flex items-center justify-center h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-gray-900"></div>
+      <div className="flex h-screen w-full items-center justify-center bg-background">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-muted-foreground">Loading dashboard preferences...</p>
+        </div>
       </div>
     );
   }
 
-  // Safely access preferences with proper type handling
-  const prefsObject = typeof preferences === 'object' ? preferences : {};
+  // Safely access preferences with proper type handling and fallbacks
+  const prefsObject = typeof preferences === 'object' && preferences ? preferences : {};
   const sidebarState = prefsObject.sidebar || "expanded";
 
   return (
