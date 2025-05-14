@@ -38,13 +38,15 @@ export default function CustomerImpactsList({ impacts, loading = false }: Custom
     );
   }
 
-  const getImpactLevelVariant = (level: string | null): "default" | "destructive" | "outline" | "secondary" => {
-    switch (level?.toLowerCase()) {
+  const getSeverityVariant = (severity: string | null): "default" | "destructive" | "outline" | "secondary" => {
+    switch (severity?.toLowerCase()) {
       case 'low':
         return 'secondary';
       case 'medium':
         return 'default';
       case 'high':
+        return 'destructive';
+      case 'critical':
         return 'destructive';
       default:
         return 'outline';
@@ -62,16 +64,16 @@ export default function CustomerImpactsList({ impacts, loading = false }: Custom
             <li key={impact.id} className="flex flex-col gap-2 border-b pb-3 last:border-0">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  {impact.impact_level && (
-                    <Badge variant={getImpactLevelVariant(impact.impact_level)}>
-                      {impact.impact_level.charAt(0).toUpperCase() + impact.impact_level.slice(1)} Impact
+                  {impact.severity && (
+                    <Badge variant={getSeverityVariant(impact.severity)}>
+                      {impact.severity.charAt(0).toUpperCase() + impact.severity.slice(1)} Impact
                     </Badge>
                   )}
                   <span className="text-sm text-muted-foreground">
-                    {formatDistanceToNow(new Date(impact.recorded_at), { addSuffix: true })}
+                    {formatDistanceToNow(new Date(impact.started_at), { addSuffix: true })}
                   </span>
                 </div>
-                {impact.region && <span className="text-sm font-medium">{impact.region}</span>}
+                {impact.impact_type && <span className="text-sm font-medium">{impact.impact_type}</span>}
               </div>
               
               {impact.affected_users && (
