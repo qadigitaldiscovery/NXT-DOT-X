@@ -105,7 +105,7 @@ const Landing = () => {
         {/* Logo */}
         <div className="mb-10 flex justify-center">
           <div className="relative">
-            <div className="absolute -inset-1 bg-gradient-to-r from-red-500 to-red-800 rounded-lg blur opacity-70"></div>
+            <div className="absolute -inset-1 bg-gradient-to-r from-red-500 to-red-800 rounded-lg blur opacity-75"></div>
             <div className="px-8 py-3 bg-gray-900 rounded-lg relative">
               <h1 className="text-4xl font-bold tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-white via-red-300 to-red-500">
                 NXT DOT X
