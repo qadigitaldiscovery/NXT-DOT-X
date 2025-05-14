@@ -248,28 +248,17 @@ export const uploadDocument = async ({
       }
       
       onProgress?.(100);
-      toast({
-        title: 'Document uploaded',
-        description: `${documentName} has been uploaded successfully`
-      });
+      toast(`${documentName} has been uploaded successfully`);
       
       return true;
     } catch (uploadError: any) {
       console.error('Upload exception:', uploadError);
-      toast({
-        variant: "destructive",
-        title: 'Upload failed',
-        description: `${uploadError instanceof Error ? uploadError.message : 'Unknown error'}`
-      });
+      toast(uploadError instanceof Error ? uploadError.message : 'Unknown error');
       return false;
     }
   } catch (error: any) {
     console.error('Document upload error:', error);
-    toast({
-      variant: "destructive",
-      title: 'Upload failed',
-      description: error instanceof Error ? error.message : 'An unknown error occurred'
-    });
+    toast(error instanceof Error ? error.message : 'An unknown error occurred');
     return false;
   }
 };

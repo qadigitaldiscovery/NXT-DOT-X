@@ -100,7 +100,7 @@ export const DocumentUpload = ({ categories, onFileUpload }: DocumentUploadProps
     e.preventDefault();
     
     if (!selectedFile || !title || !categoryId || !author) {
-      toast.error('Please fill in all required fields');
+      toast('Please fill in all required fields');
       return;
     }
     
@@ -141,7 +141,7 @@ export const DocumentUpload = ({ categories, onFileUpload }: DocumentUploadProps
     } catch (error: any) {
       console.error('Error uploading document:', error);
       setUploadError(error instanceof Error ? error.message : 'Unknown error');
-      toast.error('Upload failed: ' + (error instanceof Error ? error.message : 'Unknown error'));
+      toast('Upload failed: ' + (error instanceof Error ? error.message : 'Unknown error'));
     } finally {
       setIsUploading(false);
       setProcessingMessage('');

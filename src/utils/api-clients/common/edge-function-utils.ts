@@ -33,10 +33,11 @@ export async function tryUseEdgeFunction<T = any>(
     };
 
     // Call the Supabase Edge Function
+    // Remove the signal property as it's not supported in FunctionInvokeOptions
     const { data, error } = await supabase.functions.invoke(functionName, {
       body: fullFunctionData,
-      headers,
-      signal: controller.signal
+      headers
+      // signal is not supported in the Supabase JS client
     });
     
     // Clear the timeout
