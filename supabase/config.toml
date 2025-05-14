@@ -1,15 +1,206 @@
 
+# A string used to distinguish different Supabase projects on the same host. Defaults to the project ID.
 project_id = "ehzhosyzybzxhvhisojh"
-app_id = "1"
 
-[functions.threshold-checker]
-verify_jwt = false
+[api]
+enabled = true
+port = 54321
+schemas = ["public", "storage", "graphql_public"]
+extra_search_path = ["public", "extensions"]
+max_rows = 1000
 
-[functions.init-admin-access]
-verify_jwt = false
+[db]
+port = 54322
+shadow_port = 54320
+major_version = 15
 
-[functions.extract-zip]
-verify_jwt = false
+[db.pooler]
+enabled = false
+port = 54329
+pool_mode = "transaction"
+default_pool_size = 15
+max_client_conn = 100
 
+[realtime]
+enabled = false
+
+[studio]
+enabled = false
+port = 54323
+api_url = "http://localhost"
+
+[inbucket]
+enabled = false
+port = 54324
+
+[storage]
+enabled = true
+
+[auth]
+enabled = true
+site_url = "http://localhost:3000"
+additional_redirect_urls = ["https://localhost:3000"]
+jwt_expiry = 3600
+enable_refresh_token_rotation = true
+refresh_token_reuse_interval = 10
+enable_signup = true
+
+[auth.external.apple]
+enabled = false
+client_id = ""
+secret = ""
+# Additional scopes to request from Apple OAuth.
+# Full list of scopes: https://developer.apple.com/documentation/sign_in_with_apple/sign_in_with_apple_js/incorporating_sign_in_with_apple_into_other_platforms#3332113
+scopes = []
+
+[auth.external.azure]
+enabled = false
+client_id = ""
+secret = ""
+# Additional scopes to request from Azure OAuth
+# Full list of scopes: https://learn.microsoft.com/en-us/graph/permissions-reference
+scopes = []
+# URL for your Azure OAuth tenant
+url = ""
+
+[auth.external.bitbucket]
+enabled = false
+client_id = ""
+secret = ""
+# Additional scopes to request from Bitbucket OAuth.
+# Full list of scopes: https://support.atlassian.com/bitbucket-cloud/docs/use-oauth-on-bitbucket-cloud/#scopes
+scopes = []
+
+[auth.external.discord]
+enabled = false
+client_id = ""
+secret = ""
+# Additional scopes to request from Discord OAuth.
+# Full list of scopes: https://discord.com/developers/docs/topics/oauth2#shared-resources-oauth2-scopes
+scopes = []
+
+[auth.external.facebook]
+enabled = false
+client_id = ""
+secret = ""
+# Additional scopes to request from Facebook OAuth.
+# Full list of scopes: https://developers.facebook.com/docs/permissions/reference
+scopes = []
+
+[auth.external.github]
+enabled = false
+client_id = ""
+secret = ""
+# Additional scopes to request from GitHub OAuth.
+# Full list of scopes: https://docs.github.com/apps/building-oauth-apps/understanding-scopes-for-oauth-apps/
+scopes = []
+
+[auth.external.gitlab]
+enabled = false
+client_id = ""
+secret = ""
+# Additional scopes to request from GitLab OAuth.
+# Full list of scopes: https://docs.gitlab.com/ee/integration/oauth_provider.html#authorized-applications
+scopes = []
+# URL for your GitLab instance
+url = "https://gitlab.com"
+
+[auth.external.google]
+enabled = false
+client_id = ""
+secret = ""
+# Additional scopes to request from Google OAuth.
+# Full list of scopes: https://developers.google.com/identity/protocols/oauth2/scopes
+scopes = []
+
+[auth.external.keycloak]
+enabled = false
+client_id = ""
+secret = ""
+# Additional scopes to request from Keycloak OAuth.
+# Full list of scopes: https://www.keycloak.org/docs/latest/user/index.html#about-scopes
+scopes = []
+# URL for your Keycloak instance
+url = ""
+
+[auth.external.linkedin]
+enabled = false
+client_id = ""
+secret = ""
+# Additional scopes to request from LinkedIn OAuth.
+# Full list of scopes: https://docs.microsoft.com/en-us/linkedin/shared/integrations/people/profile-api?context=linkedin/consumer/context#permissions
+scopes = []
+
+[auth.external.notion]
+enabled = false
+client_id = ""
+secret = ""
+# Additional scopes to request from Notion OAuth.
+# Full list of scopes: https://developers.notion.com/docs/authorization#request-authorization-from-the-user
+scopes = []
+
+[auth.external.twitch]
+enabled = false
+client_id = ""
+secret = ""
+# Additional scopes to request from Twitch OAuth.
+# Full list of scopes: https://dev.twitch.tv/docs/authentication/scopes/
+scopes = []
+
+[auth.external.twitter]
+enabled = false
+client_id = ""
+secret = ""
+# Additional scopes to request from Twitter OAuth.
+# Full list of scopes: https://developer.twitter.com/en/docs/authentication/oauth-2-0/authorization-code
+scopes = []
+
+[auth.external.slack]
+enabled = false
+client_id = ""
+secret = ""
+# Additional scopes to request from Slack OAuth.
+# Full list of scopes: https://api.slack.com/scopes
+scopes = []
+
+[auth.external.spotify]
+enabled = false
+client_id = ""
+secret = ""
+# Additional scopes to request from Spotify OAuth.
+# Full list of scopes: https://developer.spotify.com/documentation/web-api/concepts/scopes
+scopes = []
+
+[auth.external.workos]
+enabled = false
+client_id = ""
+secret = ""
+# Additional scopes to request from WorkOS OAuth.
+# Full list of scopes: https://workos.com/docs/reference/sso/authorize/common-params
+scopes = []
+# URL for your WorkOS environment
+url = ""
+
+[auth.external.zoom]
+enabled = false
+client_id = ""
+secret = ""
+# Additional scopes to request from Zoom OAuth.
+# Full list of scopes: https://marketplace.zoom.us/docs/guides/auth/oauth/oauth-scopes/
+scopes = []
+
+[functions]
 [functions.create-documents-bucket]
-verify_jwt = false
+verify_jwt = true
+[functions.extract-zip]
+verify_jwt = true
+
+[analytics]
+enabled = false
+
+[experimental]
+# Configures Postgres storage engine to use vectors and enables vector functions.
+# Full list of vector functions: https://supabase.com/docs/guides/database/extensions/pgvector
+vector_enabled = true
+# Enables recommendations publishing to Postgres (default = true)
+recommends_enabled = true

@@ -44,9 +44,9 @@ serve(async (req) => {
     
     console.log("Downloading ZIP file from URL:", zipFileUrl);
     
-    // Download the ZIP file with a timeout
+    // Download the ZIP file with a timeout (shorter timeout)
     const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 20000); // 20 second timeout
+    const timeout = setTimeout(() => controller.abort(), 15000); // 15 second timeout
     
     try {
       // Download the ZIP file
@@ -65,24 +65,41 @@ serve(async (req) => {
       }
       
       // Ensure the documents bucket exists before proceeding
-      const { data: bucketData, error: bucketError } = await supabase.storage.getBucket('documents');
-      
-      if (bucketError) {
-        console.log("Bucket doesn't exist, creating it...");
-        const { error: createError } = await supabase.storage.createBucket('documents', {
-          public: true,
-          fileSizeLimit: 52428800, // 50MB
-        });
+      try {
+        const { data: bucketsData, error: bucketsError } = await supabase.storage.listBuckets();
         
-        if (createError) {
-          throw new Error(`Failed to create documents bucket: ${createError.message}`);
+        if (bucketsError) {
+          throw new Error(`Error listing buckets: ${bucketsError.message}`);
         }
-        console.log("Documents bucket created successfully");
+        
+        const documentsBucketExists = bucketsData.some(bucket => bucket.name === 'documents');
+        
+        if (!documentsBucketExists) {
+          console.log("Bucket doesn't exist, creating it...");
+          const { error: createError } = await supabase.storage.createBucket('documents', {
+            public: true,
+            fileSizeLimit: 52428800, // 50MB
+          });
+          
+          if (createError) {
+            throw new Error(`Failed to create documents bucket: ${createError.message}`);
+          }
+          console.log("Documents bucket created successfully");
+        } else {
+          console.log("Documents bucket exists, proceeding with extraction");
+        }
+      } catch (bucketError) {
+        console.error("Error checking/creating bucket:", bucketError);
+        throw new Error(`Storage bucket error: ${bucketError.message}`);
       }
       
       // Extract ZIP contents
       const files = await unZipBuffer(new Uint8Array(zipBuffer));
       console.log("ZIP extraction complete, files found:", Object.keys(files).length);
+      
+      if (Object.keys(files).length === 0) {
+        throw new Error("ZIP file contains no files");
+      }
       
       const processedFiles = [];
       const errors = [];
@@ -120,12 +137,23 @@ serve(async (req) => {
             // For binary files, store the file in Supabase Storage
             const filePath = `extracted_zip_files/${Date.now()}-${filename}`;
             
-            const { data: storageData, error: storageError } = await supabase.storage
+            // Use a shorter timeout for storage operations
+            const storageTimeoutMs = 10000; // 10 seconds
+            const storagePromise = supabase.storage
               .from('documents')
               .upload(filePath, content, {
                 contentType: getMimeType(fileExtension),
                 upsert: false
               });
+            
+            const storageResult = await Promise.race([
+              storagePromise,
+              new Promise((_, reject) => 
+                setTimeout(() => reject(new Error("Storage upload timed out")), storageTimeoutMs)
+              )
+            ]);
+            
+            const { data: storageData, error: storageError } = storageResult as any;
               
             if (storageError) {
               throw new Error(`Storage upload error: ${storageError.message}`);
@@ -140,8 +168,9 @@ serve(async (req) => {
             console.log(`File uploaded to storage, URL: ${url}`);
           }
           
-          // Create document record in database
-          const { data: docData, error: docError } = await supabase
+          // Create document record in database with shorter timeout
+          const dbTimeoutMs = 5000; // 5 seconds
+          const dbPromise = supabase
             .from('documents')
             .insert({
               title: filename,
@@ -154,6 +183,15 @@ serve(async (req) => {
             })
             .select()
             .single();
+          
+          const dbResult = await Promise.race([
+            dbPromise,
+            new Promise((_, reject) => 
+              setTimeout(() => reject(new Error("Database insert timed out")), dbTimeoutMs)
+            )
+          ]);
+          
+          const { data: docData, error: docError } = dbResult as any;
             
           if (docError) {
             throw new Error(`Document insert error: ${docError.message}`);
