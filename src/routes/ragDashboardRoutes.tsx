@@ -2,7 +2,7 @@
 import React from 'react';
 import { Route } from 'react-router-dom';
 import RAGDashboardPage from '@/pages/rag-dashboard/RAGDashboardPage';
-import { RAGAnalytics } from '@/pages/RAGAnalytics';
+import RAGAnalytics from '@/pages/RAGAnalytics';
 import PermissionGuard from '@/components/admin/PermissionGuard';
 
 export const RAGDashboardRoutes = () => {

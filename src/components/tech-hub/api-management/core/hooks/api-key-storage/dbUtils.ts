@@ -6,15 +6,14 @@ import { supabase } from '@/integrations/supabase/client';
  */
 export const columnExists = async (table: string, column: string): Promise<boolean> => {
   try {
-    // Use a direct SQL query instead of the TypeScript API to check if the column exists
-    // This avoids the type errors with the Supabase client
-    const { data, error } = await supabase.rpc(
-      'column_exists',
-      { 
-        table_name: table,
-        column_name: column 
-      }
-    );
+    // Use a direct SQL query instead of the RPC method
+    const { data, error } = await supabase
+      .from('information_schema.columns')
+      .select('column_name')
+      .eq('table_schema', 'public')
+      .eq('table_name', table)
+      .eq('column_name', column)
+      .single();
     
     if (error) {
       console.error(`Error checking if column ${column} exists in ${table}:`, error);

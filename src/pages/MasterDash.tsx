@@ -1,4 +1,3 @@
-
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
@@ -25,6 +24,7 @@ import {
   AlertTriangle
 } from 'lucide-react';
 import { Button } from "@/components/ui/button";
+import { useUserPreferences } from '@/hooks/useUserPreferences';
 
 const MasterDash = () => {
   const navigate = useNavigate();

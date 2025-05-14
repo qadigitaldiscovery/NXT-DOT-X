@@ -71,7 +71,7 @@ export function useUserPreferences<T>({
           user_id: user.id,
           module,
           key,
-          value: newPreferences,
+          value: newPreferences as any, // Type casting to satisfy Supabase types
           updated_at: new Date().toISOString()
         });
 
