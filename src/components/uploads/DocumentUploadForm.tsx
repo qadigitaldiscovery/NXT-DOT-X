@@ -20,6 +20,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "@/hooks/use-toast";
 import { UploadCloud, FileText } from 'lucide-react';
+import { uploadDocument } from '@/utils/upload-service';
 
 // Document types
 const DOCUMENT_TYPES = [
@@ -99,98 +100,46 @@ export function DocumentUploadForm({ supplierId, onUploadComplete }: DocumentUpl
     event.preventDefault();
     
     if (!selectedFile || !documentName || !documentType) {
-      toast.error("Please fill all required fields");
+      toast.error({
+        title: "Missing information",
+        description: "Please fill all required fields"
+      });
       return;
     }
     
     setIsUploading(true);
-    setUploadProgress(10);
+    setUploadProgress(0);
     
     try {
-      // Check if it's a ZIP file for special handling
-      if (isZipFile(selectedFile)) {
-        console.log("ZIP file detected, using special handling");
-        setProcessingMessage("Processing ZIP file...");
+      console.log("Starting upload process...");
+      
+      const success = await uploadDocument({
+        file: selectedFile,
+        documentName,
+        documentType,
+        expiryDate,
+        onProgress: setUploadProgress,
+        onProcessingMessage: setProcessingMessage
+      });
+      
+      if (success) {
+        // Reset form
+        setSelectedFile(null);
+        setDocumentName('');
+        setDocumentType('');
+        setExpiryDate('');
         
-        // Simulate upload progress
-        const progressInterval = setInterval(() => {
-          setUploadProgress(prev => {
-            if (prev >= 90) {
-              clearInterval(progressInterval);
-              return 90;
-            }
-            return prev + 10;
-          });
-        }, 500);
-        
-        // For ZIP files, we'll use a more direct approach to ensure we see any errors
-        const formData = new FormData();
-        formData.append('file', selectedFile);
-        formData.append('documentName', documentName);
-        formData.append('documentType', documentType);
-        
-        try {
-          setProcessingMessage("Uploading ZIP file...");
-          
-          // Create a simpler upload approach for testing
-          setTimeout(() => {
-            setProcessingMessage("Extracting ZIP contents...");
-            
-            setTimeout(() => {
-              clearInterval(progressInterval);
-              setUploadProgress(100);
-              setIsUploading(false);
-              setProcessingMessage("");
-              
-              toast.success(`Document "${documentName}" uploaded and processed successfully`);
-              
-              // Reset form
-              setSelectedFile(null);
-              setDocumentName('');
-              setDocumentType('');
-              setExpiryDate('');
-              
-              if (onUploadComplete) {
-                onUploadComplete();
-              }
-            }, 2000);
-          }, 2000);
-        } catch (zipError: any) {
-          console.error("Error processing ZIP file:", zipError);
-          toast.error(`ZIP processing failed: ${zipError.message || 'Unknown error'}`);
-          clearInterval(progressInterval);
-          setIsUploading(false);
-          setProcessingMessage("");
+        if (onUploadComplete) {
+          onUploadComplete();
         }
-      } else {
-        // Standard file upload (non-ZIP)
-        let progress = 10;
-        const interval = setInterval(() => {
-          progress += 10;
-          setUploadProgress(progress);
-          
-          if (progress >= 100) {
-            clearInterval(interval);
-            setIsUploading(false);
-            
-            toast.success(`Document "${documentName}" uploaded successfully`);
-            
-            // Reset form
-            setSelectedFile(null);
-            setDocumentName('');
-            setDocumentType('');
-            setExpiryDate('');
-            setProcessingMessage("");
-            
-            if (onUploadComplete) {
-              onUploadComplete();
-            }
-          }
-        }, 200);
       }
     } catch (error: any) {
       console.error('Upload error:', error);
-      toast.error(`Upload failed: ${error.message || 'Unknown error'}`);
+      toast.error({
+        title: "Upload failed",
+        description: error.message || 'Unknown error'
+      });
+    } finally {
       setIsUploading(false);
       setProcessingMessage("");
     }

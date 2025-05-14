@@ -1,89 +1,84 @@
 
-import { toast as sonnerToast, type ToastT } from "sonner";
-import type { ReactNode } from "react";
+import { ReactNode } from 'react';
+import { toast as sonnerToast } from 'sonner';
 
-// Define the Toast type to match expected interface
-export type Toast = {
-  id: string;
-  title?: React.ReactNode;
-  description?: React.ReactNode;
-  action?: React.ReactNode;
-  [key: string]: unknown;
+export type ToastProps = {
+  title?: ReactNode;
+  description?: ReactNode;
+  variant?: 'default' | 'destructive';
 };
 
-// Extended toast function with success and error methods
+// Define a type that extends the sonner toast function with shadcn-like methods
 interface ExtendedToastFunction {
-  (props: { title?: ReactNode; description?: ReactNode; variant?: "default" | "destructive" }): string | number;
-  success: (message: string | { title?: ReactNode; description?: ReactNode }) => string | number;
-  error: (message: string | { title?: ReactNode; description?: ReactNode }) => string | number;
+  (props: ToastProps): string | number;
+  success: (
+    message: string | ToastProps
+  ) => string | number;
+  error: (
+    message: string | ToastProps
+  ) => string | number;
 }
 
-// Create a useToast hook that returns the toast function and an empty toasts array
-// This mimics the shadcn toast API but uses sonner under the hood
+// Create a function that adapts shadcn toast API to sonner
 export const useToast = () => {
-  const extendedToast = ((props: { title?: ReactNode; description?: ReactNode; variant?: "default" | "destructive" }) => {
-    // For object params, adapt to sonner's expected format
-    return sonnerToast(props.description as string, {
-      // Map the shadcn toast API to sonner's API
-      description: props.title as string,
-    });
-  }) as ExtendedToastFunction;
-
-  // Add success and error methods
-  extendedToast.success = (message) => {
-    if (typeof message === 'string') {
-      return sonnerToast.success(message);
-    } else {
-      return sonnerToast.success(message.description as string, {
-        description: message.title as string,
-      });
-    }
-  };
-
-  extendedToast.error = (message) => {
-    if (typeof message === 'string') {
-      return sonnerToast.error(message);
-    } else {
-      return sonnerToast.error(message.description as string, {
-        description: message.title as string,
-      });
-    }
-  };
-
   return {
-    toast: extendedToast,
-    toasts: [] as Toast[],
-    dismiss: (id: string) => {},
+    toast: ((props: ToastProps) => {
+      // For object params, adapt to sonner's expected format
+      return sonnerToast(props.title as string, {
+        description: props.description as string,
+      });
+    }) as ExtendedToastFunction,
   };
 };
 
-// Export the standalone toast function that can be imported and used without the hook
-// Adapting the function to match both APIs
-export const toast = ((props: { title?: ReactNode; description?: ReactNode; variant?: "default" | "destructive" }) => {
-  return sonnerToast(props.description as string, {
-    description: props.title as string,
-  });
-}) as ExtendedToastFunction;
-
-// Add success and error methods to the standalone toast function
-toast.success = (message) => {
+// Add helper methods to adapt between APIs
+useToast().toast.success = (message: string | ToastProps) => {
   if (typeof message === 'string') {
     return sonnerToast.success(message);
   } else {
-    return sonnerToast.success(message.description as string, {
-      description: message.title as string,
+    return sonnerToast.success(message.title as string, {
+      description: message.description as string,
     });
   }
 };
 
-toast.error = (message) => {
+useToast().toast.error = (message: string | ToastProps) => {
   if (typeof message === 'string') {
     return sonnerToast.error(message);
   } else {
-    return sonnerToast.error(message.description as string, {
-      description: message.title as string,
+    return sonnerToast.error(message.title as string, {
+      description: message.description as string,
     });
   }
 };
 
-// Type export for consistent usage throughout the application
+// Export the toast function directly for ease of use
+export const toast = ((props: ToastProps) => {
+  return sonnerToast(props.title as string, {
+    description: props.description as string,
+  });
+}) as ExtendedToastFunction;
+
+// Add helper methods for direct export
+toast.success = (message: string | ToastProps) => {
+  if (typeof message === 'string') {
+    return sonnerToast.success(message);
+  } else {
+    return sonnerToast.success(message.title as string, {
+      description: message.description as string,
+    });
+  }
+};
+
+toast.error = (message: string | ToastProps) => {
+  if (typeof message === 'string') {
+    return sonnerToast.error(message);
+  } else {
+    return sonnerToast.error(message.title as string, {
+      description: message.description as string,
+    });
+  }
+};
+
+// Export types for components
+export type { ToastProps as Toast };
