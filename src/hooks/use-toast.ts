@@ -22,9 +22,10 @@ interface ExtendedToastFunction {
 // This mimics the shadcn toast API but uses sonner under the hood
 export const useToast = () => {
   const extendedToast = ((props: { title?: ReactNode; description?: ReactNode; variant?: "default" | "destructive" }) => {
+    // For object params, adapt to sonner's expected format
     return sonnerToast(props.description as string, {
       // Map the shadcn toast API to sonner's API
-      ...(props.title && { title: props.title }),
+      title: props.title as string,
     });
   }) as ExtendedToastFunction;
 
@@ -34,7 +35,7 @@ export const useToast = () => {
       return sonnerToast.success(message);
     } else {
       return sonnerToast.success(message.description as string, {
-        ...(message.title && { title: message.title }),
+        title: message.title as string,
       });
     }
   };
@@ -44,7 +45,7 @@ export const useToast = () => {
       return sonnerToast.error(message);
     } else {
       return sonnerToast.error(message.description as string, {
-        ...(message.title && { title: message.title }),
+        title: message.title as string,
       });
     }
   };
@@ -60,7 +61,7 @@ export const useToast = () => {
 // Adapting the function to match both APIs
 export const toast = ((props: { title?: ReactNode; description?: ReactNode; variant?: "default" | "destructive" }) => {
   return sonnerToast(props.description as string, {
-    ...(props.title && { title: props.title }),
+    title: props.title as string,
   });
 }) as ExtendedToastFunction;
 
@@ -70,7 +71,7 @@ toast.success = (message) => {
     return sonnerToast.success(message);
   } else {
     return sonnerToast.success(message.description as string, {
-      ...(message.title && { title: message.title }),
+      title: message.title as string,
     });
   }
 };
@@ -80,10 +81,9 @@ toast.error = (message) => {
     return sonnerToast.error(message);
   } else {
     return sonnerToast.error(message.description as string, {
-      ...(message.title && { title: message.title }),
+      title: message.title as string,
     });
   }
 };
 
-// Type export
-export type { Toast };
+// Type export for consistent usage throughout the application
