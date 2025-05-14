@@ -15,7 +15,7 @@ export type UploadDocumentParams = {
 /**
  * Ensures documents bucket exists by calling the edge function
  */
-async function ensureDocumentsBucketExists(): Promise<boolean> {
+async function ensureDocumentsBucketExists(onProcessingMessage?: (message: string) => void): Promise<boolean> {
   try {
     onProcessingMessage?.("Setting up storage...");
     
@@ -79,7 +79,7 @@ async function prepareForUpload(onProcessingMessage?: (message: string) => void)
     } else {
       // If bucket doesn't exist, try to create it via edge function
       onProcessingMessage?.("Setting up storage bucket...");
-      return await ensureDocumentsBucketExists();
+      return await ensureDocumentsBucketExists(onProcessingMessage);
     }
   } catch (error) {
     console.error("Error preparing for upload:", error);
@@ -128,7 +128,7 @@ export const uploadDocument = async ({
           throw new Error('The documents storage bucket does not exist. Please try refreshing the page or contact your administrator.');
         }
         
-        if (storageError.statusCode === '403') {
+        if (storageError.message?.includes('403') || storageError.message?.toLowerCase().includes('permission')) {
           throw new Error('Permission denied. You may not have rights to upload documents.');
         }
         
