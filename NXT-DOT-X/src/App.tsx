@@ -1,10 +1,11 @@
+
 import React from "react";
-import MasterDash from "../../src/pages/MasterDash";
+import { AppRoutes } from "../../src/routes/AppRoutes";
 
 function App() {
   return (
     <div>
-      <MasterDash />
+      <AppRoutes />
     </div>
   );
 }
