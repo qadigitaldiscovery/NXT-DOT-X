@@ -1,46 +1,25 @@
 
 import React, { useEffect } from 'react';
-import { Navigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
-import MasterDash from '@/pages/MasterDash';
-import { useModuleAccess } from '@/hooks/useModuleAccess'; 
-import { supabase } from '@/integrations/supabase/client';
-import { toast } from 'sonner';
 
 const RootHandler: React.FC = () => {
-  const { isAuthenticated, user } = useAuth();
-  const { moduleAccess, refreshAccess } = useModuleAccess();
-  
-  // If the user doesn't have any roles assigned, we'll initialize them as an admin
-  // This is just for demonstration purposes - in a real app, you would have a proper onboarding flow
-  useEffect(() => {
-    const initializeUserAccess = async () => {
-      if (user && moduleAccess && moduleAccess.roles.length === 0) {
-        try {
-          const { data, error } = await supabase.functions.invoke('init-admin-access', {
-            body: { userId: user.id }
-          });
-          
-          if (error) throw error;
-          
-          toast.success('Admin access granted');
-          refreshAccess(); // Refresh the user's access after initialization
-          
-        } catch (err) {
-          console.error('Error initializing user access:', err);
-          toast.error('Failed to initialize user access');
-        }
-      }
-    };
-    
-    initializeUserAccess();
-  }, [user, moduleAccess]);
+  const navigate = useNavigate();
+  const { isAuthenticated } = useAuth();
 
-  if (isAuthenticated) {
-    return <MasterDash />;
-  } else {
-    return <Navigate to="/landing" replace />;
-  }
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate('/master');
+    } else {
+      navigate('/landing');
+    }
+  }, [isAuthenticated, navigate]);
+
+  return (
+    <div className="h-screen w-full flex items-center justify-center">
+      <div className="animate-pulse text-red-600">Redirecting...</div>
+    </div>
+  );
 };
 
 export default RootHandler;
