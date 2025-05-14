@@ -3,6 +3,7 @@ import React, { Suspense } from 'react';
 import { PlatformLayout } from '@/components/layouts/PlatformLayout';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
 import { ragDashboardNavigation } from '@/components/rag-dashboard/config/dashboardNavigation';
 import AlertsList from '@/components/rag-dashboard/AlertsList';
@@ -13,6 +14,7 @@ import { AlertTriangle, Settings, Bell } from 'lucide-react';
 import { useAlerts } from '@/hooks/useAlerts';
 import { useThresholdRules } from '@/hooks/useThresholdRules';
 import { useUserPreferences } from '@/hooks/useUserPreferences';
+import { useModules } from '@/hooks/useModules';
 
 const LoadingCard = () => (
   <Card>
@@ -40,13 +42,24 @@ const RAGAlerts = () => {
   
   const [activeTab, setActiveTab] = React.useState('current');
   const { alerts, loading: alertsLoading, resolveAlert } = useAlerts();
-  const { rules, loading: rulesLoading } = useThresholdRules();
+  const { rules, loading: rulesLoading, deleteRule, addRule } = useThresholdRules();
+  const { modules } = useModules();
+  const [selectedModule, setSelectedModule] = React.useState<string | null>(null);
   
   React.useEffect(() => {
     if (!prefsLoading && preferences?.activeTab) {
       setActiveTab(preferences.activeTab);
     }
   }, [preferences, prefsLoading]);
+
+  // Handle adding a new rule
+  const handleAddRule = async (rule: any) => {
+    const result = await addRule(rule);
+    if (result.success) {
+      setActiveTab('rules');
+    }
+    return result;
+  };
 
   return (
     <PlatformLayout moduleTitle="RAG Alerts Center" navCategories={ragDashboardNavigation}>
@@ -100,23 +113,61 @@ const RAGAlerts = () => {
               {rulesLoading ? (
                 <LoadingCard />
               ) : (
-                <ThresholdRulesList rules={rules || []} />
+                <ThresholdRulesList 
+                  rules={rules || []} 
+                  onDeleteRule={deleteRule} 
+                  loading={rulesLoading}
+                />
               )}
             </Suspense>
           </TabsContent>
           
           <TabsContent value="new-rule" className="space-y-4 mt-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Create New Alert Rule</CardTitle>
-                <CardDescription>
-                  Define conditions that will trigger system alerts
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <RuleForm onSuccess={() => setActiveTab('rules')} />
-              </CardContent>
-            </Card>
+            {modules && modules.length > 0 && selectedModule === null && (
+              <Card>
+                <CardHeader>
+                  <CardTitle>Select Module</CardTitle>
+                  <CardDescription>
+                    Choose a module to create a rule for
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {modules.map(module => (
+                      <Card 
+                        key={module.id} 
+                        className="cursor-pointer hover:bg-slate-50" 
+                        onClick={() => setSelectedModule(module.id)}
+                      >
+                        <CardContent className="p-4">
+                          <h3 className="font-medium">{module.name}</h3>
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+            
+            {selectedModule && modules && (
+              <div>
+                <Button variant="outline" onClick={() => setSelectedModule(null)} className="mb-4">
+                  ← Back to module selection
+                </Button>
+                <RuleForm 
+                  module={modules.find(m => m.id === selectedModule)!} 
+                  onAddRule={handleAddRule}
+                />
+              </div>
+            )}
+            
+            {!modules || modules.length === 0 ? (
+              <Card>
+                <CardContent className="p-6">
+                  <p>No modules are available. Please add modules first.</p>
+                </CardContent>
+              </Card>
+            ) : null}
           </TabsContent>
         </Tabs>
       </div>
