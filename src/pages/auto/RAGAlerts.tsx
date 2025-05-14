@@ -5,10 +5,10 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { useNavigate } from 'react-router-dom';
 import { ragDashboardNavigation } from '@/components/rag-dashboard/config/dashboardNavigation';
-import { AlertsList } from '@/components/rag-dashboard/AlertsList';
-import { ThresholdRulesList } from '@/components/rag-dashboard/ThresholdRulesList';
+import AlertsList from '@/components/rag-dashboard/AlertsList';
+import ThresholdRulesList from '@/components/rag-dashboard/ThresholdRulesList';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { RuleForm } from '@/components/rag-dashboard/RuleForm';
+import RuleForm from '@/components/rag-dashboard/RuleForm';
 import { AlertTriangle, Settings, Bell } from 'lucide-react';
 import { useAlerts } from '@/hooks/useAlerts';
 import { useThresholdRules } from '@/hooks/useThresholdRules';
@@ -39,8 +39,8 @@ const RAGAlerts = () => {
   });
   
   const [activeTab, setActiveTab] = React.useState('current');
-  const { data: alerts, isLoading: alertsLoading } = useAlerts();
-  const { data: rules, isLoading: rulesLoading } = useThresholdRules();
+  const { alerts, loading: alertsLoading, resolveAlert } = useAlerts();
+  const { rules, loading: rulesLoading } = useThresholdRules();
   
   React.useEffect(() => {
     if (!prefsLoading && preferences?.activeTab) {
@@ -49,7 +49,7 @@ const RAGAlerts = () => {
   }, [preferences, prefsLoading]);
 
   return (
-    <PlatformLayout navCategories={ragDashboardNavigation}>
+    <PlatformLayout moduleTitle="RAG Alerts Center" navCategories={ragDashboardNavigation}>
       <div className="container mx-auto p-4">
         <div className="flex justify-between items-center mb-6">
           <div>
@@ -90,7 +90,7 @@ const RAGAlerts = () => {
               {alertsLoading ? (
                 <LoadingCard />
               ) : (
-                <AlertsList alerts={alerts || []} />
+                <AlertsList alerts={alerts || []} onResolve={resolveAlert} />
               )}
             </Suspense>
           </TabsContent>

@@ -2,13 +2,15 @@
 import React, { Suspense } from 'react';
 import { PlatformLayout } from '@/components/layouts/PlatformLayout';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
-import { RAGDashboardGrid } from '@/components/rag-dashboard/RAGDashboardGrid';
-import { ModuleStatusFilter } from '@/components/rag-dashboard/ModuleStatusFilter';
-import { NotificationsPopover } from '@/components/rag-dashboard/NotificationsPopover';
-import { OverviewStats } from '@/components/rag-dashboard/OverviewStats';
+import RAGDashboardGrid from '@/components/rag-dashboard/RAGDashboardGrid';
+import ModuleStatusFilter from '@/components/rag-dashboard/ModuleStatusFilter';
+import NotificationsPopover from '@/components/rag-dashboard/NotificationsPopover';
+import OverviewStats from '@/components/rag-dashboard/OverviewStats';
 import { DashboardProvider } from '@/components/rag-dashboard/providers/DashboardProvider';
 import { ragDashboardNavigation } from '@/components/rag-dashboard/config/dashboardNavigation';
 import { AlertCircle } from 'lucide-react';
+import { useModules } from '@/hooks/useModules';
+import { useAlerts } from '@/hooks/useAlerts';
 
 const LoadingFallback = () => (
   <div className="w-full h-64 flex items-center justify-center">
@@ -45,21 +47,48 @@ const ErrorBoundary = ({ children }: { children: React.ReactNode }) => {
 };
 
 const RAGDashboardPage = () => {
+  const { modules, loading: modulesLoading, error: modulesError, refreshModules } = useModules();
+  const { alerts, loading: alertsLoading, error: alertsError, resolveAlert } = useAlerts();
+  const [searchQuery, setSearchQuery] = React.useState('');
+  const [selectedStatus, setSelectedStatus] = React.useState<string | null>(null);
+
+  const handleAddRule = async (rule: any) => {
+    // Implementation would go here
+    return { success: true };
+  };
+
+  const handleDeleteRule = async (id: string) => {
+    // Implementation would go here
+    return { success: true };
+  };
+
   return (
-    <PlatformLayout navCategories={ragDashboardNavigation}>
-      <DashboardProvider>
+    <PlatformLayout moduleTitle="RAG Status Dashboard" navCategories={ragDashboardNavigation}>
+      <DashboardProvider 
+        refreshModules={refreshModules} 
+        resolveAlert={resolveAlert} 
+        addRule={handleAddRule} 
+        deleteRule={handleDeleteRule}
+      >
         <div className="container mx-auto p-4">
           <div className="flex justify-between items-center mb-6">
             <h1 className="text-2xl font-bold">RAG Status Dashboard</h1>
             <div className="flex items-center space-x-2">
-              <ModuleStatusFilter />
+              <ModuleStatusFilter
+                selectedStatus={selectedStatus}
+                onStatusSelect={setSelectedStatus}
+                searchQuery={searchQuery}
+                onSearchChange={setSearchQuery}
+              />
               <NotificationsPopover />
             </div>
           </div>
           
           <ErrorBoundary>
             <Suspense fallback={<LoadingFallback />}>
-              <OverviewStats />
+              {!modulesLoading && !alertsLoading && (
+                <OverviewStats modules={modules} alerts={alerts} />
+              )}
             </Suspense>
           </ErrorBoundary>
           

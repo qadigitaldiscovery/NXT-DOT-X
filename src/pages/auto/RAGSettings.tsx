@@ -59,7 +59,7 @@ const RAGSettings = () => {
 
   if (loading) {
     return (
-      <PlatformLayout navCategories={ragDashboardNavigation}>
+      <PlatformLayout moduleTitle="RAG Dashboard Settings" navCategories={ragDashboardNavigation}>
         <div className="container mx-auto p-4">
           <Card>
             <CardHeader>
@@ -83,7 +83,7 @@ const RAGSettings = () => {
   }
 
   return (
-    <PlatformLayout navCategories={ragDashboardNavigation}>
+    <PlatformLayout moduleTitle="RAG Dashboard Settings" navCategories={ragDashboardNavigation}>
       <div className="container mx-auto p-4">
         <Card>
           <CardHeader>
