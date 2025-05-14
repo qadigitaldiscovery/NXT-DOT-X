@@ -1,82 +1,103 @@
 
+// Follow Deno runtime requirements for Supabase Edge Functions
+// deno-lint-ignore-file no-explicit-any
+
 import { serve } from "https://deno.land/std@0.177.0/http/server.ts";
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.29.0";
 
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
-};
+interface ResponseData {
+  success: boolean;
+  message?: string;
+  error?: string;
+}
 
-serve(async (req) => {
-  // Handle CORS preflight requests
-  if (req.method === "OPTIONS") {
-    return new Response(null, { headers: corsHeaders });
+serve(async (req: Request) => {
+  console.log("Starting create-documents-bucket function");
+
+  // Get Supabase client using environment variables
+  const supabaseUrl = Deno.env.get("SUPABASE_URL") as string;
+  const supabaseAnonKey = Deno.env.get("SUPABASE_ANON_KEY") as string;
+  const supabaseServiceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") as string;
+  
+  if (!supabaseUrl || !supabaseServiceRoleKey) {
+    console.error("Missing environment variables");
+    return new Response(
+      JSON.stringify({
+        success: false,
+        error: "Server configuration error",
+      }),
+      { status: 500, headers: { "Content-Type": "application/json" } }
+    );
   }
 
+  // Initialize the client with the service role key for admin privileges
+  const supabase = createClient(supabaseUrl, supabaseServiceRoleKey);
+  
   try {
-    console.log("Starting create-documents-bucket function");
-    
-    // Initialize Supabase client
-    const supabaseUrl = Deno.env.get("SUPABASE_URL");
-    const supabaseServiceRole = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
-    
-    if (!supabaseUrl || !supabaseServiceRole) {
-      throw new Error("Missing required environment variables: SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY");
-    }
-    
-    // Using service role for storage bucket operations
-    const supabase = createClient(supabaseUrl, supabaseServiceRole);
-
-    // Check if the documents bucket exists
     console.log("Checking if documents bucket exists...");
-    const { data: buckets, error: bucketsError } = await supabase.storage.listBuckets();
     
-    if (bucketsError) {
-      throw new Error(`Failed to list storage buckets: ${bucketsError.message}`);
+    // Check if the bucket already exists
+    const { data: buckets, error: listError } = await supabase.storage.listBuckets();
+    
+    if (listError) {
+      console.error("Error listing buckets:", listError);
+      return new Response(
+        JSON.stringify({
+          success: false,
+          error: `Failed to check buckets: ${listError.message}`,
+        }),
+        { status: 500, headers: { "Content-Type": "application/json" } }
+      );
     }
     
-    const documentsBucketExists = buckets.some(bucket => bucket.name === 'documents');
-    console.log(`Documents bucket exists: ${documentsBucketExists}`);
+    const bucketExists = buckets?.some(bucket => bucket.name === "documents");
+    console.log(`Documents bucket exists: ${bucketExists}`);
     
-    if (!documentsBucketExists) {
-      console.log("Creating documents bucket...");
-      const { error: createError } = await supabase.storage.createBucket('documents', {
-        public: true,
-        fileSizeLimit: 52428800, // 50MB
-      });
-      
-      if (createError) {
-        throw new Error(`Failed to create documents bucket: ${createError.message}`);
-      }
-      console.log("Documents bucket created successfully");
-      
-      return new Response(
-        JSON.stringify({ 
-          success: true, 
-          message: "Documents storage created successfully" 
-        }),
-        { headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
-    } else {
+    if (bucketExists) {
       console.log("Documents bucket already exists, no action needed");
-      
       return new Response(
-        JSON.stringify({ 
-          success: true, 
-          message: "Documents storage already exists" 
+        JSON.stringify({
+          success: true,
+          message: "Documents storage already exists",
         }),
-        { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        { status: 200, headers: { "Content-Type": "application/json" } }
       );
     }
     
-  } catch (error) {
-    console.error("Error creating documents bucket:", error);
+    // Create the bucket if it doesn't exist
+    const { data, error } = await supabase.storage.createBucket("documents", {
+      public: true, // Make it public so files can be accessed without authentication
+      fileSizeLimit: 52428800, // 50MB in bytes
+    });
+    
+    if (error) {
+      console.error("Error creating bucket:", error);
+      return new Response(
+        JSON.stringify({
+          success: false,
+          error: `Failed to create documents bucket: ${error.message}`,
+        }),
+        { status: 500, headers: { "Content-Type": "application/json" } }
+      );
+    }
+    
+    console.log("Documents bucket created successfully");
+    
     return new Response(
-      JSON.stringify({ 
-        success: false, 
-        error: error.message || "Unknown error occurred" 
+      JSON.stringify({
+        success: true,
+        message: "Documents storage created successfully",
       }),
-      { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 500 }
+      { status: 200, headers: { "Content-Type": "application/json" } }
+    );
+  } catch (e) {
+    console.error("Exception:", e);
+    return new Response(
+      JSON.stringify({
+        success: false,
+        error: `Unexpected error: ${e.message}`,
+      }),
+      { status: 500, headers: { "Content-Type": "application/json" } }
     );
   }
 });

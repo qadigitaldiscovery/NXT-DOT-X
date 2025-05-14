@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Upload, File, X, Archive, AlertTriangle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -46,48 +45,79 @@ export const DocumentUpload = ({
   const [timeoutId, setTimeoutId] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
 
+  // Check bucket exists on component mount
   useEffect(() => {
-    // Check if the documents bucket exists and create it if it doesn't
-    const checkAndCreateBucket = async () => {
+    const checkBucketExists = async () => {
       try {
         setIsCreatingBucket(true);
         setError(null);
         console.log('Checking if documents bucket exists...');
         
-        // Call our edge function to create the bucket
-        const { data, error } = await supabase.functions.invoke('create-documents-bucket');
+        // Explicitly check if the bucket exists first
+        const { data: bucketsList, error: bucketsError } = await supabase.storage.listBuckets();
         
-        if (error) {
-          const errorMessage = `Error creating documents bucket: ${error.message}`;
-          console.error(errorMessage);
-          setError(errorMessage);
-          toast.error('Error setting up document storage. Please try again later.');
+        if (bucketsError) {
+          console.error('Error checking buckets:', bucketsError);
+          setError(`Failed to check storage buckets: ${bucketsError.message}`);
+          setIsCreatingBucket(false);
           return;
         }
         
-        console.log('Bucket creation/check response:', data);
-        if (data?.success) {
-          toast.success(data.message || 'Document storage initialized successfully');
+        // Check if the documents bucket exists
+        const documentsBucket = bucketsList?.find(b => b.name === 'documents');
+        
+        if (documentsBucket) {
+          console.log('Documents bucket already exists');
           setIsBucketReady(true);
-          setError(null);
-        } else {
-          const errorMessage = data?.error || 'Failed to initialize document storage';
-          setError(errorMessage);
-          toast.error(errorMessage);
+          setIsCreatingBucket(false);
+          return;
         }
-      } catch (error) {
-        const errorMessage = `Error checking bucket: ${error.message || 'Unknown error'}`;
-        console.error(errorMessage);
-        setError(errorMessage);
-        toast.error(`Error setting up document storage: ${error.message || 'Unknown error'}`);
+        
+        // If bucket doesn't exist, try to create it
+        console.log('Documents bucket not found, attempting to create...');
+        try {
+          // Try direct creation first (may work depending on permissions)
+          const { data: createData, error: createError } = await supabase.storage.createBucket('documents', {
+            public: false,
+            fileSizeLimit: 50 * 1024 * 1024, // 50MB limit
+          });
+          
+          if (createError) {
+            console.log('Direct bucket creation failed, trying edge function...');
+            // Fall back to edge function if direct creation fails
+            const { data, error } = await supabase.functions.invoke('create-documents-bucket');
+            
+            if (error) {
+              throw new Error(`Edge function error: ${error.message}`);
+            }
+            
+            if (data?.success) {
+              toast.success('Document storage initialized successfully');
+              setIsBucketReady(true);
+            } else {
+              throw new Error(data?.error || 'Unknown error creating bucket');
+            }
+          } else {
+            toast.success('Document storage created successfully');
+            setIsBucketReady(true);
+          }
+        } catch (createAttemptError) {
+          console.error('Failed to create bucket:', createAttemptError);
+          setError(`Failed to initialize document storage: ${createAttemptError.message}`);
+          toast.error(`Error setting up document storage: ${createAttemptError.message}`);
+        }
+      } catch (e) {
+        console.error('Error in bucket check/creation:', e);
+        setError(`Storage initialization error: ${e.message}`);
+        toast.error(`Failed to initialize storage: ${e.message}`);
       } finally {
         setIsCreatingBucket(false);
       }
     };
     
-    checkAndCreateBucket();
-
-    // Cleanup function to clear any timeouts when component unmounts
+    checkBucketExists();
+    
+    // Cleanup function
     return () => {
       if (timeoutId) {
         clearTimeout(timeoutId);
@@ -146,44 +176,12 @@ export const DocumentUpload = ({
       return;
     }
     
+    console.log('File selected:', selectedFile.name, selectedFile.size, selectedFile.type);
     setFile(selectedFile);
     
     // Auto-populate title from filename
     if (!title) {
       setTitle(selectedFile.name.replace(/\.[^/.]+$/, ""));
-    }
-  };
-
-  const retryBucketCreation = async () => {
-    setError(null);
-    setIsCreatingBucket(true);
-    
-    try {
-      const { data, error } = await supabase.functions.invoke('create-documents-bucket');
-      
-      if (error) {
-        console.error('Error creating bucket on retry:', error);
-        setError(`Failed to create storage bucket: ${error.message}`);
-        toast.error('Could not create document storage bucket. Please try again later.');
-        return false;
-      }
-      
-      if (data?.success) {
-        toast.success('Document storage initialized successfully');
-        setIsBucketReady(true);
-        return true;
-      } else {
-        setError(data?.error || 'Unknown error creating bucket');
-        toast.error(data?.error || 'Failed to create storage bucket');
-        return false;
-      }
-    } catch (error) {
-      console.error('Error in retryBucketCreation:', error);
-      setError(`Error: ${error.message}`);
-      toast.error(`Error creating bucket: ${error.message}`);
-      return false;
-    } finally {
-      setIsCreatingBucket(false);
     }
   };
 
@@ -197,48 +195,19 @@ export const DocumentUpload = ({
       const filePath = `uploads/zip/${Date.now()}-${zipFile.name}`;
       setExtractionProgress(20);
 
-      // Make sure bucket is ready
-      if (!isBucketReady) {
-        // Try to create bucket again
-        const bucketCreated = await retryBucketCreation();
-        
-        if (!bucketCreated) {
-          setIsProcessingZip(false);
-          return false;
-        }
-        
-        // Wait a moment for bucket creation to propagate
-        await new Promise(resolve => setTimeout(resolve, 1000));
-      }
-
+      console.log('Uploading ZIP file to', filePath);
       // Upload the ZIP file
-      try {
-        const { data: uploadData, error: uploadError } = await supabase.storage
-          .from('documents')
-          .upload(filePath, zipFile, {
-            cacheControl: '3600',
-            upsert: true  // Changed to true to overwrite if needed
-          });
+      const { data: uploadData, error: uploadError } = await supabase.storage
+        .from('documents')
+        .upload(filePath, zipFile, {
+          cacheControl: '3600',
+          upsert: true
+        });
 
-        if (uploadError) {
-          const errorMsg = `Error uploading ZIP file: ${uploadError.message}`;
-          console.error(errorMsg);
-          setError(errorMsg);
-          
-          if (uploadError.message?.includes('bucket') || uploadError.message?.includes('not found')) {
-            toast.error('Storage bucket not found. Please try refreshing the page.');
-          } else {
-            toast.error(errorMsg);
-          }
-          
-          setIsProcessingZip(false);
-          return false;
-        }
-      } catch (uploadError) {
-        const errorMsg = `Exception during upload: ${uploadError.message}`;
-        console.error(errorMsg);
-        setError(errorMsg);
-        toast.error(errorMsg);
+      if (uploadError) {
+        console.error('Error uploading ZIP file:', uploadError);
+        setError(`Upload error: ${uploadError.message}`);
+        toast.error(`Failed to upload ZIP file: ${uploadError.message}`);
         setIsProcessingZip(false);
         return false;
       }
@@ -246,95 +215,59 @@ export const DocumentUpload = ({
       setExtractionProgress(50);
 
       // Get public URL for the zip file
-      let publicUrl = '';
-      try {
-        const { data: urlData } = await supabase.storage
-          .from('documents')
-          .getPublicUrl(filePath);
+      const { data: urlData } = await supabase.storage
+        .from('documents')
+        .getPublicUrl(filePath);
 
-        if (!urlData?.publicUrl) {
-          const errorMsg = 'Could not get public URL for uploaded ZIP file';
-          setError(errorMsg);
-          toast.error(errorMsg);
-          setIsProcessingZip(false);
-          return false;
+      if (!urlData?.publicUrl) {
+        setError('Could not get public URL for uploaded ZIP file');
+        toast.error('Failed to get access to the uploaded file');
+        setIsProcessingZip(false);
+        return false;
+      }
+      
+      const publicUrl = urlData.publicUrl;
+      setExtractionProgress(60);
+      console.log('Invoking extract-zip function with ZIP URL:', publicUrl);
+
+      // Call edge function to extract the ZIP file
+      const { data, error } = await supabase.functions.invoke('extract-zip', {
+        body: {
+          zipFileUrl: publicUrl,
+          categoryId,
+          author
         }
-        
-        publicUrl = urlData.publicUrl;
-      } catch (urlError) {
-        const errorMsg = `Error getting public URL: ${urlError.message}`;
-        console.error(errorMsg);
-        setError(errorMsg);
-        toast.error(errorMsg);
+      });
+      
+      setExtractionProgress(90);
+
+      if (error) {
+        console.error('Error invoking extract-zip function:', error);
+        setError(`Function error: ${error.message}`);
+        toast.error(`Failed to process ZIP file: ${error.message}`);
         setIsProcessingZip(false);
         return false;
       }
 
-      setExtractionProgress(60);
-      console.log('Invoking extract-zip function with ZIP URL:', publicUrl);
-
-      // Call our edge function to extract the ZIP file with timeout handling
-      try {
-        const extractTimeoutPromise = new Promise((_, reject) => {
-          setTimeout(() => reject(new Error("ZIP extraction timed out")), 25000); // 25 second timeout
-        });
-        
-        const extractPromise = supabase.functions.invoke('extract-zip', {
-          body: {
-            zipFileUrl: publicUrl,
-            categoryId,
-            author
-          }
-        });
-        
-        const result = await Promise.race([extractPromise, extractTimeoutPromise]);
-        const { data, error } = result as any;
-        
-        setExtractionProgress(90);
-
-        if (error) {
-          const errorMsg = `Error invoking extract-zip function: ${error.message}`;
-          console.error(errorMsg);
-          setError(errorMsg);
-          toast.error(errorMsg);
-          setIsProcessingZip(false);
-          return false;
+      setExtractionProgress(100);
+      
+      if (data && data.success) {
+        toast.success(`Successfully extracted ${data.totalFiles} files from ZIP archive`);
+        if (data.hasErrors) {
+          toast.warning(`Failed to process ${data.errors.length} files from the ZIP archive`);
         }
-
-        setExtractionProgress(100);
-        
-        if (data && data.success) {
-          toast.success(`Successfully extracted ${data.totalFiles} files from ZIP archive`);
-          if (data.hasErrors) {
-            toast.warning(`Failed to process ${data.errors.length} files from the ZIP archive`);
-          }
-          setIsProcessingZip(false);
-          return true;
-        } else {
-          const errorMsg = data?.error || 'Unknown error';
-          setError(`Failed to extract ZIP file: ${errorMsg}`);
-          toast.error(`Failed to extract ZIP file: ${errorMsg}`);
-          setIsProcessingZip(false);
-          return false;
-        }
-      } catch (extractError) {
-        const errorMsg = `Error during extraction: ${extractError.message}`;
-        console.error(errorMsg);
-        setError(errorMsg);
-        
-        if (extractError.message.includes('timed out')) {
-          toast.error('ZIP extraction timed out. The file may be too large or the server is busy.');
-        } else {
-          toast.error(`Error processing ZIP file: ${extractError.message}`);
-        }
-        
+        setIsProcessingZip(false);
+        return true;
+      } else {
+        setError(`Failed to extract ZIP file: ${data?.error || 'Unknown error'}`);
+        toast.error(`ZIP extraction failed: ${data?.error || 'Unknown error'}`);
         setIsProcessingZip(false);
         return false;
       }
     } catch (error) {
       console.error('Error processing ZIP file:', error);
-      setError(`Error processing ZIP file: ${error.message || 'Unknown error'}`);
-      toast.error(`Error processing ZIP file: ${error.message || 'Unknown error'}`);
+      setError(`Error: ${error.message}`);
+      toast.error(`Error processing ZIP file: ${error.message}`);
       setIsProcessingZip(false);
       return false;
     }
@@ -346,7 +279,7 @@ export const DocumentUpload = ({
       return;
     }
     
-    // Reset error state when starting a new upload
+    // Reset error state when starting new upload
     setError(null);
     
     // Clear any previous timeout
@@ -359,6 +292,7 @@ export const DocumentUpload = ({
     try {
       // Check if it's a ZIP file
       if (isZipFile(file)) {
+        console.log('Processing ZIP file:', file.name);
         // Set a timeout to prevent UI hanging indefinitely
         const newTimeoutId = window.setTimeout(() => {
           if (isProcessingZip) {
@@ -390,6 +324,7 @@ export const DocumentUpload = ({
         return;
       }
       
+      console.log('Processing regular file:', file.name);
       // Handle regular file upload with progress simulation
       let progress = 0;
       const interval = setInterval(() => {
@@ -402,6 +337,7 @@ export const DocumentUpload = ({
           
           // Process the file
           const documentType = getDocumentType(file);
+          console.log('Sending file to onFileUpload handler with type:', documentType);
           onFileUpload(file, documentType, {
             title,
             description,
@@ -421,8 +357,8 @@ export const DocumentUpload = ({
       }, 200);
     } catch (error) {
       console.error('Upload error:', error);
-      setError(`Upload failed: ${error.message || 'Unknown error'}`);
-      toast.error(`Upload failed: ${error.message || 'Unknown error'}`);
+      setError(`Upload failed: ${error.message}`);
+      toast.error(`Upload failed: ${error.message}`);
       setIsUploading(false);
     }
   };
@@ -549,16 +485,6 @@ export const DocumentUpload = ({
                 >
                   Select File
                 </Button>
-                {!isBucketReady && !isCreatingBucket && (
-                  <Button 
-                    variant="outline" 
-                    onClick={retryBucketCreation}
-                    className="mt-2"
-                    size="sm"
-                  >
-                    Retry Storage Setup
-                  </Button>
-                )}
                 <input
                   id="file-upload"
                   type="file"
