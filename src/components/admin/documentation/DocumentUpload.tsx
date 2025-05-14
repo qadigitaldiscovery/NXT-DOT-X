@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -11,8 +12,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { UploadCloud, File } from 'lucide-react';
+import { UploadCloud, File, AlertCircle } from 'lucide-react';
 import { isZipFile, uploadDocument } from '@/utils/upload-service';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 
 interface DocumentUploadProps {
   categories: DocumentCategory[];
@@ -34,11 +36,13 @@ export const DocumentUpload = ({ categories, onFileUpload }: DocumentUploadProps
   const [isUploading, setIsUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [processingMessage, setProcessingMessage] = useState('');
+  const [uploadError, setUploadError] = useState<string | null>(null);
   
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files[0]) {
       const file = event.target.files[0];
       setSelectedFile(file);
+      setUploadError(null);
       
       // Auto-populate title from filename if empty
       if (!title) {
@@ -71,6 +75,7 @@ export const DocumentUpload = ({ categories, onFileUpload }: DocumentUploadProps
     
     setIsUploading(true);
     setUploadProgress(0);
+    setUploadError(null);
     
     try {
       // If it's a ZIP file, use our utility for zip extraction
@@ -92,16 +97,39 @@ export const DocumentUpload = ({ categories, onFileUpload }: DocumentUploadProps
       } else {
         // Otherwise use the normal document upload flow
         setProcessingMessage("Uploading document...");
-        onFileUpload(selectedFile, type, {
-          title,
-          description,
-          author,
-          categoryId
-        });
-        resetForm();
+        
+        try {
+          // First try our direct upload method
+          const success = await uploadDocument({
+            file: selectedFile,
+            documentName: title,
+            documentType: categoryId,
+            onProgress: setUploadProgress,
+            onProcessingMessage: setProcessingMessage
+          });
+          
+          if (success) {
+            resetForm();
+            return;
+          }
+          
+          // If uploadDocument fails, fall back to the component's onFileUpload prop
+          onFileUpload(selectedFile, type, {
+            title,
+            description,
+            author,
+            categoryId
+          });
+          
+          resetForm();
+        } catch (error) {
+          setUploadError(error instanceof Error ? error.message : 'Unknown upload error');
+          console.error('Error during file upload:', error);
+        }
       }
     } catch (error) {
       console.error('Error uploading document:', error);
+      setUploadError(error instanceof Error ? error.message : 'Unknown error');
       toast.error('Upload failed: ' + (error instanceof Error ? error.message : 'Unknown error'));
     } finally {
       setIsUploading(false);
@@ -117,6 +145,7 @@ export const DocumentUpload = ({ categories, onFileUpload }: DocumentUploadProps
     setCategoryId('');
     setType('other');
     setUploadProgress(0);
+    setUploadError(null);
   };
 
   return (
@@ -213,6 +242,15 @@ export const DocumentUpload = ({ categories, onFileUpload }: DocumentUploadProps
           </div>
         </div>
       </div>
+
+      {uploadError && (
+        <Alert variant="destructive">
+          <AlertCircle className="h-4 w-4" />
+          <AlertDescription>
+            {uploadError}
+          </AlertDescription>
+        </Alert>
+      )}
 
       {selectedFile && isZipFile(selectedFile) && (
         <div className="bg-blue-50 p-3 rounded-md border border-blue-200">

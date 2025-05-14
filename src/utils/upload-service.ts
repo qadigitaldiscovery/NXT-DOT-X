@@ -13,12 +13,11 @@ export type UploadDocumentParams = {
 };
 
 /**
- * Ensures the document storage bucket exists
- * Returns true if the bucket exists or was created
+ * Checks if documents bucket exists and returns true if it does
  */
-async function ensureDocumentsBucketExists(): Promise<boolean> {
+async function checkDocumentsBucketExists(): Promise<boolean> {
   try {
-    // First check if bucket exists
+    // Check if bucket exists
     const { data: buckets, error: listError } = await supabase.storage.listBuckets();
     
     if (listError) {
@@ -26,44 +25,35 @@ async function ensureDocumentsBucketExists(): Promise<boolean> {
       return false;
     }
     
-    const bucketExists = buckets?.some(bucket => bucket.name === "documents");
+    return buckets?.some(bucket => bucket.name === "documents") || false;
+  } catch (error) {
+    console.error("Error checking if documents bucket exists:", error);
+    return false;
+  }
+}
+
+/**
+ * Instead of creating buckets (which requires admin permissions),
+ * we'll just check if it exists and proceed with upload
+ */
+async function prepareForUpload(): Promise<boolean> {
+  try {
+    // Check if bucket exists first
+    const bucketExists = await checkDocumentsBucketExists();
     
     if (bucketExists) {
       console.log("Documents bucket already exists");
       return true;
-    }
-    
-    // Try using the edge function first
-    const result = await tryUseEdgeFunction<{ success: boolean, message?: string, error?: string }>(
-      'storage',
-      'create-documents-bucket',
-      {}
-    );
-    
-    if (result?.success) {
-      console.log("Documents bucket created via edge function");
-      return true;
-    }
-    
-    // Fall back to direct creation if the edge function failed
-    // Note: This may fail due to permissions but we try anyway
-    const { data, error } = await supabase.storage.createBucket("documents", {
-      public: true,
-      fileSizeLimit: 52428800, // 50MB in bytes
-    });
-    
-    if (error) {
-      console.error("Error creating bucket directly:", error);
-      // Don't fail here, we'll attempt the upload anyway
+    } else {
+      // If bucket doesn't exist, log this but allow upload attempt anyway
+      // The user might have permissions to upload to an existing bucket but not create one
+      console.log("Documents bucket doesn't exist. Upload may fail if you don't have proper permissions.");
       return false;
     }
-    
-    console.log("Documents bucket created directly");
-    return true;
   } catch (error) {
-    console.error("Error ensuring documents bucket exists:", error);
-    // Don't fail here, we'll attempt the upload anyway
-    return false;
+    console.error("Error preparing for upload:", error);
+    // Still return true to attempt the upload anyway
+    return true;
   }
 }
 
@@ -80,8 +70,8 @@ export const uploadDocument = async ({
     onProgress?.(5);
     onProcessingMessage?.("Initializing upload...");
     
-    // Make sure the documents bucket exists
-    await ensureDocumentsBucketExists();
+    // Check if bucket exists, but don't try to create it
+    await prepareForUpload();
     onProgress?.(10);
     
     // Determine file path
@@ -101,6 +91,12 @@ export const uploadDocument = async ({
       
       if (storageError) {
         console.error('Storage upload error:', storageError);
+        
+        // If the error is about the bucket not existing, provide a clearer message
+        if (storageError.message?.includes('bucket') && storageError.message?.includes('not found')) {
+          throw new Error('The documents storage bucket does not exist. Please contact your administrator to create it.');
+        }
+        
         throw storageError;
       }
       
@@ -131,7 +127,7 @@ export const uploadDocument = async ({
       onProcessingMessage?.("Finalizing upload...");
       
       // Log the document data before inserting
-      console.log("Creating document record:", documentData);
+      console.log("Document uploaded successfully:", documentData);
       
       try {
         // If this is a ZIP file, attempt extraction
@@ -194,4 +190,3 @@ export const isZipFile = (file: File): boolean => {
     file.type === 'application/x-zip-compressed' || 
     file.name.toLowerCase().endsWith('.zip');
 };
-
