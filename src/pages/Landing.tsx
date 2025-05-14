@@ -42,63 +42,19 @@ const Landing = () => {
 
   return (
     <div className="h-screen w-full flex flex-col items-center justify-center relative overflow-hidden bg-black">
-      {/* Cyberpunk tunnel effect */}
-      <div className="absolute inset-0 z-0 perspective-1000">
-        <div className="absolute inset-0 bg-gradient-to-b from-black via-[#101014] to-[#1a1a24]">
-          {/* Octagonal frames with neon effect - multiple layers for depth */}
-          {[...Array(5)].map((_, i) => (
-            <div 
-              key={i}
-              className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
-              style={{ 
-                width: `${100 - i * 10}%`,
-                height: `${100 - i * 10}%`,
-                border: '1px solid rgba(255,0,0,0.3)',
-                boxShadow: `0 0 15px rgba(200,0,0,0.${6-i})`,
-                transform: `translateZ(-${i * 50}px) rotate(${i % 2 ? 30 : 45}deg)`,
-                clipPath: 'polygon(30% 0%, 70% 0%, 100% 30%, 100% 70%, 70% 100%, 30% 100%, 0% 70%, 0% 30%)'
-              }}
-            >
-              {/* Neon lights at the edges */}
-              <div className="absolute inset-0 opacity-70"
-                style={{
-                  background: `linear-gradient(45deg, 
-                    rgba(255,0,0,0) 0%, 
-                    rgba(255,0,0,0.6) 50%, 
-                    rgba(255,0,0,0) 100%)`
-                }}
-              ></div>
-            </div>
-          ))}
-
-          {/* Horizontal and vertical light lines */}
-          <div className="absolute inset-0 overflow-hidden">
-            {[...Array(10)].map((_, i) => (
-              <React.Fragment key={i}>
-                <div 
-                  className="absolute bg-red-500/30"
-                  style={{
-                    height: '1px',
-                    width: '100%',
-                    top: `${10 + i * 10}%`,
-                    boxShadow: '0 0 10px #ff0000, 0 0 20px #ff0000',
-                    opacity: Math.random() * 0.5 + 0.2,
-                  }}
-                ></div>
-                <div 
-                  className="absolute bg-blue-400/20"
-                  style={{
-                    width: '1px',
-                    height: '100%',
-                    left: `${5 + i * 10}%`,
-                    boxShadow: '0 0 10px #00a2ff, 0 0 20px #00a2ff',
-                    opacity: Math.random() * 0.5 + 0.2,
-                  }}
-                ></div>
-              </React.Fragment>
-            ))}
-          </div>
-        </div>
+      {/* Cyberpunk background with uploaded image */}
+      <div 
+        className="absolute inset-0 z-0"
+        style={{
+          backgroundImage: "url('/lovable-uploads/2b82e9cc-7d5f-4868-93b7-66677154cdbd.png')",
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat',
+          opacity: 0.8
+        }}
+      >
+        {/* Adding a slight dark overlay for better text visibility */}
+        <div className="absolute inset-0 bg-black bg-opacity-40"></div>
       </div>
 
       <div className="relative z-10 w-full max-w-md px-6 flex flex-col items-center">
@@ -107,12 +63,11 @@ const Landing = () => {
           <div className="relative">
             <div className="absolute -inset-1 bg-gradient-to-r from-red-500 to-red-800 rounded-lg blur opacity-75"></div>
             <div className="px-8 py-3 bg-gray-900 rounded-lg relative">
-              <h1 className="text-4xl font-bold tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-white via-red-300 to-red-500">
-                NXT DOT X
-              </h1>
-              <p className="text-xs tracking-widest text-gray-400 uppercase mt-1">
-                Advanced Security Protocol
-              </p>
+              <img 
+                src="/lovable-uploads/8b4ed002-cfe2-4c82-b0a8-bccf404be22c.png" 
+                alt="NXT DOTX Logo" 
+                className="h-16 w-auto"
+              />
             </div>
           </div>
         </div>
@@ -167,7 +122,7 @@ const Landing = () => {
                   {isLoading ? 'AUTHENTICATING' : 'ACCESS SYSTEM'}
                 </Button>
                 
-                <div className="text-xs text-center text-gray-500">
+                <div className="text-xs text-center text-gray-400">
                   <p>
                     Demo credentials: admin@example.com / admin1
                   </p>
@@ -186,7 +141,7 @@ const Landing = () => {
           ))}
         </div>
 
-        <footer className="mt-8 text-center text-gray-600 text-xs">
+        <footer className="mt-8 text-center text-gray-400 text-xs">
           © 2025 NXT DOT X. All rights reserved.
         </footer>
       </div>
