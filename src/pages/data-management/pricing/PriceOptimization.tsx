@@ -7,7 +7,7 @@ import { Slider } from "@/components/ui/slider";
 import { 
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer 
 } from 'recharts';
-import { toast } from "@/components/ui/use-toast";
+import { toast } from "@/hooks/use-toast";
 
 // Sample data for price optimization charts
 const priceElasticityData = [
@@ -39,8 +39,9 @@ const PriceOptimization: React.FC = () => {
     // In a real application, this would run an optimization algorithm
     const optimalPrice = optimizationTarget === "revenue" ? 20 : 15;
     setCurrentPrice(optimalPrice);
+    
+    // Fix the toast call to use the correct format
     toast({
-      title: "Price Optimized",
       description: `Optimal price calculated: $${optimalPrice.toFixed(2)} based on ${optimizationTarget} optimization`,
     });
   };

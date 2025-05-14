@@ -1,12 +1,18 @@
 
-import { useToast as useShadcnToast } from "@/components/ui/use-toast";
-import { Toast, toast as shadcnToast } from "@/components/ui/toast";
+import { toast, Toast } from "@/components/ui/toast";
 
-// Re-export the hook for component usage
-export const useToast = useShadcnToast;
+// Create a useToast hook that returns the toast function and an empty toasts array
+// This mimics the shadcn toast API but uses sonner under the hood
+export const useToast = () => {
+  return {
+    toast,
+    toasts: [] as Toast[],
+    dismiss: (id: string) => {},
+  };
+};
 
-// Export a standalone toast function that can be imported and used without the hook
-export const toast = shadcnToast;
+// Export the standalone toast function that can be imported and used without the hook
+export { toast };
 
 // Type export
 export type { Toast };
