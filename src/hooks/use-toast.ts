@@ -1,11 +1,20 @@
 
 import { ReactNode } from 'react';
-import { toast as sonnerToast, Toaster, ToastT } from 'sonner';
+import { toast as sonnerToast, Toaster } from 'sonner';
 
 export type ToastProps = {
   title?: ReactNode;
   description?: ReactNode;
   variant?: 'default' | 'destructive';
+};
+
+// Define a type for the toast object that will be returned
+export type Toast = {
+  id: string;
+  title?: ReactNode;
+  description?: ReactNode;
+  action?: ReactNode;
+  [key: string]: unknown;
 };
 
 // Define a type that extends the sonner toast function with shadcn-like methods
@@ -29,7 +38,7 @@ export const useToast = () => {
       });
     }) as ExtendedToastFunction,
     // Add a dummy toasts array for compatibility with the Toaster component
-    toasts: [] as any[]
+    toasts: [] as Toast[]
   };
 };
 
@@ -81,6 +90,3 @@ toast.error = (message: string | ToastProps) => {
     });
   }
 };
-
-// Export types for components
-export type { ToastT as Toast };

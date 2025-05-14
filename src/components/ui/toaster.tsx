@@ -1,3 +1,4 @@
+
 import { useToast } from "@/hooks/use-toast"
 import {
   ToastClose,
@@ -9,7 +10,7 @@ import {
 import { Toaster as SonnerToaster } from "sonner"
 
 export function Toaster() {
-  // We're not actually using the toasts array as we're using sonner directly
+  // We're using toasts from useToast for compatibility
   const { toasts } = useToast()
 
   return (
