@@ -1,6 +1,6 @@
 
 import { ReactNode } from 'react';
-import { toast as sonnerToast, Toaster, Toast as SonnerToast } from 'sonner';
+import { toast as sonnerToast, Toaster, ToastT } from 'sonner';
 
 export type ToastProps = {
   title?: ReactNode;
@@ -83,4 +83,4 @@ toast.error = (message: string | ToastProps) => {
 };
 
 // Export types for components
-export type { SonnerToast as Toast };
+export type { ToastT as Toast };
