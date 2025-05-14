@@ -1,95 +1,75 @@
 
 import { useState, useCallback } from 'react';
-import { callOpenAI, processStream } from '@/utils/api-clients/openai/client';
-import { ChatCompletionResponse } from '@/utils/api-clients/openai/types';
+import { createOpenAIClient } from './client';
+import { useToast } from '@/components/ui/use-toast';
 
-export const useOpenAIClient = () => {
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<Error | null>(null);
+// Main hook for using OpenAI in components
+export const useOpenAI = () => {
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const { toast } = useToast();
+
+  // Get API key - in a real app, this would be fetched securely
+  const getApiKey = () => {
+    // This is a simplified version; in production, you'd use a more secure method
+    const apiKey = localStorage.getItem('openai_api_key');
+    if (!apiKey) {
+      throw new Error('OpenAI API key not found');
+    }
+    return apiKey;
+  };
 
   const sendMessage = useCallback(async (
-    content: string,
+    userMessage: string,
     model: string = 'gpt-4o-mini',
     options: {
-      temperature?: number;
-      maxTokens?: number;
-      systemPrompt?: string;
+      systemPrompt?: string,
+      temperature?: number,
+      maxTokens?: number
     } = {}
   ) => {
-    setIsLoading(true);
+    const {
+      systemPrompt = 'You are a helpful assistant.',
+      temperature = 0.7,
+      maxTokens = 1000
+    } = options;
+
+    setLoading(true);
     setError(null);
-    
+
     try {
-      const messages = [
-        ...(options.systemPrompt ? [{ role: 'system' as const, content: options.systemPrompt }] : []),
-        { role: 'user' as const, content }
-      ];
-      
-      const result = await callOpenAI<ChatCompletionResponse>({
-        endpoint: 'chat',
-        payload: {
-          model,
-          messages,
-          temperature: options.temperature,
-          max_tokens: options.maxTokens
-        }
+      const apiKey = getApiKey();
+      const client = createOpenAIClient(apiKey);
+
+      const response = await client.createChatCompletion({
+        model,
+        messages: [
+          { role: 'system', content: systemPrompt },
+          { role: 'user', content: userMessage }
+        ],
+        temperature,
+        max_tokens: maxTokens
       });
-      
-      return result.choices[0]?.message.content || '';
-    } catch (err) {
-      setError(err instanceof Error ? err : new Error('Failed to send message to OpenAI'));
+
+      return response.choices[0].message.content;
+    } catch (err: any) {
+      console.error('OpenAI API error:', err);
+      const errorMessage = err.message || 'Failed to get response from AI';
+      setError(errorMessage);
+      toast({
+        title: 'AI Request Failed',
+        description: errorMessage,
+        variant: 'destructive',
+      });
       throw err;
     } finally {
-      setIsLoading(false);
+      setLoading(false);
     }
-  }, []);
-  
-  const streamMessage = useCallback(async function* (
-    content: string,
-    model: string = 'gpt-4o-mini',
-    options: {
-      temperature?: number;
-      maxTokens?: number;
-      systemPrompt?: string;
-    } = {}
-  ) {
-    setIsLoading(true);
-    setError(null);
-    
-    try {
-      const messages = [
-        ...(options.systemPrompt ? [{ role: 'system' as const, content: options.systemPrompt }] : []),
-        { role: 'user' as const, content }
-      ];
-      
-      const response = await callOpenAI({
-        endpoint: 'chat',
-        payload: {
-          model,
-          messages,
-          temperature: options.temperature,
-          max_tokens: options.maxTokens,
-          stream: true
-        }
-      });
-      
-      if (response && typeof response === 'object' && 'getReader' in response) {
-        // Cast to ReadableStream after verifying it has the getReader method
-        const stream = response as unknown as ReadableStream<Uint8Array>;
-        yield* processStream(stream);
-      }
-    } catch (err) {
-      setError(err instanceof Error ? err : new Error('Failed to stream message from OpenAI'));
-      throw err;
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
-  
+  }, [toast]);
+
   return {
     sendMessage,
-    streamMessage,
-    isLoading,
+    loading,
     error
   };
 };

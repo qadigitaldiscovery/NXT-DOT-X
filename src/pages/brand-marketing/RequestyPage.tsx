@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/components/ui/use-toast';
 import { Loader2, MessageSquare, BrainCircuit } from 'lucide-react';
-import { useOpenAI } from '@/hooks/api-clients/openai';
+import { useOpenAI } from '@/hooks/api-clients/openai/use-openai-client';
 
 const RequestyPage = () => {
   const [query, setQuery] = useState('');

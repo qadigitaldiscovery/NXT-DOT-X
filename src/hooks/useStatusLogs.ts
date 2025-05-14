@@ -1,58 +1,76 @@
 
-import { useState, useEffect } from 'react';
-import { supabase } from '@/integrations/supabase/client';
+import { useState, useCallback, useEffect } from 'react';
 
-export type StatusLog = {
+export interface StatusLog {
   id: string;
   module_id: string;
-  status: 'green' | 'orange' | 'red';
-  note: string | null;
-  created_at: string;
-  recorded_at: string; // Alias for created_at used in the UI
-};
+  timestamp: string;
+  status: string;
+  message: string;
+  metadata?: Record<string, any>;
+}
 
-export function useStatusLogs(moduleId?: string) {
+export const useStatusLogs = () => {
   const [logs, setLogs] = useState<StatusLog[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
 
+  const fetchLogs = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    
+    try {
+      // Mock data for now - in a real app, this would fetch from an API
+      const mockLogs: StatusLog[] = [
+        {
+          id: '1',
+          module_id: 'module-1',
+          timestamp: new Date(Date.now() - 3600000).toISOString(),
+          status: 'green',
+          message: 'System operating normally'
+        },
+        {
+          id: '2',
+          module_id: 'module-1',
+          timestamp: new Date(Date.now() - 7200000).toISOString(),
+          status: 'orange',
+          message: 'Latency increased above threshold'
+        },
+        {
+          id: '3',
+          module_id: 'module-2',
+          timestamp: new Date(Date.now() - 86400000).toISOString(),
+          status: 'red',
+          message: 'Service unavailable'
+        }
+      ];
+      
+      setLogs(mockLogs);
+    } catch (err: any) {
+      setError(err);
+      console.error('Error fetching status logs:', err);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
   useEffect(() => {
-    const fetchLogs = async () => {
-      // If no moduleId is provided, don't fetch
-      if (!moduleId) {
-        setLogs([]);
-        setLoading(false);
-        return;
-      }
-
-      try {
-        setLoading(true);
-        // Fetch status logs for the specified module
-        const { data, error } = await supabase
-          .from('rag_status_logs')
-          .select('*')
-          .eq('module_id', moduleId)
-          .order('created_at', { ascending: false });
-        
-        if (error) throw error;
-        
-        // Map the data to include recorded_at as an alias for created_at
-        const mappedLogs = (data || []).map(log => ({
-          ...log,
-          recorded_at: log.created_at
-        })) as StatusLog[];
-        
-        setLogs(mappedLogs);
-      } catch (err) {
-        console.error('Error fetching status logs:', err);
-        setError(err instanceof Error ? err : new Error('Unknown error occurred'));
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchLogs();
-  }, [moduleId]);
+  }, [fetchLogs]);
 
-  return { logs, loading, error };
-}
+  const getLogsByModuleId = useCallback((moduleId: string) => {
+    // In a real app, this would be an API call
+    // For now, we'll filter the mock data
+    return Promise.resolve(
+      logs.filter(log => log.module_id === moduleId)
+    );
+  }, [logs]);
+
+  return {
+    logs,
+    loading,
+    error,
+    fetchLogs,
+    getLogsByModuleId
+  };
+};
