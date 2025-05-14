@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Upload, File, X } from 'lucide-react';
+import { Upload, File, X, Archive } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
@@ -11,6 +11,8 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { Separator } from '@/components/ui/separator';
+import { Badge } from '@/components/ui/badge';
+import { supabase } from '@/integrations/supabase/client';
 
 interface DocumentUploadProps {
   onFileUpload: (file: File, type: DocumentType, metadata: {
@@ -26,7 +28,7 @@ interface DocumentUploadProps {
 export const DocumentUpload = ({ 
   onFileUpload,
   categories,
-  allowedTypes = ['.pdf', '.md', '.txt', '.jpg', '.jpeg', '.png', '.docx', '.xlsx']
+  allowedTypes = ['.pdf', '.md', '.txt', '.jpg', '.jpeg', '.png', '.docx', '.xlsx', '.zip']
 }: DocumentUploadProps) => {
   const [file, setFile] = useState<File | null>(null);
   const [uploadProgress, setUploadProgress] = useState(0);
@@ -36,6 +38,8 @@ export const DocumentUpload = ({
   const [description, setDescription] = useState('');
   const [categoryId, setCategoryId] = useState('');
   const [author, setAuthor] = useState('');
+  const [isProcessingZip, setIsProcessingZip] = useState(false);
+  const [extractionProgress, setExtractionProgress] = useState(0);
 
   const getDocumentType = (file: File): DocumentType => {
     const extension = file.name.split('.').pop()?.toLowerCase() || '';
@@ -44,7 +48,12 @@ export const DocumentUpload = ({
     if (extension === 'pdf') return 'pdf';
     if (['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(extension)) return 'image';
     if (['txt', 'csv', 'html'].includes(extension)) return 'text';
+    if (extension === 'zip') return 'zip';
     return 'other';
+  };
+
+  const isZipFile = (file: File) => {
+    return file.name.toLowerCase().endsWith('.zip');
   };
 
   const handleDragOver = (e: React.DragEvent) => {
@@ -88,7 +97,73 @@ export const DocumentUpload = ({
     }
   };
 
-  const handleUpload = () => {
+  const processZipFile = async (zipFile: File) => {
+    try {
+      setIsProcessingZip(true);
+      setExtractionProgress(10);
+
+      // First, upload the ZIP file to storage
+      const filePath = `uploads/zip/${Date.now()}-${zipFile.name}`;
+      setExtractionProgress(20);
+
+      const { data: uploadData, error: uploadError } = await supabase.storage
+        .from('documents')
+        .upload(filePath, zipFile);
+
+      if (uploadError) {
+        toast.error(`Error uploading ZIP file: ${uploadError.message}`);
+        setIsProcessingZip(false);
+        return false;
+      }
+      setExtractionProgress(50);
+
+      // Get public URL for the zip file
+      const { data: urlData } = await supabase.storage
+        .from('documents')
+        .getPublicUrl(filePath);
+
+      setExtractionProgress(60);
+
+      // Call our edge function to extract the ZIP file
+      const { data, error } = await supabase.functions.invoke('extract-zip', {
+        body: {
+          zipFileUrl: urlData.publicUrl,
+          categoryId,
+          author
+        }
+      });
+
+      setExtractionProgress(90);
+
+      if (error) {
+        toast.error(`Error extracting ZIP file: ${error.message}`);
+        setIsProcessingZip(false);
+        return false;
+      }
+
+      setExtractionProgress(100);
+      
+      if (data.success) {
+        toast.success(`Successfully extracted ${data.totalFiles} files from ZIP archive`);
+        if (data.hasErrors) {
+          toast.warning(`Failed to process ${data.errors.length} files from the ZIP archive`);
+        }
+        setIsProcessingZip(false);
+        return true;
+      } else {
+        toast.error(`Failed to extract ZIP file: ${data.error}`);
+        setIsProcessingZip(false);
+        return false;
+      }
+    } catch (error) {
+      console.error('Error processing ZIP file:', error);
+      toast.error(`Error processing ZIP file: ${error.message || 'Unknown error'}`);
+      setIsProcessingZip(false);
+      return false;
+    }
+  };
+
+  const handleUpload = async () => {
     if (!file || !title || !categoryId || !author) {
       toast.error('Please fill in all required fields');
       return;
@@ -96,35 +171,57 @@ export const DocumentUpload = ({
     
     setIsUploading(true);
     
-    // Simulate upload progress
-    let progress = 0;
-    const interval = setInterval(() => {
-      progress += 10;
-      setUploadProgress(progress);
-      
-      if (progress >= 100) {
-        clearInterval(interval);
+    try {
+      // Check if it's a ZIP file
+      if (isZipFile(file)) {
+        const success = await processZipFile(file);
         setIsUploading(false);
         
-        // Process the file
-        const documentType = getDocumentType(file);
-        onFileUpload(file, documentType, {
-          title,
-          description,
-          author,
-          categoryId
-        });
-        
-        // Reset state
-        setFile(null);
-        setTitle('');
-        setDescription('');
-        setCategoryId('');
-        setAuthor('');
-        setUploadProgress(0);
-        toast.success('File uploaded successfully');
+        if (success) {
+          // Reset form
+          setFile(null);
+          setTitle('');
+          setDescription('');
+          setAuthor('');
+          setUploadProgress(0);
+        }
+        return;
       }
-    }, 200);
+      
+      // Handle regular file upload with progress simulation
+      let progress = 0;
+      const interval = setInterval(() => {
+        progress += 10;
+        setUploadProgress(progress);
+        
+        if (progress >= 100) {
+          clearInterval(interval);
+          setIsUploading(false);
+          
+          // Process the file
+          const documentType = getDocumentType(file);
+          onFileUpload(file, documentType, {
+            title,
+            description,
+            author,
+            categoryId
+          });
+          
+          // Reset state
+          setFile(null);
+          setTitle('');
+          setDescription('');
+          setCategoryId('');
+          setAuthor('');
+          setUploadProgress(0);
+          toast.success('File uploaded successfully');
+        }
+      }, 200);
+    } catch (error) {
+      console.error('Upload error:', error);
+      toast.error(`Upload failed: ${error.message || 'Unknown error'}`);
+      setIsUploading(false);
+    }
   };
 
   const removeFile = () => {
@@ -221,6 +318,12 @@ export const DocumentUpload = ({
                   <p className="text-sm text-gray-500">
                     Supported formats: {allowedTypes.join(', ')}
                   </p>
+                  <p className="text-sm text-blue-500 mt-1">
+                    <Badge variant="outline" className="gap-1 mt-1">
+                      <Archive className="h-3 w-3" />
+                      ZIP files will be extracted automatically
+                    </Badge>
+                  </p>
                 </div>
                 <Button 
                   variant="outline" 
@@ -240,16 +343,25 @@ export const DocumentUpload = ({
               <div className="space-y-4">
                 <div className="flex items-center space-x-4">
                   <div className="bg-gray-100 p-2 rounded-md">
-                    <File className="h-8 w-8 text-blue-500" />
+                    {file.name.toLowerCase().endsWith('.zip') ? (
+                      <Archive className="h-8 w-8 text-blue-500" />
+                    ) : (
+                      <File className="h-8 w-8 text-blue-500" />
+                    )}
                   </div>
                   <div className="flex-1">
                     <div className="flex justify-between">
-                      <p className="font-medium truncate max-w-[200px]">{file.name}</p>
+                      <p className="font-medium truncate max-w-[200px]">
+                        {file.name}
+                        {file.name.toLowerCase().endsWith('.zip') && (
+                          <Badge variant="outline" className="ml-2">ZIP</Badge>
+                        )}
+                      </p>
                       <Button 
                         variant="ghost" 
                         size="icon" 
                         onClick={removeFile}
-                        disabled={isUploading}
+                        disabled={isUploading || isProcessingZip}
                       >
                         <X className="h-4 w-4" />
                       </Button>
@@ -258,7 +370,7 @@ export const DocumentUpload = ({
                       {(file.size / 1024).toFixed(1)} KB
                     </p>
                     
-                    {isUploading && (
+                    {isUploading && !isProcessingZip && (
                       <div className="mt-2">
                         <Progress value={uploadProgress} className="h-2" />
                         <p className="text-xs text-gray-500 mt-1">
@@ -266,12 +378,25 @@ export const DocumentUpload = ({
                         </p>
                       </div>
                     )}
+                    
+                    {isProcessingZip && (
+                      <div className="mt-2">
+                        <Progress value={extractionProgress} className="h-2" />
+                        <p className="text-xs text-gray-500 mt-1">
+                          Extracting ZIP: {extractionProgress}%
+                        </p>
+                      </div>
+                    )}
                   </div>
                 </div>
                 
-                {!isUploading && (
-                  <Button onClick={handleUpload} className="w-full">
-                    Upload File
+                {!isUploading && !isProcessingZip && (
+                  <Button 
+                    onClick={handleUpload} 
+                    className="w-full"
+                    disabled={!file || !title || !categoryId || !author}
+                  >
+                    {file.name.toLowerCase().endsWith('.zip') ? 'Upload & Extract ZIP' : 'Upload File'}
                   </Button>
                 )}
               </div>
