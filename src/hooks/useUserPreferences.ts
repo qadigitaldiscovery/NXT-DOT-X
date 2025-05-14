@@ -2,103 +2,129 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/context/AuthContext';
-import { toast } from '@/hooks/use-toast';
 
-interface UseUserPreferencesProps {
+interface PreferencesOptions {
   module: string;
   key: string;
-  defaultValue?: any;
+  defaultValue: any;
 }
 
-export function useUserPreferences<T>({ 
-  module, 
-  key, 
-  defaultValue 
-}: UseUserPreferencesProps) {
-  const [preferences, setPreferences] = useState<T | null>(null);
-  const [loading, setLoading] = useState(true);
+export function useUserPreferences({ module, key, defaultValue }: PreferencesOptions) {
+  const [preferences, setPreferences] = useState<any>(defaultValue);
+  const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<Error | null>(null);
   const { user } = useAuth();
 
   useEffect(() => {
     const fetchPreferences = async () => {
-      if (!user) {
-        setPreferences(defaultValue as T);
+      if (!user?.id) {
+        setPreferences(defaultValue);
         setLoading(false);
         return;
       }
 
       try {
-        setLoading(true);
-        
+        // Make sure we're using a valid UUID format
+        const userId = user.id;
+        if (typeof userId !== 'string' || !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(userId)) {
+          console.warn('Invalid user ID format, using default preferences');
+          setPreferences(defaultValue);
+          setLoading(false);
+          return;
+        }
+
         const { data, error } = await supabase
           .from('user_preferences')
           .select('value')
-          .eq('user_id', user.id)
+          .eq('user_id', userId)
           .eq('module', module)
           .eq('key', key)
           .single();
 
-        if (error && error.code !== 'PGRST116') {
-          console.error('Error fetching preferences:', error);
-          setError(new Error(error.message));
-          setPreferences(defaultValue as T);
+        if (error) {
+          throw error;
+        }
+
+        if (data) {
+          setPreferences(data.value);
         } else {
-          setPreferences((data?.value as any) || defaultValue as T);
+          // No stored preferences, save the default
+          await supabase.from('user_preferences').insert({
+            user_id: userId,
+            module,
+            key,
+            value: defaultValue,
+          });
+          setPreferences(defaultValue);
         }
       } catch (err) {
-        console.error('Error in preference fetching:', err);
-        setError(err instanceof Error ? err : new Error('Unknown error'));
-        setPreferences(defaultValue as T);
+        console.error('Error fetching preferences:', err);
+        // Fall back to default preferences on error
+        setPreferences(defaultValue);
+        setError(err as Error);
       } finally {
         setLoading(false);
       }
     };
 
     fetchPreferences();
-  }, [user, module, key, defaultValue]);
+  }, [module, key, defaultValue, user]);
 
-  const savePreferences = async (newPreferences: T) => {
-    if (!user) {
-      setPreferences(newPreferences);
-      return;
+  const setPreferencesValue = async (newValue: any) => {
+    setPreferences(newValue);
+    
+    if (!user?.id) {
+      console.warn('No user ID available, preferences will not be saved');
+      return { success: false };
     }
 
     try {
-      const preferenceData = {
-        user_id: user.id,
-        module,
-        key,
-        value: newPreferences as any, // Use type casting to satisfy Supabase types
-        updated_at: new Date().toISOString()
-      };
+      // Make sure we're using a valid UUID format
+      const userId = user.id;
+      if (typeof userId !== 'string' || !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(userId)) {
+        console.warn('Invalid user ID format, preferences will not be saved');
+        return { success: false };
+      }
 
-      const { error } = await supabase
+      const { data, error } = await supabase
         .from('user_preferences')
-        .upsert(preferenceData);
+        .select('id')
+        .eq('user_id', userId)
+        .eq('module', module)
+        .eq('key', key)
+        .single();
 
-      if (error) {
+      if (error && error.code !== 'PGRST116') {
         throw error;
       }
+
+      if (data?.id) {
+        // Update existing preference
+        await supabase
+          .from('user_preferences')
+          .update({ value: newValue })
+          .eq('id', data.id);
+      } else {
+        // Insert new preference
+        await supabase.from('user_preferences').insert({
+          user_id: userId,
+          module,
+          key,
+          value: newValue,
+        });
+      }
       
-      setPreferences(newPreferences);
-      
+      return { success: true };
     } catch (err) {
       console.error('Error saving preferences:', err);
-      toast({
-        title: 'Error',
-        description: 'Failed to save your preferences',
-        variant: 'destructive'
-      });
-      setError(err instanceof Error ? err : new Error('Unknown error'));
-      throw err;
+      return { success: false, error: err };
     }
   };
 
   return {
     preferences,
-    setPreferences: savePreferences,
+    setPreferences: setPreferencesValue,
     loading,
-    error
+    error,
   };
 }

@@ -1,4 +1,3 @@
-
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
@@ -30,7 +29,7 @@ import { useUserPreferences } from '@/hooks/useUserPreferences';
 const MasterDash = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
-  const { preferences, setPreferences, loading: prefsLoading } = useUserPreferences({
+  const { preferences, loading: prefsLoading } = useUserPreferences({
     module: 'dashboard',
     key: 'layout_state',
     defaultValue: { sidebar: "expanded", theme: "dark" }
@@ -119,7 +118,7 @@ const MasterDash = () => {
   }
 
   // Safely access preferences with proper type handling
-  const prefsObject = preferences as { sidebar?: string } || {};
+  const prefsObject = typeof preferences === 'object' ? preferences : {};
   const sidebarState = prefsObject.sidebar || "expanded";
 
   return (
