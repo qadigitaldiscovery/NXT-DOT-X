@@ -44,148 +44,151 @@ serve(async (req) => {
     
     console.log("Downloading ZIP file from URL:", zipFileUrl);
     
-    // Download the ZIP file
-    const response = await fetch(zipFileUrl);
-    if (!response.ok) {
-      throw new Error(`Failed to download ZIP file: ${response.statusText} (${response.status})`);
-    }
+    // Download the ZIP file with a timeout
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 20000); // 20 second timeout
     
-    const zipBuffer = await response.arrayBuffer();
-    console.log("ZIP file downloaded, size:", zipBuffer.byteLength);
-    
-    if (zipBuffer.byteLength === 0) {
-      throw new Error("Downloaded ZIP file is empty");
-    }
-    
-    // Check if the documents bucket exists (it should be created by the create-documents-bucket function)
-    const { data: buckets, error: bucketsError } = await supabase.storage.listBuckets();
-    
-    if (bucketsError) {
-      throw new Error(`Failed to check buckets: ${bucketsError.message}`);
-    }
-    
-    const documentsBucketExists = buckets?.some(bucket => bucket.name === 'documents');
-    
-    if (!documentsBucketExists) {
-      // If bucket doesn't exist, create it
-      console.log("Documents bucket does not exist, creating it...");
-      const { error: createError } = await supabase.storage.createBucket('documents', {
-        public: true,
-        fileSizeLimit: 52428800, // 50MB
-      });
+    try {
+      // Download the ZIP file
+      const response = await fetch(zipFileUrl, { signal: controller.signal });
+      clearTimeout(timeout);
       
-      if (createError) {
-        throw new Error(`Failed to create documents bucket: ${createError.message}`);
+      if (!response.ok) {
+        throw new Error(`Failed to download ZIP file: ${response.statusText} (${response.status})`);
       }
-      console.log("Documents bucket created successfully");
-    } else {
-      console.log("Documents bucket exists, proceeding with extraction");
-    }
-    
-    // Extract ZIP contents
-    const files = await unZipBuffer(new Uint8Array(zipBuffer));
-    console.log("ZIP extraction complete, files found:", Object.keys(files).length);
-    
-    const processedFiles = [];
-    const errors = [];
-    
-    // Process each extracted file
-    for (const [filename, content] of Object.entries(files)) {
-      try {
-        // Skip directories and hidden files
-        if (filename.endsWith("/") || filename.startsWith("__MACOSX") || filename.startsWith(".")) {
-          console.log(`Skipping file: ${filename} (directory or hidden file)`);
-          continue;
+      
+      const zipBuffer = await response.arrayBuffer();
+      console.log("ZIP file downloaded, size:", zipBuffer.byteLength);
+      
+      if (zipBuffer.byteLength === 0) {
+        throw new Error("Downloaded ZIP file is empty");
+      }
+      
+      // Ensure the documents bucket exists before proceeding
+      const { data: bucketData, error: bucketError } = await supabase.storage.getBucket('documents');
+      
+      if (bucketError) {
+        console.log("Bucket doesn't exist, creating it...");
+        const { error: createError } = await supabase.storage.createBucket('documents', {
+          public: true,
+          fileSizeLimit: 52428800, // 50MB
+        });
+        
+        if (createError) {
+          throw new Error(`Failed to create documents bucket: ${createError.message}`);
         }
-        
-        // Determine file type
-        const fileExtension = filename.split(".").pop()?.toLowerCase() || "";
-        let type = "other";
-        
-        if (["md", "markdown"].includes(fileExtension)) type = "markdown";
-        else if (fileExtension === "pdf") type = "pdf";
-        else if (["jpg", "jpeg", "png", "gif", "webp"].includes(fileExtension)) type = "image";
-        else if (["txt", "csv", "html"].includes(fileExtension)) type = "text";
-        
-        console.log(`Processing file: ${filename} (type: ${type})`);
-        
-        // Process file content
-        let fileContent = "";
-        let url = "";
-        
-        if (type === "text" || type === "markdown") {
-          // For text files, use the content directly
-          const textDecoder = new TextDecoder("utf-8");
-          fileContent = textDecoder.decode(content);
-          console.log(`Text content extracted, length: ${fileContent.length}`);
-        } else {
-          // For binary files, store the file in Supabase Storage
-          const filePath = `extracted_zip_files/${Date.now()}-${filename}`;
-          
-          const { data: storageData, error: storageError } = await supabase.storage
-            .from('documents')
-            .upload(filePath, content, {
-              contentType: getMimeType(fileExtension),
-              upsert: false
-            });
-            
-          if (storageError) {
-            throw new Error(`Storage upload error: ${storageError.message}`);
+        console.log("Documents bucket created successfully");
+      }
+      
+      // Extract ZIP contents
+      const files = await unZipBuffer(new Uint8Array(zipBuffer));
+      console.log("ZIP extraction complete, files found:", Object.keys(files).length);
+      
+      const processedFiles = [];
+      const errors = [];
+      
+      // Process each extracted file
+      for (const [filename, content] of Object.entries(files)) {
+        try {
+          // Skip directories and hidden files
+          if (filename.endsWith("/") || filename.startsWith("__MACOSX") || filename.startsWith(".")) {
+            console.log(`Skipping file: ${filename} (directory or hidden file)`);
+            continue;
           }
           
-          // Get public URL for the file
-          const { data: urlData } = await supabase.storage
-            .from('documents')
-            .getPublicUrl(filePath);
-            
-          url = urlData.publicUrl;
-          console.log(`File uploaded to storage, URL: ${url}`);
-        }
-        
-        // Create document record in database
-        const { data: docData, error: docError } = await supabase
-          .from('documents')
-          .insert({
-            title: filename,
-            description: `Extracted from ZIP archive`,
-            category_id: categoryId,
-            type,
-            content: fileContent,
-            url,
-            author
-          })
-          .select()
-          .single();
+          // Determine file type
+          const fileExtension = filename.split(".").pop()?.toLowerCase() || "";
+          let type = "other";
           
-        if (docError) {
-          throw new Error(`Document insert error: ${docError.message}`);
+          if (["md", "markdown"].includes(fileExtension)) type = "markdown";
+          else if (fileExtension === "pdf") type = "pdf";
+          else if (["jpg", "jpeg", "png", "gif", "webp"].includes(fileExtension)) type = "image";
+          else if (["txt", "csv", "html"].includes(fileExtension)) type = "text";
+          
+          console.log(`Processing file: ${filename} (type: ${type})`);
+          
+          // Process file content
+          let fileContent = "";
+          let url = "";
+          
+          if (type === "text" || type === "markdown") {
+            // For text files, use the content directly
+            const textDecoder = new TextDecoder("utf-8");
+            fileContent = textDecoder.decode(content);
+            console.log(`Text content extracted, length: ${fileContent.length}`);
+          } else {
+            // For binary files, store the file in Supabase Storage
+            const filePath = `extracted_zip_files/${Date.now()}-${filename}`;
+            
+            const { data: storageData, error: storageError } = await supabase.storage
+              .from('documents')
+              .upload(filePath, content, {
+                contentType: getMimeType(fileExtension),
+                upsert: false
+              });
+              
+            if (storageError) {
+              throw new Error(`Storage upload error: ${storageError.message}`);
+            }
+            
+            // Get public URL for the file
+            const { data: urlData } = await supabase.storage
+              .from('documents')
+              .getPublicUrl(filePath);
+              
+            url = urlData.publicUrl;
+            console.log(`File uploaded to storage, URL: ${url}`);
+          }
+          
+          // Create document record in database
+          const { data: docData, error: docError } = await supabase
+            .from('documents')
+            .insert({
+              title: filename,
+              description: `Extracted from ZIP archive`,
+              category_id: categoryId,
+              type,
+              content: fileContent,
+              url,
+              author
+            })
+            .select()
+            .single();
+            
+          if (docError) {
+            throw new Error(`Document insert error: ${docError.message}`);
+          }
+          
+          processedFiles.push({
+            filename,
+            id: docData.id
+          });
+          console.log(`Document record created for: ${filename}`);
+          
+        } catch (error) {
+          console.error(`Error processing file ${filename}:`, error);
+          errors.push({
+            filename,
+            error: error.message
+          });
         }
-        
-        processedFiles.push({
-          filename,
-          id: docData.id
-        });
-        console.log(`Document record created for: ${filename}`);
-        
-      } catch (error) {
-        console.error(`Error processing file ${filename}:`, error);
-        errors.push({
-          filename,
-          error: error.message
-        });
       }
+      
+      return new Response(
+        JSON.stringify({ 
+          success: true, 
+          processedFiles, 
+          totalFiles: processedFiles.length,
+          errors,
+          hasErrors: errors.length > 0
+        }),
+        { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+      
+    } catch (fetchError) {
+      clearTimeout(timeout);
+      throw new Error(`Fetch error: ${fetchError.message}`);
     }
-    
-    return new Response(
-      JSON.stringify({ 
-        success: true, 
-        processedFiles, 
-        totalFiles: processedFiles.length,
-        errors,
-        hasErrors: errors.length > 0
-      }),
-      { headers: { ...corsHeaders, "Content-Type": "application/json" } }
-    );
     
   } catch (error) {
     console.error("Error extracting ZIP:", error);

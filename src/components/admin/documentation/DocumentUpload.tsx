@@ -42,6 +42,7 @@ export const DocumentUpload = ({
   const [extractionProgress, setExtractionProgress] = useState(0);
   const [isBucketReady, setIsBucketReady] = useState(false);
   const [isCreatingBucket, setIsCreatingBucket] = useState(false);
+  const [timeoutId, setTimeoutId] = useState<number | null>(null);
 
   useEffect(() => {
     // Check if the documents bucket exists and create it if it doesn't
@@ -75,6 +76,13 @@ export const DocumentUpload = ({
     };
     
     checkAndCreateBucket();
+
+    // Cleanup function to clear any timeouts when component unmounts
+    return () => {
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+      }
+    };
   }, []);
 
   const getDocumentType = (file: File): DocumentType => {
@@ -142,34 +150,41 @@ export const DocumentUpload = ({
       const filePath = `uploads/zip/${Date.now()}-${zipFile.name}`;
       setExtractionProgress(20);
 
-      // Verify bucket exists before upload
-      const { data: bucketData, error: bucketError } = await supabase.storage
-        .getBucket('documents');
+      // Make sure bucket is ready
+      if (!isBucketReady) {
+        // Try to create bucket again
+        const { data: createBucketData, error: createBucketError } = await supabase.functions.invoke('create-documents-bucket');
         
-      if (bucketError) {
-        console.error('Error getting bucket info:', bucketError);
-        // Try to create bucket again if it doesn't exist
-        const { data: createData, error: createError } = await supabase.functions.invoke('create-documents-bucket');
-        
-        if (createError || !createData?.success) {
-          toast.error('Storage bucket does not exist and could not be created');
+        if (createBucketError || !createBucketData?.success) {
+          console.error('Error preparing storage bucket:', createBucketError || 'Unknown error');
+          toast.error('Could not set up document storage. Please try again.');
           setIsProcessingZip(false);
           return false;
         }
+        
+        setIsBucketReady(true);
         // Wait a moment for bucket creation to propagate
         await new Promise(resolve => setTimeout(resolve, 1000));
       }
 
+      // Upload the ZIP file
       const { data: uploadData, error: uploadError } = await supabase.storage
         .from('documents')
         .upload(filePath, zipFile);
 
       if (uploadError) {
         console.error('Error uploading ZIP file:', uploadError);
-        toast.error(`Error uploading ZIP file: ${uploadError.message || 'Unknown error'}`);
+        
+        if (uploadError.message?.includes('bucket') || uploadError.message?.includes('not found')) {
+          toast.error('Storage bucket not found. Please try refreshing the page.');
+        } else {
+          toast.error(`Error uploading ZIP file: ${uploadError.message || 'Unknown error'}`);
+        }
+        
         setIsProcessingZip(false);
         return false;
       }
+      
       setExtractionProgress(50);
 
       // Get public URL for the zip file
@@ -233,18 +248,9 @@ export const DocumentUpload = ({
       return;
     }
     
-    if (!isBucketReady) {
-      toast.error('Document storage is not ready yet. Please try again in a moment.');
-      // Try to initialize bucket again
-      try {
-        const { data, error } = await supabase.functions.invoke('create-documents-bucket');
-        if (error || !data?.success) {
-          return;
-        }
-        setIsBucketReady(true);
-      } catch (error) {
-        return;
-      }
+    // Clear any previous timeout
+    if (timeoutId) {
+      clearTimeout(timeoutId);
     }
     
     setIsUploading(true);
@@ -252,7 +258,23 @@ export const DocumentUpload = ({
     try {
       // Check if it's a ZIP file
       if (isZipFile(file)) {
+        // Set a timeout to prevent UI hanging indefinitely
+        const newTimeoutId = window.setTimeout(() => {
+          if (isProcessingZip) {
+            setIsProcessingZip(false);
+            setIsUploading(false);
+            toast.error("ZIP extraction timed out. The process might still complete in the background.");
+          }
+        }, 30000); // 30 seconds timeout
+        
+        setTimeoutId(newTimeoutId);
+        
         const success = await processZipFile(file);
+        
+        // Clear the timeout since we got a response
+        clearTimeout(newTimeoutId);
+        setTimeoutId(null);
+        
         setIsUploading(false);
         
         if (success) {
@@ -411,7 +433,7 @@ export const DocumentUpload = ({
                 <Button 
                   variant="outline" 
                   onClick={() => document.getElementById('file-upload')?.click()}
-                  disabled={!isBucketReady}
+                  disabled={!isBucketReady && !isCreatingBucket}
                 >
                   Select File
                 </Button>
