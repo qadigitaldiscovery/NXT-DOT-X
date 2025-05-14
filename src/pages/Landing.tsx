@@ -58,13 +58,6 @@ const Landing = () => {
       </div>
 
       <div className="relative z-10 w-full max-w-md px-6 flex flex-col items-center">
-        {/* Logo directly placed without any container */}
-        <img 
-          src="/lovable-uploads/8b4ed002-cfe2-4c82-b0a8-bccf404be22c.png" 
-          alt="NXT DOTX Logo" 
-          className="h-auto w-full max-w-[320px] mb-10"
-        />
-
         {/* Login form */}
         <div className="w-full perspective-800">
           <div className="w-full transform bg-black bg-opacity-50 backdrop-blur-sm border border-red-900/30 rounded-lg overflow-hidden relative">
