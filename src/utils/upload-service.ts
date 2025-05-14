@@ -1,6 +1,6 @@
 
 import { supabase } from '@/integrations/supabase/client';
-import { toast } from '@/hooks/use-toast';
+import { toast } from 'sonner';
 import { tryUseEdgeFunction } from './api-clients/common/edge-function-utils';
 
 export type UploadDocumentParams = {
@@ -28,7 +28,7 @@ async function ensureDocumentsBucketExists(onProcessingMessage?: (message: strin
       action: 'create-bucket',
       bucketName: 'documents'
     }, {
-      timeout: 5000 // 5 second timeout
+      timeout: 10000 // 10 second timeout
     });
     
     if (result?.success) {
@@ -88,6 +88,27 @@ async function prepareForUpload(onProcessingMessage?: (message: string) => void)
   }
 }
 
+/**
+ * Get a signed URL for direct upload to bypass RLS policies
+ */
+async function getSignedUploadUrl(filePath: string): Promise<string | null> {
+  try {
+    const result = await tryUseEdgeFunction<{
+      success: boolean;
+      data: { signedURL: string; path: string; token: string };
+    }>('storage', 'get-upload-url', {
+      action: 'get-upload-url',
+      filePath,
+      bucketName: 'documents'
+    });
+    
+    return result?.success ? result.data.signedURL : null;
+  } catch (error) {
+    console.error("Error getting signed URL:", error);
+    return null;
+  }
+}
+
 export const uploadDocument = async ({
   file,
   documentName,
@@ -106,53 +127,87 @@ export const uploadDocument = async ({
     onProgress?.(10);
     
     // Determine file path
-    const filePath = `documents/${Date.now()}-${file.name}`;
+    const filePath = `documents/${Date.now()}-${file.name.replace(/\s+/g, '_')}`;
     onProgress?.(30);
     
     // Upload file to storage
     onProcessingMessage?.("Uploading file...");
     
     try {
-      const { data: storageData, error: storageError } = await supabase.storage
-        .from('documents')
-        .upload(filePath, file, {
-          cacheControl: '3600',
-          upsert: true
-        });
+      // Try to get a signed URL for upload
+      const signedUrl = await getSignedUploadUrl(filePath);
       
-      if (storageError) {
-        console.error('Storage upload error:', storageError);
+      let uploadSuccess = false;
+      let publicUrl = '';
+      
+      // If we have a signed URL, use it for direct upload
+      if (signedUrl) {
+        onProcessingMessage?.("Using direct upload...");
+        const uploadResponse = await fetch(signedUrl, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': file.type,
+            'x-upsert': 'true'
+          },
+          body: file
+        });
         
-        // If the error is about the bucket not existing or RLS policy
-        if (storageError.message?.includes('bucket') && storageError.message?.includes('not found')) {
-          throw new Error('The documents storage bucket does not exist. Please try refreshing the page or contact your administrator.');
+        if (uploadResponse.ok) {
+          uploadSuccess = true;
+          const { data } = await supabase.storage.from('documents').getPublicUrl(filePath);
+          publicUrl = data.publicUrl;
+        } else {
+          console.error('Direct upload failed:', await uploadResponse.text());
+          throw new Error('Direct upload failed. Falling back to regular upload.');
+        }
+      }
+      
+      // If direct upload failed or no signed URL, try regular upload
+      if (!uploadSuccess) {
+        onProcessingMessage?.("Using regular upload method...");
+        const { data: storageData, error: storageError } = await supabase.storage
+          .from('documents')
+          .upload(filePath, file, {
+            cacheControl: '3600',
+            upsert: true
+          });
+        
+        if (storageError) {
+          console.error('Storage upload error:', storageError);
+          
+          // Handle specific error cases
+          if (storageError.message?.includes('bucket') && storageError.message?.includes('not found')) {
+            throw new Error('The documents storage bucket does not exist. Please try refreshing the page or contact your administrator.');
+          }
+          
+          if (storageError.message?.includes('403') || storageError.message?.toLowerCase().includes('permission')) {
+            throw new Error('Permission denied. You may not have rights to upload documents.');
+          }
+          
+          throw storageError;
         }
         
-        if (storageError.message?.includes('403') || storageError.message?.toLowerCase().includes('permission')) {
-          throw new Error('Permission denied. You may not have rights to upload documents.');
+        // Get public URL
+        const { data: urlData } = await supabase.storage
+          .from('documents')
+          .getPublicUrl(filePath);
+        
+        if (!urlData?.publicUrl) {
+          throw new Error('Could not get document URL');
         }
         
-        throw storageError;
+        publicUrl = urlData.publicUrl;
       }
       
       onProgress?.(60);
       onProcessingMessage?.("Processing document...");
-      
-      // Get public URL
-      const { data: urlData } = await supabase.storage
-        .from('documents')
-        .getPublicUrl(filePath);
-      
-      if (!urlData?.publicUrl) {
-        throw new Error('Could not get document URL');
-      }
       
       // Create database record
       const documentData = {
         title: documentName,
         document_type: documentType,
         file_path: filePath,
-        url: urlData.publicUrl,
+        url: publicUrl,
         expiry_date: expiryDate || null,
         file_size: file.size,
         file_type: file.type
@@ -175,7 +230,7 @@ export const uploadDocument = async ({
             processedFiles: number;
             hasErrors: boolean;
           }>('archive', 'extract-zip', {
-            zipFileUrl: urlData.publicUrl,
+            zipFileUrl: publicUrl,
             categoryId: documentType,
             author: 'System Upload'
           });
@@ -199,7 +254,7 @@ export const uploadDocument = async ({
       });
       
       return true;
-    } catch (uploadError) {
+    } catch (uploadError: any) {
       console.error('Upload exception:', uploadError);
       toast({
         variant: "destructive",
@@ -208,7 +263,7 @@ export const uploadDocument = async ({
       });
       return false;
     }
-  } catch (error) {
+  } catch (error: any) {
     console.error('Document upload error:', error);
     toast({
       variant: "destructive",

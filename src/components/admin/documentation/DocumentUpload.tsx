@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -65,6 +66,36 @@ export const DocumentUpload = ({ categories, onFileUpload }: DocumentUploadProps
     }
   };
 
+  const prepareBucketIfNeeded = async (): Promise<boolean> => {
+    try {
+      setProcessingMessage("Preparing storage bucket...");
+      
+      // Call our edge function to ensure the bucket exists
+      const result = await tryUseEdgeFunction<{
+        success: boolean;
+        message: string;
+      }>('storage', 'create-bucket', { 
+        action: 'create-bucket',
+        bucketName: 'documents'
+      }, {
+        timeout: 10000 // 10 second timeout
+      });
+      
+      if (result?.success) {
+        console.log("Storage bucket prepared successfully:", result.message);
+        return true;
+      } else {
+        console.warn("Storage bucket preparation may have failed.");
+        // Continue anyway and let the upload process handle any further errors
+        return true;
+      }
+    } catch (error) {
+      console.error("Error preparing bucket:", error);
+      // Return true anyway to allow the upload to attempt to proceed
+      return true;
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -77,78 +108,37 @@ export const DocumentUpload = ({ categories, onFileUpload }: DocumentUploadProps
     setUploadProgress(0);
     setUploadError(null);
     
-    // First, ensure the storage bucket exists
     try {
-      setProcessingMessage("Checking storage configuration...");
+      // First make sure the bucket exists
+      await prepareBucketIfNeeded();
       
-      // Call the edge function to ensure bucket exists
-      const bucketResult = await tryUseEdgeFunction<{
-        success: boolean;
-        message: string;
-      }>('storage', 'create-bucket', { 
-        action: 'create-bucket',
-        bucketName: 'documents'
+      // Then attempt the upload
+      setProcessingMessage("Uploading document...");
+      
+      const success = await uploadDocument({
+        file: selectedFile,
+        documentName: title,
+        documentType: categoryId,
+        onProgress: setUploadProgress,
+        onProcessingMessage: setProcessingMessage
       });
       
-      if (!bucketResult?.success) {
-        setProcessingMessage("Storage setup in progress...");
-      }
-    } catch (bucketError) {
-      console.warn("Error checking bucket:", bucketError);
-      // Continue anyway, the uploadDocument function will handle errors
-    }
-    
-    try {
-      // If it's a ZIP file, use our utility for zip extraction
-      if (isZipFile(selectedFile)) {
-        setProcessingMessage("Uploading ZIP archive...");
-        
-        const success = await uploadDocument({
-          file: selectedFile,
-          documentName: title,
-          documentType: categoryId,
-          onProgress: setUploadProgress,
-          onProcessingMessage: setProcessingMessage
+      if (success) {
+        // Call the onFileUpload prop to let the parent component know
+        onFileUpload(selectedFile, type, {
+          title,
+          description,
+          author,
+          categoryId
         });
         
-        if (success) {
-          toast.success('ZIP file uploaded and processed successfully');
-          resetForm();
-        }
+        resetForm();
+        return;
       } else {
-        // Otherwise use the normal document upload flow
-        setProcessingMessage("Uploading document...");
-        
-        try {
-          // First try our direct upload method
-          const success = await uploadDocument({
-            file: selectedFile,
-            documentName: title,
-            documentType: categoryId,
-            onProgress: setUploadProgress,
-            onProcessingMessage: setProcessingMessage
-          });
-          
-          if (success) {
-            resetForm();
-            return;
-          }
-          
-          // If uploadDocument fails, fall back to the component's onFileUpload prop
-          onFileUpload(selectedFile, type, {
-            title,
-            description,
-            author,
-            categoryId
-          });
-          
-          resetForm();
-        } catch (error) {
-          setUploadError(error instanceof Error ? error.message : 'Unknown upload error');
-          console.error('Error during file upload:', error);
-        }
+        // If direct upload failed but no error was thrown, show a generic error
+        setUploadError("Upload failed. Please try again later.");
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error uploading document:', error);
       setUploadError(error instanceof Error ? error.message : 'Unknown error');
       toast.error('Upload failed: ' + (error instanceof Error ? error.message : 'Unknown error'));

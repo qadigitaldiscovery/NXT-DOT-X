@@ -1,75 +1,64 @@
 
 import { supabase } from '@/integrations/supabase/client';
 
+type EdgeFunctionOptions = {
+  timeout?: number; // Timeout in milliseconds
+  headers?: Record<string, string>;
+};
+
 /**
- * Try to use an edge function, with error handling and improved timeout handling
+ * Try to use a Supabase Edge Function with improved error handling.
+ * @param functionName The name of the Edge Function.
+ * @param functionData The data to pass to the Edge Function.
+ * @param options Additional options like timeout.
+ * @returns The response from the Edge Function, or null if it fails.
  */
-export const tryUseEdgeFunction = async <T>(
-  namespace: string,
+export async function tryUseEdgeFunction<T = any>(
   functionName: string,
-  payload: any,
-  options?: {
-    timeout?: number;
-    retries?: number;
-  }
-): Promise<T | null> => {
-  const retries = options?.retries || 1;
+  action: string, 
+  functionData: any,
+  options: EdgeFunctionOptions = {}
+): Promise<T | null> {
+  const { timeout = 30000, headers = {} } = options;
   
   try {
-    // First attempt
-    const { data, error } = await supabase.functions.invoke(`${namespace ? namespace + '/' : ''}${functionName}`, {
-      body: payload
+    // Create an abort controller with the specified timeout
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), timeout);
+    
+    // Include the action in the function data
+    const fullFunctionData = {
+      ...functionData,
+      action
+    };
+
+    // Call the Supabase Edge Function
+    const { data, error } = await supabase.functions.invoke(functionName, {
+      body: fullFunctionData,
+      headers,
+      signal: controller.signal
     });
-
+    
+    // Clear the timeout
+    clearTimeout(timeoutId);
+    
     if (error) {
-      console.error(`Error calling ${functionName} edge function:`, error);
-      
-      if (retries > 0 && options?.timeout) {
-        console.warn(`Will retry ${functionName} edge function after ${options.timeout}ms...`);
-        return tryRetry();
+      if (error.message.includes('aborted')) {
+        console.error(`Edge function ${functionName} timed out after ${timeout}ms`);
+        throw new Error(`Request to ${functionName} timed out. Please try again.`);
+      } else {
+        console.error(`Error calling edge function ${functionName}:`, error);
+        throw error;
       }
-      return null;
     }
-
+    
     return data as T;
-  } catch (error) {
-    console.error(`Exception calling ${functionName} edge function:`, error);
-    
-    if (retries > 0 && options?.timeout) {
-      console.warn(`Will retry ${functionName} edge function after ${options.timeout}ms...`);
-      return tryRetry();
+  } catch (error: any) {
+    if (error.name === 'AbortError') {
+      console.error(`Edge function ${functionName} timed out after ${timeout}ms`);
+      throw new Error(`Request to ${functionName} timed out. Please try again.`);
     }
-    
-    console.warn(`Edge function ${functionName} failed with no retry options`);
+    console.error(`Exception in edge function ${functionName}:`, error);
     return null;
   }
-  
-  // Helper function for retry logic
-  async function tryRetry(): Promise<T | null> {
-    try {
-      return new Promise((resolve) => {
-        setTimeout(async () => {
-          try {
-            console.log(`Retrying ${functionName} edge function...`);
-            const { data, error } = await supabase.functions.invoke(`${namespace ? namespace + '/' : ''}${functionName}`, {
-              body: payload
-            });
-            
-            if (error) {
-              console.warn(`Edge function ${functionName} retry failed:`, error);
-              resolve(null);
-            } else {
-              resolve(data as T);
-            }
-          } catch (retryError) {
-            console.warn(`Edge function ${functionName} retry exception:`, retryError);
-            resolve(null);
-          }
-        }, options?.timeout || 2000);
-      });
-    } catch (retryError) {
-      console.warn(`Edge function ${functionName} retry attempt failed:`, retryError);
-      return null;
-    }
-  }
-};
+}
