@@ -1,6 +1,6 @@
 
 import React, { createContext, useContext, useState, useCallback } from 'react';
-import { useToast } from '@/components/ui/use-toast';
+import { useToast } from '@/hooks/use-toast';
 import { Module } from '@/hooks/useModules';
 
 interface DashboardContextType {
@@ -46,14 +46,12 @@ export const DashboardProvider: React.FC<DashboardProviderProps> = ({
     try {
       await refreshModules();
       toast({
-        title: "Dashboard refreshed",
         description: "The dashboard data has been refreshed.",
       });
     } catch (error) {
       toast({
-        variant: "destructive",
-        title: "Refresh failed",
         description: "There was an error refreshing the dashboard data.",
+        variant: "destructive"
       });
     } finally {
       setIsRefreshing(false);
@@ -65,14 +63,12 @@ export const DashboardProvider: React.FC<DashboardProviderProps> = ({
     
     if (result.success) {
       toast({
-        title: "Alert resolved",
         description: "The alert has been marked as resolved.",
       });
     } else {
       toast({
-        variant: "destructive",
-        title: "Failed to resolve alert",
         description: "There was an error resolving the alert.",
+        variant: "destructive"
       });
     }
     
@@ -84,15 +80,13 @@ export const DashboardProvider: React.FC<DashboardProviderProps> = ({
       const result = await addRule(rule);
       
       toast({
-        title: "Rule created",
         description: "The threshold rule has been created successfully.",
       });
       return result;
     } catch (err) {
       toast({
-        variant: "destructive",
-        title: "Failed to create rule",
         description: "There was an error creating the threshold rule.",
+        variant: "destructive"
       });
       throw err;
     }
@@ -103,14 +97,12 @@ export const DashboardProvider: React.FC<DashboardProviderProps> = ({
     
     if (result.success) {
       toast({
-        title: "Rule deleted",
         description: "The threshold rule has been deleted.",
       });
     } else {
       toast({
-        variant: "destructive",
-        title: "Failed to delete rule",
         description: "There was an error deleting the threshold rule.",
+        variant: "destructive"
       });
     }
     

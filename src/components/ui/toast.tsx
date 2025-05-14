@@ -1,6 +1,7 @@
 
 // Re-exporting from sonner
 import { toast, Toaster as SonnerToaster } from 'sonner';
+import React from 'react';
 
 // Define the Toast type to match expected interface
 export type Toast = {
