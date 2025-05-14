@@ -6,19 +6,42 @@ import { supabase } from '@/integrations/supabase/client';
  */
 export const columnExists = async (table: string, column: string): Promise<boolean> => {
   try {
-    // Try a simple query with the column
-    const { error } = await supabase
-      .from(table as any) // Cast to any to bypass TypeScript's table name checking
-      .select(`${column}`)
-      .limit(1);
+    // Use a direct SQL query instead of the TypeScript API to check if the column exists
+    // This avoids the type errors with the Supabase client
+    const { data, error } = await supabase.rpc(
+      'column_exists',
+      { 
+        table_name: table,
+        column_name: column 
+      }
+    );
     
-    // If there's an error about the column not existing, return false
-    if (error && error.message.includes(`column '${column}' does not exist`)) {
-      return false;
+    if (error) {
+      console.error(`Error checking if column ${column} exists in ${table}:`, error);
+      
+      // Fallback method: Try a simple query with the column
+      try {
+        const { error: queryError } = await supabase
+          .from(table)
+          .select(`${column}`)
+          .limit(1);
+        
+        // If there's an error about the column not existing, return false
+        if (queryError && queryError.message.includes(`column "${column}" does not exist`)) {
+          console.info(`Column ${column} does not exist in ${table}.`);
+          return false;
+        }
+        
+        // If no error related to column not existing, assume it exists
+        console.info(`Config column already exists.`);
+        return true;
+      } catch (queryError) {
+        console.error(`Error in fallback method:`, queryError);
+        return false;
+      }
     }
     
-    // If there's no error related to the column not existing, assume it exists
-    return true;
+    return !!data;
   } catch (error) {
     console.error(`Error checking if column ${column} exists in ${table}:`, error);
     return false;

@@ -126,6 +126,7 @@ export type Database = {
       api_provider_settings: {
         Row: {
           api_key: string
+          config: Json | null
           created_at: string
           id: string
           preferred_model: string | null
@@ -135,6 +136,7 @@ export type Database = {
         }
         Insert: {
           api_key: string
+          config?: Json | null
           created_at?: string
           id?: string
           preferred_model?: string | null
@@ -144,6 +146,7 @@ export type Database = {
         }
         Update: {
           api_key?: string
+          config?: Json | null
           created_at?: string
           id?: string
           preferred_model?: string | null
