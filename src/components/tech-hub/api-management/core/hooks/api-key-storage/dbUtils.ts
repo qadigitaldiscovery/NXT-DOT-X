@@ -6,44 +6,30 @@ import { supabase } from '@/integrations/supabase/client';
  */
 export const columnExists = async (table: string, column: string): Promise<boolean> => {
   try {
-    // Use a direct SQL query instead of the TypeScript API to check if the column exists
-    // This avoids the type errors with the Supabase client
-    const { data, error } = await supabase.rpc(
-      'column_exists',
-      { 
-        table_name: table,
-        column_name: column 
-      }
-    );
-    
-    if (error) {
-      console.error(`Error checking if column ${column} exists in ${table}:`, error);
+    // Instead of directly querying information_schema or using an RPC that might not be defined
+    // in TypeScript, use a more direct approach by trying to select the column
+    try {
+      // Attempt to select the column from the table
+      const { error } = await supabase
+        .from(table as any)
+        .select(`${column}`)
+        .limit(1);
       
-      // Fallback method: Try a simple query with the column
-      try {
-        const { error: queryError } = await supabase
-          .from(table)
-          .select(`${column}`)
-          .limit(1);
-        
-        // If there's an error about the column not existing, return false
-        if (queryError && queryError.message.includes(`column "${column}" does not exist`)) {
-          console.info(`Column ${column} does not exist in ${table}.`);
-          return false;
-        }
-        
-        // If no error related to column not existing, assume it exists
-        console.info(`Config column already exists.`);
-        return true;
-      } catch (queryError) {
-        console.error(`Error in fallback method:`, queryError);
+      // If there's an error about the column not existing, return false
+      if (error && error.message.includes(`column "${column}" does not exist`)) {
+        console.info(`Column ${column} does not exist in ${table}.`);
         return false;
       }
+      
+      // If we got here without an error about the column not existing, assume it exists
+      console.info(`Column ${column} exists in ${table}.`);
+      return true;
+    } catch (err) {
+      console.error(`Error checking if column ${column} exists in ${table}:`, err);
+      return false;
     }
-    
-    return !!data;
   } catch (error) {
-    console.error(`Error checking if column ${column} exists in ${table}:`, error);
+    console.error(`Error in columnExists function:`, error);
     return false;
   }
 };
