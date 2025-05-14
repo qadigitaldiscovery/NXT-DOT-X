@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import Sidebar from '@/components/ui/sidebar';
+import { Sidebar } from '@/components/ui/sidebar';
 import Topbar from '@/components/layouts/Topbar';
 
 interface PlatformLayoutProps {
