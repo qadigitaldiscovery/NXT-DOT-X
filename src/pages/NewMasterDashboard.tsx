@@ -6,7 +6,7 @@ import KpiCard from '@/components/shared/KpiCard';
 
 export default function NewMasterDashboard() {
   return (
-    <div className="flex h-screen w-screen bg-pureblack text-white">
+    <div className="flex h-screen w-screen bg-background text-foreground">
       <Sidebar />
       <div className="flex-1 flex flex-col">
         <Topbar />
