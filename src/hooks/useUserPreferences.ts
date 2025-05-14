@@ -44,7 +44,7 @@ export function useUserPreferences<T>({
           setError(new Error(error.message));
           setPreferences(defaultValue as T);
         } else {
-          setPreferences((data?.value as T) || defaultValue as T);
+          setPreferences((data?.value as any) || defaultValue as T);
         }
       } catch (err) {
         console.error('Error in preference fetching:', err);
@@ -65,15 +65,17 @@ export function useUserPreferences<T>({
     }
 
     try {
+      const preferenceData = {
+        user_id: user.id,
+        module,
+        key,
+        value: newPreferences as any, // Use type casting to satisfy Supabase types
+        updated_at: new Date().toISOString()
+      };
+
       const { error } = await supabase
         .from('user_preferences')
-        .upsert({
-          user_id: user.id,
-          module,
-          key,
-          value: newPreferences as any, // Type casting to satisfy Supabase types
-          updated_at: new Date().toISOString()
-        });
+        .upsert(preferenceData);
 
       if (error) {
         throw error;

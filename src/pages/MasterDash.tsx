@@ -1,3 +1,4 @@
+
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
@@ -117,12 +118,16 @@ const MasterDash = () => {
     );
   }
 
+  // Safely access preferences with proper type handling
+  const prefsObject = preferences as { sidebar?: string } || {};
+  const sidebarState = prefsObject.sidebar || "expanded";
+
   return (
     <SharedDashboardLayout
       moduleTitle="Business Management Platform"
       navCategories={navCategories}
       customFooterContent={navigationFooter}
-      showTopLeftToggle={preferences ? preferences.sidebar !== "collapsed" : true}
+      showTopLeftToggle={sidebarState !== "collapsed"}
       removeBottomToggle={false}
     >
       <DashboardModules />

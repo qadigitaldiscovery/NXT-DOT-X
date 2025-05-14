@@ -137,6 +137,14 @@ const RAGDashboardPage: React.FC = () => {
     );
   }
 
+  const handleAlertResolve = (id: string) => {
+    resolveAlert(id);
+  };
+
+  const handleDeleteRule = (id: string) => {
+    deleteRule(id);
+  };
+
   return (
     <PlatformLayout>
       <DashboardProvider
@@ -154,16 +162,21 @@ const RAGDashboardPage: React.FC = () => {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <div className="lg:col-span-2">
               <RAGDashboardGrid 
-                modules={modules}
-                onUpdateStatus={updateModuleStatus}
+                className=""
               />
             </div>
             
             <div className="space-y-6">
-              <AlertsList alerts={alerts} />
+              <AlertsList 
+                alerts={alerts}
+                onResolve={handleAlertResolve}
+              />
               
               {hasPermission('modules.configure') && (
-                <ThresholdRulesList rules={rules} />
+                <ThresholdRulesList 
+                  rules={rules}
+                  onDeleteRule={handleDeleteRule}
+                />
               )}
             </div>
           </div>
