@@ -33,13 +33,14 @@ serve(async (req) => {
     
     // Initialize Supabase client
     const supabaseUrl = Deno.env.get("SUPABASE_URL");
-    const supabaseKey = Deno.env.get("SUPABASE_ANON_KEY");
+    const supabaseServiceRole = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
     
-    if (!supabaseUrl || !supabaseKey) {
-      throw new Error("Missing required environment variables: SUPABASE_URL or SUPABASE_ANON_KEY");
+    if (!supabaseUrl || !supabaseServiceRole) {
+      throw new Error("Missing required environment variables: SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY");
     }
     
-    const supabase = createClient(supabaseUrl, supabaseKey);
+    // Using service role for more permissions
+    const supabase = createClient(supabaseUrl, supabaseServiceRole);
     
     console.log("Downloading ZIP file from URL:", zipFileUrl);
     
@@ -66,7 +67,19 @@ serve(async (req) => {
     const documentsBucketExists = buckets?.some(bucket => bucket.name === 'documents');
     
     if (!documentsBucketExists) {
-      throw new Error("Documents bucket does not exist. Please create it first.");
+      // If bucket doesn't exist, create it
+      console.log("Documents bucket does not exist, creating it...");
+      const { error: createError } = await supabase.storage.createBucket('documents', {
+        public: true,
+        fileSizeLimit: 52428800, // 50MB
+      });
+      
+      if (createError) {
+        throw new Error(`Failed to create documents bucket: ${createError.message}`);
+      }
+      console.log("Documents bucket created successfully");
+    } else {
+      console.log("Documents bucket exists, proceeding with extraction");
     }
     
     // Extract ZIP contents

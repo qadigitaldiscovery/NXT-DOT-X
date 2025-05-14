@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Upload, File, X, Archive } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -40,38 +41,36 @@ export const DocumentUpload = ({
   const [isProcessingZip, setIsProcessingZip] = useState(false);
   const [extractionProgress, setExtractionProgress] = useState(0);
   const [isBucketReady, setIsBucketReady] = useState(false);
+  const [isCreatingBucket, setIsCreatingBucket] = useState(false);
 
   useEffect(() => {
     // Check if the documents bucket exists and create it if it doesn't
     const checkAndCreateBucket = async () => {
       try {
-        // Try to list files in the bucket to see if it exists
-        const { error } = await supabase.storage.from('documents').list('');
+        setIsCreatingBucket(true);
+        console.log('Checking if documents bucket exists...');
+        
+        // Call our edge function to create the bucket
+        const { data, error } = await supabase.functions.invoke('create-documents-bucket');
         
         if (error) {
-          console.log('Documents bucket not found, attempting to create it...');
-          // Call our edge function to create the bucket
-          const { data, error: funcError } = await supabase.functions.invoke('create-documents-bucket');
-          
-          if (funcError) {
-            console.error('Error creating documents bucket:', funcError);
-            toast.error('Error setting up document storage. Please try again later.');
-            return;
-          }
-          
-          console.log('Bucket creation response:', data);
-          if (data.success) {
-            toast.success('Document storage initialized successfully');
-            setIsBucketReady(true);
-          } else {
-            toast.error('Failed to initialize document storage');
-          }
-        } else {
-          console.log('Documents bucket exists');
+          console.error('Error creating documents bucket:', error);
+          toast.error('Error setting up document storage. Please try again later.');
+          return;
+        }
+        
+        console.log('Bucket creation/check response:', data);
+        if (data.success) {
+          toast.success(data.message || 'Document storage initialized successfully');
           setIsBucketReady(true);
+        } else {
+          toast.error(data.error || 'Failed to initialize document storage');
         }
       } catch (error) {
         console.error('Error checking bucket:', error);
+        toast.error(`Error setting up document storage: ${error.message || 'Unknown error'}`);
+      } finally {
+        setIsCreatingBucket(false);
       }
     };
     
@@ -143,12 +142,31 @@ export const DocumentUpload = ({
       const filePath = `uploads/zip/${Date.now()}-${zipFile.name}`;
       setExtractionProgress(20);
 
+      // Verify bucket exists before upload
+      const { data: bucketData, error: bucketError } = await supabase.storage
+        .getBucket('documents');
+        
+      if (bucketError) {
+        console.error('Error getting bucket info:', bucketError);
+        // Try to create bucket again if it doesn't exist
+        const { data: createData, error: createError } = await supabase.functions.invoke('create-documents-bucket');
+        
+        if (createError || !createData?.success) {
+          toast.error('Storage bucket does not exist and could not be created');
+          setIsProcessingZip(false);
+          return false;
+        }
+        // Wait a moment for bucket creation to propagate
+        await new Promise(resolve => setTimeout(resolve, 1000));
+      }
+
       const { data: uploadData, error: uploadError } = await supabase.storage
         .from('documents')
         .upload(filePath, zipFile);
 
       if (uploadError) {
-        toast.error(`Error uploading ZIP file: ${uploadError.message}`);
+        console.error('Error uploading ZIP file:', uploadError);
+        toast.error(`Error uploading ZIP file: ${uploadError.message || 'Unknown error'}`);
         setIsProcessingZip(false);
         return false;
       }
@@ -159,7 +177,14 @@ export const DocumentUpload = ({
         .from('documents')
         .getPublicUrl(filePath);
 
+      if (!urlData?.publicUrl) {
+        toast.error('Could not get public URL for uploaded ZIP file');
+        setIsProcessingZip(false);
+        return false;
+      }
+
       setExtractionProgress(60);
+      console.log('Invoking extract-zip function with ZIP URL:', urlData.publicUrl);
 
       // Call our edge function to extract the ZIP file
       const { data, error } = await supabase.functions.invoke('extract-zip', {
@@ -174,7 +199,7 @@ export const DocumentUpload = ({
 
       if (error) {
         console.error('Error invoking extract-zip function:', error);
-        toast.error(`Error extracting ZIP file: ${error.message}`);
+        toast.error(`Error extracting ZIP file: ${error.message || 'Unknown error'}`);
         setIsProcessingZip(false);
         return false;
       }
@@ -210,7 +235,16 @@ export const DocumentUpload = ({
     
     if (!isBucketReady) {
       toast.error('Document storage is not ready yet. Please try again in a moment.');
-      return;
+      // Try to initialize bucket again
+      try {
+        const { data, error } = await supabase.functions.invoke('create-documents-bucket');
+        if (error || !data?.success) {
+          return;
+        }
+        setIsBucketReady(true);
+      } catch (error) {
+        return;
+      }
     }
     
     setIsUploading(true);
@@ -352,7 +386,12 @@ export const DocumentUpload = ({
             onDragLeave={handleDragLeave}
             onDrop={handleDrop}
           >
-            {!file ? (
+            {isCreatingBucket ? (
+              <div className="flex flex-col items-center justify-center space-y-4 py-4">
+                <Progress value={60} className="h-2 w-40" />
+                <p className="text-sm text-gray-500">Setting up document storage...</p>
+              </div>
+            ) : !file ? (
               <div className="flex flex-col items-center justify-center space-y-4">
                 <Upload className="h-10 w-10 text-gray-400" />
                 <div className="text-center">
@@ -372,6 +411,7 @@ export const DocumentUpload = ({
                 <Button 
                   variant="outline" 
                   onClick={() => document.getElementById('file-upload')?.click()}
+                  disabled={!isBucketReady}
                 >
                   Select File
                 </Button>
@@ -438,7 +478,7 @@ export const DocumentUpload = ({
                   <Button 
                     onClick={handleUpload} 
                     className="w-full"
-                    disabled={!file || !title || !categoryId || !author}
+                    disabled={!file || !title || !categoryId || !author || !isBucketReady}
                   >
                     {file.name.toLowerCase().endsWith('.zip') ? 'Upload & Extract ZIP' : 'Upload File'}
                   </Button>

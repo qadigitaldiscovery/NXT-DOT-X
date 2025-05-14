@@ -1,22 +1,22 @@
 
-export type DocumentType = 'pdf' | 'text' | 'markdown' | 'image' | 'zip' | 'other';
+export interface DocumentCategory {
+  id: string;
+  name: string;
+  created_at?: string;
+  updated_at?: string;
+}
 
 export interface DocumentItem {
   id: string;
   title: string;
   description?: string;
   type: DocumentType;
-  url?: string;
   content?: string;
-  createdAt: string;
-  updatedAt: string;
-  author: string;
-  isPublic?: boolean;
-  shareId?: string | null;
+  url?: string;
+  author?: string;
+  category_id: string;
+  created_at?: string;
+  updated_at?: string;
 }
 
-export interface DocumentCategory {
-  id: string;
-  name: string;
-  documents: DocumentItem[];
-}
+export type DocumentType = 'markdown' | 'pdf' | 'image' | 'text' | 'zip' | 'other';

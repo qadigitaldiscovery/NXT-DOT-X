@@ -7,12 +7,13 @@ import PermissionGuard from '@/components/PermissionGuard';
 const RAGDashboardPage: React.FC = () => {
   // Mock functions that return Promises with the expected return types
   const refreshModules = async (): Promise<{ success: boolean }> => {
-    return { success: true };
+    console.log('Refreshing modules');
+    return Promise.resolve({ success: true });
   };
   
   const resolveAlert = async (id: string): Promise<any> => {
     console.log(`Resolving alert with ID: ${id}`);
-    return { success: true };
+    return Promise.resolve({ success: true });
   };
   
   const addRule = async (rule: any): Promise<any> => {
