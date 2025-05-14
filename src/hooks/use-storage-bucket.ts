@@ -22,7 +22,7 @@ export function useStorageBucket(bucketName: string = 'documents') {
             success: boolean;
             message: string;
             bucketName: string;
-          }>('storage', 'create-bucket', {
+          }>('storage', {
             action: 'create-bucket',
             bucketName
           });
@@ -38,7 +38,7 @@ export function useStorageBucket(bucketName: string = 'documents') {
             const result = await tryUseEdgeFunction<{
               success: boolean;
               message: string;
-            }>('storage', 'create-bucket', {
+            }>('storage', {
               action: 'create-bucket',
               bucketName
             });

@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -74,7 +73,7 @@ export const DocumentUpload = ({ categories, onFileUpload }: DocumentUploadProps
       const result = await tryUseEdgeFunction<{
         success: boolean;
         message: string;
-      }>('storage', 'create-bucket', { 
+      }>('storage', {
         action: 'create-bucket',
         bucketName: 'documents'
       }, {

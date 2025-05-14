@@ -32,8 +32,7 @@ export async function tryUseEdgeFunction<T>(
       functionName, 
       {
         body: payload,
-        headers: options.headers,
-        signal: controller.signal
+        headers: options.headers
       }
     );
     

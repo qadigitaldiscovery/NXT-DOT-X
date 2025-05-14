@@ -1,4 +1,3 @@
-
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { tryUseEdgeFunction } from './api-clients/common/edge-function-utils';
@@ -147,7 +146,6 @@ async function processZipFile(publicUrl: string, documentType: string, documentN
       if (hasErrors) {
         const failedCount = (errors?.length || 0);
         toast({
-          title: "ZIP extraction completed with issues",
           description: `Successfully extracted ${processedFiles} files. ${failedCount} files had errors.`,
           duration: 5000,
         });
