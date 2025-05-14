@@ -55,7 +55,7 @@ const DocumentationPage = () => {
 
   // Set first document as selected if none selected
   useEffect(() => {
-    if (!selectedDocument && filteredCategories.length > 0 && filteredCategories[0].documents.length > 0) {
+    if (!selectedDocument && filteredCategories.length > 0 && filteredCategories[0].documents && filteredCategories[0].documents.length > 0) {
       setSelectedDocument(filteredCategories[0].documents[0]);
     }
   }, [filteredCategories, selectedDocument]);
@@ -72,7 +72,10 @@ const DocumentationPage = () => {
     author: string;
   }) => {
     try {
-      const newDocument = await documentService.addDocument(categoryId, documentData);
+      const newDocument = await documentService.addDocument(categoryId, {
+        ...documentData,
+        category_id: categoryId // Make sure to include category_id
+      });
       const refreshedCategories = await documentService.getAllCategories();
       setCategories(refreshedCategories);
       setSelectedDocument(newDocument);

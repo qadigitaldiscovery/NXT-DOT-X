@@ -69,12 +69,12 @@ export const DocumentExplorer = ({
               }
               <Folder className="h-4 w-4 mr-2 text-blue-500" />
               <span className="flex-1 text-left">{category.name}</span>
-              <span className="text-xs text-gray-400">{category.documents.length}</span>
+              <span className="text-xs text-gray-400">{category.documents?.length || 0}</span>
             </button>
             
             {expandedCategories.includes(category.id) && (
               <div className="ml-6 mt-1 space-y-1">
-                {category.documents.length === 0 ? (
+                {!category.documents || category.documents.length === 0 ? (
                   <div className="px-2 py-1.5 text-sm text-gray-400 italic">No documents</div>
                 ) : (
                   category.documents.map((document) => (

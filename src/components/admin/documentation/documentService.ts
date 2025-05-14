@@ -1,3 +1,4 @@
+
 import { DocumentCategory, DocumentItem, DocumentType } from './types';
 import { documentCategories as initialDocumentCategories } from './mockData';
 import { supabase } from "@/integrations/supabase/client";
@@ -38,6 +39,10 @@ class DocumentService {
       content: dbDocument.content || '',
       url: dbDocument.url || '',
       author: dbDocument.author || '',
+      category_id: dbDocument.category_id,
+      created_at: dbDocument.created_at,
+      updated_at: dbDocument.updated_at,
+      // Add aliases for compatibility
       createdAt: dbDocument.created_at,
       updatedAt: dbDocument.updated_at,
       isPublic: dbDocument.is_public || false,
@@ -89,6 +94,8 @@ class DocumentService {
           return {
             id: category.id,
             name: category.name,
+            created_at: category.created_at,
+            updated_at: category.updated_at,
             documents: mappedDocuments,
           };
         })
@@ -371,7 +378,8 @@ class DocumentService {
         type: type,
         content: content,
         url: url,
-        author: metadata.author
+        author: metadata.author,
+        category_id: metadata.categoryId // Make sure to include category_id
       });
       
       return document;
@@ -473,7 +481,7 @@ class DocumentService {
       
       return {
         ...data,
-        documents: [],
+        documents: [], // Include empty documents array
       };
     } catch (error) {
       console.error('Error in addCategory:', error);

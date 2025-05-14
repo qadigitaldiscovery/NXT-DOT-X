@@ -128,7 +128,7 @@ export const DocumentViewer = ({ document }: DocumentViewerProps) => {
           <h2 className="text-2xl font-bold">{document.title}</h2>
           <p className="text-sm text-gray-500">
             {document.author && `By ${document.author} • `}
-            Last updated {new Date(document.updatedAt).toLocaleDateString()}
+            Last updated {new Date(document.updated_at || document.updatedAt || '').toLocaleDateString()}
           </p>
         </div>
         <div className="flex space-x-2">

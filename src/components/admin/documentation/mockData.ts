@@ -1,4 +1,3 @@
-
 import { DocumentCategory, DocumentType } from './types';
 
 export const documentCategories: DocumentCategory[] = [
@@ -58,9 +57,10 @@ The NXT-DOT-X platform is a comprehensive business management solution designed 
 
 ### Current development state: 
 In Progress - Core modules functional with ongoing feature development`,
-        createdAt: '2023-05-09T10:00:00',
-        updatedAt: '2023-05-09T10:00:00',
-        author: 'System Architecture Team'
+        created_at: '2023-05-09T10:00:00',
+        updated_at: '2023-05-09T10:00:00',
+        author: 'System Architecture Team',
+        category_id: 'sys-docs'
       },
       {
         id: 'lead-dev-profile',
@@ -93,9 +93,10 @@ The Lead Developer is responsible for overseeing the technical implementation of
 - Follow the project's naming conventions and file structure
 - Write unit tests for critical functionality
 - Use proper error handling and logging`,
-        createdAt: '2023-01-15T09:30:00',
-        updatedAt: '2023-02-01T14:20:00',
-        author: 'Admin Team'
+        created_at: '2023-01-15T09:30:00',
+        updated_at: '2023-02-01T14:20:00',
+        author: 'Admin Team',
+        category_id: 'sys-docs'
       },
       {
         id: 'sys-arch-comp',
@@ -133,9 +134,10 @@ The Lead Developer is responsible for overseeing the technical implementation of
 ## 3. Executive Summary
 
 The NXT-DOT-X platform represents a sophisticated, comprehensive business management solution designed to unify and streamline diverse operational aspects across an organization. This modular platform serves as a centralized command center, empowering stakeholders with actionable insights, process optimization tools, and integrated management capabilities.`,
-        createdAt: '2023-03-20T11:45:00',
-        updatedAt: '2023-05-15T16:30:00',
-        author: 'Architecture Team'
+        created_at: '2023-03-20T11:45:00',
+        updated_at: '2023-05-15T16:30:00',
+        author: 'Architecture Team',
+        category_id: 'sys-docs'
       }
     ]
   },
@@ -159,9 +161,10 @@ This document outlines the comprehensive architecture design for the NXT-DOT-X s
 - **State Management**: Context API and React Query for data fetching/caching
 - **Backend Services**: RESTful API endpoints with Supabase integration
 - **Data Storage**: PostgreSQL database with normalized schema design`,
-        createdAt: '2023-05-09T10:00:00',
-        updatedAt: '2023-05-09T10:00:00',
-        author: 'System Architecture Team'
+        created_at: '2023-05-09T10:00:00',
+        updated_at: '2023-05-09T10:00:00',
+        author: 'System Architecture Team',
+        category_id: 'sys-projects'
       }
     ]
   },
@@ -174,18 +177,20 @@ This document outlines the comprehensive architecture design for the NXT-DOT-X s
         title: 'Getting Started Guide',
         type: 'markdown',
         content: '# Getting Started\n\nWelcome to our documentation. This guide will help you get started with our system.',
-        createdAt: '2023-01-15T09:30:00',
-        updatedAt: '2023-02-01T14:20:00',
-        author: 'Admin Team'
+        created_at: '2023-01-15T09:30:00',
+        updated_at: '2023-02-01T14:20:00',
+        author: 'Admin Team',
+        category_id: 'core-docs'
       },
       {
         id: 'api-docs',
         title: 'API Documentation',
         type: 'markdown',
         content: '# API Documentation\n\nThis document provides details about our API endpoints and how to use them.',
-        createdAt: '2023-01-20T11:45:00',
-        updatedAt: '2023-03-15T16:30:00',
-        author: 'API Team'
+        created_at: '2023-01-20T11:45:00',
+        updated_at: '2023-03-15T16:30:00',
+        author: 'API Team',
+        category_id: 'core-docs'
       }
     ]
   },
@@ -198,18 +203,20 @@ This document outlines the comprehensive architecture design for the NXT-DOT-X s
         title: 'Dashboard User Guide',
         type: 'markdown',
         content: '# Dashboard Guide\n\nLearn how to use the dashboard effectively with this comprehensive guide.',
-        createdAt: '2023-02-10T13:15:00',
-        updatedAt: '2023-02-10T13:15:00',
-        author: 'User Experience Team'
+        created_at: '2023-02-10T13:15:00',
+        updated_at: '2023-02-10T13:15:00',
+        author: 'User Experience Team',
+        category_id: 'user-guides'
       },
       {
         id: 'report-guide',
         title: 'Reporting System Guide',
         type: 'markdown',
         content: '# Reporting System\n\nThis guide explains how to generate and customize reports in the system.',
-        createdAt: '2023-02-12T10:00:00',
-        updatedAt: '2023-04-05T09:20:00',
-        author: 'Reporting Team'
+        created_at: '2023-02-12T10:00:00',
+        updated_at: '2023-04-05T09:20:00',
+        author: 'Reporting Team',
+        category_id: 'user-guides'
       }
     ]
   }
