@@ -1,11 +1,10 @@
-
 import React from "react";
-import { AppRoutes } from "../../src/routes/AppRoutes";
+import MasterDash from "../../src/pages/MasterDash";
 
 function App() {
   return (
-    <div className="min-h-screen w-full">
-      <AppRoutes />
+    <div>
+      <MasterDash />
     </div>
   );
 }

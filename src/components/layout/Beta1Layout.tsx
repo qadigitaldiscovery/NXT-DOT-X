@@ -28,7 +28,7 @@ export const Beta1Layout = ({ children }: Beta1LayoutProps) => {
 
   return (
     <div className="flex h-screen overflow-hidden bg-background">
-      <Sidebar />
+      <Sidebar open={sidebarOpen} onToggle={toggleSidebar} />
       <div className="flex flex-col flex-1 overflow-hidden">
         <Navbar onMenuClick={toggleSidebar} />
         <main className="flex-1 overflow-y-auto p-4 md:p-6">

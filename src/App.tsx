@@ -7,7 +7,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
 import { ThemeProvider } from "./context/ThemeContext";
-import { AppRoutes } from "./routes/AppRoutes";
+import { AppRoutes } from "./routes";
 
 const queryClient = new QueryClient();
 
@@ -16,11 +16,13 @@ const App = () => {
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
         <ThemeProvider>
-          <TooltipProvider>
-            <AppRoutes />
-            <Toaster />
-            <Sonner />
-          </TooltipProvider>
+          <BrowserRouter>
+            <TooltipProvider>
+              <AppRoutes />
+              <Toaster />
+              <Sonner />
+            </TooltipProvider>
+          </BrowserRouter>
         </ThemeProvider>
       </AuthProvider>
     </QueryClientProvider>

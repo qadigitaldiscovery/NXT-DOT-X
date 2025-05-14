@@ -1,13 +1,8 @@
 
+// KpiCard.tsx
 import React from 'react';
 
-interface KpiCardProps {
-  title: string;
-  value: string | number;
-  change: number | null;
-}
-
-export default function KpiCard({ title, value, change }: KpiCardProps) {
+export default function KpiCard({ title, value, change }) {
   const changeColor = change >= 0 ? 'text-green-600' : 'text-red-600';
   const changeSign = change >= 0 ? '+' : '';
   return (
