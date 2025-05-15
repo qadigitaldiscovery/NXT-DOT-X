@@ -5,17 +5,7 @@ import { SharedNavbar } from './SharedNavbar';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { cn } from '@/lib/utils';
 import { Home, Users, Gift, BarChart3, Settings, BrainCircuit } from 'lucide-react';
-
-interface NavItem {
-  label: string;
-  icon: React.ElementType;
-  path: string;
-}
-
-interface NavCategory {
-  name: string;
-  items: NavItem[];
-}
+import { NavCategory, NavItem } from './sidebar/types';
 
 interface LoyaltyLayoutProps {
   children: React.ReactNode;
@@ -24,6 +14,7 @@ interface LoyaltyLayoutProps {
 const loyaltyNavItems: NavCategory[] = [
   {
     name: "Loyalty Menu",
+    label: "Loyalty Menu",
     items: [
       { label: 'Dashboard', icon: Home, path: '/loyalty-rewards' },
       { label: 'Members', icon: Users, path: '/loyalty-rewards/members' },
@@ -34,6 +25,7 @@ const loyaltyNavItems: NavCategory[] = [
   },
   {
     name: "Tech Hub",
+    label: "Tech Hub",
     items: [
       { label: 'AI Personas', icon: BrainCircuit, path: '/tech-hub/personas' },
     ]

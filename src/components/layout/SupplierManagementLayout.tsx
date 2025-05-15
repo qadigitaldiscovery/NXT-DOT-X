@@ -6,17 +6,7 @@ import { useIsMobile } from '@/hooks/use-mobile';
 import { cn } from '@/lib/utils';
 import { Outlet } from 'react-router-dom';
 import { Home, Users, Settings, Database, BarChart3, FileUp } from 'lucide-react';
-
-interface NavItem {
-  label: string;
-  icon: React.ElementType;
-  path: string;
-}
-
-interface NavCategory {
-  name: string;
-  items: NavItem[];
-}
+import { NavCategory, NavItem } from './sidebar/types';
 
 interface SupplierManagementLayoutProps {
   children?: React.ReactNode;
@@ -25,6 +15,7 @@ interface SupplierManagementLayoutProps {
 const supplierNavItems: NavCategory[] = [
   {
     name: "SUPPLIER MANAGEMENT",
+    label: "Supplier Management",
     items: [
       { label: 'Dashboard', icon: Database, path: '/supplier-management' },
       { label: 'Supplier Directory', icon: Users, path: '/supplier-management/directory' },

@@ -1,72 +1,100 @@
 
-import React, { useState } from 'react';
+import React from 'react';
+import { ChevronDown } from 'lucide-react';
+import { SidebarItem } from './SidebarItem';
+import { NavItem } from './types';
 import { useLocation } from 'react-router-dom';
-import { NavCategory, NavItem } from './types';
-import { ChevronDown, ChevronRight } from 'lucide-react';
-import SidebarItem from './SidebarItem';
+import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
 
 interface SidebarCategoryMenuProps {
-  category: NavCategory;
+  title: string;
+  items: NavItem[];
+  open?: boolean;
+  collapsed?: boolean;
   textColor?: string;
   textHoverColor?: string;
   activeBgColor?: string;
   activeTextColor?: string;
-  iconColor?: string;
 }
 
-const SidebarCategoryMenu: React.FC<SidebarCategoryMenuProps> = ({
-  category,
-  textColor = 'text-gray-700 dark:text-gray-200',
-  textHoverColor = 'hover:text-gray-900 dark:hover:text-white',
-  activeBgColor = 'bg-gray-200 dark:bg-gray-700',
-  activeTextColor = 'text-gray-900 dark:text-white',
-  iconColor = 'text-gray-500 dark:text-gray-400',
+export const SidebarCategoryMenu: React.FC<SidebarCategoryMenuProps> = ({
+  title,
+  items,
+  open = true,
+  collapsed = false,
+  textColor = "text-white",
+  textHoverColor = "hover:text-white",
+  activeBgColor = "bg-indigo-500",
+  activeTextColor = "text-white",
 }) => {
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = React.useState(open);
   const location = useLocation();
+  
+  // Check if any item in this category is active
+  const hasActiveItem = React.useMemo(() => {
+    return items.some(item => {
+      const currentPath = location.pathname;
+      const itemPath = item.href || item.path;
+      return currentPath === itemPath || 
+             (item.activeMatchPattern && 
+              (typeof item.activeMatchPattern === 'string' 
+                ? currentPath.includes(item.activeMatchPattern) 
+                : item.activeMatchPattern.test(currentPath)));
+    });
+  }, [items, location.pathname]);
 
-  // Normalize items to ensure href is present
-  const normalizedItems = category.items.map(item => ({
-    ...item,
-    href: item.href || item.path || '#' // Ensure href is always present
-  }));
-
-  const isActiveCategory = normalizedItems.some(
-    (item) => item.href === location.pathname
-  );
+  if (collapsed) {
+    return null; // Don't render category titles in collapsed mode
+  }
 
   return (
     <div className="mb-2">
-      <button
-        className={`flex items-center justify-between w-full px-3 py-2 rounded-md ${textColor} ${textHoverColor} transition-colors`}
-        onClick={() => setIsOpen(!isOpen)}
-      >
-        <span className="font-medium">{category.name}</span>
-        {isOpen ? (
-          <ChevronDown className="h-4 w-4" />
-        ) : (
-          <ChevronRight className="h-4 w-4" />
-        )}
-      </button>
-
+      {!collapsed && (
+        <Button
+          variant="ghost"
+          className={cn(
+            "flex justify-between items-center w-full px-2 py-1 font-medium",
+            textColor,
+            textHoverColor,
+            "text-xs opacity-60 hover:opacity-80 transition-colors"
+          )}
+          onClick={() => setIsOpen(!isOpen)}
+        >
+          {title}
+          <ChevronDown
+            className={cn(
+              "h-3 w-3 transition-transform",
+              isOpen && "rotate-180"
+            )}
+          />
+        </Button>
+      )}
+      
       {isOpen && (
-        <div className="mt-1 ml-2 space-y-1">
-          {normalizedItems.map((item) => (
-            <SidebarItem
-              key={item.href}
-              item={item}
-              isActive={location.pathname === item.href}
-              textColor={textColor}
-              textHoverColor={textHoverColor}
-              activeBgColor={activeBgColor}
-              activeTextColor={activeTextColor}
-              iconColor={iconColor}
-            />
-          ))}
+        <div className="mt-1 ml-1 space-y-0.5">
+          {items.map((item, index) => {
+            // Check if current route matches this item
+            const isActive = location.pathname === (item.href || item.path) || 
+                           (item.activeMatchPattern && 
+                            (typeof item.activeMatchPattern === 'string' 
+                             ? location.pathname.includes(item.activeMatchPattern) 
+                             : item.activeMatchPattern.test(location.pathname)));
+
+            return (
+              <SidebarItem
+                key={index}
+                item={item}
+                isActive={isActive}
+                textColor={textColor}
+                textHoverColor={textHoverColor}
+                activeBgColor={activeBgColor}
+                activeTextColor={activeTextColor}
+              />
+            );
+          })}
         </div>
       )}
     </div>
   );
 };
-
-export default SidebarCategoryMenu;

@@ -6,22 +6,12 @@ import { useIsMobile } from '@/hooks/use-mobile';
 import { cn } from '@/lib/utils';
 import { Outlet } from 'react-router-dom';
 import { BarChart3, Bot, Shield, Users, Settings, Zap, Brain, Home } from 'lucide-react';
-
-interface NavItem {
-  label: string;
-  icon: React.ElementType;
-  path: string;
-  children?: NavItem[];
-}
-
-interface NavCategory {
-  name: string;
-  items: NavItem[];
-}
+import { NavCategory, NavItem } from './sidebar/types';
 
 const dotXNavItems: NavCategory[] = [
   {
     name: "NAVIGATION",
+    label: "Navigation",
     items: [
       { label: 'Mission Control', icon: BarChart3, path: '/dot-x' },
       { label: 'AI Agents', icon: Bot, path: '/dot-x/ai-agents' },

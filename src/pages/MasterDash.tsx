@@ -49,6 +49,7 @@ const MasterDash = () => {
   const navCategories: NavCategory[] = [
     {
       name: "Main",
+      label: "Main",
       items: [
         { label: "All Modules", href: "/", icon: Layout },
         { label: "API Keys", href: "/tech-hub/api-management", icon: Key },
@@ -58,6 +59,7 @@ const MasterDash = () => {
     },
     {
       name: "Administration",
+      label: "Administration",
       items: [
         { label: "User Management", href: "/admin/users", icon: Users },
         { label: "Customer Management", href: "/data-management/customers", icon: Building },
@@ -72,6 +74,7 @@ const MasterDash = () => {
     },
     {
       name: "Account",
+      label: "Account",
       items: [
         { label: "Billing", href: "/settings/billing", icon: CreditCard }
       ]

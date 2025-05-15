@@ -1,110 +1,91 @@
 
 import React from 'react';
-import { NavLink } from 'react-router-dom';
-import { ChevronDown, ChevronRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { SidebarItemProps } from './types';
+import { NavItem } from './types';
+import { Link } from 'react-router-dom';
+import { ChevronRight } from 'lucide-react';
 
-export const SidebarItem = ({
+export interface SidebarItemProps {
+  item: NavItem;
+  isActive: boolean;
+  textColor?: string;
+  textHoverColor?: string;
+  activeBgColor?: string;
+  activeTextColor?: string;
+  iconColor?: string;
+}
+
+export const SidebarItem: React.FC<SidebarItemProps> = ({
   item,
   isActive,
-  onClick,
-  textColor,
-  textHoverColor,
-  activeBgColor,
-  activeTextColor,
-  hoverBgColor,
-  hasChildren,
-  isExpanded
-}: SidebarItemProps) => {
-  // Use href property with path as fallback for backwards compatibility
-  const to = item.href || item.path || '#';
+  textColor = "text-gray-300",
+  textHoverColor = "hover:text-white",
+  activeBgColor = "bg-gray-800",
+  activeTextColor = "text-white",
+  iconColor = "text-gray-400"
+}) => {
+  const [isSubMenuOpen, setIsSubMenuOpen] = React.useState(false);
+  const hasChildren = item.children && item.children.length > 0;
   
-  // Handle the icon rendering safely
-  const renderIcon = () => {
-    const Icon = item.icon;
-    if (typeof Icon === 'function') {
-      return <Icon className="h-5 w-5 mr-2" />;
-    } else {
-      return <span className="mr-2">{Icon}</span>;
+  // For icons
+  const Icon = item.icon;
+  
+  // Handle path/href
+  const path = item.path || item.href || "#";
+  
+  // If item has children, toggle submenu on click
+  const handleClick = (e: React.MouseEvent) => {
+    if (hasChildren) {
+      e.preventDefault();
+      setIsSubMenuOpen(!isSubMenuOpen);
     }
   };
 
-  const renderContent = () => (
-    <>
-      <span className="flex items-center flex-1">
-        {renderIcon()}
-        <span>{item.label}</span>
-      </span>
-      {hasChildren && (
-        <span className="ml-auto">
-          {isExpanded ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
-        </span>
-      )}
-    </>
-  );
-
-  if (hasChildren) {
-    return (
-      <div>
-        <button
-          onClick={onClick}
-          className={cn(
-            "flex items-center w-full py-2 px-3 rounded-md transition-colors duration-150",
-            textColor,
-            textHoverColor,
-            hoverBgColor,
-            isActive && `${activeBgColor} ${activeTextColor}`
-          )}
-        >
-          {renderContent()}
-        </button>
-        {isExpanded && item.children && (
-          <div className="pl-4 mt-1 space-y-1">
-            {item.children.map((child) => (
-              <NavLink
-                key={child.label}
-                to={child.href || child.path || '#'}
-                className={({ isActive }) =>
-                  cn(
-                    "flex items-center py-2 px-3 rounded-md transition-colors duration-150",
-                    textColor,
-                    textHoverColor,
-                    hoverBgColor,
-                    isActive && `${activeBgColor} ${activeTextColor}`
-                  )
-                }
-              >
-                {typeof child.icon === 'function' ? (
-                  <child.icon className="h-4 w-4 mr-2" />
-                ) : (
-                  <span className="mr-2">{child.icon}</span>
-                )}
-                <span className="text-sm">{child.label}</span>
-              </NavLink>
-            ))}
-          </div>
-        )}
-      </div>
-    );
-  }
-
   return (
-    <NavLink
-      to={to}
-      className={({ isActive: linkActive }) =>
-        cn(
-          "flex items-center py-2 px-3 rounded-md transition-colors duration-150",
-          textColor,
+    <div className="relative">
+      <Link
+        to={path}
+        onClick={handleClick}
+        className={cn(
+          "flex items-center py-2 px-3 rounded-md text-sm",
+          isActive ? cn(activeBgColor, activeTextColor) : textColor,
           textHoverColor,
-          hoverBgColor,
-          (isActive || linkActive) && `${activeBgColor} ${activeTextColor}`
-        )
-      }
-    >
-      {renderContent()}
-    </NavLink>
+          "transition-colors"
+        )}
+      >
+        {Icon && (
+          <span className={cn("mr-2", isActive ? activeTextColor : iconColor)}>
+            <Icon className="h-4 w-4" />
+          </span>
+        )}
+        <span className="flex-1 truncate">{item.label}</span>
+        {hasChildren && (
+          <ChevronRight 
+            className={cn(
+              "h-4 w-4 transition-transform", 
+              isSubMenuOpen ? "rotate-90" : ""
+            )} 
+          />
+        )}
+      </Link>
+      
+      {/* Submenu */}
+      {hasChildren && isSubMenuOpen && (
+        <div className="ml-4 mt-1 space-y-1">
+          {item.children?.map((child, idx) => (
+            <SidebarItem
+              key={idx}
+              item={child}
+              isActive={false} // You might want to implement logic for checking if submenu item is active
+              textColor={textColor}
+              textHoverColor={textHoverColor}
+              activeBgColor={activeBgColor}
+              activeTextColor={activeTextColor}
+              iconColor={iconColor}
+            />
+          ))}
+        </div>
+      )}
+    </div>
   );
 };
-
-export default SidebarItem;
