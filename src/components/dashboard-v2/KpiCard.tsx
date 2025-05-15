@@ -1,19 +1,37 @@
 
-// KpiCard.tsx
 import React from 'react';
+import { Card, CardContent } from '@/components/ui/card';
+import { ArrowUpIcon, ArrowDownIcon } from 'lucide-react';
 
-export default function KpiCard({ title, value, change }) {
-  const changeColor = change >= 0 ? 'text-green-600' : 'text-red-600';
-  const changeSign = change >= 0 ? '+' : '';
-  return (
-    <div className="bg-white shadow rounded p-4">
-      <div className="text-sm text-gray-500">{title}</div>
-      <div className="text-xl font-bold">{value}</div>
-      {change != null && (
-        <div className={`text-sm ${changeColor}`}>
-          {changeSign}{change}%
-        </div>
-      )}
-    </div>
-  );
+interface KpiCardProps {
+  title: string;
+  value: string;
+  change: number;
 }
+
+const KpiCard = ({ title, value, change }: KpiCardProps) => {
+  const isPositive = change >= 0;
+
+  return (
+    <Card>
+      <CardContent className="p-4">
+        <h3 className="text-sm font-medium text-muted-foreground">{title}</h3>
+        <div className="flex items-center justify-between mt-2">
+          <p className="text-2xl font-bold">{value}</p>
+          <div className="flex items-center">
+            {isPositive ? (
+              <ArrowUpIcon className="w-4 h-4 text-green-500" />
+            ) : (
+              <ArrowDownIcon className="w-4 h-4 text-red-500" />
+            )}
+            <span className={`ml-1 text-sm ${isPositive ? 'text-green-500' : 'text-red-500'}`}>
+              {Math.abs(change)}%
+            </span>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  );
+};
+
+export default KpiCard;

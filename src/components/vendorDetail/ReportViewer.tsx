@@ -1,11 +1,10 @@
 
-import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { getReportUrl } from '@/services/vendorApi';
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { VendorReport } from '@/types/vendor';
-import { ChevronLeft, ChevronRight, ZoomIn, ZoomOut, Download } from 'lucide-react';
-import { formatDate } from '@/utils/vendorCalculations';
+import { getReportUrl } from '@/services/vendorApi';
+import { FileText, Download } from 'lucide-react';
 import { useFetchCreditReport } from '@/hooks/useVendorDetail';
 
 interface ReportViewerProps {
@@ -14,119 +13,71 @@ interface ReportViewerProps {
 }
 
 export function ReportViewer({ report, vendorId }: ReportViewerProps) {
-  const [signedUrl, setSignedUrl] = useState<string | null>(null);
-  const [page, setPage] = useState(1);
-  const [zoom, setZoom] = useState(1);
-  
+  const [url, setUrl] = useState<string | null>(null);
   const { mutate: fetchReport, isPending } = useFetchCreditReport(vendorId);
-
-  useEffect(() => {
-    if (report) {
-      getReportUrl(report.file_path)
-        .then(url => setSignedUrl(url))
-        .catch(err => console.error('Error fetching report URL:', err));
+  
+  // Function to get and open the report
+  const handleViewReport = async () => {
+    if (!report?.file_path) return;
+    
+    try {
+      const reportUrl = await getReportUrl(report.file_path);
+      setUrl(reportUrl);
+      window.open(reportUrl, '_blank');
+    } catch (error) {
+      console.error('Error getting report URL:', error);
     }
-  }, [report]);
-
-  const handleZoomIn = () => {
-    setZoom(prev => Math.min(prev + 0.25, 2));
   };
-
-  const handleZoomOut = () => {
-    setZoom(prev => Math.max(prev - 0.25, 0.5));
-  };
-
+  
+  // Function to fetch a new credit report
   const handleFetchReport = () => {
     fetchReport();
   };
 
-  if (!report) {
-    return (
-      <Card className="h-full">
-        <CardHeader className="pb-2">
-          <CardTitle className="text-lg">Credit Report</CardTitle>
-        </CardHeader>
-        <CardContent className="flex flex-col items-center justify-center h-72">
-          <p className="text-muted-foreground mb-4">No report available</p>
-          <Button onClick={handleFetchReport} disabled={isPending}>
-            {isPending ? 'Fetching...' : 'Fetch Latest Report'}
-          </Button>
-        </CardContent>
-      </Card>
-    );
-  }
-
   return (
-    <Card className="h-full">
-      <CardHeader className="pb-2">
-        <div className="flex justify-between items-center">
-          <CardTitle className="text-lg">Credit Report</CardTitle>
-          <div className="text-sm text-muted-foreground">
-            {report && `Last Updated: ${formatDate(report.fetched_at)}`}
-          </div>
-        </div>
-        <div className="flex items-center justify-between mt-2">
-          <div className="space-x-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setPage(prev => Math.max(prev - 1, 1))}
-              disabled={page <= 1}
-            >
-              <ChevronLeft className="h-4 w-4" />
-            </Button>
-            <span className="text-sm">
-              Page {page}
-            </span>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setPage(prev => prev + 1)}
-            >
-              <ChevronRight className="h-4 w-4" />
-            </Button>
-          </div>
-          <div className="space-x-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handleZoomOut}
-              disabled={zoom <= 0.5}
-            >
-              <ZoomOut className="h-4 w-4" />
-            </Button>
-            <span className="text-sm">{Math.round(zoom * 100)}%</span>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handleZoomIn}
-              disabled={zoom >= 2}
-            >
-              <ZoomIn className="h-4 w-4" />
-            </Button>
-            {signedUrl && (
-              <Button variant="outline" size="sm" asChild>
-                <a href={signedUrl} download target="_blank" rel="noopener noreferrer">
-                  <Download className="h-4 w-4 mr-1" /> Download
-                </a>
-              </Button>
-            )}
-          </div>
-        </div>
+    <Card>
+      <CardHeader>
+        <CardTitle className="text-xl flex items-center">
+          <FileText className="mr-2" size={20} />
+          Credit Reports
+        </CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="h-[500px] overflow-hidden border rounded">
-          {signedUrl ? (
-            <iframe
-              src={`${signedUrl}#page=${page}&zoom=${zoom}`}
-              className="w-full h-full"
-              title="Vendor Credit Report"
-            />
-          ) : (
-            <div className="flex items-center justify-center h-full">
-              <p>Loading report...</p>
+        {report ? (
+          <div className="space-y-4">
+            <div className="flex justify-between items-center">
+              <div>
+                <p className="font-medium">Latest Report</p>
+                <p className="text-sm text-muted-foreground">
+                  {new Date(report.fetched_at).toLocaleDateString()}
+                </p>
+              </div>
+              <Button 
+                variant="outline" 
+                className="flex items-center"
+                onClick={handleViewReport}
+              >
+                <Download className="mr-2" size={16} />
+                View Report
+              </Button>
             </div>
-          )}
+          </div>
+        ) : (
+          <div className="space-y-4">
+            <p className="text-muted-foreground">No reports available for this vendor.</p>
+          </div>
+        )}
+        
+        <div className="mt-4 border-t pt-4">
+          <Button 
+            onClick={handleFetchReport} 
+            disabled={isPending}
+          >
+            {isPending ? 'Fetching...' : 'Request New Credit Report'}
+          </Button>
+          <p className="mt-2 text-sm text-muted-foreground">
+            Fetch the latest credit information from our providers.
+          </p>
         </div>
       </CardContent>
     </Card>

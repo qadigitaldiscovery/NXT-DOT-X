@@ -18,20 +18,6 @@ interface SidebarNavListProps {
   onCategoryToggle?: (categoryName: string) => void;
 }
 
-interface SidebarItemProps {
-  key: string;
-  item: NavItem;
-  isActive: boolean;
-  hasChildren: boolean;
-  isExpanded: boolean;
-  textColor: string;
-  textHoverColor: string;
-  activeBgColor: string;
-  activeTextColor: string;
-  hoverBgColor: string;
-  onClick?: () => void;
-}
-
 export function SidebarNavList({
   categories,
   activeItemKey,
@@ -79,16 +65,12 @@ export function SidebarNavList({
               <div className="pt-1 pl-1">
                 {category.items.map((item) => {
                   const isActive = activeItemKey === item.path || activeItemKey === item.label;
-                  const hasChildren = !!(item.children && item.children.length > 0);
-                  const itemIsExpanded = expandedCategories.includes(item.label);
                   
                   return (
                     <SidebarItem
                       key={item.label}
                       item={item}
                       isActive={isActive}
-                      hasChildren={hasChildren}
-                      isExpanded={itemIsExpanded}
                       textColor={textColor}
                       textHoverColor={textHoverColor}
                       activeBgColor={activeBgColor}

@@ -1,4 +1,4 @@
-// Update the import statement to use default import
+
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -10,7 +10,7 @@ const DashboardV2 = () => {
       <h1>Dashboard V2</h1>
       <Button>Click me</Button>
       <Card>
-        <KpiCard title="Total Revenue" value="$1M" />
+        <KpiCard title="Total Revenue" value="$1M" change={10} />
       </Card>
     </div>
   );
