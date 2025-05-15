@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { saveToLocalStorage, loadFromLocalStorage, clearFromLocalStorage } from '@/components/tech-hub/api-management/core/hooks/api-key-storage/localStorageUtils';
 import { useUserPreferences } from '@/hooks/useUserPreferences';
@@ -26,7 +27,7 @@ const OpenAIKeyForm = ({ defaultModel = 'gpt-3.5-turbo', additionalConfig = {}, 
   const [isSaving, setIsSaving] = useState(false);
   const [isClearing, setIsClearing] = useState(false);
 
-  const { preferences, setPreferences, isLoading } = useUserPreferences({
+  const { preferences, setPreferences, loading: isLoading } = useUserPreferences({
     module: 'openai',
     key: 'settings',
     defaultValue: { apiKey: '', preferredModel: defaultModel }

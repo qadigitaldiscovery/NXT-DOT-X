@@ -25,7 +25,7 @@ export const CompactSidebar = ({
   hoverBgColor = "hover:bg-indigo-900/50"
 }: CompactSidebarProps) => {
   // Prepare items for display
-  const allItems = navItems || [];
+  const allItems = [...(navItems || [])];
   
   // If we have categories, flatten their items
   if (categories && categories.length > 0) {
