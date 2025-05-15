@@ -64,11 +64,11 @@ const Landing = () => {
         <div className="absolute inset-0 bg-black bg-opacity-30"></div>
       </div>
 
-      <div className="relative z-10 flex flex-col items-center justify-center">
+      <div className="relative z-10 flex flex-col items-center justify-center px-0">
         {/* Circular login form */}
         <div className="w-[420px] h-[420px] rounded-full perspective-800 flex items-center justify-center">
           <div className="w-full h-full rounded-full transform bg-black bg-opacity-50 backdrop-blur-sm border border-red-900/30 overflow-hidden relative flex items-center justify-center">
-            <div className="absolute inset-0 bg-gradient-to-br from-transparent via-transparent to-red-900/20 bg-transparent rounded-none"></div>
+            <div className="absolute inset-0 bg-gradient-to-br from-transparent via-transparent to-red-900/20 bg-transparent rounded-none py-0 mx-[33px] my-[58px]"></div>
             
             {/* Red corner accents - adjusted for circle */}
             <div className="absolute top-[15%] left-[15%] w-4 h-4 border-t-2 border-l-2 border-red-500 rounded-tl-full"></div>
