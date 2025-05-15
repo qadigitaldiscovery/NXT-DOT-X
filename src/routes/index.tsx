@@ -7,6 +7,12 @@ import Unauthorized from "@/pages/Unauthorized";
 import MasterDash from '@/pages/MasterDash';
 import SharedDocumentPage from '@/pages/SharedDocumentPage';
 
+// Import vendor pages
+import VendorDetail from '@/pages/vendors/VendorDetail';
+import VendorsPage from '@/pages/vendors/VendorsPage';
+import NewVendorPage from '@/pages/vendors/NewVendorPage';
+import { VendorLayout } from '@/components/layout/VendorLayout';
+
 // Import module-specific routes
 import { AdminRoutes } from "./adminRoutes";
 import { DataManagementRoutes } from "./dataManagementRoutes";
@@ -38,6 +44,13 @@ export const AppRoutes = () => {
       
       {/* Shared Document Route */}
       <Route path="/shared-document/:shareId" element={<SharedDocumentPage />} />
+      
+      {/* Healthcare Supplier Dashboard Routes */}
+      <Route path="/vendors" element={<VendorLayout />}>
+        <Route index element={<VendorsPage />} />
+        <Route path=":id" element={<VendorDetail />} />
+        <Route path="new" element={<NewVendorPage />} />
+      </Route>
       
       {/* Legacy route redirects */}
       <Route path="/prototypes" element={<Navigate to="/" replace />} />

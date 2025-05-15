@@ -280,6 +280,41 @@ export type Database = {
         }
         Relationships: []
       }
+      credit_ratings: {
+        Row: {
+          credit_limit: number | null
+          description: string | null
+          fetched_at: string | null
+          id: number
+          rating_code: string | null
+          vendor_id: string | null
+        }
+        Insert: {
+          credit_limit?: number | null
+          description?: string | null
+          fetched_at?: string | null
+          id?: number
+          rating_code?: string | null
+          vendor_id?: string | null
+        }
+        Update: {
+          credit_limit?: number | null
+          description?: string | null
+          fetched_at?: string | null
+          id?: number
+          rating_code?: string | null
+          vendor_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "credit_ratings_vendor_id_fkey"
+            columns: ["vendor_id"]
+            isOneToOne: false
+            referencedRelation: "vendors"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       currency_exchange_rates: {
         Row: {
           created_at: string | null
@@ -1633,14 +1668,104 @@ export type Database = {
         }
         Relationships: []
       }
+      vendor_performance: {
+        Row: {
+          date: string
+          id: number
+          score: number
+          vendor_id: string | null
+        }
+        Insert: {
+          date: string
+          id?: number
+          score: number
+          vendor_id?: string | null
+        }
+        Update: {
+          date?: string
+          id?: number
+          score?: number
+          vendor_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "vendor_performance_vendor_id_fkey"
+            columns: ["vendor_id"]
+            isOneToOne: false
+            referencedRelation: "vendors"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      vendor_reports: {
+        Row: {
+          fetched_at: string | null
+          file_path: string
+          id: string
+          vendor_id: string | null
+        }
+        Insert: {
+          fetched_at?: string | null
+          file_path: string
+          id?: string
+          vendor_id?: string | null
+        }
+        Update: {
+          fetched_at?: string | null
+          file_path?: string
+          id?: string
+          vendor_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "vendor_reports_vendor_id_fkey"
+            columns: ["vendor_id"]
+            isOneToOne: false
+            referencedRelation: "vendors"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      vendors: {
+        Row: {
+          company_name: string
+          created_at: string | null
+          id: string
+          local_score: number | null
+        }
+        Insert: {
+          company_name: string
+          created_at?: string | null
+          id?: string
+          local_score?: number | null
+        }
+        Update: {
+          company_name?: string
+          created_at?: string | null
+          id?: string
+          local_score?: number | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
+      get_credit_rating: {
+        Args: { local_score: number }
+        Returns: {
+          rating_code: string
+          description: string
+        }[]
+      }
       has_role: {
         Args: { check_user_id: string; check_role: string }
         Returns: boolean
+      }
+      recommend_credit_limit: {
+        Args: { annual_revenue: number; leverage_factor?: number }
+        Returns: number
       }
     }
     Enums: {
