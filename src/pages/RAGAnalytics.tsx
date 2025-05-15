@@ -21,8 +21,8 @@ const RAGAnalytics: React.FC = () => {
   const { metrics, loading: metricsLoading } = useModuleMetrics(selectedModule, timeRange);
   const { score: healthScore, trend: healthTrend, loading: healthLoading } = useSystemHealthScore();
 
-  // Define navigation categories for this module
-  const sidebarCategories: NavCategory[] = [
+  // Define navigation categories for the RAG module
+  const navCategories: NavCategory[] = [
     {
       name: "RAG Dashboard",
       label: "RAG Dashboard", // Adding the required label property
@@ -82,10 +82,10 @@ const RAGAnalytics: React.FC = () => {
   }, [metrics]);
 
   return (
-    <SharedDashboardLayout
-      moduleTitle="RAG Analytics"
-      navCategories={sidebarCategories}
-      sidebarClassName="bg-gradient-to-b from-indigo-950 via-blue-950 to-slate-950"
+    <SharedDashboardLayout 
+      moduleTitle="RAG Analytics" 
+      navCategories={navCategories}
+      sidebarClassName="bg-gradient-to-b from-gray-900 via-gray-800 to-black"
       removeBottomToggle={true}
       showTopLeftToggle={true}
     >

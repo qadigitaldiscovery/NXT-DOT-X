@@ -15,7 +15,6 @@ import {
 } from "lucide-react";
 import SharedDashboardLayout from "./SharedDashboardLayout";
 import { Button } from "../ui/button";
-import { cn } from "@/lib/utils";
 import { NavCategory } from "./sidebar/types";
 
 const ProjectManagementLayout = ({ children }: { children?: React.ReactNode }) => {

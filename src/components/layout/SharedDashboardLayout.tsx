@@ -1,10 +1,11 @@
+
 import React, { useState } from 'react';
 import { ChevronsLeft, ChevronsRight } from 'lucide-react';
 import { SidebarNavList } from './sidebar/SidebarNavList';
 import { CompactSidebar } from './sidebar/CompactSidebar';
 import { NavCategory } from './sidebar/types';
-import { ThemeToggle } from '../theme-toggle';
-import { UserMenu } from '../user-menu';
+import { ThemeToggle } from '@/components/theme-toggle';
+import { UserMenu } from '@/components/user-menu';
 import { useAuth } from '@/context/AuthContext';
 
 interface SharedDashboardLayoutProps {
@@ -16,6 +17,7 @@ interface SharedDashboardLayoutProps {
   removeBottomToggle?: boolean;
   initialSidebarState?: string;
   onSidebarStateChange?: (state: string) => void;
+  sidebarClassName?: string;
 }
 
 const SharedDashboardLayout: React.FC<SharedDashboardLayoutProps> = ({
@@ -26,7 +28,8 @@ const SharedDashboardLayout: React.FC<SharedDashboardLayoutProps> = ({
   showTopLeftToggle = true,
   removeBottomToggle = false,
   initialSidebarState = "expanded",
-  onSidebarStateChange
+  onSidebarStateChange,
+  sidebarClassName = "bg-indigo-950"
 }) => {
   const [expandedItems, setExpandedItems] = useState<string[]>([]);
   const [sidebarExpanded, setSidebarExpanded] = useState<boolean>(initialSidebarState !== "collapsed");
@@ -55,7 +58,7 @@ const SharedDashboardLayout: React.FC<SharedDashboardLayoutProps> = ({
   return (
     <div className="flex h-screen bg-zinc-900 text-white">
       {/* Sidebar */}
-      <aside className={`bg-indigo-950 transition-all duration-300 flex flex-col ${sidebarExpanded ? 'w-64' : 'w-16'} border-r border-gray-800`}>
+      <aside className={`${sidebarClassName} transition-all duration-300 flex flex-col ${sidebarExpanded ? 'w-64' : 'w-16'} border-r border-gray-800`}>
         {/* Logo/Header */}
         <div className="p-4 flex items-center justify-between border-b border-gray-800">
           {sidebarExpanded && <h1 className="text-lg font-semibold">NXT Platform</h1>}
@@ -75,8 +78,8 @@ const SharedDashboardLayout: React.FC<SharedDashboardLayoutProps> = ({
             <SidebarNavList 
               categories={navCategories}
               userRole={currentRole as 'admin' | 'manager' | 'user'} 
-              expandedItems={expandedItems}
-              onToggleExpand={handleToggleExpand}
+              expandedCategories={expandedItems}
+              onCategoryToggle={handleToggleExpand}
               textColor="text-gray-300"
               textHoverColor="hover:text-white"
               activeBgColor="bg-indigo-500"
@@ -85,8 +88,11 @@ const SharedDashboardLayout: React.FC<SharedDashboardLayoutProps> = ({
             />
           ) : (
             <CompactSidebar 
-              categories={navCategories}
-              userRole={currentRole as 'admin' | 'manager' | 'user'}
+              navItems={navCategories.flatMap(cat => cat.items)}
+              textColor="text-gray-300"
+              activeBgColor="bg-indigo-500"
+              activeTextColor="text-white"
+              hoverBgColor="hover:bg-indigo-900/50"
             />
           )}
         </div>

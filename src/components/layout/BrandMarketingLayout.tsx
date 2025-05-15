@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
 import { 
@@ -18,7 +17,7 @@ import { NavCategory } from "./sidebar/types";
 import { Button } from "../ui/button";
 import { cn } from "@/lib/utils";
 
-const BrandMarketingLayout = () => {
+const BrandMarketingLayout = ({ children }: { children?: React.ReactNode }) => {
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -82,11 +81,11 @@ const BrandMarketingLayout = () => {
       moduleTitle="Brand Marketing"
       navCategories={navCategories}
       customFooterContent={navigationFooter}
-      sidebarClassName="bg-gradient-to-b from-indigo-950 via-blue-950 to-slate-950"
+      sidebarClassName="bg-gradient-to-b from-blue-900 via-indigo-900 to-violet-900"
       removeBottomToggle={false}
       showTopLeftToggle={true}
     >
-      <Outlet />
+      {children || <Outlet />}
     </SharedDashboardLayout>
   );
 };

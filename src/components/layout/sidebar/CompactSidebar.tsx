@@ -5,72 +5,68 @@ import { NavLink } from 'react-router-dom';
 import { NavItem, NavCategory } from './types';
 
 interface CompactSidebarProps {
-  topLevelItems: NavItem[];
-  categoriesItems: NavCategory[];
-  footerItem: NavItem;
+  categories?: NavCategory[];
+  navItems?: NavItem[];
+  userRole?: string;
+  homeItem?: NavItem;
+  textColor?: string;
+  activeBgColor?: string;
+  activeTextColor?: string;
+  hoverBgColor?: string;
 }
 
 export const CompactSidebar = ({ 
-  topLevelItems, 
-  categoriesItems, 
-  footerItem 
+  categories,
+  navItems,
+  homeItem,
+  textColor = "text-gray-300",
+  activeBgColor = "bg-indigo-500",
+  activeTextColor = "text-white",
+  hoverBgColor = "hover:bg-indigo-900/50"
 }: CompactSidebarProps) => {
-  return (
-    <>
-      <div className="hidden md:flex flex-col items-center py-4 space-y-6">
-        {/* Top level nav items first */}
-        {topLevelItems.map(item => (
-          <NavLink
-            key={item.href || item.path || item.label}
-            to={item.href || item.path || '#'}
-            className={({ isActive }) => cn(
-              "w-10 h-10 flex items-center justify-center rounded-md",
-              isActive 
-                ? "bg-sidebar-primary text-white" 
-                : "text-sidebar-foreground hover:bg-sidebar-accent"
-            )}
-            title={item.label}
-          >
-            {typeof item.icon === 'function' ? <item.icon className="h-5 w-5" /> : item.icon}
-          </NavLink>
-        ))}
-        
-        {/* Then all the category items flattened */}
-        {categoriesItems.flatMap(category => 
-          category.items.map(item => (
-            <NavLink
-              key={item.href || item.path || item.label}
-              to={item.href || item.path || '#'}
-              className={({ isActive }) => cn(
-                "w-10 h-10 flex items-center justify-center rounded-md",
-                isActive 
-                  ? "bg-sidebar-primary text-white" 
-                  : "text-sidebar-foreground hover:bg-sidebar-accent"
-              )}
-              title={item.label}
-            >
-              {typeof item.icon === 'function' ? <item.icon className="h-5 w-5" /> : item.icon}
-            </NavLink>
-          ))
-        )}
-      </div>
+  // Prepare items for display
+  const allItems = navItems || [];
+  
+  // If we have categories, flatten their items
+  if (categories && categories.length > 0) {
+    categories.forEach(category => {
+      allItems.push(...category.items);
+    });
+  }
 
-      {/* Settings icon for collapsed state */}
-      <div className="hidden md:flex justify-center p-4 border-t border-sidebar-border">
+  return (
+    <div className="flex flex-col items-center py-4 space-y-4">
+      {allItems.map((item) => (
         <NavLink
-          to={footerItem.href || footerItem.path || '#'}
+          key={item.path || item.href || item.label}
+          to={item.path || item.href || '#'}
           className={({ isActive }) => cn(
             "w-10 h-10 flex items-center justify-center rounded-md",
             isActive 
-              ? "bg-sidebar-primary text-white" 
-              : "text-sidebar-foreground hover:bg-sidebar-accent"
+              ? `${activeBgColor} ${activeTextColor}` 
+              : `${textColor} ${hoverBgColor}`
           )}
-          title={footerItem.label}
+          title={item.label}
         >
-          {typeof footerItem.icon === 'function' ? <footerItem.icon className="h-5 w-5" /> : footerItem.icon}
+          {item.icon && typeof item.icon === 'function' && <item.icon className="h-5 w-5" />}
         </NavLink>
-      </div>
-    </>
+      ))}
+      
+      {homeItem && (
+        <NavLink
+          to={homeItem.path || homeItem.href || '/'}
+          className={({ isActive }) => cn(
+            "mt-auto w-10 h-10 flex items-center justify-center rounded-md",
+            isActive 
+              ? `${activeBgColor} ${activeTextColor}` 
+              : `${textColor} ${hoverBgColor}`
+          )}
+          title={homeItem.label}
+        >
+          {homeItem.icon && typeof homeItem.icon === 'function' && <homeItem.icon className="h-5 w-5" />}
+        </NavLink>
+      )}
+    </div>
   );
 };
 

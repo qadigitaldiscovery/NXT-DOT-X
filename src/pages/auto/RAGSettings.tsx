@@ -1,5 +1,5 @@
-
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { useAuth } from '@/context/AuthContext';
 import { PlatformLayout } from '@/components/layouts/PlatformLayout';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
