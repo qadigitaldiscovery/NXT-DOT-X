@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -6,6 +7,7 @@ import { toast } from 'sonner';
 import { LogIn } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { AspectRatio } from '@/components/ui/aspect-ratio';
+
 const Landing = () => {
   const [usernameOrEmail, setUsernameOrEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -22,6 +24,7 @@ const Landing = () => {
       navigate('/');
     }
   }, [navigate, isAuthenticated]);
+
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
@@ -40,6 +43,7 @@ const Landing = () => {
     }
     setIsLoading(false);
   };
+
   return <div className="h-screen w-full flex flex-col items-center justify-center relative overflow-hidden">
       {/* Full-screen background with uploaded image */}
       <div className="absolute inset-0 z-0" style={{
@@ -85,8 +89,8 @@ const Landing = () => {
                   </div>
                 </div>
                 
-                <Button type="submit" disabled={isLoading} className="w-full bg-gradient-to-r from-red-800 to-red-600 hover:from-red-700 hover:to-red-500 
-                             h-12 border border-red-700 shadow-[0_0_10px_rgba(220,38,38,0.6)] text-white 
+                <Button type="submit" disabled={isLoading} className="w-full bg-gradient-to-r from-gray-700 to-gray-600 hover:from-gray-600 hover:to-gray-500 
+                             h-12 border border-gray-500 shadow-[0_0_10px_rgba(85,85,85,0.6)] text-white 
                              font-bold uppercase tracking-wider rounded-full">
                   {isLoading ? 'AUTHENTICATING...' : 'LOGIN'}
                 </Button>
@@ -108,4 +112,5 @@ const Landing = () => {
       </div>
     </div>;
 };
+
 export default Landing;
