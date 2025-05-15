@@ -4,3 +4,4 @@ export function usePermissions() {
     hasRole: (role: string) => user.role === role,
   };
 }
+ 
