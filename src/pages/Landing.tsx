@@ -42,6 +42,18 @@ const Landing = () => {
 
   return (
     <div className="h-screen w-full flex flex-col items-center justify-center relative overflow-hidden bg-black">
+      {/* Neon green dot for testing */}
+      <div style={{
+        position: 'absolute',
+        top: '10px',
+        right: '10px',
+        width: '20px', /* Approximately the size of an old dollar coin */
+        height: '20px',
+        backgroundColor: 'lime', /* Neon green */
+        borderRadius: '50%',
+        zIndex: 9999 /* Ensure it's on top */
+      }}></div>
+
       {/* Cyberpunk background with uploaded image */}
       <div 
         className="absolute inset-0 z-0"
