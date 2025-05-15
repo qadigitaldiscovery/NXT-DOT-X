@@ -4,7 +4,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { DashboardProvider } from '@/components/rag-dashboard/providers/DashboardProvider';
 import { DashboardHeader } from '@/components/rag-dashboard/dashboard/DashboardHeader';
 import { ModulesGrid } from '@/components/rag-dashboard/dashboard/ModulesGrid';
-import { DashboardFilters } from '@/components/rag-dashboard/dashboard/DashboardFilters';
+// Import correctly - either as a named import or as a default import
+import DashboardFilters from '@/components/rag-dashboard/dashboard/DashboardFilters';
 import { DashboardDialogs } from '@/components/rag-dashboard/dashboard/DashboardDialogs';
 import { StatisticsSection } from '@/components/rag-dashboard/analytics/StatisticsSection';
 import { MetricsChartsSection } from '@/components/rag-dashboard/analytics/MetricsChartsSection';
@@ -16,6 +17,9 @@ const RAGDashboardPage = () => {
   const [ruleDialogOpen, setRuleDialogOpen] = useState(false);
   const [moduleDetailsOpen, setModuleDetailsOpen] = useState(false);
   const [selectedModule, setSelectedModule] = useState(null);
+  // Add state for filter functionality
+  const [selectedStatus, setSelectedStatus] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
 
   const handleOpenModuleDetails = (module: any) => {
     setSelectedModule(module);
@@ -46,7 +50,12 @@ const RAGDashboardPage = () => {
           </TabsList>
           
           <TabsContent value="dashboard" className="space-y-4">
-            <DashboardFilters />
+            <DashboardFilters 
+              selectedStatus={selectedStatus}
+              onStatusSelect={setSelectedStatus}
+              searchQuery={searchQuery}
+              onSearchChange={setSearchQuery}
+            />
             <ModulesGrid onModuleClick={handleOpenModuleDetails} />
           </TabsContent>
           

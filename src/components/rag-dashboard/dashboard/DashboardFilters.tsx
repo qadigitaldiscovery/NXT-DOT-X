@@ -1,4 +1,3 @@
-
 import React from 'react';
 import ModuleStatusFilter from '@/components/rag-dashboard/ModuleStatusFilter';
 
@@ -9,7 +8,8 @@ interface DashboardFiltersProps {
   onSearchChange: (query: string) => void;
 }
 
-const DashboardFilters: React.FC<DashboardFiltersProps> = ({
+// Change to named export to match how it's being imported
+export const DashboardFilters: React.FC<DashboardFiltersProps> = ({
   selectedStatus,
   onStatusSelect,
   searchQuery,
@@ -28,4 +28,5 @@ const DashboardFilters: React.FC<DashboardFiltersProps> = ({
   );
 };
 
+// Keep the default export for backward compatibility
 export default DashboardFilters;
