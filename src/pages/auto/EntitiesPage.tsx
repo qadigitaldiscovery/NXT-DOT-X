@@ -1,7 +1,7 @@
 
 import React from 'react';
 import MissingPageTemplate from './MissingPageTemplate';
-import { Building, Users, FileText, Map, Settings } from 'lucide-react';
+import { Building, Users, FileText, Map, Settings, ListOrdered } from 'lucide-react';
 import { NavCategory } from '@/components/layout/sidebar/types';
 
 const EntitiesPage: React.FC = () => {
@@ -11,7 +11,7 @@ const EntitiesPage: React.FC = () => {
       label: "Entities",
       items: [
         { label: "Dashboard", path: "/entities", icon: Building },
-        { label: "Directory", path: "/entities/list", icon: List },
+        { label: "Directory", path: "/entities/list", icon: ListOrdered },
         { label: "Personnel", path: "/entities/personnel", icon: Users },
         { label: "Documents", path: "/entities/documents", icon: FileText },
         { label: "Locations", path: "/entities/locations", icon: Map },

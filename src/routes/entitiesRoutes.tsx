@@ -2,7 +2,7 @@
 import { Route } from "react-router-dom";
 import { PlatformLayout } from '@/components/layouts/PlatformLayout';
 import EntitiesPage from "@/pages/auto/EntitiesPage";
-import { Building, Users, FileText, Map, Settings, List } from 'lucide-react';
+import { Building, Users, FileText, Map, Settings, ListOrdered } from 'lucide-react';
 import { NavCategory } from '@/components/layout/sidebar/types';
 
 export const EntitiesNavCategories: NavCategory[] = [
@@ -11,7 +11,7 @@ export const EntitiesNavCategories: NavCategory[] = [
     label: "Entities",
     items: [
       { label: "Dashboard", path: "/entities", icon: Building },
-      { label: "Directory", path: "/entities/list", icon: List },
+      { label: "Directory", path: "/entities/list", icon: ListOrdered },
       { label: "Personnel", path: "/entities/personnel", icon: Users },
       { label: "Documents", path: "/entities/documents", icon: FileText },
       { label: "Locations", path: "/entities/locations", icon: Map },
