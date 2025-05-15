@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -6,7 +5,6 @@ import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
 import { LogIn } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
-
 const Landing = () => {
   const [usernameOrEmail, setUsernameOrEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -23,7 +21,6 @@ const Landing = () => {
       navigate('/');
     }
   }, [navigate, isAuthenticated]);
-
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
@@ -42,29 +39,27 @@ const Landing = () => {
     }
     setIsLoading(false);
   };
-
-  return (
-    <div className="h-screen w-full flex flex-col items-center justify-center relative overflow-hidden bg-black">
+  return <div className="h-screen w-full flex flex-col items-center justify-center relative overflow-hidden bg-black">
       {/* Neon green dot for testing */}
       <div style={{
-        position: 'absolute',
-        top: '10px',
-        right: '10px',
-        width: '20px',
-        height: '20px',
-        backgroundColor: 'lime',
-        borderRadius: '50%',
-        zIndex: 9999
-      }}></div>
+      position: 'absolute',
+      top: '10px',
+      right: '10px',
+      width: '20px',
+      height: '20px',
+      backgroundColor: 'lime',
+      borderRadius: '50%',
+      zIndex: 9999
+    }}></div>
 
       {/* Background with uploaded image */}
       <div className="absolute inset-0 z-0" style={{
-        backgroundImage: "url('/lovable-uploads/74716bd3-b36e-4695-8c95-1077e32c77eb.png')",
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundRepeat: 'no-repeat',
-        opacity: 1
-      }}>
+      backgroundImage: "url('/lovable-uploads/74716bd3-b36e-4695-8c95-1077e32c77eb.png')",
+      backgroundSize: 'cover',
+      backgroundPosition: 'center',
+      backgroundRepeat: 'no-repeat',
+      opacity: 1
+    }}>
         {/* Adding a slight dark overlay for better text visibility */}
         <div className="absolute inset-0 bg-black bg-opacity-30"></div>
       </div>
@@ -73,7 +68,7 @@ const Landing = () => {
         {/* Circular login form */}
         <div className="w-[420px] h-[420px] rounded-full perspective-800 flex items-center justify-center">
           <div className="w-full h-full rounded-full transform bg-black bg-opacity-50 backdrop-blur-sm border border-red-900/30 overflow-hidden relative flex items-center justify-center">
-            <div className="absolute inset-0 bg-gradient-to-br from-transparent via-transparent to-red-900/20"></div>
+            <div className="absolute inset-0 bg-gradient-to-br from-transparent via-transparent to-red-900/20 bg-transparent rounded-none"></div>
             
             {/* Red corner accents - adjusted for circle */}
             <div className="absolute top-[15%] left-[15%] w-4 h-4 border-t-2 border-l-2 border-red-500 rounded-tl-full"></div>
@@ -115,16 +110,14 @@ const Landing = () => {
 
         <div className="mt-8 flex justify-center space-x-3">
           {[...Array(3)].map((_, i) => <div key={i} className="w-2 h-2 rounded-full bg-orange-400/60 animate-pulse" style={{
-            animationDelay: `${i * 0.3}s`
-          }}></div>)}
+          animationDelay: `${i * 0.3}s`
+        }}></div>)}
         </div>
 
         <footer className="mt-8 text-center text-gray-400 text-xs">
           © 2025 NXT DOT X. All rights reserved.
         </footer>
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default Landing;
