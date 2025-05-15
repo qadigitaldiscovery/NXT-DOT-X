@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { cn } from '@/lib/utils';
 import { Sidebar as SidebarComponent } from './Sidebar';
@@ -9,6 +8,7 @@ import { CompactSidebar } from './CompactSidebar';
 import { SidebarFooter } from './SidebarFooter';
 import { SidebarToggleButton } from './SidebarToggleButton';
 import { NavCategory, NavItem } from './types';
+import { getAdminSidebarItems } from '@/utils/rbac/index';
 
 // Export all sidebar components for external use
 export {
