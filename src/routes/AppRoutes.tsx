@@ -43,6 +43,7 @@ import { RequestsRoutes } from "./requestsRoutes";
 
 // Import layout configuration
 import { navCategories } from '@/components/layout/sidebar/NavigationConfig';
+import { Home, Settings as SettingsIcon } from 'lucide-react';
 
 export const AppRoutes = () => {
   // Define main navigation categories for standard page layout
@@ -51,8 +52,8 @@ export const AppRoutes = () => {
       name: "Main",
       label: "Main",
       items: [
-        { label: "Dashboard", path: "/", icon: () => <span>🏠</span> },
-        { label: "Settings", path: "/settings", icon: () => <span>⚙️</span> }
+        { label: "Dashboard", path: "/master", icon: Home },
+        { label: "Settings", path: "/settings", icon: SettingsIcon }
       ]
     }
   ];
@@ -121,7 +122,14 @@ export const AppRoutes = () => {
         <Route path="/cost-analysis" element={<Navigate to="/data-management/cost-analysis" replace />} />
         
         {/* 404 Page */}
-        <Route path="*" element={<NotFound />} />
+        <Route path="*" element={
+          <PlatformLayout
+            moduleTitle="Not Found"
+            navCategories={mainNavCategories}
+          >
+            <NotFound />
+          </PlatformLayout>
+        } />
       </Routes>
     </Router>
   );

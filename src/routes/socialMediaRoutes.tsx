@@ -1,12 +1,67 @@
 
 import { Route } from "react-router-dom";
+import { PlatformLayout } from '@/components/layouts/PlatformLayout';
 import SocialMediaDashboard from "@/pages/social-media/Dashboard";
+import { NavCategory } from '@/components/layout/sidebar/types';
+import { MessageSquare, BarChart3, Calendar, Settings, Users } from 'lucide-react';
+
+const socialMediaNavCategories: NavCategory[] = [
+  {
+    name: "Social Media",
+    label: "SOCIAL MEDIA",
+    items: [
+      { label: 'Dashboard', icon: BarChart3, path: '/social-media' },
+      { label: 'Accounts', icon: Users, path: '/social-media/accounts' },
+      { label: 'Post Calendar', icon: Calendar, path: '/social-media/calendar' },
+      { label: 'Engagement', icon: MessageSquare, path: '/social-media/engagement' },
+      { label: 'Settings', icon: Settings, path: '/social-media/settings' }
+    ]
+  }
+];
 
 export const SocialMediaRoutes = () => {
   return (
     <Route path="/social-media">
-      <Route index element={<SocialMediaDashboard />} />
-      {/* Additional social media routes would go here */}
+      <Route index element={
+        <PlatformLayout
+          moduleTitle="Social Media Marketing"
+          navCategories={socialMediaNavCategories}
+        >
+          <SocialMediaDashboard />
+        </PlatformLayout>
+      } />
+      <Route path="accounts" element={
+        <PlatformLayout
+          moduleTitle="Social Media Accounts"
+          navCategories={socialMediaNavCategories}
+        >
+          <SocialMediaDashboard />
+        </PlatformLayout>
+      } />
+      <Route path="calendar" element={
+        <PlatformLayout
+          moduleTitle="Social Media Calendar"
+          navCategories={socialMediaNavCategories}
+        >
+          <SocialMediaDashboard />
+        </PlatformLayout>
+      } />
+      <Route path="engagement" element={
+        <PlatformLayout
+          moduleTitle="Social Media Engagement"
+          navCategories={socialMediaNavCategories}
+        >
+          <SocialMediaDashboard />
+        </PlatformLayout>
+      } />
+      <Route path="settings" element={
+        <PlatformLayout
+          moduleTitle="Social Media Settings"
+          navCategories={socialMediaNavCategories}
+        >
+          <SocialMediaDashboard />
+        </PlatformLayout>
+      } />
     </Route>
   );
 };
