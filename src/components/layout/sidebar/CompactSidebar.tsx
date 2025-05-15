@@ -21,8 +21,8 @@ export const CompactSidebar = ({
         {/* Top level nav items first */}
         {topLevelItems.map(item => (
           <NavLink
-            key={item.path}
-            to={item.path}
+            key={item.href || item.path || item.label}
+            to={item.href || item.path || '#'}
             className={({ isActive }) => cn(
               "w-10 h-10 flex items-center justify-center rounded-md",
               isActive 
@@ -31,7 +31,7 @@ export const CompactSidebar = ({
             )}
             title={item.label}
           >
-            <item.icon className="h-5 w-5" />
+            {typeof item.icon === 'function' ? <item.icon className="h-5 w-5" /> : item.icon}
           </NavLink>
         ))}
         
@@ -39,8 +39,8 @@ export const CompactSidebar = ({
         {categoriesItems.flatMap(category => 
           category.items.map(item => (
             <NavLink
-              key={item.path}
-              to={item.path}
+              key={item.href || item.path || item.label}
+              to={item.href || item.path || '#'}
               className={({ isActive }) => cn(
                 "w-10 h-10 flex items-center justify-center rounded-md",
                 isActive 
@@ -49,7 +49,7 @@ export const CompactSidebar = ({
               )}
               title={item.label}
             >
-              <item.icon className="h-5 w-5" />
+              {typeof item.icon === 'function' ? <item.icon className="h-5 w-5" /> : item.icon}
             </NavLink>
           ))
         )}
@@ -58,7 +58,7 @@ export const CompactSidebar = ({
       {/* Settings icon for collapsed state */}
       <div className="hidden md:flex justify-center p-4 border-t border-sidebar-border">
         <NavLink
-          to={footerItem.path}
+          to={footerItem.href || footerItem.path || '#'}
           className={({ isActive }) => cn(
             "w-10 h-10 flex items-center justify-center rounded-md",
             isActive 
@@ -67,9 +67,11 @@ export const CompactSidebar = ({
           )}
           title={footerItem.label}
         >
-          <footerItem.icon className="h-5 w-5" />
+          {typeof footerItem.icon === 'function' ? <footerItem.icon className="h-5 w-5" /> : footerItem.icon}
         </NavLink>
       </div>
     </>
   );
 };
+
+export default CompactSidebar;

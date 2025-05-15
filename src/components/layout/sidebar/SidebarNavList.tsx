@@ -31,12 +31,25 @@ export const SidebarNavList: React.FC<SidebarNavListProps> = ({
     // Skip items that the user doesn't have permission to see
     if (item.roles && !hasRequiredRole(item.roles)) return null;
     
-    const isActive = currentPath === item.href;
+    // Use href property with path as fallback for backwards compatibility
+    const to = item.href || item.path || '#';
+    const isActive = currentPath === to;
+    
+    // Handle icon rendering safely
+    const renderIcon = () => {
+      if (typeof item.icon === 'function') {
+        const IconComponent = item.icon;
+        return <IconComponent className={cn("mr-2 h-5 w-5", iconColor)} />;
+      } else if (React.isValidElement(item.icon)) {
+        return <span className="mr-2">{item.icon}</span>;
+      }
+      return null;
+    };
     
     return (
-      <li key={item.href} className="mb-1">
+      <li key={to} className="mb-1">
         <NavLink
-          to={item.href}
+          to={to}
           className={({ isActive }) => cn(
             "flex items-center px-3 py-2 rounded-md transition-colors",
             textColor,
@@ -45,11 +58,7 @@ export const SidebarNavList: React.FC<SidebarNavListProps> = ({
             isActive && `${activeBgColor} ${activeTextColor}`
           )}
         >
-          {typeof item.icon === 'function' ? (
-            <item.icon className={cn("mr-2 h-5 w-5", iconColor)} />
-          ) : (
-            <span className="mr-2">{item.icon}</span>
-          )}
+          {renderIcon()}
           <span>{item.label}</span>
         </NavLink>
       </li>
@@ -62,3 +71,5 @@ export const SidebarNavList: React.FC<SidebarNavListProps> = ({
     </ul>
   );
 };
+
+export default SidebarNavList;

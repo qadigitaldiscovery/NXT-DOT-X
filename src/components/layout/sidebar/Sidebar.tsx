@@ -10,6 +10,24 @@ import { NavItem, NavCategory, SidebarProps } from './types';
 import { useAuth } from '@/context/AuthContext';
 import { SidebarToggleButton } from './SidebarToggleButton';
 
+// Helper function to normalize navigation items
+const normalizeNavItems = (items: NavItem[]): NavItem[] => {
+  return items.map(item => ({
+    ...item,
+    href: item.href || item.path || '#' // Ensure href is always present
+  }));
+};
+
+const normalizeNavCategories = (categories: NavCategory[]): NavCategory[] => {
+  return categories.map(category => ({
+    ...category,
+    items: category.items.map(item => ({
+      ...item,
+      href: item.href || item.path || '#' // Ensure href is always present
+    }))
+  }));
+};
+
 export const Sidebar: React.FC<SidebarProps> = ({
   open,
   onToggle,
@@ -29,6 +47,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
   const [internalOpen, setInternalOpen] = useState(true);
   const isOpen = open !== undefined ? open : internalOpen;
   const toggleSidebar = onToggle || (() => setInternalOpen(!internalOpen));
+
+  // Normalize all navigation items to ensure href is present
+  const normalizedNavItems = normalizeNavItems(navItems);
+  const normalizedNavCategories = normalizeNavCategories(navCategories);
 
   // Updated styling with more reasonable sizing
   const sidebarBgColor = className || 'bg-gradient-to-b from-indigo-950 via-blue-950 to-slate-950';
@@ -67,7 +89,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
           !isOpen && "hidden" // Hide when sidebar is collapsed
         )}>
           <SidebarNavList 
-            items={navCategories?.flatMap(category => category.items) || []}
+            items={normalizedNavCategories?.flatMap(category => category.items) || []}
             userRole={user?.role}
             expandedItems={expandedItems}
             onToggleExpand={toggleExpanded}
@@ -82,7 +104,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
         {/* Icon-Only Navigation (Visible when collapsed on desktop) */}
         {!isOpen && !isMobile && (
           <CollapsedSidebar 
-            navItems={navCategories || []}
+            navItems={normalizedNavCategories || []}
             textColor={textColor}
             activeBgColor={activeBgColor}
             activeTextColor={activeTextColor}
@@ -110,3 +132,5 @@ export const Sidebar: React.FC<SidebarProps> = ({
     </>
   );
 };
+
+export default Sidebar;

@@ -17,13 +17,23 @@ export const SidebarItem = ({
   hasChildren,
   isExpanded
 }: SidebarItemProps) => {
-  const Icon = item.icon;
-  const path = item.path || item.href || '#';
+  // Use href property with path as fallback for backwards compatibility
+  const to = item.href || item.path || '#';
+  
+  // Handle the icon rendering safely
+  const renderIcon = () => {
+    const Icon = item.icon;
+    if (typeof Icon === 'function') {
+      return <Icon className="h-5 w-5 mr-2" />;
+    } else {
+      return <span className="mr-2">{Icon}</span>;
+    }
+  };
 
   const renderContent = () => (
     <>
       <span className="flex items-center flex-1">
-        {Icon && <Icon className="h-5 w-5 mr-2" />}
+        {renderIcon()}
         <span>{item.label}</span>
       </span>
       {hasChildren && (
@@ -54,7 +64,7 @@ export const SidebarItem = ({
             {item.children.map((child) => (
               <NavLink
                 key={child.label}
-                to={child.path || child.href || '#'}
+                to={child.href || child.path || '#'}
                 className={({ isActive }) =>
                   cn(
                     "flex items-center py-2 px-3 rounded-md transition-colors duration-150",
@@ -65,7 +75,11 @@ export const SidebarItem = ({
                   )
                 }
               >
-                {child.icon && <child.icon className="h-4 w-4 mr-2" />}
+                {typeof child.icon === 'function' ? (
+                  <child.icon className="h-4 w-4 mr-2" />
+                ) : (
+                  <span className="mr-2">{child.icon}</span>
+                )}
                 <span className="text-sm">{child.label}</span>
               </NavLink>
             ))}
@@ -77,7 +91,7 @@ export const SidebarItem = ({
 
   return (
     <NavLink
-      to={path}
+      to={to}
       className={({ isActive: linkActive }) =>
         cn(
           "flex items-center py-2 px-3 rounded-md transition-colors duration-150",
@@ -92,3 +106,5 @@ export const SidebarItem = ({
     </NavLink>
   );
 };
+
+export default SidebarItem;

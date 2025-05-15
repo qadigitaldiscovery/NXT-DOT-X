@@ -5,8 +5,11 @@ import { IconType } from 'react-icons';
 export interface NavItem {
   icon: ReactNode | IconType;
   label: string;
-  href: string; // Using href instead of path for consistency
+  href: string;
+  path?: string; // For backwards compatibility
   roles?: string[]; // Add roles for access control
+  activeMatchPattern?: RegExp | string; // For custom active pattern matching
+  children?: NavItem[]; // For nested navigation items
 }
 
 export interface NavCategory {
@@ -22,6 +25,10 @@ export interface SidebarItemProps {
   activeBgColor?: string;
   activeTextColor?: string;
   iconColor?: string;
+  hoverBgColor?: string;
+  hasChildren?: boolean;
+  isExpanded?: boolean;
+  onClick?: () => void;
 }
 
 export interface SidebarProps {
@@ -40,6 +47,7 @@ export interface SidebarProps {
   open?: boolean;
   onToggle?: () => void;
   homeItem?: NavItem;
+  className?: string;
 }
 
 export interface SidebarNavListProps {

@@ -36,7 +36,9 @@ export const CollapsedSidebar = ({
   
   // Function to check if an item is active
   const isItemActive = (item: NavItem) => {
-    const path = item.path || item.href || '';
+    const path = item.href || item.path || '';
+    
+    // Custom active pattern matching if provided
     if (item.activeMatchPattern) {
       if (typeof item.activeMatchPattern === 'string') {
         return location.pathname.includes(item.activeMatchPattern);
@@ -44,6 +46,7 @@ export const CollapsedSidebar = ({
         return item.activeMatchPattern.test(location.pathname);
       }
     }
+    
     return location.pathname === path || 
       (path !== '/' && path !== '' && location.pathname.startsWith(path));
   };
@@ -59,11 +62,22 @@ export const CollapsedSidebar = ({
     <div className="py-4 flex flex-col items-center space-y-2 overflow-y-auto">
       <TooltipProvider delayDuration={300}>
         {displayItems.map((item, index) => {
-          const Icon = item.icon;
-          const path = item.path || item.href || '#';
+          // Use href property with path as fallback for backwards compatibility
+          const to = item.href || item.path || '#';
           
           // If it's the home item and not the only item, add some spacing before it
           const isHomeItem = item === homeItem && displayItems.length > 1;
+          
+          // Handle icon rendering safely
+          const renderIcon = () => {
+            if (typeof item.icon === 'function') {
+              const IconComponent = item.icon;
+              return <IconComponent className="h-5 w-5" />;
+            } else if (React.isValidElement(item.icon)) {
+              return item.icon;
+            }
+            return null;
+          };
           
           return (
             <React.Fragment key={item.label + index}>
@@ -71,7 +85,7 @@ export const CollapsedSidebar = ({
               <Tooltip>
                 <TooltipTrigger asChild>
                   <NavLink
-                    to={path}
+                    to={to}
                     className={({ isActive: linkActive }) => cn(
                       "p-2 rounded-lg transition-colors duration-150 flex justify-center",
                       textColor,
@@ -79,7 +93,7 @@ export const CollapsedSidebar = ({
                       (isItemActive(item) || linkActive) && `${activeBgColor} ${activeTextColor}`
                     )}
                   >
-                    {Icon && <Icon className="h-5 w-5" />}
+                    {renderIcon()}
                   </NavLink>
                 </TooltipTrigger>
                 <TooltipContent side="right" className="bg-gray-800 text-white border-gray-700">
@@ -93,3 +107,5 @@ export const CollapsedSidebar = ({
     </div>
   );
 };
+
+export default CollapsedSidebar;

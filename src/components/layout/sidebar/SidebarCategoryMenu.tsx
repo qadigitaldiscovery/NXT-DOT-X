@@ -25,7 +25,13 @@ const SidebarCategoryMenu: React.FC<SidebarCategoryMenuProps> = ({
   const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
 
-  const isActiveCategory = category.items.some(
+  // Normalize items to ensure href is present
+  const normalizedItems = category.items.map(item => ({
+    ...item,
+    href: item.href || item.path || '#' // Ensure href is always present
+  }));
+
+  const isActiveCategory = normalizedItems.some(
     (item) => item.href === location.pathname
   );
 
@@ -45,7 +51,7 @@ const SidebarCategoryMenu: React.FC<SidebarCategoryMenuProps> = ({
 
       {isOpen && (
         <div className="mt-1 ml-2 space-y-1">
-          {category.items.map((item) => (
+          {normalizedItems.map((item) => (
             <SidebarItem
               key={item.href}
               item={item}

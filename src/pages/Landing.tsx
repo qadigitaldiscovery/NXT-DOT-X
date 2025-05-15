@@ -58,7 +58,7 @@ const Landing = () => {
       <div 
         className="absolute inset-0 z-0"
         style={{
-          backgroundImage: "url('/lovable-uploads/a956833c-9bfa-47bb-bdb6-146924f0f6e8.png')",
+          backgroundImage: "url('/lovable-uploads/74716bd3-b36e-4695-8c95-1077e32c77eb.png')",
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           backgroundRepeat: 'no-repeat',
