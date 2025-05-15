@@ -6,17 +6,7 @@ import { useIsMobile } from '@/hooks/use-mobile';
 import { cn } from '@/lib/utils';
 import { Outlet } from 'react-router-dom';
 import { Home, Users, Settings, Database, BarChart3, FileUp } from 'lucide-react';
-
-interface NavItem {
-  label: string;
-  icon: React.ElementType;
-  path: string;
-}
-
-interface NavCategory {
-  name: string;
-  items: NavItem[];
-}
+import { NavCategory, NavItem } from './sidebar/types';
 
 interface CustomerManagementLayoutProps {
   children?: React.ReactNode;
@@ -25,6 +15,7 @@ interface CustomerManagementLayoutProps {
 const customerNavItems: NavCategory[] = [
   {
     name: "CUSTOMER MANAGEMENT",
+    label: "CUSTOMER MANAGEMENT",
     items: [
       { label: 'Dashboard', icon: Database, path: '/customer-management' },
       { label: 'Customer Directory', icon: Users, path: '/customer-management/directory' },

@@ -25,6 +25,7 @@ const ProjectManagementLayout = ({ children }: { children?: React.ReactNode }) =
   const navCategories: NavCategory[] = [
     {
       name: "Project Hub",
+      label: "Project Hub",
       items: [
         { label: "Dashboard", path: "/projects", icon: LayoutDashboard },
         { label: "Projects", path: "/projects/list", icon: Box }
@@ -32,6 +33,7 @@ const ProjectManagementLayout = ({ children }: { children?: React.ReactNode }) =
     },
     {
       name: "Current Project",
+      label: "Current Project",
       items: [
         { label: "Overview", path: "#", icon: ListTodo },
         { label: "Kanban Board", path: "#", icon: ListTodo, roles: ["admin", "manager"] },

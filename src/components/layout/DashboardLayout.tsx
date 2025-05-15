@@ -1,21 +1,11 @@
+
 import React from 'react';
 import { cn } from '@/lib/utils';
 import { SharedSidebar } from './SharedSidebar';
 import { SharedNavbar } from './SharedNavbar';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { Home, FileUp, BarChart3, LineChart, ArrowDownUp, FileDown, Settings, FileCode } from 'lucide-react';
-
-type NavItem = {
-  label: string;
-  icon: React.ElementType;
-  path: string;
-  children?: NavItem[];
-};
-
-type NavCategory = {
-  name: string;
-  items: NavItem[];
-};
+import { NavCategory, NavItem } from './sidebar/types';
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -26,18 +16,21 @@ interface DashboardLayoutProps {
 const dashboardNavItems: NavCategory[] = [
   {
     name: "Navigation",
+    label: "Navigation",
     items: [
       { label: 'Home', icon: Home, path: '/' }
     ]
   },
   {
     name: "Dashboard",
+    label: "Dashboard",
     items: [
       { label: 'Dashboard Home', icon: Home, path: '/dashboard' }
     ]
   },
   {
     name: "Cost Management",
+    label: "Cost Management",
     items: [
       { label: 'Supplier Costing', icon: FileUp, path: '/supplier-costing' },
       { label: 'Cost Analysis', icon: BarChart3, path: '/cost-analysis' }
@@ -45,6 +38,7 @@ const dashboardNavItems: NavCategory[] = [
   },
   {
     name: "Pricing",
+    label: "Pricing",
     items: [
       { label: 'Competitor Pricing', icon: LineChart, path: '/competitor-pricing' },
       { label: 'Price Management', icon: ArrowDownUp, path: '/price-management' }
@@ -52,6 +46,7 @@ const dashboardNavItems: NavCategory[] = [
   },
   {
     name: "Data",
+    label: "Data",
     items: [
       { label: 'Export Data', icon: FileDown, path: '/export-data' },
       { label: 'APIs', icon: FileCode, path: '/data-management/apis' }

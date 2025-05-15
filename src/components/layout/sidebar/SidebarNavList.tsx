@@ -2,7 +2,7 @@
 import React from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
-import SidebarItem from './SidebarItem';
+import { SidebarItem } from './SidebarItem';
 import { NavItem } from './types';
 
 interface SidebarNavListProps {

@@ -26,18 +26,20 @@ const BrandMarketingLayout = () => {
   const navCategories: NavCategory[] = [
     {
       name: "Brand Management",
+      label: "Brand Management",
       items: [
         { label: "Brand Dashboard", path: "/brand-marketing", icon: Award },
         { label: "Brand Analytics", path: "/brand-marketing/analytics", icon: BarChart3 },
         { label: "Trust Analysis", path: "/brand-marketing/trust-analysis", icon: BadgePercent },
         { label: "Market Perception", path: "/brand-marketing/market-perception", icon: TrendingUp },
-        { label: "SEO & Keywords", path: "/brand-marketing/seo", icon: Search },
-        { label: "Requesty AI", path: "/brand-marketing/requesty", icon: MessageCircle, roles: ["admin", "manager"] }
+        { label: "SEO & Keywords", path: "/brand-marketing/seo", icon: Search }
       ]
     },
     {
       name: "Configuration",
+      label: "Configuration",
       items: [
+        { label: "Requesty AI", path: "/brand-marketing/requesty", icon: MessageCircle, roles: ["admin", "manager"] },
         { label: "Brand Settings", path: "/brand-marketing/settings", icon: Settings, roles: ["admin"] }
       ]
     }
