@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -19,17 +18,18 @@ interface ModuleMetric {
 }
 
 interface MetricsChartsSectionProps {
-  metrics: ModuleMetric[];
-  metricsLoading: boolean;
-  formatTimestamp: (timestamp: string) => string;
-  chartTheme: 'light' | 'dark';
+  metrics?: ModuleMetric[];
+  metricsLoading?: boolean;
+  formatTimestamp?: (timestamp: string) => string;
+  chartTheme?: 'light' | 'dark';
 }
 
-const MetricsChartsSection: React.FC<MetricsChartsSectionProps> = ({
-  metrics,
-  metricsLoading,
-  formatTimestamp,
-  chartTheme
+// Export as a named constant to match import in RAGDashboardPage
+export const MetricsChartsSection: React.FC<MetricsChartsSectionProps> = ({
+  metrics = [],
+  metricsLoading = false,
+  formatTimestamp = (timestamp: string) => new Date(timestamp).toLocaleTimeString(),
+  chartTheme = 'dark'
 }) => {
   return (
     <Tabs defaultValue="line" className="bg-card/30 backdrop-blur rounded-lg p-4 border border-border/30">
@@ -169,4 +169,5 @@ const MetricsChartsSection: React.FC<MetricsChartsSectionProps> = ({
   );
 };
 
+// Keep default export for backward compatibility
 export default MetricsChartsSection;

@@ -8,7 +8,7 @@ import { ModulesGrid } from '@/components/rag-dashboard/dashboard/ModulesGrid';
 import DashboardFilters from '@/components/rag-dashboard/dashboard/DashboardFilters';
 import { DashboardDialogs } from '@/components/rag-dashboard/dashboard/DashboardDialogs';
 import { StatisticsSection } from '@/components/rag-dashboard/analytics/StatisticsSection';
-import { MetricsChartsSection } from '@/components/rag-dashboard/analytics/MetricsChartsSection';
+import MetricsChartsSection from '@/components/rag-dashboard/analytics/MetricsChartsSection';
 import { SystemHealthSection } from '@/components/rag-dashboard/analytics/SystemHealthSection';
 
 const RAGDashboardPage = () => {
