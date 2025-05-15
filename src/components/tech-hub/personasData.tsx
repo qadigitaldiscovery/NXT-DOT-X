@@ -1,9 +1,8 @@
 
 import React from 'react';
-import { BrainCircuit, Code2, PenTool, Bug } from "lucide-react";
 import { Persona } from './PersonaCard';
+import { BrainCircuit, Paintbrush, Code, Bug } from 'lucide-react';
 
-// Define the personas based on the provided metadata
 export const personas: Persona[] = [
   {
     id: 'boo_planner',
@@ -22,8 +21,8 @@ export const personas: Persona[] = [
       { text: "Resolve bottlenecks and optimize workflows." },
       { text: "Centralize user communication and unify feedback." }
     ],
-    icon: <BrainCircuit className="h-10 w-10 text-purple-500" />,
-    color: 'bg-purple-100 border-purple-300'
+    icon: <BrainCircuit className="h-5 w-5 text-blue-600" />,
+    color: "bg-blue-600"
   },
   {
     id: 'boo_designer',
@@ -42,8 +41,8 @@ export const personas: Persona[] = [
       { text: "Explain architectural choices with analogies or simplified diagrams." },
       { text: "Promote industry best practices and resilient patterns." }
     ],
-    icon: <PenTool className="h-10 w-10 text-blue-500" />,
-    color: 'bg-blue-100 border-blue-300'
+    icon: <Paintbrush className="h-5 w-5 text-purple-600" />,
+    color: "bg-purple-600"
   },
   {
     id: 'boo_builder',
@@ -56,18 +55,18 @@ export const personas: Persona[] = [
       { name: 'modular_engineer' }
     ],
     responsibilities: [
-      { text: "Deliver typed, testable, and linted code using tools like Next.js, Tailwind, Prisma, Zod, and shadcn/ui." },
+      { text: "Deliver typed, testable, and linted code using modern tools." },
       { text: "Provide full code files, CLI commands, and configs — not just snippets." },
       { text: "Include setup instructions, reusable utilities, and fallback/error handling." },
       { text: "Ensure accessibility, performance, and security standards." },
       { text: "Minimize boilerplate through generators or DRY abstractions." }
     ],
-    icon: <Code2 className="h-10 w-10 text-green-500" />,
-    color: 'bg-green-100 border-green-300'
+    icon: <Code className="h-5 w-5 text-indigo-600" />,
+    color: "bg-indigo-600"
   },
   {
     id: 'boo_debugger',
-    name: 'Debugger',
+    name: 'Fixer',
     description: 'Boo becomes an expert software debugger, systematically diagnosing issues, identifying root causes, and guiding resolution through clear steps and rational analysis.',
     traits: [
       { name: 'methodical' },
@@ -80,12 +79,9 @@ export const personas: Persona[] = [
       { text: "Ask clarifying questions to fill context gaps." },
       { text: "Formulate diagnostic plans and root cause hypotheses." },
       { text: "Suggest targeted code or config fixes with rationale." },
-      { text: "Provide verification steps and guidance on regression testing." },
-      { text: "Educate users about principles behind bugs and resolutions." },
-      { text: "Document the debugging journey if needed (e.g., bug reports)." },
-      { text: "Ensure reproducibility and long-term robustness through best practices." }
+      { text: "Provide verification steps and guidance on regression testing." }
     ],
-    icon: <Bug className="h-10 w-10 text-red-500" />,
-    color: 'bg-red-100 border-red-300'
+    icon: <Bug className="h-5 w-5 text-green-600" />,
+    color: "bg-green-600"
   }
 ];
