@@ -48,7 +48,7 @@ const Landing = () => {
     <div className="h-screen w-full flex flex-col items-center justify-center relative overflow-hidden">
       {/* Full-screen background with uploaded image */}
       <div className="absolute inset-0 z-0" style={{
-        backgroundImage: "url('/lovable-uploads/358e768f-b3aa-4ca0-9ced-77089fb161d6.png')",
+        backgroundImage: "url('/lovable-uploads/875e855a-93e1-4360-89b4-b7e970545959.png')",
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat'
