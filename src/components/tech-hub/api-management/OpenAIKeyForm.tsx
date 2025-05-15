@@ -1,4 +1,3 @@
-
 import React, { useState, useCallback, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -8,6 +7,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { toast } from "sonner";
 import { supabase } from '@/integrations/supabase/client';
 import { callOpenAI, OpenAIError, RateLimitError } from '@/utils/openai-client';
+import { useUserPreferences } from '@/utils/user-preferences';
 
 const OpenAIKeyForm: React.FC = () => {
   const [apiKey, setApiKey] = useState<string>('');
@@ -17,10 +17,34 @@ const OpenAIKeyForm: React.FC = () => {
   const [keyStatus, setKeyStatus] = useState<'unknown' | 'valid' | 'invalid' | 'quota_exceeded'>('unknown');
   const [model, setModel] = useState<string>('gpt-4o-mini');
   
+  // Use preferences hook for API key settings
+  const { preferences, setPreferences } = useUserPreferences({
+    module: 'api_provider_settings',
+    key: 'openai',
+    defaultValue: {
+      api_key: '',
+      preferred_model: 'gpt-4o-mini'
+    }
+  });
+  
   // Load API key from database on component mount
   useEffect(() => {
     const fetchApiKey = async () => {
       try {
+        // First try to get from user preferences
+        if (preferences && !loading) {
+          const prefData = preferences as any;
+          if (prefData.api_key) {
+            setApiKey(prefData.api_key);
+            setSavedKey(prefData.api_key);
+            if (prefData.preferred_model) setModel(prefData.preferred_model);
+            setKeyStatus('valid'); // Assume valid until tested
+            setIsLoading(false);
+            return;
+          }
+        }
+        
+        // Fall back to querying the database table directly
         const { data: { session } } = await supabase.auth.getSession();
         
         if (!session) {
@@ -52,11 +76,18 @@ const OpenAIKeyForm: React.FC = () => {
     };
     
     fetchApiKey();
-  }, []);
+  }, [preferences, loading]);
   
-  // Save API key to database
+  // Save API key to database and preferences
   const saveApiKey = async (key: string, verifiedModel: string) => {
     try {
+      // First update preferences
+      await setPreferences({
+        api_key: key,
+        preferred_model: verifiedModel
+      });
+      
+      // Then update the database table
       const { data: { session } } = await supabase.auth.getSession();
       
       if (!session) {
@@ -133,8 +164,13 @@ const OpenAIKeyForm: React.FC = () => {
     }
   }, [apiKey, model]);
   
+  // Update the clear API key method to also clear preferences
   const clearApiKey = async () => {
     try {
+      // Clear preferences first
+      await setPreferences(null);
+      
+      // Then clear from database
       const { data: { session } } = await supabase.auth.getSession();
       
       if (!session) {

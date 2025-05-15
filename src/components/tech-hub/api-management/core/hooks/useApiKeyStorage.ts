@@ -1,7 +1,8 @@
-
 import { useState } from 'react';
 import { saveToLocalStorage, loadFromLocalStorage, clearFromLocalStorage } from './api-key-storage/localStorageUtils';
 import { saveToDatabase, loadFromDatabase, deleteFromDatabase } from './api-key-storage/databaseUtils';
+import { useAuth } from '@/context/AuthContext';
+import { useUserPreferences } from '@/hooks/useUserPreferences';
 
 export interface ApiKeyStorageOptions {
   providerName: string;
@@ -14,17 +15,38 @@ export interface ApiKeyStorageOptions {
 export const useApiKeyStorage = (options: ApiKeyStorageOptions) => {
   const [isSaving, setIsSaving] = useState(false);
   const [saveError, setSaveError] = useState<Error | null>(null);
+  const { user } = useAuth();
   
-  // Save API key to localStorage
+  // Use user preferences for authenticated users
+  const { preferences, setPreferences } = useUserPreferences({
+    module: 'api_keys',
+    key: options.providerName,
+    defaultValue: null
+  });
+  
+  // Save API key to localStorage and database
   const saveToLocalStorageWrapper = (
     apiKey: string, 
     preferredModel: string, 
     additionalConfig: Record<string, any> = {}
   ): boolean => {
-    return saveToLocalStorage(options.localStorageKey, apiKey, preferredModel, additionalConfig);
+    // Always save to localStorage as fallback
+    const result = saveToLocalStorage(options.localStorageKey, apiKey, preferredModel, additionalConfig);
+    
+    // If authenticated, also save to user preferences
+    if (user) {
+      setPreferences({
+        key: apiKey,
+        model: preferredModel,
+        config: additionalConfig,
+        timestamp: Date.now()
+      });
+    }
+    
+    return result;
   };
   
-  // Load API key from localStorage
+  // Load API key from localStorage or user preferences
   const loadFromLocalStorageWrapper = (
     defaultModel: string,
     defaultConfig: Record<string, any> = {}
@@ -33,15 +55,34 @@ export const useApiKeyStorage = (options: ApiKeyStorageOptions) => {
     model: string; 
     config: Record<string, any>;
   } => {
+    // If authenticated and we have preferences, use them
+    if (user && preferences) {
+      const prefData = preferences as any;
+      return {
+        key: prefData?.key || null,
+        model: prefData?.model || defaultModel,
+        config: prefData?.config || defaultConfig
+      };
+    }
+    
+    // Otherwise fall back to localStorage
     return loadFromLocalStorage(options.localStorageKey, defaultModel, defaultConfig);
   };
 
-  // Clear API key from localStorage
+  // Clear API key from localStorage and user preferences
   const clearFromLocalStorageWrapper = (): boolean => {
-    return clearFromLocalStorage(options.localStorageKey);
+    // Always clear localStorage
+    const result = clearFromLocalStorage(options.localStorageKey);
+    
+    // If authenticated, also clear from user preferences
+    if (user) {
+      setPreferences(null);
+    }
+    
+    return result;
   };
   
-  // Save API key to database
+  // Keep the original database methods for compatibility
   const saveToDatabaseWrapper = async (
     apiKey: string, 
     preferredModel: string,
@@ -61,7 +102,6 @@ export const useApiKeyStorage = (options: ApiKeyStorageOptions) => {
     }
   };
   
-  // Load API key from database
   const loadFromDatabaseWrapper = async (
     defaultModel: string,
     defaultConfig: Record<string, any> = {}
@@ -73,7 +113,6 @@ export const useApiKeyStorage = (options: ApiKeyStorageOptions) => {
     return await loadFromDatabase(options.providerName, defaultModel, defaultConfig);
   };
 
-  // Delete API key from database
   const deleteFromDatabaseWrapper = async (): Promise<boolean> => {
     return await deleteFromDatabase(options.providerName);
   };

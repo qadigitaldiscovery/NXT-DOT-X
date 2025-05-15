@@ -1,12 +1,31 @@
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { Module } from '@/hooks/useModules';
 import { useAlerts } from '@/hooks/useAlerts';
+import { useUserPreferences } from '@/hooks/useUserPreferences';
+import { useAuth } from '@/context/AuthContext';
 
 export const useDashboardState = (modules: Module[], alerts: any[]) => {
-  // State for filtering and search
-  const [selectedStatus, setSelectedStatus] = useState<string | null>(null);
-  const [searchQuery, setSearchQuery] = useState('');
+  const { user } = useAuth();
+  
+  // Get preferences from database with fallback to local state
+  const { preferences, setPreferences } = useUserPreferences({
+    module: 'rag_dashboard',
+    key: 'filters',
+    defaultValue: {
+      selectedStatus: null,
+      searchQuery: '',
+    }
+  });
+  
+  // Local state for UI
+  const [selectedStatus, setSelectedStatus] = useState<string | null>(
+    (preferences as any)?.selectedStatus || null
+  );
+  
+  const [searchQuery, setSearchQuery] = useState<string>(
+    (preferences as any)?.searchQuery || ''
+  );
   
   // State for module details dialog
   const [selectedModule, setSelectedModule] = useState<Module | null>(null);
@@ -14,6 +33,16 @@ export const useDashboardState = (modules: Module[], alerts: any[]) => {
   
   // State for batch operations dialog
   const [isBatchOperationsOpen, setIsBatchOperationsOpen] = useState(false);
+  
+  // Save preferences when filter state changes
+  useEffect(() => {
+    if (user) {
+      setPreferences({
+        selectedStatus,
+        searchQuery
+      });
+    }
+  }, [selectedStatus, searchQuery, user, setPreferences]);
   
   // Filter modules based on selected status and search query
   const filteredModules = useMemo(() => {
@@ -45,12 +74,34 @@ export const useDashboardState = (modules: Module[], alerts: any[]) => {
     return counts;
   }, [alerts]);
 
+  // Set status handler with persistence
+  const setSelectedStatusWithPersistence = (status: string | null) => {
+    setSelectedStatus(status);
+    if (user) {
+      setPreferences({
+        selectedStatus: status,
+        searchQuery
+      });
+    }
+  };
+  
+  // Set search handler with persistence
+  const setSearchQueryWithPersistence = (query: string) => {
+    setSearchQuery(query);
+    if (user) {
+      setPreferences({
+        selectedStatus,
+        searchQuery: query
+      });
+    }
+  };
+
   return {
     // State
     selectedStatus,
-    setSelectedStatus,
+    setSelectedStatus: setSelectedStatusWithPersistence,
     searchQuery,
-    setSearchQuery,
+    setSearchQuery: setSearchQueryWithPersistence,
     selectedModule,
     setSelectedModule,
     isDetailsOpen,

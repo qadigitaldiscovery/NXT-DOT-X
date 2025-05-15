@@ -1,4 +1,6 @@
 
+import { useUserPreferences } from '@/hooks/useUserPreferences';
+
 /**
  * Save API key data to localStorage
  */

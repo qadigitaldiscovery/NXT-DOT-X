@@ -31,7 +31,7 @@ import { NavCategory } from '@/components/layout/sidebar/types';
 const MasterDash = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
-  const { preferences, loading: prefsLoading, error } = useUserPreferences({
+  const { preferences, setPreferences, loading: prefsLoading, error } = useUserPreferences({
     module: 'dashboard',
     key: 'layout_state',
     defaultValue: { sidebar: "expanded", theme: "dark" }
@@ -44,6 +44,16 @@ const MasterDash = () => {
       toast.error('Please sign in to access this page');
     }
   }, [navigate, user]);
+
+  // Update sidebar state handler
+  const updateSidebarState = (state: string) => {
+    if (user) {
+      setPreferences({
+        ...preferences,
+        sidebar: state
+      });
+    }
+  };
 
   // Define navigation categories for the sidebar
   const navCategories: NavCategory[] = [
@@ -122,6 +132,7 @@ const MasterDash = () => {
         customFooterContent={navigationFooter}
         showTopLeftToggle={true}
         removeBottomToggle={false}
+        onSidebarStateChange={updateSidebarState}
       >
         <DashboardModules />
       </SharedDashboardLayout>
@@ -151,6 +162,8 @@ const MasterDash = () => {
       customFooterContent={navigationFooter}
       showTopLeftToggle={sidebarState !== "collapsed"}
       removeBottomToggle={false}
+      initialSidebarState={sidebarState}
+      onSidebarStateChange={updateSidebarState}
     >
       <DashboardModules />
     </SharedDashboardLayout>

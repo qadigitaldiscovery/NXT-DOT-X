@@ -1,82 +1,129 @@
-
 import React, { useState } from 'react';
-import { Outlet, useLocation } from 'react-router-dom';
+import { ChevronsLeft, ChevronsRight } from 'lucide-react';
+import { SidebarNavList } from './sidebar/SidebarNavList';
+import { CompactSidebar } from './sidebar/CompactSidebar';
+import { NavCategory } from './sidebar/types';
+import { ThemeToggle } from '../theme-toggle';
+import { UserMenu } from '../user-menu';
 import { useAuth } from '@/context/AuthContext';
-import { SharedNavbar } from './SharedNavbar';
-import { SharedSidebar } from './SharedSidebar';
-import { Home } from 'lucide-react';
-import { cn } from '@/lib/utils';
-import { NavItem, NavCategory } from './sidebar/types';
 
 interface SharedDashboardLayoutProps {
-  moduleTitle?: string;
+  children: React.ReactNode;
+  moduleTitle: string;
   navCategories: NavCategory[];
-  children?: React.ReactNode;
-  notificationArea?: React.ReactNode;
-  homeItem?: NavItem;
   customFooterContent?: React.ReactNode;
-  sidebarClassName?: string;
-  removeBottomToggle?: boolean;
   showTopLeftToggle?: boolean;
+  removeBottomToggle?: boolean;
+  initialSidebarState?: string;
+  onSidebarStateChange?: (state: string) => void;
 }
 
 const SharedDashboardLayout: React.FC<SharedDashboardLayoutProps> = ({
-  moduleTitle = "Dashboard",
-  navCategories,
   children,
-  notificationArea,
-  homeItem = {
-    href: '/',
-    label: 'Master Dashboard',
-    icon: Home
-  },
+  moduleTitle,
+  navCategories,
   customFooterContent,
-  sidebarClassName,
+  showTopLeftToggle = true,
   removeBottomToggle = false,
-  showTopLeftToggle = true
+  initialSidebarState = "expanded",
+  onSidebarStateChange
 }) => {
-  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [expandedItems, setExpandedItems] = useState<string[]>([]);
+  const [sidebarExpanded, setSidebarExpanded] = useState<boolean>(initialSidebarState !== "collapsed");
   const { user } = useAuth();
-  const location = useLocation();
-
-  const toggleSidebar = () => {
-    setSidebarOpen(!sidebarOpen);
+  
+  const currentRole = user?.role || 'user'; // Default to 'user' if no role found
+  
+  const handleToggleSidebar = () => {
+    const newState = !sidebarExpanded;
+    setSidebarExpanded(newState);
+    
+    // Persist sidebar state via callback
+    if (onSidebarStateChange) {
+      onSidebarStateChange(newState ? "expanded" : "collapsed");
+    }
+  };
+  
+  const handleToggleExpand = (label: string) => {
+    if (expandedItems.includes(label)) {
+      setExpandedItems(expandedItems.filter(item => item !== label));
+    } else {
+      setExpandedItems([...expandedItems, label]);
+    }
   };
 
   return (
-    <div className="h-screen overflow-hidden bg-slate-50 dark:bg-gray-900">
-      {/* Main Layout */}
-      <div className="flex h-full flex-col">
-        {/* Header - Now positioned above the sidebar and main content */}
-        <SharedNavbar 
-          onMenuClick={toggleSidebar} 
-          moduleTitle={moduleTitle}
-          notificationArea={notificationArea}
-          showSidebarToggle={showTopLeftToggle}
-        />
-        
-        <div className="flex flex-1 overflow-hidden">
-          {/* Sidebar */}
-          <SharedSidebar 
-            open={sidebarOpen} 
-            onToggle={toggleSidebar} 
-            navItems={navCategories}
-            homeItem={homeItem}
-            customFooterContent={customFooterContent}
-            className={sidebarClassName || "bg-gradient-to-b from-indigo-950 via-blue-950 to-slate-950"}
-            removeBottomToggle={removeBottomToggle}
-          />
-          
-          {/* Main Content */}
-          <div className={cn(
-            "flex-1 overflow-auto transition-all duration-200"
-          )}>
-            {/* Dashboard Content */}
-            <main className="p-6 overflow-auto h-full">
-              {children || <Outlet />}
-            </main>
-          </div>
+    <div className="flex h-screen bg-zinc-900 text-white">
+      {/* Sidebar */}
+      <aside className={`bg-indigo-950 transition-all duration-300 flex flex-col ${sidebarExpanded ? 'w-64' : 'w-16'} border-r border-gray-800`}>
+        {/* Logo/Header */}
+        <div className="p-4 flex items-center justify-between border-b border-gray-800">
+          {sidebarExpanded && <h1 className="text-lg font-semibold">NXT Platform</h1>}
+          {showTopLeftToggle && (
+            <button 
+              onClick={handleToggleSidebar}
+              className="p-1 rounded-md hover:bg-indigo-900 text-gray-300 hover:text-white"
+            >
+              {sidebarExpanded ? <ChevronsLeft size={18} /> : <ChevronsRight size={18} />}
+            </button>
+          )}
         </div>
+        
+        {/* Navigation */}
+        <div className="flex-1 overflow-y-auto py-2">
+          {sidebarExpanded ? (
+            <SidebarNavList 
+              categories={navCategories}
+              userRole={currentRole as 'admin' | 'manager' | 'user'} 
+              expandedItems={expandedItems}
+              onToggleExpand={handleToggleExpand}
+              textColor="text-gray-300"
+              textHoverColor="hover:text-white"
+              activeBgColor="bg-indigo-500"
+              activeTextColor="text-white"
+              hoverBgColor="hover:bg-indigo-900/50"
+            />
+          ) : (
+            <CompactSidebar 
+              categories={navCategories}
+              userRole={currentRole as 'admin' | 'manager' | 'user'}
+            />
+          )}
+        </div>
+        
+        {/* Footer content if provided */}
+        {customFooterContent && sidebarExpanded && (
+          <div>{customFooterContent}</div>
+        )}
+        
+        {/* Bottom toggle button */}
+        {!removeBottomToggle && (
+          <div className="p-2 border-t border-gray-800">
+            <button
+              onClick={handleToggleSidebar}
+              className="w-full flex justify-center p-1 rounded-md hover:bg-indigo-900 text-gray-300 hover:text-white"
+            >
+              {sidebarExpanded ? <ChevronsLeft size={18} /> : <ChevronsRight size={18} />}
+            </button>
+          </div>
+        )}
+      </aside>
+      
+      {/* Main Content */}
+      <div className="flex flex-col flex-1 overflow-hidden">
+        {/* Top navigation */}
+        <header className="bg-zinc-800 border-b border-zinc-700 p-4 flex items-center justify-between">
+          <h1 className="text-xl font-medium">{moduleTitle}</h1>
+          <div className="flex items-center space-x-4">
+            <ThemeToggle />
+            <UserMenu />
+          </div>
+        </header>
+        
+        {/* Content area */}
+        <main className="flex-1 overflow-y-auto p-6 bg-zinc-900">
+          {children}
+        </main>
       </div>
     </div>
   );

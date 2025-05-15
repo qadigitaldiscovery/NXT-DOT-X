@@ -1,5 +1,7 @@
 
 import React, { createContext, useContext, useEffect, useState } from "react";
+import { useUserPreferences } from '@/hooks/useUserPreferences';
+import { useAuth } from '@/context/AuthContext';
 
 type Theme = "light" | "dark";
 
@@ -11,8 +13,17 @@ type ThemeContextType = {
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [theme, setTheme] = useState<Theme>(() => {
-    // Check for saved theme preference or use system preference
+  const { user } = useAuth();
+  
+  // Use database persistence with fallback to localStorage for unauthenticated users
+  const { preferences, setPreferences, loading } = useUserPreferences({
+    module: 'system',
+    key: 'theme',
+    defaultValue: getInitialTheme()
+  });
+  
+  // Get theme from localStorage or system preference as initial value
+  function getInitialTheme(): Theme {
     if (typeof window !== "undefined") {
       const savedTheme = localStorage.getItem("theme") as Theme;
       if (savedTheme && (savedTheme === "light" || savedTheme === "dark")) return savedTheme;
@@ -21,7 +32,10 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       return prefersDark ? "dark" : "light";
     }
     return "light";
-  });
+  }
+  
+  // Extract the theme value from preferences
+  const theme = (preferences as Theme) || "light";
 
   useEffect(() => {
     // Apply theme to document immediately and effectively
@@ -31,19 +45,24 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     html.classList.remove("light", "dark");
     html.classList.add(theme);
     
-    // Save theme preference
+    // Save theme preference to localStorage as fallback
     localStorage.setItem("theme", theme);
     
     // Log for debugging
     console.log("Theme changed to:", theme);
   }, [theme]);
 
-  const toggleTheme = () => {
-    setTheme((prevTheme) => {
-      const newTheme = prevTheme === "light" ? "dark" : "light";
-      console.log("Toggling theme from", prevTheme, "to", newTheme);
-      return newTheme;
-    });
+  const toggleTheme = async () => {
+    const newTheme = theme === "light" ? "dark" : "light";
+    console.log("Toggling theme from", theme, "to", newTheme);
+    
+    // Update in database if authenticated
+    if (user) {
+      await setPreferences(newTheme);
+    } else {
+      // Fall back to localStorage for unauthenticated users
+      localStorage.setItem("theme", newTheme);
+    }
   };
 
   return (

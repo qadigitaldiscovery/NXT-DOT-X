@@ -19,6 +19,7 @@ interface SettingsFormValues {
 
 const RAGSettings = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const { preferences, setPreferences, loading } = useUserPreferences({
     module: 'rag_dashboard',
     key: 'settings',
@@ -31,22 +32,22 @@ const RAGSettings = () => {
 
   const form = useForm<SettingsFormValues>({
     defaultValues: {
-      enableNotifications: preferences?.enableNotifications || true,
-      enableAutoRefresh: preferences?.enableAutoRefresh || true,
-      showCriticalOnly: preferences?.showCriticalOnly || false
+      enableNotifications: preferences?.enableNotifications ?? true,
+      enableAutoRefresh: preferences?.enableAutoRefresh ?? true,
+      showCriticalOnly: preferences?.showCriticalOnly ?? false
     }
   });
 
-  // Update form values when preferences load
+  // Update form values when preferences load or user changes
   React.useEffect(() => {
     if (!loading && preferences) {
       form.reset({
-        enableNotifications: preferences.enableNotifications,
-        enableAutoRefresh: preferences.enableAutoRefresh,
-        showCriticalOnly: preferences.showCriticalOnly
+        enableNotifications: preferences.enableNotifications ?? true,
+        enableAutoRefresh: preferences.enableAutoRefresh ?? true,
+        showCriticalOnly: preferences.showCriticalOnly ?? false
       });
     }
-  }, [preferences, loading, form]);
+  }, [preferences, loading, form, user]);
 
   const onSubmit = async (data: SettingsFormValues) => {
     const result = await setPreferences(data);
