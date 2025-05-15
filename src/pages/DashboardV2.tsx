@@ -1,15 +1,25 @@
 import React from 'react';
-import { PlatformLayout } from '@/components/layouts/PlatformLayout';
 import KpiCard from '@/components/shared/KpiCard';
+import { ThemeToggle } from '@/components/ui/ThemeToggle';
+import { PlatformLayout } from '@/components/layouts/PlatformLayout';
 
 export default function DashboardV2() {
+  const navItems = [
+    { label: 'Home', href: '/' },
+    { label: 'Reports', href: '/reports' },
+    { label: 'Users', href: '/users' }
+  ];
+
   return (
-    <PlatformLayout>
+    <PlatformLayout navItems={navItems} homeItem={{ label: 'Lovable', href: '/' }}>
+      <div className="flex justify-end mb-4">
+        <ThemeToggle />
+      </div>
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
-        <KpiCard title="Revenue" value="$82,000" change={5.2} />
-        <KpiCard title="New Users" value="1,234" change={2.8} />
-        <KpiCard title="Conversion Rate" value="7.5%" change={-1.4} />
-        <KpiCard title="Sessions" value="45,120" change={3.9} />
+        <KpiCard metric="revenue" label="Revenue" />
+        <KpiCard metric="new_users" label="New Users" />
+        <KpiCard metric="conversion_rate" label="Conversion Rate" suffix="%" />
+        <KpiCard metric="sessions" label="Sessions" />
       </div>
     </PlatformLayout>
   );
