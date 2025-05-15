@@ -7,7 +7,7 @@ import DashboardHeader from '@/components/rag-dashboard/dashboard/DashboardHeade
 import ModulesGrid from '@/components/rag-dashboard/dashboard/ModulesGrid';
 import DashboardFilters from '@/components/rag-dashboard/dashboard/DashboardFilters';
 import { DashboardDialogs } from '@/components/rag-dashboard/dashboard/DashboardDialogs';
-import { StatisticsSection } from '@/components/rag-dashboard/analytics/StatisticsSection';
+import StatisticsSection from '@/components/rag-dashboard/analytics/StatisticsSection';
 import MetricsChartsSection from '@/components/rag-dashboard/analytics/MetricsChartsSection';
 import { SystemHealthSection } from '@/components/rag-dashboard/analytics/SystemHealthSection';
 
@@ -66,7 +66,15 @@ const RAGDashboardPage = () => {
           </TabsContent>
           
           <TabsContent value="analytics" className="space-y-6">
-            <StatisticsSection />
+            <StatisticsSection 
+              healthScore={85}
+              healthTrend="stable"
+              avgResponseTime={120}
+              modulesCount={8}
+              operationalCount={7}
+              errorRate={0.5}
+              healthLoading={false}
+            />
             <div className="grid md:grid-cols-2 gap-6">
               <MetricsChartsSection />
               <SystemHealthSection />

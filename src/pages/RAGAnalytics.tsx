@@ -1,4 +1,3 @@
-
 import React, { useState, useMemo } from 'react';
 import { useModules } from '@/hooks/useModules';
 import { useModuleMetrics, useSystemHealthScore } from '@/hooks/useModuleMetrics';
@@ -7,7 +6,7 @@ import { NavCategory } from '@/components/layout/sidebar/types';
 import { BarChart3, LineChart as LineChartIcon, AlertTriangle, Settings } from 'lucide-react';
 import { format } from 'date-fns';
 
-// Import the new component files
+// Import the components with correct export types
 import DashboardHeader from '@/components/rag-dashboard/analytics/DashboardHeader';
 import StatisticsSection from '@/components/rag-dashboard/analytics/StatisticsSection';
 import SystemHealthSection from '@/components/rag-dashboard/analytics/SystemHealthSection';

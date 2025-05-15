@@ -1,4 +1,3 @@
-
 import React from 'react';
 import StatisticCard from '@/components/rag-dashboard/StatisticCard';
 import { Activity, Clock, Cpu, AlertOctagon } from 'lucide-react';
@@ -13,7 +12,8 @@ interface StatisticsSectionProps {
   healthLoading: boolean;
 }
 
-const StatisticsSection: React.FC<StatisticsSectionProps> = ({
+// Export as a named constant to match import in RAGDashboardPage
+export const StatisticsSection: React.FC<StatisticsSectionProps> = ({
   healthScore,
   healthTrend,
   avgResponseTime,
@@ -58,4 +58,5 @@ const StatisticsSection: React.FC<StatisticsSectionProps> = ({
   );
 };
 
+// Keep default export for backward compatibility
 export default StatisticsSection;
