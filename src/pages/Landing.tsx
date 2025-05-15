@@ -71,10 +71,10 @@ const Landing = () => {
               </div>
 
               {/* Login Form - Repositioned to align with background */}
-              <form onSubmit={handleLogin} className="w-full space-y-6 max-w-[300px] px-[27px] my-0 py-0 mt-8">
+              <form onSubmit={handleLogin} className="w-full space-y-3 max-w-[380px] px-[27px] my-0 py-0 mt-16">
                 <div className="space-y-2">
                   <div className="relative">
-                    <Input id="usernameOrEmail" type="text" placeholder="username" value={usernameOrEmail} onChange={e => setUsernameOrEmail(e.target.value)} required className="bg-gray-100/90 border-gray-300 focus:border-red-500 h-12 pl-10 text-black rounded-full py-0 my-[4px]" />
+                    <Input id="usernameOrEmail" type="text" placeholder="username" value={usernameOrEmail} onChange={e => setUsernameOrEmail(e.target.value)} required className="bg-gray-100/90 border-gray-300 focus:border-red-500 h-9 pl-10 text-black rounded-full py-0 my-[4px]" />
                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                       <span className="text-gray-700">🔒</span>
                     </div>
@@ -83,7 +83,7 @@ const Landing = () => {
                 
                 <div className="space-y-2">
                   <div className="relative">
-                    <Input id="password" type="password" placeholder="password" value={password} onChange={e => setPassword(e.target.value)} required className="bg-gray-100/90 border-gray-300 focus:border-red-500 h-12 pl-10 text-black rounded-full" />
+                    <Input id="password" type="password" placeholder="password" value={password} onChange={e => setPassword(e.target.value)} required className="bg-gray-100/90 border-gray-300 focus:border-red-500 h-9 pl-10 text-black rounded-full" />
                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                       <span className="text-gray-700">🔒</span>
                     </div>
