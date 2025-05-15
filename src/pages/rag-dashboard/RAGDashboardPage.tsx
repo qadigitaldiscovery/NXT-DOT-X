@@ -9,7 +9,7 @@ import DashboardFilters from '@/components/rag-dashboard/dashboard/DashboardFilt
 import { DashboardDialogs } from '@/components/rag-dashboard/dashboard/DashboardDialogs';
 import StatisticsSection from '@/components/rag-dashboard/analytics/StatisticsSection';
 import MetricsChartsSection from '@/components/rag-dashboard/analytics/MetricsChartsSection';
-import { SystemHealthSection } from '@/components/rag-dashboard/analytics/SystemHealthSection';
+import SystemHealthSection from '@/components/rag-dashboard/analytics/SystemHealthSection';
 
 const RAGDashboardPage = () => {
   const [selectedTab, setSelectedTab] = useState("dashboard");
@@ -77,7 +77,16 @@ const RAGDashboardPage = () => {
             />
             <div className="grid md:grid-cols-2 gap-6">
               <MetricsChartsSection />
-              <SystemHealthSection />
+              <SystemHealthSection 
+                healthScore={85}
+                healthLoading={false}
+                pieData={[
+                  { name: 'Operational', value: 7, color: '#10b981' },
+                  { name: 'Degraded', value: 1, color: '#f59e0b' },
+                  { name: 'Outage', value: 0, color: '#ef4444' }
+                ]}
+                chartTheme="dark"
+              />
             </div>
           </TabsContent>
         </Tabs>

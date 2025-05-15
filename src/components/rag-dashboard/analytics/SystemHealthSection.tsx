@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import StatusGauge from '@/components/rag-dashboard/StatusGauge';
@@ -15,7 +14,8 @@ interface SystemHealthSectionProps {
   chartTheme: 'light' | 'dark';
 }
 
-const SystemHealthSection: React.FC<SystemHealthSectionProps> = ({
+// Export as a named constant to match import in RAGDashboardPage
+export const SystemHealthSection: React.FC<SystemHealthSectionProps> = ({
   healthScore,
   healthLoading,
   pieData,
@@ -82,4 +82,5 @@ const SystemHealthSection: React.FC<SystemHealthSectionProps> = ({
   );
 };
 
+// Keep default export for backward compatibility
 export default SystemHealthSection;
