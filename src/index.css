@@ -8,6 +8,16 @@
     --foreground: 0 0% 10%;
     --border: 210 16% 82%;
     --ring: 222.2 84% 4.9%;
+    --dockred: 0 100% 60%;
+    --metallic: 240 2% 26%;
+    --pureblack: 0 0% 0%;
+  }
+
+  .dark {
+    --background: 0 0% 6%;
+    --foreground: 0 0% 98%;
+    --border: 210 16% 24%;
+    --ring: 222.2 84% 80%;
   }
 }
 
