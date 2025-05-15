@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Module } from '@/hooks/useModules';
 import ModuleCard from '@/components/rag-dashboard/ModuleCard';
@@ -11,7 +10,8 @@ interface ModulesGridProps {
   onViewDetails: (module: Module) => void;
 }
 
-const ModulesGrid: React.FC<ModulesGridProps> = ({ 
+// Export as a named constant to match import in RAGDashboardPage
+export const ModulesGrid: React.FC<ModulesGridProps> = ({ 
   modules, 
   isLoading, 
   hasError, 
@@ -48,4 +48,5 @@ const ModulesGrid: React.FC<ModulesGridProps> = ({
   );
 };
 
+// Keep default export for backward compatibility
 export default ModulesGrid;

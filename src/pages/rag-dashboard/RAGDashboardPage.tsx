@@ -4,7 +4,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { DashboardProvider } from '@/components/rag-dashboard/providers/DashboardProvider';
 // Import correctly - either as a named import or as a default import
 import DashboardHeader from '@/components/rag-dashboard/dashboard/DashboardHeader';
-import { ModulesGrid } from '@/components/rag-dashboard/dashboard/ModulesGrid';
+import ModulesGrid from '@/components/rag-dashboard/dashboard/ModulesGrid';
 import DashboardFilters from '@/components/rag-dashboard/dashboard/DashboardFilters';
 import { DashboardDialogs } from '@/components/rag-dashboard/dashboard/DashboardDialogs';
 import { StatisticsSection } from '@/components/rag-dashboard/analytics/StatisticsSection';
@@ -56,7 +56,13 @@ const RAGDashboardPage = () => {
               searchQuery={searchQuery}
               onSearchChange={setSearchQuery}
             />
-            <ModulesGrid onModuleClick={handleOpenModuleDetails} />
+            <ModulesGrid 
+              onViewDetails={handleOpenModuleDetails}
+              modules={[]} 
+              isLoading={false} 
+              hasError={false} 
+              alertCountByModule={{}} 
+            />
           </TabsContent>
           
           <TabsContent value="analytics" className="space-y-6">
