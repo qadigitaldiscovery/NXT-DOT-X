@@ -20,30 +20,24 @@ import {
   AccordionItem, 
   AccordionTrigger 
 } from '@/components/ui/accordion';
+import { NavCategory, NavItem } from './sidebar/types';
 
 interface SidebarProps {
   open: boolean;
   onToggle: () => void;
-}
-
-interface NavItem {
-  label: string;
-  icon: React.ElementType;
-  path: string;
-}
-
-interface NavCategory {
-  name: string;
-  items: NavItem[];
+  navItems?: NavCategory[];
+  homeItem?: NavItem;
+  removeBottomToggle?: boolean;
+  customFooterContent?: React.ReactNode;
 }
 
 // Top level nav items (not in categories)
-const topLevelNavItems: NavItem[] = [
+const defaultTopLevelNavItems: NavItem[] = [
   { label: 'Dashboard', icon: Home, path: '/' }
 ];
 
 // Organize remaining nav items into categories
-const navCategories: NavCategory[] = [
+const defaultNavCategories: NavCategory[] = [
   {
     name: "Cost Management",
     items: [
@@ -66,9 +60,17 @@ const navCategories: NavCategory[] = [
   }
 ];
 
-export const Sidebar = ({ open, onToggle }: SidebarProps) => {
+export const Sidebar = ({ 
+  open, 
+  onToggle, 
+  navItems = defaultNavCategories, 
+  homeItem,
+  removeBottomToggle = false,
+  customFooterContent
+}: SidebarProps) => {
   const isMobile = useIsMobile();
   const [openCategories, setOpenCategories] = React.useState<string[]>(["Cost Management"]);
+  const topLevelNavItems = homeItem ? [homeItem] : defaultTopLevelNavItems;
 
   const handleCategoryToggle = (category: string) => {
     setOpenCategories(prev => 
@@ -154,7 +156,7 @@ export const Sidebar = ({ open, onToggle }: SidebarProps) => {
             value={openCategories}
             className="space-y-1"
           >
-            {navCategories.map((category) => (
+            {navItems.map((category) => (
               <AccordionItem 
                 key={category.name} 
                 value={category.name}
@@ -214,7 +216,7 @@ export const Sidebar = ({ open, onToggle }: SidebarProps) => {
           ))}
           
           {/* Then all the category items flattened */}
-          {navCategories.flatMap(category => 
+          {navItems.flatMap(category => 
             category.items.map(item => (
               <NavLink
                 key={item.path}
@@ -233,23 +235,32 @@ export const Sidebar = ({ open, onToggle }: SidebarProps) => {
           )}
         </div>
 
-        <div className={cn(
-          "p-4 border-t border-sidebar-border",
-          !open && "md:hidden"
-        )}>
-          <NavLink
-            to="/settings"
-            className={({ isActive }) => cn(
-              "flex items-center justify-center gap-2 w-full px-4 py-2 rounded-md transition-colors",
-              isActive 
-                ? "bg-sidebar-primary text-white" 
-                : "bg-sidebar-accent text-sidebar-foreground border-sidebar-border hover:bg-sidebar-primary hover:text-white"
-            )}
-          >
-            <Settings className="h-5 w-5" />
-            <span>Settings</span>
-          </NavLink>
-        </div>
+        {customFooterContent ? (
+          <div className={cn(
+            "border-t border-sidebar-border",
+            !open && "md:hidden"
+          )}>
+            {customFooterContent}
+          </div>
+        ) : (
+          <div className={cn(
+            "p-4 border-t border-sidebar-border",
+            !open && "md:hidden"
+          )}>
+            <NavLink
+              to="/settings"
+              className={({ isActive }) => cn(
+                "flex items-center justify-center gap-2 w-full px-4 py-2 rounded-md transition-colors",
+                isActive 
+                  ? "bg-sidebar-primary text-white" 
+                  : "bg-sidebar-accent text-sidebar-foreground border-sidebar-border hover:bg-sidebar-primary hover:text-white"
+              )}
+            >
+              <Settings className="h-5 w-5" />
+              <span>Settings</span>
+            </NavLink>
+          </div>
+        )}
         
         {/* Settings icon for collapsed state */}
         <div className={cn(
@@ -271,18 +282,20 @@ export const Sidebar = ({ open, onToggle }: SidebarProps) => {
         </div>
       </aside>
 
-      {/* Toggle button - visible on all screen sizes */}
-      <Button
-        variant="outline"
-        size="icon"
-        onClick={onToggle}
-        className={cn(
-          "fixed z-40 rounded-full shadow-md bg-white",
-          isMobile ? "left-4 bottom-4" : open ? "left-60 bottom-4" : "left-16 bottom-4",
-        )}
-      >
-        {open ? <ChevronLeft className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
-      </Button>
+      {/* Toggle button - visible on all screen sizes if not removed */}
+      {!removeBottomToggle && (
+        <Button
+          variant="outline"
+          size="icon"
+          onClick={onToggle}
+          className={cn(
+            "fixed z-40 rounded-full shadow-md bg-white",
+            isMobile ? "left-4 bottom-4" : open ? "left-60 bottom-4" : "left-16 bottom-4",
+          )}
+        >
+          {open ? <ChevronLeft className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
+        </Button>
+      )}
     </>
   );
 };

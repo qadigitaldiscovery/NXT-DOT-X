@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Sidebar } from '@/components/layout/Sidebar';
 import { Topbar } from '@/components/layout/Topbar';
@@ -36,13 +37,10 @@ export const PlatformLayout = ({
       />
       <div className="flex flex-col flex-1">
         <Topbar
-          moduleTitle={moduleTitle}
-          showTopLeftToggle={showTopLeftToggle}
-          onSidebarToggle={() => setSidebarOpen(!sidebarOpen)}
+          onMenuClick={() => setSidebarOpen(!sidebarOpen)}
         />
         <main className="p-6 overflow-auto">{children}</main>
       </div>
     </div>
   );
 };
-  
