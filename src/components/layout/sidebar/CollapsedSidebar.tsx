@@ -1,9 +1,10 @@
 
 import React from 'react';
-import { useLocation, NavLink } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 import { cn } from '@/lib/utils';
-import { NavItem, NavCategory } from './types';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { NavCategory, NavItem } from './types';
+import { useLocation } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
 
 interface CollapsedSidebarProps {
@@ -15,69 +16,80 @@ interface CollapsedSidebarProps {
   homeItem?: NavItem;
 }
 
-export const CollapsedSidebar: React.FC<CollapsedSidebarProps> = ({
+export const CollapsedSidebar = ({
   navItems,
   textColor,
   activeBgColor,
   activeTextColor,
   hoverBgColor,
   homeItem
-}) => {
+}: CollapsedSidebarProps) => {
   const location = useLocation();
   const { user } = useAuth();
-
-  // Flatten all navigation items
-  const flattenedItems = React.useMemo(() => {
-    const items: NavItem[] = [];
-    
-    // Add home item if provided
-    if (homeItem) {
-      items.push(homeItem);
+  
+  // Function to check if an item should be shown based on user role
+  const shouldShowItem = (item: NavItem) => {
+    if (!item.roles || item.roles.length === 0) return true;
+    if (!user?.role) return false;
+    return item.roles.includes(user.role);
+  };
+  
+  // Function to check if an item is active
+  const isItemActive = (item: NavItem) => {
+    const path = item.path || item.href || '';
+    if (item.activeMatchPattern) {
+      if (typeof item.activeMatchPattern === 'string') {
+        return location.pathname.includes(item.activeMatchPattern);
+      } else {
+        return item.activeMatchPattern.test(location.pathname);
+      }
     }
+    return location.pathname === path || 
+      (path !== '/' && path !== '' && location.pathname.startsWith(path));
+  };
+
+  // Collect all items that are not children
+  const allItems = navItems.flatMap(category => category.items)
+    .filter(item => shouldShowItem(item) && !item.children);
     
-    // Add items from categories
-    navItems.forEach(category => {
-      category.items.forEach(item => {
-        // Only include items that the user has permission to see
-        if (!item.roles || item.roles.includes(user?.role || '')) {
-          items.push(item);
-        }
-      });
-    });
-    
-    return items;
-  }, [navItems, homeItem, user?.role]);
+  // If homeItem is provided, add it to the bottom
+  const displayItems = homeItem ? [...allItems, homeItem] : allItems;
 
   return (
-    <div className="flex flex-col items-center pt-4 space-y-2">
-      {flattenedItems.map(item => {
-        const isActive = location.pathname === item.path;
-        const Icon = item.icon;
-        
-        return (
-          <TooltipProvider key={item.path}>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <NavLink
-                  to={item.path}
-                  className={cn(
-                    "w-10 h-10 rounded-md flex items-center justify-center transition-colors",
-                    textColor,
-                    hoverBgColor,
-                    isActive && activeBgColor,
-                    isActive && activeTextColor
-                  )}
-                >
-                  {Icon && <Icon className="h-5 w-5" />}
-                </NavLink>
-              </TooltipTrigger>
-              <TooltipContent side="right">
-                {item.label}
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-        );
-      })}
+    <div className="py-4 flex flex-col items-center space-y-2 overflow-y-auto">
+      <TooltipProvider delayDuration={300}>
+        {displayItems.map((item, index) => {
+          const Icon = item.icon;
+          const path = item.path || item.href || '#';
+          
+          // If it's the home item and not the only item, add some spacing before it
+          const isHomeItem = item === homeItem && displayItems.length > 1;
+          
+          return (
+            <React.Fragment key={item.label + index}>
+              {isHomeItem && <div className="h-4" />}
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <NavLink
+                    to={path}
+                    className={({ isActive: linkActive }) => cn(
+                      "p-2 rounded-lg transition-colors duration-150 flex justify-center",
+                      textColor,
+                      hoverBgColor,
+                      (isItemActive(item) || linkActive) && `${activeBgColor} ${activeTextColor}`
+                    )}
+                  >
+                    {Icon && <Icon className="h-5 w-5" />}
+                  </NavLink>
+                </TooltipTrigger>
+                <TooltipContent side="right" className="bg-gray-800 text-white border-gray-700">
+                  {item.label}
+                </TooltipContent>
+              </Tooltip>
+            </React.Fragment>
+          );
+        })}
+      </TooltipProvider>
     </div>
   );
 };

@@ -1,47 +1,94 @@
 
 import React from 'react';
-import { cn } from '@/lib/utils';
 import { NavLink } from 'react-router-dom';
-import { NavItem } from './types';
+import { ChevronDown, ChevronRight } from 'lucide-react';
+import { cn } from '@/lib/utils';
+import { SidebarItemProps } from './types';
 
-interface SidebarItemProps {
-  item: NavItem;
-  isCompact?: boolean;
-}
+export const SidebarItem = ({
+  item,
+  isActive,
+  onClick,
+  textColor,
+  textHoverColor,
+  activeBgColor,
+  activeTextColor,
+  hoverBgColor,
+  hasChildren,
+  isExpanded
+}: SidebarItemProps) => {
+  const Icon = item.icon;
+  const path = item.path || item.href || '#';
 
-export const SidebarItem = ({ item, isCompact = false }: SidebarItemProps) => {
-  if (isCompact) {
+  const renderContent = () => (
+    <>
+      <span className="flex items-center flex-1">
+        {Icon && <Icon className="h-5 w-5 mr-2" />}
+        <span>{item.label}</span>
+      </span>
+      {hasChildren && (
+        <span className="ml-auto">
+          {isExpanded ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
+        </span>
+      )}
+    </>
+  );
+
+  if (hasChildren) {
     return (
-      <NavLink
-        key={item.path}
-        to={item.path}
-        className={({ isActive }) => cn(
-          "w-10 h-10 flex items-center justify-center rounded-md",
-          isActive 
-            ? "bg-sidebar-primary text-white" 
-            : "text-sidebar-foreground hover:bg-sidebar-accent"
+      <div>
+        <button
+          onClick={onClick}
+          className={cn(
+            "flex items-center w-full py-2 px-3 rounded-md transition-colors duration-150",
+            textColor,
+            textHoverColor,
+            hoverBgColor,
+            isActive && `${activeBgColor} ${activeTextColor}`
+          )}
+        >
+          {renderContent()}
+        </button>
+        {isExpanded && item.children && (
+          <div className="pl-4 mt-1 space-y-1">
+            {item.children.map((child) => (
+              <NavLink
+                key={child.label}
+                to={child.path || child.href || '#'}
+                className={({ isActive }) =>
+                  cn(
+                    "flex items-center py-2 px-3 rounded-md transition-colors duration-150",
+                    textColor,
+                    textHoverColor,
+                    hoverBgColor,
+                    isActive && `${activeBgColor} ${activeTextColor}`
+                  )
+                }
+              >
+                {child.icon && <child.icon className="h-4 w-4 mr-2" />}
+                <span className="text-sm">{child.label}</span>
+              </NavLink>
+            ))}
+          </div>
         )}
-        title={item.label}
-      >
-        <item.icon className="h-5 w-5" />
-      </NavLink>
+      </div>
     );
   }
 
   return (
-    <li key={item.path}>
-      <NavLink
-        to={item.path}
-        className={({ isActive }) => cn(
-          "flex items-center gap-3 px-4 py-3 rounded-md transition-colors",
-          isActive 
-            ? "bg-sidebar-primary text-white" 
-            : "text-sidebar-foreground hover:bg-sidebar-accent"
-        )}
-      >
-        <item.icon className="h-5 w-5" />
-        <span>{item.label}</span>
-      </NavLink>
-    </li>
+    <NavLink
+      to={path}
+      className={({ isActive: linkActive }) =>
+        cn(
+          "flex items-center py-2 px-3 rounded-md transition-colors duration-150",
+          textColor,
+          textHoverColor,
+          hoverBgColor,
+          (isActive || linkActive) && `${activeBgColor} ${activeTextColor}`
+        )
+      }
+    >
+      {renderContent()}
+    </NavLink>
   );
 };

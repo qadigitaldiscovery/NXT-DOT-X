@@ -54,19 +54,19 @@ const Landing = () => {
         zIndex: 9999 /* Ensure it's on top */
       }}></div>
 
-      {/* Cyberpunk background with uploaded image */}
+      {/* New background with uploaded image */}
       <div 
         className="absolute inset-0 z-0"
         style={{
-          backgroundImage: "url('/lovable-uploads/2b82e9cc-7d5f-4868-93b7-66677154cdbd.png')",
+          backgroundImage: "url('/lovable-uploads/a956833c-9bfa-47bb-bdb6-146924f0f6e8.png')",
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           backgroundRepeat: 'no-repeat',
-          opacity: 0.8
+          opacity: 1
         }}
       >
         {/* Adding a slight dark overlay for better text visibility */}
-        <div className="absolute inset-0 bg-black bg-opacity-40"></div>
+        <div className="absolute inset-0 bg-black bg-opacity-30"></div>
       </div>
 
       <div className="relative z-10 w-full max-w-md px-6 flex flex-col items-center">
@@ -135,7 +135,7 @@ const Landing = () => {
 
         <div className="mt-8 flex justify-center space-x-3">
           {[...Array(3)].map((_, i) => (
-            <div key={i} className="w-2 h-2 rounded-full bg-blue-400/60 animate-pulse" style={{animationDelay: `${i * 0.3}s`}}></div>
+            <div key={i} className="w-2 h-2 rounded-full bg-orange-400/60 animate-pulse" style={{animationDelay: `${i * 0.3}s`}}></div>
           ))}
         </div>
 
