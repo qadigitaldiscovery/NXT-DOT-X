@@ -1,27 +1,22 @@
-
 import React, { useState } from 'react';
-import { Sidebar } from '@/components/layout/Sidebar';
+import { Sidebar } from '@/components/layout/sidebar';
 import { Topbar } from '@/components/layout/Topbar';
-import { NavCategory, NavItem } from '@/components/layout/sidebar/types';
+import { NavItem } from '@/components/layout/sidebar/types';
 
 interface PlatformLayoutProps {
   children: React.ReactNode;
-  moduleTitle?: string;
-  navCategories?: NavCategory[];
-  customFooterContent?: React.ReactNode;
-  removeBottomToggle?: boolean;
-  showTopLeftToggle?: boolean;
+  navItems?: NavItem[];
   homeItem?: NavItem;
+  removeBottomToggle?: boolean;
+  customFooterContent?: React.ReactNode;
 }
 
 export const PlatformLayout = ({
   children,
-  moduleTitle = '',
-  navCategories = [],
-  customFooterContent,
-  removeBottomToggle = false,
-  showTopLeftToggle = false,
+  navItems = [],
   homeItem,
+  removeBottomToggle = false,
+  customFooterContent
 }: PlatformLayoutProps) => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
 
@@ -30,15 +25,13 @@ export const PlatformLayout = ({
       <Sidebar
         open={sidebarOpen}
         onToggle={() => setSidebarOpen(!sidebarOpen)}
-        navItems={navCategories}
+        navItems={navItems}
         homeItem={homeItem}
         removeBottomToggle={removeBottomToggle}
         customFooterContent={customFooterContent}
       />
       <div className="flex flex-col flex-1">
-        <Topbar
-          onMenuClick={() => setSidebarOpen(!sidebarOpen)}
-        />
+        <Topbar onMenuClick={() => setSidebarOpen(!sidebarOpen)} />
         <main className="p-6 overflow-auto">{children}</main>
       </div>
     </div>
