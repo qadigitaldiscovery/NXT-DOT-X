@@ -1,6 +1,7 @@
 import { useModuleAccess } from "@/hooks/useModuleAccess";
 import { NavCategory, NavItem } from "@/components/layout/sidebar/types";
 import { Users, Shield, Database, FileText } from 'lucide-react';
+import { FiSettings, FiHome, FiUsers, FiUserCheck } from 'react-icons/fi';
 
 // Define the structure for sidebar item configurations
 export interface SidebarItemConfig extends NavItem {
@@ -147,3 +148,48 @@ export const generateAdminSidebarItems = (
 
 // Add an alias for generateAdminSidebarItems to match the import in sidebar/index.tsx
 export const getAdminSidebarItems = generateAdminSidebarItems;
+
+/**
+ * Generates sidebar items based on user permissions
+ * @param userPermissions The user's permissions
+ * @returns An array of sidebar items
+ */
+export const getNavItemsByPermission = (
+  userPermissions: string[]
+): NavItem[] => {
+  const permittedNavItems: NavItem[] = [];
+
+  if (userPermissions.includes('modules.admin')) {
+    permittedNavItems.push({
+      label: 'Administration',
+      href: '/admin',
+      icon: FiSettings,
+    });
+  }
+
+  if (userPermissions.includes('modules.dashboard')) {
+    permittedNavItems.push({
+      label: 'Dashboard',
+      href: '/dashboard',
+      icon: FiHome,
+    });
+  }
+
+  if (userPermissions.includes('modules.suppliers')) {
+    permittedNavItems.push({
+      label: 'Suppliers',
+      href: '/suppliers',
+      icon: FiUsers,
+    });
+  }
+
+  if (userPermissions.includes('modules.customers')) {
+    permittedNavItems.push({
+      label: 'Customers',
+      href: '/customers',
+      icon: FiUserCheck,
+    });
+  }
+
+  return permittedNavItems;
+};

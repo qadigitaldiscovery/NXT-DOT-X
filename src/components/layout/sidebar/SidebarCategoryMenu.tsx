@@ -1,53 +1,66 @@
 
-import React from 'react';
-import { cn } from '@/lib/utils';
-import { NavCategory } from './types';
-import { SidebarItem } from './SidebarItem';
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger
-} from '@/components/ui/accordion';
+import React, { useState } from 'react';
+import { useLocation } from 'react-router-dom';
+import { NavCategory, NavItem } from './types';
+import { ChevronDown, ChevronRight } from 'lucide-react';
+import SidebarItem from './SidebarItem';
 
 interface SidebarCategoryMenuProps {
-  categories: NavCategory[];
-  openCategories: string[];
-  onCategoryToggle: (category: string) => void;
+  category: NavCategory;
+  textColor?: string;
+  textHoverColor?: string;
+  activeBgColor?: string;
+  activeTextColor?: string;
+  iconColor?: string;
 }
 
-export const SidebarCategoryMenu = ({ 
-  categories, 
-  openCategories,
-  onCategoryToggle
-}: SidebarCategoryMenuProps) => {
+const SidebarCategoryMenu: React.FC<SidebarCategoryMenuProps> = ({
+  category,
+  textColor = 'text-gray-700 dark:text-gray-200',
+  textHoverColor = 'hover:text-gray-900 dark:hover:text-white',
+  activeBgColor = 'bg-gray-200 dark:bg-gray-700',
+  activeTextColor = 'text-gray-900 dark:text-white',
+  iconColor = 'text-gray-500 dark:text-gray-400',
+}) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const location = useLocation();
+
+  const isActiveCategory = category.items.some(
+    (item) => item.href === location.pathname
+  );
+
   return (
-    <Accordion 
-      type="multiple" 
-      value={openCategories}
-      className="space-y-1"
-    >
-      {categories.map((category) => (
-        <AccordionItem 
-          key={category.name} 
-          value={category.name}
-          className="border-none"
-        >
-          <AccordionTrigger 
-            className="py-2 px-3 rounded-md hover:bg-sidebar-accent hover:no-underline text-sidebar-foreground"
-            onClick={() => onCategoryToggle(category.name)}
-          >
-            <span className="text-sm font-medium">{category.name}</span>
-          </AccordionTrigger>
-          <AccordionContent className="pb-0 pt-1">
-            <ul className="space-y-1 pl-2">
-              {category.items.map((item) => (
-                <SidebarItem key={item.path} item={item} />
-              ))}
-            </ul>
-          </AccordionContent>
-        </AccordionItem>
-      ))}
-    </Accordion>
+    <div className="mb-2">
+      <button
+        className={`flex items-center justify-between w-full px-3 py-2 rounded-md ${textColor} ${textHoverColor} transition-colors`}
+        onClick={() => setIsOpen(!isOpen)}
+      >
+        <span className="font-medium">{category.name}</span>
+        {isOpen ? (
+          <ChevronDown className="h-4 w-4" />
+        ) : (
+          <ChevronRight className="h-4 w-4" />
+        )}
+      </button>
+
+      {isOpen && (
+        <div className="mt-1 ml-2 space-y-1">
+          {category.items.map((item) => (
+            <SidebarItem
+              key={item.href}
+              item={item}
+              isActive={location.pathname === item.href}
+              textColor={textColor}
+              textHoverColor={textHoverColor}
+              activeBgColor={activeBgColor}
+              activeTextColor={activeTextColor}
+              iconColor={iconColor}
+            />
+          ))}
+        </div>
+      )}
+    </div>
   );
 };
+
+export default SidebarCategoryMenu;

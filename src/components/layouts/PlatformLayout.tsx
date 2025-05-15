@@ -1,38 +1,42 @@
-import React, { useState } from 'react';
-import { Sidebar } from '@/components/layout/sidebar';
-import { Topbar } from '@/components/layout/Topbar';
-import { NavItem } from '@/components/layout/sidebar/types';
 
-interface PlatformLayoutProps {
-  children: React.ReactNode;
+import React, { ReactNode } from 'react';
+import { NavCategory, NavItem } from '@/components/layout/sidebar/types';
+import Sidebar from '@/components/layout/sidebar';
+import Topbar from '@/components/layouts/Topbar';
+
+export interface PlatformLayoutProps {
+  children: ReactNode;
   navItems?: NavItem[];
-  homeItem?: NavItem;
+  navCategories?: NavCategory[];
+  customFooterContent?: ReactNode;
   removeBottomToggle?: boolean;
-  customFooterContent?: React.ReactNode;
+  showTopLeftToggle?: boolean;
+  moduleTitle?: string; // Add moduleTitle prop
 }
 
-export const PlatformLayout = ({
+export const PlatformLayout: React.FC<PlatformLayoutProps> = ({
   children,
   navItems = [],
-  homeItem,
+  navCategories = [],
+  customFooterContent,
   removeBottomToggle = false,
-  customFooterContent
-}: PlatformLayoutProps) => {
-  const [sidebarOpen, setSidebarOpen] = useState(true);
-
+  showTopLeftToggle = true,
+  moduleTitle = '',
+}) => {
   return (
-    <div className="flex h-screen bg-background text-foreground">
+    <div className="flex h-screen bg-gray-100 dark:bg-gray-900">
       <Sidebar
-        open={sidebarOpen}
-        onToggle={() => setSidebarOpen(!sidebarOpen)}
         navItems={navItems}
-        homeItem={homeItem}
-        removeBottomToggle={removeBottomToggle}
+        navCategories={navCategories}
         customFooterContent={customFooterContent}
+        removeBottomToggle={removeBottomToggle}
+        showToggleButton={showTopLeftToggle}
       />
-      <div className="flex flex-col flex-1">
-        <Topbar onMenuClick={() => setSidebarOpen(!sidebarOpen)} />
-        <main className="p-6 overflow-auto">{children}</main>
+      <div className="flex flex-col flex-1 overflow-hidden">
+        <Topbar moduleTitle={moduleTitle} />
+        <main className="flex-1 overflow-y-auto p-4">
+          {children}
+        </main>
       </div>
     </div>
   );

@@ -1,17 +1,11 @@
 
 import { ReactNode } from 'react';
 import { IconType } from 'react-icons';
-import { LucideIcon } from 'lucide-react';
 
 export interface NavItem {
+  icon: ReactNode | IconType;
   label: string;
-  icon: LucideIcon | IconType;
-  href?: string;   // For backward compatibility
-  path?: string;   // For new components using path
-  children?: NavItem[];
-  roles?: string[];
-  divider?: boolean;
-  activeMatchPattern?: RegExp | string;
+  href: string;
 }
 
 export interface NavCategory {
@@ -19,43 +13,36 @@ export interface NavCategory {
   items: NavItem[];
 }
 
+export interface SidebarItemProps {
+  item: NavItem;
+  isActive: boolean;
+  textColor?: string;
+  textHoverColor?: string;
+  activeBgColor?: string;
+  activeTextColor?: string;
+  iconColor?: string;
+}
+
 export interface SidebarProps {
-  open: boolean;
-  onToggle: () => void;
-  navItems?: NavCategory[];
-  homeItem?: NavItem;
+  navItems?: NavItem[];
+  navCategories?: NavCategory[];
+  textColor?: string;
+  textHoverColor?: string;
+  activeTextColor?: string;
+  activeBgColor?: string;
+  iconColor?: string;
+  isCollapsed?: boolean;
+  onToggleCollapsed?: () => void;
+  showToggleButton?: boolean;
   customFooterContent?: ReactNode;
-  className?: string;
   removeBottomToggle?: boolean;
 }
 
 export interface SidebarNavListProps {
   items?: NavItem[];
-  userRole?: string;
-  expandedItems: string[];
-  onToggleExpand: (label: string) => void;
-  textColor: string;
-  textHoverColor: string;
-  activeBgColor: string;
-  activeTextColor: string;
-  hoverBgColor: string;
-  navItems?: NavCategory[];
-}
-
-export interface SidebarItemProps {
-  item: NavItem;
-  isActive: boolean;
-  onClick?: () => void;
-  textColor: string;
-  textHoverColor: string;
-  activeBgColor: string;
-  activeTextColor: string;
-  hoverBgColor: string;
-  hasChildren?: boolean;
-  isExpanded?: boolean;
-}
-
-export interface SidebarToggleButtonProps {
-  open: boolean;
-  onToggle: () => void;
+  textColor?: string;
+  textHoverColor?: string;
+  activeBgColor?: string;
+  activeTextColor?: string;
+  iconColor?: string;
 }
