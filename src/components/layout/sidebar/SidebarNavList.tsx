@@ -1,97 +1,64 @@
+
 import React from 'react';
-import { NavItem, NavCategory, SidebarNavListProps } from './types';
-import { SidebarItem } from './SidebarItem';
-import { useLocation } from 'react-router-dom';
+import { NavLink, useLocation } from 'react-router-dom';
+import { ChevronDown, ChevronRight } from 'lucide-react';
+import { cn } from '@/lib/utils';
+import { SidebarNavListProps, NavItem } from './types';
 
-export const SidebarNavList = ({
-  navItems = [],
+export const SidebarNavList: React.FC<SidebarNavListProps> = ({
   items = [],
+  textColor = 'text-gray-200',
+  textHoverColor = 'hover:text-white',
+  activeBgColor = 'bg-blue-700',
+  activeTextColor = 'text-white',
+  iconColor,
   userRole,
-  expandedItems,
-  onToggleExpand,
-  textColor,
-  textHoverColor,
-  activeBgColor,
-  activeTextColor,
-  hoverBgColor
-}: SidebarNavListProps) => {
+  expandedItems = [],
+  onToggleExpand = () => {},
+  hoverBgColor = 'hover:bg-gray-700'
+}) => {
   const location = useLocation();
-  
-  // Function to check if a menu item should be shown based on user role
-  const shouldShowItem = (item: NavItem) => {
-    if (!item.roles || item.roles.length === 0) return true;
+  const currentPath = location.pathname;
+
+  // Check if the user has the required role to view this item
+  const hasRequiredRole = (itemRoles?: string[]) => {
+    if (!itemRoles || itemRoles.length === 0) return true;
     if (!userRole) return false;
-    return item.roles.includes(userRole);
+    return itemRoles.includes(userRole);
   };
 
-  // Function to check if an item is active
-  const isItemActive = (item: NavItem) => {
-    const path = item.path || item.href || '';
-    if (item.activeMatchPattern) {
-      if (typeof item.activeMatchPattern === 'string') {
-        return location.pathname.includes(item.activeMatchPattern);
-      } else {
-        return item.activeMatchPattern.test(location.pathname);
-      }
-    }
-    return location.pathname === path || 
-      (path !== '/' && path !== '' && location.pathname.startsWith(path));
-  };
-
-  // If navItems is provided, use the category structure
-  if (navItems && navItems.length > 0) {
+  const renderNavItem = (item: NavItem) => {
+    // Skip items that the user doesn't have permission to see
+    if (item.roles && !hasRequiredRole(item.roles)) return null;
+    
+    const isActive = currentPath === item.href;
+    
     return (
-      <div className="space-y-6">
-        {navItems.map((category) => (
-          <div key={category.name}>
-            <h2 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3 px-3">
-              {category.name}
-            </h2>
-            <div className="space-y-1">
-              {category.items.map((item) => 
-                shouldShowItem(item) && (
-                  <SidebarItem
-                    key={item.label}
-                    item={item}
-                    isActive={isItemActive(item)}
-                    onClick={() => item.children?.length && onToggleExpand(item.label)}
-                    textColor={textColor}
-                    textHoverColor={textHoverColor}
-                    activeBgColor={activeBgColor}
-                    activeTextColor={activeTextColor}
-                    hoverBgColor={hoverBgColor}
-                    hasChildren={!!item.children?.length}
-                    isExpanded={expandedItems.includes(item.label)}
-                  />
-                )
-              )}
-            </div>
-          </div>
-        ))}
-      </div>
+      <li key={item.href} className="mb-1">
+        <NavLink
+          to={item.href}
+          className={({ isActive }) => cn(
+            "flex items-center px-3 py-2 rounded-md transition-colors",
+            textColor,
+            textHoverColor,
+            hoverBgColor,
+            isActive && `${activeBgColor} ${activeTextColor}`
+          )}
+        >
+          {typeof item.icon === 'function' ? (
+            <item.icon className={cn("mr-2 h-5 w-5", iconColor)} />
+          ) : (
+            <span className="mr-2">{item.icon}</span>
+          )}
+          <span>{item.label}</span>
+        </NavLink>
+      </li>
     );
-  }
-  
-  // Otherwise, use the flat items list
+  };
+
   return (
-    <div className="space-y-1">
-      {items.map((item) => 
-        shouldShowItem(item) && (
-          <SidebarItem
-            key={item.label}
-            item={item}
-            isActive={isItemActive(item)}
-            onClick={() => item.children?.length && onToggleExpand(item.label)}
-            textColor={textColor}
-            textHoverColor={textHoverColor}
-            activeBgColor={activeBgColor}
-            activeTextColor={activeTextColor}
-            hoverBgColor={hoverBgColor}
-            hasChildren={!!item.children?.length}
-            isExpanded={expandedItems.includes(item.label)}
-          />
-        )
-      )}
-    </div>
+    <ul className="space-y-1">
+      {items.map(renderNavItem)}
+    </ul>
   );
 };

@@ -26,7 +26,7 @@ const SharedDashboardLayout: React.FC<SharedDashboardLayoutProps> = ({
   children,
   notificationArea,
   homeItem = {
-    path: '/',
+    href: '/',
     label: 'Master Dashboard',
     icon: Home
   },

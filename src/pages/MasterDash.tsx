@@ -26,6 +26,7 @@ import {
 } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { useUserPreferences } from '@/hooks/useUserPreferences';
+import { NavCategory } from '@/components/layout/sidebar/types';
 
 const MasterDash = () => {
   const navigate = useNavigate();
@@ -45,34 +46,34 @@ const MasterDash = () => {
   }, [navigate, user]);
 
   // Define navigation categories for the sidebar
-  const navCategories = [
+  const navCategories: NavCategory[] = [
     {
       name: "Main",
       items: [
-        { label: "All Modules", path: "/", icon: Layout },
-        { label: "API Keys", path: "/tech-hub/api-management", icon: Key },
-        { label: "Project Management", path: "/projects", icon: ClipboardList },
-        { label: "RAG Dashboard", path: "/dashboard/rag", icon: AlertTriangle }
+        { label: "All Modules", href: "/", icon: Layout },
+        { label: "API Keys", href: "/tech-hub/api-management", icon: Key },
+        { label: "Project Management", href: "/projects", icon: ClipboardList },
+        { label: "RAG Dashboard", href: "/dashboard/rag", icon: AlertTriangle }
       ]
     },
     {
       name: "Administration",
       items: [
-        { label: "User Management", path: "/admin/users", icon: Users },
-        { label: "Customer Management", path: "/data-management/customers", icon: Building },
-        { label: "Roles & Permissions", path: "/admin/roles", icon: UserCog },
-        { label: "Security", path: "/admin/security", icon: Shield },
-        { label: "Reporting", path: "/admin/reporting", icon: BarChart3 },
-        { label: "Localization", path: "/admin/localization", icon: Globe },
-        { label: "Documentation", path: "/admin/documentation", icon: FileText },
-        { label: "Database Admin", path: "/admin/database", icon: Database },
-        { label: "System Settings", path: "/admin/system-settings", icon: Settings }
+        { label: "User Management", href: "/admin/users", icon: Users },
+        { label: "Customer Management", href: "/data-management/customers", icon: Building },
+        { label: "Roles & Permissions", href: "/admin/roles", icon: UserCog },
+        { label: "Security", href: "/admin/security", icon: Shield },
+        { label: "Reporting", href: "/admin/reporting", icon: BarChart3 },
+        { label: "Localization", href: "/admin/localization", icon: Globe },
+        { label: "Documentation", href: "/admin/documentation", icon: FileText },
+        { label: "Database Admin", href: "/admin/database", icon: Database },
+        { label: "System Settings", href: "/admin/system-settings", icon: Settings }
       ]
     },
     {
       name: "Account",
       items: [
-        { label: "Billing", path: "/settings/billing", icon: CreditCard }
+        { label: "Billing", href: "/settings/billing", icon: CreditCard }
       ]
     }
   ];

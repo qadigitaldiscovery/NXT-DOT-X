@@ -5,7 +5,8 @@ import { IconType } from 'react-icons';
 export interface NavItem {
   icon: ReactNode | IconType;
   label: string;
-  href: string;
+  href: string; // Using href instead of path for consistency
+  roles?: string[]; // Add roles for access control
 }
 
 export interface NavCategory {
@@ -36,6 +37,9 @@ export interface SidebarProps {
   showToggleButton?: boolean;
   customFooterContent?: ReactNode;
   removeBottomToggle?: boolean;
+  open?: boolean;
+  onToggle?: () => void;
+  homeItem?: NavItem;
 }
 
 export interface SidebarNavListProps {
@@ -45,4 +49,8 @@ export interface SidebarNavListProps {
   activeBgColor?: string;
   activeTextColor?: string;
   iconColor?: string;
+  userRole?: string;
+  expandedItems?: string[];
+  onToggleExpand?: (label: string) => void;
+  hoverBgColor?: string;
 }

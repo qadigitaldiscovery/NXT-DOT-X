@@ -37,11 +37,11 @@ const Index = () => {
     {
       name: "Main Navigation",
       items: [
-        { label: "Dashboard", path: "/", icon: Home },
-        { label: "Projects", path: "/projects", icon: Layers },
-        { label: "RAG Dashboard", path: "/dashboard/rag", icon: AlertTriangle },
-        { label: "Users", path: "/admin/users", icon: Users, roles: ["admin"] },
-        { label: "Settings", path: "/settings", icon: Settings, roles: ["admin", "manager"] }
+        { label: "Dashboard", href: "/", icon: Home },
+        { label: "Projects", href: "/projects", icon: Layers },
+        { label: "RAG Dashboard", href: "/dashboard/rag", icon: AlertTriangle },
+        { label: "Users", href: "/admin/users", icon: Users, roles: ["admin"] },
+        { label: "Settings", href: "/settings", icon: Settings, roles: ["admin", "manager"] }
       ]
     }
   ];

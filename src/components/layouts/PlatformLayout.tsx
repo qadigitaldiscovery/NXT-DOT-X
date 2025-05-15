@@ -1,7 +1,7 @@
 
 import React, { ReactNode } from 'react';
 import { NavCategory, NavItem } from '@/components/layout/sidebar/types';
-import Sidebar from '@/components/layout/sidebar';
+import { Sidebar } from '@/components/layout/sidebar'; // Importing named export instead of default
 import Topbar from '@/components/layouts/Topbar';
 
 export interface PlatformLayoutProps {

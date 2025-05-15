@@ -10,18 +10,25 @@ import { NavItem, NavCategory, SidebarProps } from './types';
 import { useAuth } from '@/context/AuthContext';
 import { SidebarToggleButton } from './SidebarToggleButton';
 
-export const Sidebar = ({
+export const Sidebar: React.FC<SidebarProps> = ({
   open,
   onToggle,
   navItems = [],
+  navCategories = [],
   homeItem,
   customFooterContent,
   className,
-  removeBottomToggle = false
-}: SidebarProps) => {
+  removeBottomToggle = false,
+  showToggleButton = true
+}) => {
   const isMobile = useIsMobile();
   const [expandedItems, setExpandedItems] = useState<string[]>([]);
   const { user } = useAuth();
+
+  // Use provided open/onToggle or internal state
+  const [internalOpen, setInternalOpen] = useState(true);
+  const isOpen = open !== undefined ? open : internalOpen;
+  const toggleSidebar = onToggle || (() => setInternalOpen(!internalOpen));
 
   // Updated styling with more reasonable sizing
   const sidebarBgColor = className || 'bg-gradient-to-b from-indigo-950 via-blue-950 to-slate-950';
@@ -38,10 +45,10 @@ export const Sidebar = ({
   return (
     <>
       {/* Mobile backdrop */}
-      {open && isMobile && (
+      {isOpen && isMobile && (
         <div 
           className="fixed inset-0 bg-black bg-opacity-70 z-20 backdrop-blur-sm" 
-          onClick={onToggle} 
+          onClick={toggleSidebar} 
         />
       )}
 
@@ -49,19 +56,18 @@ export const Sidebar = ({
         className={cn(
           "fixed md:sticky top-0 left-0 h-screen z-30 shadow-xl flex flex-col transition-all duration-300 ease-in-out",
           sidebarBgColor,
-          open ? "w-60" : "w-0 md:w-16",
-          isMobile && !open && "-translate-x-full",
-          isMobile && open && "translate-x-0"
+          isOpen ? "w-60" : "w-0 md:w-16",
+          isMobile && !isOpen && "-translate-x-full",
+          isMobile && isOpen && "translate-x-0"
         )}
       >
         {/* Full Navigation List (Visible when open) */}
         <nav className={cn(
           "flex-1 pt-4 px-2 overflow-y-auto scrollbar-thin scrollbar-thumb-blue-800/50 scrollbar-track-slate-900/50",
-          !open && "hidden" // Hide when sidebar is collapsed
+          !isOpen && "hidden" // Hide when sidebar is collapsed
         )}>
           <SidebarNavList 
-            navItems={navItems}
-            items={navItems.flatMap(category => category.items)}
+            items={navCategories?.flatMap(category => category.items) || []}
             userRole={user?.role}
             expandedItems={expandedItems}
             onToggleExpand={toggleExpanded}
@@ -74,9 +80,9 @@ export const Sidebar = ({
         </nav>
 
         {/* Icon-Only Navigation (Visible when collapsed on desktop) */}
-        {!open && !isMobile && (
+        {!isOpen && !isMobile && (
           <CollapsedSidebar 
-            navItems={navItems}
+            navItems={navCategories || []}
             textColor={textColor}
             activeBgColor={activeBgColor}
             activeTextColor={activeTextColor}
@@ -100,7 +106,7 @@ export const Sidebar = ({
       </aside>
 
       {/* Bottom sidebar toggle button (if not removed) */}
-      {!removeBottomToggle && <SidebarToggleButton open={open} onToggle={onToggle} />}
+      {!removeBottomToggle && showToggleButton && <SidebarToggleButton open={isOpen} onToggle={toggleSidebar} />}
     </>
   );
 };

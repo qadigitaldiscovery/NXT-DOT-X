@@ -71,7 +71,7 @@ export const SharedSidebar = ({
           !open && "hidden" // Hide when sidebar is collapsed
         )}>
           <SidebarNavList 
-            navItems={navItems}
+            items={navItems.flatMap(category => category.items)}
             userRole={user?.role}
             expandedItems={expandedItems}
             onToggleExpand={toggleExpanded}
