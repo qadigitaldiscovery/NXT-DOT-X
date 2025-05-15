@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -7,7 +6,6 @@ import { toast } from 'sonner';
 import { LogIn } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { AspectRatio } from '@/components/ui/aspect-ratio';
-
 const Landing = () => {
   const [usernameOrEmail, setUsernameOrEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -24,7 +22,6 @@ const Landing = () => {
       navigate('/');
     }
   }, [navigate, isAuthenticated]);
-
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
@@ -43,16 +40,14 @@ const Landing = () => {
     }
     setIsLoading(false);
   };
-
-  return (
-    <div className="h-screen w-full flex flex-col items-center justify-center relative overflow-hidden">
+  return <div className="h-screen w-full flex flex-col items-center justify-center relative overflow-hidden">
       {/* Full-screen background with uploaded image */}
       <div className="absolute inset-0 z-0" style={{
-        backgroundImage: "url('/lovable-uploads/875e855a-93e1-4360-89b4-b7e970545959.png')",
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundRepeat: 'no-repeat'
-      }}>
+      backgroundImage: "url('/lovable-uploads/875e855a-93e1-4360-89b4-b7e970545959.png')",
+      backgroundSize: 'cover',
+      backgroundPosition: 'center',
+      backgroundRepeat: 'no-repeat'
+    }}>
       </div>
 
       {/* Centered login circle with NXT DOT X logo and form */}
@@ -71,7 +66,7 @@ const Landing = () => {
               </div>
 
               {/* Login Form - Repositioned to align with background */}
-              <form onSubmit={handleLogin} className="w-full space-y-3 max-w-[380px] px-[27px] my-0 py-0 mt-16">
+              <form onSubmit={handleLogin} className="w-full space-y-3 max-w-[380px] px-[27px] mt-16 my-[21px] py-[12px]">
                 <div className="space-y-2">
                   <div className="relative">
                     <Input id="usernameOrEmail" type="text" placeholder="username" value={usernameOrEmail} onChange={e => setUsernameOrEmail(e.target.value)} required className="bg-gray-100/90 border-gray-300 focus:border-red-500 h-9 pl-10 text-black rounded-full py-0 my-[4px]" />
@@ -111,8 +106,6 @@ const Landing = () => {
           
         </div>
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default Landing;
