@@ -658,6 +658,30 @@ export type Database = {
           },
         ]
       }
+      metrics: {
+        Row: {
+          change: number | null
+          id: string
+          name: string
+          updated_at: string | null
+          value: string | null
+        }
+        Insert: {
+          change?: number | null
+          id?: string
+          name: string
+          updated_at?: string | null
+          value?: string | null
+        }
+        Update: {
+          change?: number | null
+          id?: string
+          name?: string
+          updated_at?: string | null
+          value?: string | null
+        }
+        Relationships: []
+      }
       modules: {
         Row: {
           created_at: string | null
