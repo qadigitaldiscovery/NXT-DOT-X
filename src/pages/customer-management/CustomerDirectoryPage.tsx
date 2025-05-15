@@ -21,14 +21,14 @@ const CustomerDirectoryPage = () => {
   };
   
   return (
-    <div className="w-full h-full space-y-6">
+    <div className="h-full w-full space-y-6">
       <div>
         <p className="text-muted-foreground">
           Manage your customer information and relationships
         </p>
       </div>
       
-      <Card className="w-full">
+      <Card className="w-full h-[calc(100%-4rem)]">
         <CardHeader>
           <CardTitle>Customers</CardTitle>
           <CardDescription>
@@ -65,7 +65,9 @@ const CustomerDirectoryPage = () => {
             </div>
           </div>
           
-          <CustomersTable />
+          <div className="h-[calc(100vh-20rem)] overflow-auto">
+            <CustomersTable />
+          </div>
         </CardContent>
       </Card>
     </div>

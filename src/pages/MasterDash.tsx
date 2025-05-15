@@ -1,6 +1,6 @@
 
 import React, { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { toast } from 'sonner';
 import { useAuth } from '@/context/AuthContext';
 import DashboardModules from '@/components/master-dash/DashboardModules';
@@ -30,6 +30,7 @@ import { NavCategory } from '@/components/layout/sidebar/types';
 
 const MasterDash = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { user } = useAuth();
   const { preferences, setPreferences, loading: prefsLoading, error } = useUserPreferences({
     module: 'dashboard',
@@ -61,32 +62,32 @@ const MasterDash = () => {
       name: "Main",
       label: "Main",
       items: [
-        { label: "All Modules", href: "/", icon: Layout },
-        { label: "API Keys", href: "/tech-hub/api-management", icon: Key },
-        { label: "Project Management", href: "/projects", icon: ClipboardList },
-        { label: "RAG Dashboard", href: "/dashboard/rag", icon: AlertTriangle }
+        { label: "All Modules", path: "/master", icon: Layout },
+        { label: "API Keys", path: "/tech-hub/api-management", icon: Key },
+        { label: "Project Management", path: "/projects", icon: ClipboardList },
+        { label: "RAG Dashboard", path: "/dashboard/rag", icon: AlertTriangle }
       ]
     },
     {
       name: "Administration",
       label: "Administration",
       items: [
-        { label: "User Management", href: "/admin/users", icon: Users },
-        { label: "Customer Management", href: "/data-management/customers", icon: Building },
-        { label: "Roles & Permissions", href: "/admin/roles", icon: UserCog },
-        { label: "Security", href: "/admin/security", icon: Shield },
-        { label: "Reporting", href: "/admin/reporting", icon: BarChart3 },
-        { label: "Localization", href: "/admin/localization", icon: Globe },
-        { label: "Documentation", href: "/admin/documentation", icon: FileText },
-        { label: "Database Admin", href: "/admin/database", icon: Database },
-        { label: "System Settings", href: "/admin/system-settings", icon: Settings }
+        { label: "User Management", path: "/admin/users", icon: Users },
+        { label: "Customer Management", path: "/customer-management", icon: Building },
+        { label: "Roles & Permissions", path: "/admin/roles", icon: UserCog },
+        { label: "Security", path: "/admin/security", icon: Shield },
+        { label: "Reporting", path: "/admin/reporting", icon: BarChart3 },
+        { label: "Localization", path: "/admin/localization", icon: Globe },
+        { label: "Documentation", path: "/admin/documentation", icon: FileText },
+        { label: "Database Admin", path: "/admin/database", icon: Database },
+        { label: "System Settings", path: "/admin/system-settings", icon: Settings }
       ]
     },
     {
       name: "Account",
       label: "Account",
       items: [
-        { label: "Billing", href: "/settings/billing", icon: CreditCard }
+        { label: "Billing", path: "/settings/billing", icon: CreditCard }
       ]
     }
   ];
@@ -106,7 +107,7 @@ const MasterDash = () => {
       <Button 
         variant="ghost" 
         size="icon" 
-        onClick={() => navigate('/')}
+        onClick={() => navigate('/master')}
         className="text-gray-300 hover:text-white hover:bg-indigo-900 rounded-lg"
       >
         <Home className="h-5 w-5" />

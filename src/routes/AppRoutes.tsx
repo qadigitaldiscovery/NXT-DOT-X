@@ -29,6 +29,17 @@ import { BrandMarketingRoutes } from "./brandMarketingRoutes";
 import { SocialMediaRoutes } from "./socialMediaRoutes";
 import { ProjectManagementRoutes } from "./projectManagementRoutes";
 import { RAGDashboardRoutes } from "./ragDashboardRoutes";
+import { VendorRoutes } from "./vendorRoutes";
+import { ContractsRoutes } from "./contractsRoutes";
+import { CategoriesRoutes } from "./categoriesRoutes";
+import { EntitiesRoutes } from "./entitiesRoutes";
+import { ScorecardsRoutes } from "./scorecardsRoutes";
+import { WorkflowsRoutes } from "./workflowsRoutes";
+import { AIExtractRoutes } from "./aiExtractRoutes";
+import { FilesRoutes } from "./filesRoutes";
+import { EventsRoutes } from "./eventsRoutes";
+import { RiskRegisterRoutes } from "./riskRegisterRoutes";
+import { RequestsRoutes } from "./requestsRoutes";
 
 // Import layout configuration
 import { navCategories } from '@/components/layout/sidebar/NavigationConfig';
@@ -51,7 +62,7 @@ export const AppRoutes = () => {
       <Routes>
         {/* Root/Index Route */}
         <Route index element={<RootHandler />} />
-        <Route path="/" element={<Index />} />
+        <Route path="/" element={<Navigate to="/master" replace />} />
         
         {/* Settings page with PlatformLayout */}
         <Route 
@@ -91,6 +102,17 @@ export const AppRoutes = () => {
         {SocialMediaRoutes()}
         {ProjectManagementRoutes()}
         {RAGDashboardRoutes()}
+        {VendorRoutes()}
+        {ContractsRoutes()}
+        {CategoriesRoutes()}
+        {EntitiesRoutes()}
+        {ScorecardsRoutes()}
+        {WorkflowsRoutes()}
+        {AIExtractRoutes()}
+        {FilesRoutes()}
+        {EventsRoutes()}
+        {RiskRegisterRoutes()}
+        {RequestsRoutes()}
         
         {/* Legacy route redirects */}
         <Route path="/prototypes" element={<Navigate to="/" replace />} />

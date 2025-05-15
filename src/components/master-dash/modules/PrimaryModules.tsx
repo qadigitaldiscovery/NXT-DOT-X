@@ -19,14 +19,14 @@ export default function PrimaryModules({ activeTab = "all", searchQuery = "" }: 
   const navigate = useNavigate();
   
   const allModules = [
-    { component: <DataManagement key="data" />, category: "data" },
-    { component: <LoyaltyProgram key="loyalty" />, category: "marketing" },
-    { component: <TradingSystem key="trading" />, category: "operations" },
-    { component: <SocialMediaMarketing key="social" />, category: "marketing" },
-    { component: <TechHub key="tech" />, category: "tech" },
-    { component: <DotX key="dotx" />, category: "tech" },
-    { component: <BrandMarketing key="brand" />, category: "marketing" },
-    { component: <ProjectManagement key="project" />, category: "operations" }
+    { component: <DataManagement key="data" />, category: "data", path: "/data-management" },
+    { component: <LoyaltyProgram key="loyalty" />, category: "marketing", path: "/loyalty-rewards" },
+    { component: <TradingSystem key="trading" />, category: "operations", path: "/trading-system" },
+    { component: <SocialMediaMarketing key="social" />, category: "marketing", path: "/social-media" },
+    { component: <TechHub key="tech" />, category: "tech", path: "/tech-hub" },
+    { component: <DotX key="dotx" />, category: "tech", path: "/dot-x" },
+    { component: <BrandMarketing key="brand" />, category: "marketing", path: "/brand-marketing" },
+    { component: <ProjectManagement key="project" />, category: "operations", path: "/projects" }
   ];
   
   const [filteredModules, setFilteredModules] = useState(allModules.map(m => m.component));
@@ -42,8 +42,11 @@ export default function PrimaryModules({ activeTab = "all", searchQuery = "" }: 
     
     // Filter by search query if provided
     if (searchQuery.trim() !== "") {
-      // This is a simplified search - in a real app you would have module metadata to search against
-      // For now, we'll just return all modules when searching as this is just for demonstration
+      const query = searchQuery.toLowerCase();
+      filtered = filtered.filter(module => 
+        module.category.toLowerCase().includes(query) || 
+        module.path.toLowerCase().includes(query)
+      );
     }
     
     setFilteredModules(filtered.map(m => m.component));

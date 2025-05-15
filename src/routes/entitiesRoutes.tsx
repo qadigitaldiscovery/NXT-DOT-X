@@ -4,6 +4,7 @@ import { PlatformLayout } from '@/components/layouts/PlatformLayout';
 import EntitiesPage from "@/pages/auto/EntitiesPage";
 import { Building, Users, FileText, Map, Settings, ListOrdered } from 'lucide-react';
 import { NavCategory } from '@/components/layout/sidebar/types';
+import ProtectedRoute from "@/components/ProtectedRoute";
 
 export const EntitiesNavCategories: NavCategory[] = [
   {
@@ -24,52 +25,64 @@ export const EntitiesRoutes = () => {
   return (
     <Route path="/entities">
       <Route index element={
-        <PlatformLayout
-          moduleTitle="Entities"
-          navCategories={EntitiesNavCategories}
-        >
-          <EntitiesPage />
-        </PlatformLayout>
+        <ProtectedRoute>
+          <PlatformLayout
+            moduleTitle="Entities"
+            navCategories={EntitiesNavCategories}
+          >
+            <EntitiesPage />
+          </PlatformLayout>
+        </ProtectedRoute>
       } />
       <Route path="list" element={
-        <PlatformLayout
-          moduleTitle="Entities Directory"
-          navCategories={EntitiesNavCategories}
-        >
-          <EntitiesPage />
-        </PlatformLayout>
+        <ProtectedRoute>
+          <PlatformLayout
+            moduleTitle="Entities Directory"
+            navCategories={EntitiesNavCategories}
+          >
+            <EntitiesPage />
+          </PlatformLayout>
+        </ProtectedRoute>
       } />
       <Route path="personnel" element={
-        <PlatformLayout
-          moduleTitle="Entity Personnel"
-          navCategories={EntitiesNavCategories}
-        >
-          <EntitiesPage />
-        </PlatformLayout>
+        <ProtectedRoute>
+          <PlatformLayout
+            moduleTitle="Entity Personnel"
+            navCategories={EntitiesNavCategories}
+          >
+            <EntitiesPage />
+          </PlatformLayout>
+        </ProtectedRoute>
       } />
       <Route path="documents" element={
-        <PlatformLayout
-          moduleTitle="Entity Documents"
-          navCategories={EntitiesNavCategories}
-        >
-          <EntitiesPage />
-        </PlatformLayout>
+        <ProtectedRoute>
+          <PlatformLayout
+            moduleTitle="Entity Documents"
+            navCategories={EntitiesNavCategories}
+          >
+            <EntitiesPage />
+          </PlatformLayout>
+        </ProtectedRoute>
       } />
       <Route path="locations" element={
-        <PlatformLayout
-          moduleTitle="Entity Locations"
-          navCategories={EntitiesNavCategories}
-        >
-          <EntitiesPage />
-        </PlatformLayout>
+        <ProtectedRoute>
+          <PlatformLayout
+            moduleTitle="Entity Locations"
+            navCategories={EntitiesNavCategories}
+          >
+            <EntitiesPage />
+          </PlatformLayout>
+        </ProtectedRoute>
       } />
       <Route path="settings" element={
-        <PlatformLayout
-          moduleTitle="Entity Settings"
-          navCategories={EntitiesNavCategories}
-        >
-          <EntitiesPage />
-        </PlatformLayout>
+        <ProtectedRoute>
+          <PlatformLayout
+            moduleTitle="Entity Settings"
+            navCategories={EntitiesNavCategories}
+          >
+            <EntitiesPage />
+          </PlatformLayout>
+        </ProtectedRoute>
       } />
     </Route>
   );

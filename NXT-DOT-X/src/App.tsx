@@ -1,6 +1,5 @@
 
 import React from "react";
-import MasterDash from "../../src/pages/MasterDash";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -12,11 +11,7 @@ function App() {
     navigate("/master");
   }, [navigate]);
 
-  return (
-    <div>
-      <MasterDash />
-    </div>
-  );
+  return null; // No need to render anything as we're redirecting
 }
 
 export default App;

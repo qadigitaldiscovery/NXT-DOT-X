@@ -18,7 +18,7 @@ import DocumentsPage from "@/pages/data-management/documents/DocumentsPage";
 import SuppliersPage from "@/pages/SuppliersPage";
 import NotFound from "@/pages/NotFound";
 
-const dataNavCategories: NavCategory[] = [
+export const dataNavCategories: NavCategory[] = [
   {
     name: "DATA MANAGEMENT",
     label: "DATA MANAGEMENT",
@@ -32,7 +32,7 @@ const dataNavCategories: NavCategory[] = [
   }
 ];
 
-const customerNavCategories: NavCategory[] = [
+export const customerNavCategories: NavCategory[] = [
   {
     name: "CUSTOMER MANAGEMENT",
     label: "CUSTOMER MANAGEMENT",
