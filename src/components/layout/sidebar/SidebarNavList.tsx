@@ -1,7 +1,7 @@
 import React from 'react';
 import { NavItem } from './types';
 
-export const SidebarNavList = ({ items }: { items: NavItem[] }) => (
+export const SidebarNavList = ({ items = [] }: { items?: NavItem[] }) => (
   <ul className="space-y-2">
     {items.map((item) => (
       <li key={item.href}>
