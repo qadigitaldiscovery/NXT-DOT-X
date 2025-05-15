@@ -1,8 +1,11 @@
 
 import { Route } from "react-router-dom";
 import { PlatformLayout } from "@/components/layouts/PlatformLayout";
-import Dashboard from "@/pages/Dashboard";
-import NotFound from "@/pages/NotFound";
+import DotXDashboard from "@/pages/dot-x/Dashboard";
+import DotXApi from "@/pages/dot-x/Api";
+import DotXDataServices from "@/pages/dot-x/DataServices";
+import DotXPlugins from "@/pages/dot-x/Plugins";
+import DotXSettings from "@/pages/dot-x/Settings";
 import { NavCategory } from '@/components/layout/sidebar/types';
 import { LayoutDashboard, Code, Database, FileCode, Settings } from 'lucide-react';
 
@@ -28,7 +31,7 @@ export const DotXRoutes = () => {
           moduleTitle="DOT-X Platform"
           navCategories={dotXNavCategories}
         >
-          <Dashboard />
+          <DotXDashboard />
         </PlatformLayout>
       } />
       <Route path="api" element={
@@ -36,7 +39,7 @@ export const DotXRoutes = () => {
           moduleTitle="DOT-X API Integration"
           navCategories={dotXNavCategories}
         >
-          <Dashboard />
+          <DotXApi />
         </PlatformLayout>
       } />
       <Route path="data-services" element={
@@ -44,7 +47,7 @@ export const DotXRoutes = () => {
           moduleTitle="DOT-X Data Services"
           navCategories={dotXNavCategories}
         >
-          <Dashboard />
+          <DotXDataServices />
         </PlatformLayout>
       } />
       <Route path="plugins" element={
@@ -52,7 +55,7 @@ export const DotXRoutes = () => {
           moduleTitle="DOT-X Plugins"
           navCategories={dotXNavCategories}
         >
-          <Dashboard />
+          <DotXPlugins />
         </PlatformLayout>
       } />
       <Route path="settings" element={
@@ -60,16 +63,7 @@ export const DotXRoutes = () => {
           moduleTitle="DOT-X Settings"
           navCategories={dotXNavCategories}
         >
-          <Dashboard />
-        </PlatformLayout>
-      } />
-      
-      <Route path="*" element={
-        <PlatformLayout
-          moduleTitle="Not Found"
-          navCategories={dotXNavCategories}
-        >
-          <NotFound />
+          <DotXSettings />
         </PlatformLayout>
       } />
     </Route>

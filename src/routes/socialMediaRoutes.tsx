@@ -2,6 +2,10 @@
 import { Route } from "react-router-dom";
 import { PlatformLayout } from '@/components/layouts/PlatformLayout';
 import SocialMediaDashboard from "@/pages/social-media/Dashboard";
+import SocialMediaAccounts from "@/pages/social-media/Accounts";
+import SocialMediaCalendar from "@/pages/social-media/Calendar";
+import SocialMediaEngagement from "@/pages/social-media/Engagement";
+import SocialMediaSettings from "@/pages/social-media/Settings";
 import { NavCategory } from '@/components/layout/sidebar/types';
 import { MessageSquare, BarChart3, Calendar, Settings, Users } from 'lucide-react';
 
@@ -35,7 +39,7 @@ export const SocialMediaRoutes = () => {
           moduleTitle="Social Media Accounts"
           navCategories={socialMediaNavCategories}
         >
-          <SocialMediaDashboard />
+          <SocialMediaAccounts />
         </PlatformLayout>
       } />
       <Route path="calendar" element={
@@ -43,7 +47,7 @@ export const SocialMediaRoutes = () => {
           moduleTitle="Social Media Calendar"
           navCategories={socialMediaNavCategories}
         >
-          <SocialMediaDashboard />
+          <SocialMediaCalendar />
         </PlatformLayout>
       } />
       <Route path="engagement" element={
@@ -51,7 +55,7 @@ export const SocialMediaRoutes = () => {
           moduleTitle="Social Media Engagement"
           navCategories={socialMediaNavCategories}
         >
-          <SocialMediaDashboard />
+          <SocialMediaEngagement />
         </PlatformLayout>
       } />
       <Route path="settings" element={
@@ -59,7 +63,7 @@ export const SocialMediaRoutes = () => {
           moduleTitle="Social Media Settings"
           navCategories={socialMediaNavCategories}
         >
-          <SocialMediaDashboard />
+          <SocialMediaSettings />
         </PlatformLayout>
       } />
     </Route>

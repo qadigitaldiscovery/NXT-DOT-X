@@ -3,6 +3,9 @@ import { Route } from "react-router-dom";
 import { PlatformLayout } from "@/components/layouts/PlatformLayout";
 import TradingSystemDashboard from "@/pages/TradingSystemDashboard";
 import TradingSystemSettings from "@/pages/TradingSystemSettings";
+import TradingSystemTrades from "@/pages/TradingSystemTrades";
+import TradingSystemAnalytics from "@/pages/TradingSystemAnalytics";
+import TradingSystemHistory from "@/pages/TradingSystemHistory";
 import { NavCategory } from '@/components/layout/sidebar/types';
 import { BarChart3, Settings, LineChart, ArrowLeftRight, History } from 'lucide-react';
 
@@ -36,7 +39,7 @@ export const TradingSystemRoutes = () => {
           moduleTitle="Trading System - Trades"
           navCategories={tradingSystemNavCategories}
         >
-          <TradingSystemDashboard />
+          <TradingSystemTrades />
         </PlatformLayout>
       } />
       <Route path="analytics" element={
@@ -44,7 +47,7 @@ export const TradingSystemRoutes = () => {
           moduleTitle="Trading System - Analytics"
           navCategories={tradingSystemNavCategories}
         >
-          <TradingSystemDashboard />
+          <TradingSystemAnalytics />
         </PlatformLayout>
       } />
       <Route path="history" element={
@@ -52,7 +55,7 @@ export const TradingSystemRoutes = () => {
           moduleTitle="Trading System - History"
           navCategories={tradingSystemNavCategories}
         >
-          <TradingSystemDashboard />
+          <TradingSystemHistory />
         </PlatformLayout>
       } />
       <Route path="settings" element={
