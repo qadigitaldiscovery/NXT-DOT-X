@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -6,6 +7,7 @@ import { toast } from 'sonner';
 import { LogIn } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { AspectRatio } from '@/components/ui/aspect-ratio';
+
 const Landing = () => {
   const [usernameOrEmail, setUsernameOrEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -22,6 +24,7 @@ const Landing = () => {
       navigate('/');
     }
   }, [navigate, isAuthenticated]);
+
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
@@ -40,18 +43,20 @@ const Landing = () => {
     }
     setIsLoading(false);
   };
-  return <div className="h-screen w-full flex flex-col items-center justify-center relative overflow-hidden">
+
+  return (
+    <div className="h-screen w-full flex flex-col items-center justify-center relative overflow-hidden">
       {/* Full-screen background with uploaded image */}
       <div className="absolute inset-0 z-0" style={{
-      backgroundImage: "url('/lovable-uploads/358e768f-b3aa-4ca0-9ced-77089fb161d6.png')",
-      backgroundSize: 'cover',
-      backgroundPosition: 'center',
-      backgroundRepeat: 'no-repeat'
-    }}>
+        backgroundImage: "url('/lovable-uploads/358e768f-b3aa-4ca0-9ced-77089fb161d6.png')",
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat'
+      }}>
       </div>
 
       {/* Centered login circle with NXT DOT X logo and form */}
-      <div className="relative z-10 flex flex-col items-center justify-center">
+      <div className="relative z-10 flex flex-col items-center justify-center mt-32">
         <div className="w-[480px] h-[480px] flex items-center justify-center py-0 my-0">
           {/* Circular login box with energy effect */}
           <div className="w-full h-full rounded-full flex items-center justify-center relative">
@@ -65,8 +70,8 @@ const Landing = () => {
                 </h1>
               </div>
 
-              {/* Login Form */}
-              <form onSubmit={handleLogin} className="w-full space-y-4 max-w-[300px] px-[27px] my-0 py-0">
+              {/* Login Form - Repositioned to align with background */}
+              <form onSubmit={handleLogin} className="w-full space-y-6 max-w-[300px] px-[27px] my-0 py-0 mt-8">
                 <div className="space-y-2">
                   <div className="relative">
                     <Input id="usernameOrEmail" type="text" placeholder="username" value={usernameOrEmail} onChange={e => setUsernameOrEmail(e.target.value)} required className="bg-gray-100/90 border-gray-300 focus:border-red-500 h-12 pl-10 text-black rounded-full py-0 my-[4px]" />
@@ -106,6 +111,8 @@ const Landing = () => {
           
         </div>
       </div>
-    </div>;
+    </div>
+  );
 };
+
 export default Landing;
