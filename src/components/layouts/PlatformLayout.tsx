@@ -15,3 +15,4 @@ export const PlatformLayout = ({ children }: { children: React.ReactNode }) => {
     </div>
   );
 };
+ 
