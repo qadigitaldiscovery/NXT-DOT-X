@@ -2,6 +2,7 @@
 import React from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
+// Fixed import - using named export instead of default
 import { SidebarItem } from './SidebarItem';
 import { NavItem } from './types';
 
@@ -65,12 +66,13 @@ export const SidebarNavList = ({
       {items.filter(shouldShowItem).map((item, index) => {
         const isExpanded = expandedItems.includes(item.label);
         
+        // Fixed by changing onClick to onItemClick prop to match SidebarItem interface
         return (
           <SidebarItem
             key={`${item.label}-${index}`}
             item={item}
             isActive={isItemActive(item)}
-            onClick={() => handleItemToggle(item)}
+            onItemClick={() => handleItemToggle(item)} 
             hasChildren={item.children && item.children.length > 0}
             isExpanded={isExpanded}
             textColor={textColor}

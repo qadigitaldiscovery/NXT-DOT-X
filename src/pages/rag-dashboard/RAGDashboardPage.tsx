@@ -2,7 +2,8 @@
 import React from 'react';
 import { useAuth } from '@/context/AuthContext';
 import RAGDashboardGrid from '@/components/rag-dashboard/RAGDashboardGrid';
-import { PermissionGuard } from '@/components/rag-dashboard/PermissionGuard';
+// Changed import from named to default import
+import PermissionGuard from '@/components/rag-dashboard/PermissionGuard';
 import { useModules } from '@/hooks/useModules';
 import { useKpiIndicators } from '@/hooks/useKpiIndicators';
 import { useNotifications } from '@/hooks/useNotifications';
@@ -13,12 +14,26 @@ import { DashboardHeader } from '@/components/rag-dashboard/dashboard/DashboardH
 
 const RAGDashboardPage: React.FC = () => {
   const { user } = useAuth();
+  const { modules, refreshModules } = useModules();
+  const { alerts, resolveAlert } = useAlerts();
+  const { rules, addRule, deleteRule } = useThresholdRules();
+  
+  // Added function to handle batch operations
+  const handleBatchOperationsOpen = () => {
+    console.log("Batch operations opened");
+    // Implementation would go here in a real app
+  };
   
   return (
-    <PermissionGuard requiredRole="user">
-      <DashboardProvider>
+    <PermissionGuard requiredPermission="user">
+      <DashboardProvider 
+        refreshModules={refreshModules}
+        resolveAlert={resolveAlert}
+        addRule={addRule}
+        deleteRule={deleteRule}
+      >
         <div className="container mx-auto px-4 py-6">
-          <DashboardHeader />
+          <DashboardHeader onBatchOperationsOpen={handleBatchOperationsOpen} />
           <div className="mt-6">
             <RAGDashboardGrid />
           </div>

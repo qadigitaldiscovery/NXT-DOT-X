@@ -15,6 +15,7 @@ interface CustomerManagementLayoutProps {
 const customerNavItems: NavCategory[] = [
   {
     name: "CUSTOMER MANAGEMENT",
+    // Added label field to match NavCategory interface
     label: "CUSTOMER MANAGEMENT",
     items: [
       { label: 'Dashboard', icon: Database, path: '/customer-management' },

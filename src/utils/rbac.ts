@@ -2,6 +2,7 @@ import { useModuleAccess } from "@/hooks/useModuleAccess";
 import { NavCategory, NavItem } from "@/components/layout/sidebar/types";
 import { Users, Shield, Database, FileText } from 'lucide-react';
 import { FiSettings, FiHome, FiUsers, FiUserCheck } from 'react-icons/fi';
+import { HomeIcon, BuildingIcon, BarChartIcon, SettingsIcon } from 'lucide-react';
 
 // Define the structure for sidebar item configurations
 export interface SidebarItemConfig extends NavItem {
@@ -192,4 +193,45 @@ export const getNavItemsByPermission = (
   }
 
   return permittedNavItems;
+};
+
+export const generateNavItems = (modulePermissions: ModulePermission[]): NavItem[] => {
+  const navItems: NavItem[] = [];
+  
+  modulePermissions.forEach(mp => {
+    // Fix: Change 'title' property to 'label'
+    if (mp.module === 'dashboard') {
+      navItems.push({
+        label: 'Dashboard',
+        path: '/dashboard',
+        icon: HomeIcon
+      });
+    }
+    
+    if (mp.module === 'suppliers') {
+      navItems.push({
+        label: 'Suppliers',
+        path: '/suppliers',
+        icon: BuildingIcon
+      });
+    }
+    
+    if (mp.module === 'costs') {
+      navItems.push({
+        label: 'Cost Analysis',
+        path: '/costs',
+        icon: BarChartIcon
+      });
+    }
+    
+    if (mp.module === 'settings') {
+      navItems.push({
+        label: 'Settings',
+        path: '/settings',
+        icon: SettingsIcon
+      });
+    }
+  });
+  
+  return navItems;
 };
