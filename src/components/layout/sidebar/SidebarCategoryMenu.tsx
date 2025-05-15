@@ -16,6 +16,7 @@ interface SidebarCategoryMenuProps {
   textHoverColor?: string;
   activeBgColor?: string;
   activeTextColor?: string;
+  hoverBgColor?: string;
 }
 
 export const SidebarCategoryMenu: React.FC<SidebarCategoryMenuProps> = ({
@@ -27,6 +28,7 @@ export const SidebarCategoryMenu: React.FC<SidebarCategoryMenuProps> = ({
   textHoverColor = "hover:text-white",
   activeBgColor = "bg-indigo-500",
   activeTextColor = "text-white",
+  hoverBgColor = "hover:bg-indigo-900/50",
 }) => {
   const [isOpen, setIsOpen] = React.useState(open);
   const location = useLocation();
@@ -90,6 +92,7 @@ export const SidebarCategoryMenu: React.FC<SidebarCategoryMenuProps> = ({
                 textHoverColor={textHoverColor}
                 activeBgColor={activeBgColor}
                 activeTextColor={activeTextColor}
+                hoverBgColor={hoverBgColor}
               />
             );
           })}

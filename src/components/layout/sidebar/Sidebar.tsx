@@ -57,6 +57,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   if (allNavItems.length > 0 && allCategories.length === 0) {
     allCategories.push({
       label: "Navigation",
+      name: "Navigation",
       items: allNavItems
     });
   }
@@ -98,10 +99,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
           !isOpen && "hidden" // Hide when sidebar is collapsed
         )}>
           <SidebarNavList 
-            items={allCategories.flatMap(category => category.items)}
+            categories={allCategories}
             userRole={user?.role}
-            expandedItems={expandedItems}
-            onToggleExpand={toggleExpanded}
+            expandedCategories={expandedItems}
+            onCategoryToggle={toggleExpanded}
             textColor={textColor}
             textHoverColor={textHoverColor}
             activeBgColor={activeBgColor}

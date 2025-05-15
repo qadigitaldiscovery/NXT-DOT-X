@@ -5,7 +5,8 @@ import { SidebarItem } from './SidebarItem';
 import { cn } from '@/lib/utils';
 
 interface SidebarNavListProps {
-  categories: NavCategory[];
+  categories?: NavCategory[];
+  items?: NavItem[];
   activeItemKey?: string;
   onItemClick?: (key: string) => void;
   isCollapsed?: boolean;
@@ -16,10 +17,14 @@ interface SidebarNavListProps {
   hoverBgColor?: string;
   expandedCategories?: string[];
   onCategoryToggle?: (categoryName: string) => void;
+  userRole?: string;
+  expandedItems?: string[];
+  onToggleExpand?: (label: string) => void;
 }
 
 export function SidebarNavList({
-  categories,
+  categories = [],
+  items = [],
   activeItemKey,
   onItemClick,
   isCollapsed,
@@ -29,20 +34,31 @@ export function SidebarNavList({
   activeTextColor = "text-gray-900",
   hoverBgColor = "hover:bg-gray-50",
   expandedCategories = [],
-  onCategoryToggle
+  onCategoryToggle,
+  expandedItems,
+  onToggleExpand
 }: SidebarNavListProps) {
 
-  if (!categories || categories.length === 0) {
+  // If items are provided but no categories, create a default category
+  const allCategories = categories.length > 0 ? categories : 
+    items.length > 0 ? [{
+      name: 'default',
+      label: 'Navigation',
+      items: items
+    }] : [];
+  
+  if (allCategories.length === 0) {
     return null;
   }
   
   return (
     <div className={cn("space-y-4", isCollapsed && "items-center")}>
-      {categories.map((category) => {
-        const isExpanded = expandedCategories.includes(category.name);
+      {allCategories.map((category) => {
+        const isExpanded = expandedCategories.includes(category.name || '') || 
+                          (expandedItems && category.label && expandedItems.includes(category.label));
         
         return (
-          <div key={category.name} className="space-y-1">
+          <div key={category.name || category.label} className="space-y-1">
             {!isCollapsed && (
               <h3 
                 className={cn(
@@ -50,7 +66,13 @@ export function SidebarNavList({
                   textColor, 
                   textHoverColor
                 )}
-                onClick={() => onCategoryToggle && onCategoryToggle(category.name)}
+                onClick={() => {
+                  if (onCategoryToggle && category.name) {
+                    onCategoryToggle(category.name);
+                  } else if (onToggleExpand && category.label) {
+                    onToggleExpand(category.label);
+                  }
+                }}
               >
                 {category.label || category.name}
                 {category.items && category.items.length > 0 && (

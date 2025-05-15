@@ -94,14 +94,14 @@ export async function createVendor(
  * Get a download URL for a vendor report
  */
 export async function getReportUrl(filePath: string) {
-  const { data, error } = await supabase
+  const response = await supabase
     .storage
     .from('reports')
     .getPublicUrl(filePath);
   
-  if (error) throw error;
-  
-  return data.publicUrl;
+  // Supabase storage getPublicUrl doesn't return an error property
+  // It returns { data: { publicUrl: string } }
+  return response.data.publicUrl;
 }
 
 /**
