@@ -5,7 +5,7 @@ import { Share2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 export default function SocialMediaMarketing() {
   const navigate = useNavigate();
-  return <Card className="col-span-1 bg-gray-800">
+  return <Card className="col-span-1 bg-zinc-400">
       <CardHeader className="pb-2">
         <CardTitle className="flex items-center space-x-2">
           <Share2 className="w-5 h-5 text-blue-600" />
