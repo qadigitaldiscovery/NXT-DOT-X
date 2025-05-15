@@ -1,4 +1,3 @@
-
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { PlatformLayout } from '@/components/layouts/PlatformLayout';
@@ -33,9 +32,10 @@ const Index = () => {
   }, [isAuthenticated, navigate]);
   
   // Define navigation categories for this page
-  const navCategories: NavCategory[] = [
+  const categories: NavCategory[] = [
     {
-      name: "Main Navigation",
+      name: "General",
+      label: "General", // Adding the required label property
       items: [
         { label: "Dashboard", href: "/", icon: Home },
         { label: "Projects", href: "/projects", icon: Layers },
@@ -90,7 +90,7 @@ const Index = () => {
   return (
     <PlatformLayout
       moduleTitle="Welcome"
-      navCategories={navCategories}
+      navCategories={categories}
       customFooterContent={navigationFooter}
       removeBottomToggle={false}
       showTopLeftToggle={true}

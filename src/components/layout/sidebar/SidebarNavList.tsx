@@ -1,88 +1,108 @@
 
 import React from 'react';
-import { NavLink, useLocation } from 'react-router-dom';
-import { cn } from '@/lib/utils';
-// Fixed import - using named export instead of default
+import { NavCategory, NavItem } from './types';
 import { SidebarItem } from './SidebarItem';
-import { NavItem } from './types';
+import { cn } from '@/lib/utils';
 
 interface SidebarNavListProps {
-  items: NavItem[];
-  userRole?: string;
-  expandedItems?: string[];
-  onToggleExpand?: (label: string) => void;
+  categories: NavCategory[];
+  activeItemKey?: string;
+  onItemClick?: (key: string) => void;
+  isCollapsed?: boolean;
   textColor?: string;
   textHoverColor?: string;
   activeBgColor?: string;
   activeTextColor?: string;
   hoverBgColor?: string;
+  expandedCategories?: string[];
+  onCategoryToggle?: (categoryName: string) => void;
 }
 
-export const SidebarNavList = ({
-  items,
-  userRole,
-  expandedItems = [],
-  onToggleExpand = () => {},
-  textColor = 'text-blue-200',
-  textHoverColor = 'hover:text-blue-300',
-  activeBgColor = 'bg-gradient-to-r from-blue-800 to-indigo-700',
-  activeTextColor = 'text-white',
-  hoverBgColor = 'hover:bg-indigo-900/50'
-}: SidebarNavListProps) => {
-  const location = useLocation();
-  
-  // Function to check if an item should be shown based on user role
-  const shouldShowItem = (item: NavItem) => {
-    if (!item.roles || item.roles.length === 0) return true;
-    if (!userRole) return false;
-    return item.roles.includes(userRole);
-  };
-  
-  // Function to check if an item is active
-  const isItemActive = (item: NavItem) => {
-    const path = item.href || item.path || '';
-    
-    // Custom active pattern matching if provided
-    if (item.activeMatchPattern) {
-      if (typeof item.activeMatchPattern === 'string') {
-        return location.pathname.includes(item.activeMatchPattern);
-      } else if (item.activeMatchPattern instanceof RegExp) {
-        return item.activeMatchPattern.test(location.pathname);
-      }
-    }
-    
-    return location.pathname === path || 
-      (path !== '/' && path !== '' && location.pathname.startsWith(path));
-  };
+interface SidebarItemProps {
+  key: string;
+  item: NavItem;
+  isActive: boolean;
+  hasChildren: boolean;
+  isExpanded: boolean;
+  textColor: string;
+  textHoverColor: string;
+  activeBgColor: string;
+  activeTextColor: string;
+  hoverBgColor: string;
+  onClick?: () => void;
+}
 
-  const handleItemToggle = (item: NavItem) => {
-    if (item.children && onToggleExpand) {
-      onToggleExpand(item.label);
-    }
-  };
+export function SidebarNavList({
+  categories,
+  activeItemKey,
+  onItemClick,
+  isCollapsed,
+  textColor = "text-gray-600",
+  textHoverColor = "hover:text-gray-900",
+  activeBgColor = "bg-gray-100",
+  activeTextColor = "text-gray-900",
+  hoverBgColor = "hover:bg-gray-50",
+  expandedCategories = [],
+  onCategoryToggle
+}: SidebarNavListProps) {
 
+  if (!categories || categories.length === 0) {
+    return null;
+  }
+  
   return (
-    <div className="space-y-1">
-      {items.filter(shouldShowItem).map((item, index) => {
-        const isExpanded = expandedItems.includes(item.label);
+    <div className={cn("space-y-4", isCollapsed && "items-center")}>
+      {categories.map((category) => {
+        const isExpanded = expandedCategories.includes(category.name);
         
-        // Fixed by changing onClick to onItemClick prop to match SidebarItem interface
         return (
-          <SidebarItem
-            key={`${item.label}-${index}`}
-            item={item}
-            isActive={isItemActive(item)}
-            onClick={() => handleItemToggle(item)} 
-            hasChildren={item.children && item.children.length > 0}
-            isExpanded={isExpanded}
-            textColor={textColor}
-            textHoverColor={textHoverColor}
-            activeBgColor={activeBgColor}
-            activeTextColor={activeTextColor}
-            hoverBgColor={hoverBgColor}
-          />
+          <div key={category.name} className="space-y-1">
+            {!isCollapsed && (
+              <h3 
+                className={cn(
+                  "flex items-center justify-between text-sm font-medium px-3 py-1.5 rounded-md cursor-pointer",
+                  textColor, 
+                  textHoverColor
+                )}
+                onClick={() => onCategoryToggle && onCategoryToggle(category.name)}
+              >
+                {category.label || category.name}
+                {category.items && category.items.length > 0 && (
+                  <span className={cn("transform transition-transform", isExpanded ? "rotate-180" : "")}>
+                    ▼
+                  </span>
+                )}
+              </h3>
+            )}
+            
+            {(!isCollapsed || !onCategoryToggle) && (isExpanded || !onCategoryToggle) && category.items && (
+              <div className="pt-1 pl-1">
+                {category.items.map((item) => {
+                  const isActive = activeItemKey === item.path || activeItemKey === item.label;
+                  const hasChildren = !!(item.children && item.children.length > 0);
+                  const itemIsExpanded = expandedCategories.includes(item.label);
+                  
+                  return (
+                    <SidebarItem
+                      key={item.label}
+                      item={item}
+                      isActive={isActive}
+                      hasChildren={hasChildren}
+                      isExpanded={itemIsExpanded}
+                      textColor={textColor}
+                      textHoverColor={textHoverColor}
+                      activeBgColor={activeBgColor}
+                      activeTextColor={activeTextColor}
+                      hoverBgColor={hoverBgColor}
+                      onClick={() => onItemClick && onItemClick(item.path || item.label)}
+                    />
+                  );
+                })}
+              </div>
+            )}
+          </div>
         );
       })}
     </div>
   );
-};
+}

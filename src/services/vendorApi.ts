@@ -1,23 +1,25 @@
 
 import { supabase } from '@/integrations/supabase/client';
-import { Vendor, VendorWithDetails, SubScore } from '@/types/vendor';
-import { calculateLocalScore, getCreditRating, calculateCreditLimit } from '@/utils/vendorCalculations';
+import { nanoid } from 'nanoid';
+import { Vendor, SubScore, VendorWithDetails } from '@/types/vendor';
+import { calculateLocalScore } from '@/utils/vendorCalculations';
 
 /**
- * Fetch a list of all vendors
+ * Fetch all vendors
  */
 export async function fetchVendors() {
   const { data, error } = await supabase
     .from('vendors')
     .select('*')
-    .order('company_name');
+    .order('created_at', { ascending: false });
 
   if (error) throw error;
+  
   return data as Vendor[];
 }
 
 /**
- * Fetch a single vendor with all related data
+ * Fetch a vendor by ID with related credit ratings, reports and performance data
  */
 export async function fetchVendorDetails(vendorId: string) {
   const { data, error } = await supabase
@@ -25,89 +27,79 @@ export async function fetchVendorDetails(vendorId: string) {
     .select(`
       *,
       credit_ratings(*),
-      vendor_performance(*),
-      vendor_reports(*)
+      vendor_reports(*),
+      vendor_performance(*)
     `)
     .eq('id', vendorId)
+    .order('fetched_at', { foreignTable: 'credit_ratings', ascending: false })
+    .order('fetched_at', { foreignTable: 'vendor_reports', ascending: false })
+    .order('date', { foreignTable: 'vendor_performance', ascending: true })
     .single();
 
   if (error) throw error;
+  
   return data as VendorWithDetails;
 }
 
 /**
- * Fetch vendor performance data
+ * Fetch performance data for a vendor
  */
 export async function fetchVendorPerformance(vendorId: string) {
   const { data, error } = await supabase
     .from('vendor_performance')
     .select('*')
     .eq('vendor_id', vendorId)
-    .order('date');
+    .order('date', { ascending: true });
 
   if (error) throw error;
-  return data;
+  
+  return data || [];
 }
 
 /**
- * Fetch a credit report URL
+ * Create a new vendor with initial scores
  */
-export async function getReportUrl(filePath: string) {
-  const { data, error } = await supabase.storage
-    .from('reports')
-    .createSignedUrl(filePath, 3600); // 1 hour expiry
-
-  if (error) throw error;
-  return data.signedUrl;
-}
-
-/**
- * Create a new vendor
- */
-export async function createVendor(vendor: Partial<Vendor>, subScores: SubScore) {
-  // Calculate local score
+export async function createVendor(
+  vendor: Partial<Vendor>,
+  subScores: SubScore
+) {
+  // Calculate local score from sub-scores
   const localScore = calculateLocalScore(
     subScores.paymentTimeliness,
     subScores.financialHealth,
     subScores.operationalStability
   );
-
-  // Insert vendor
+  
+  // Generate vendor ID if not provided
+  const id = vendor.id || nanoid(10);
+  
+  // First, create the vendor
   const { data: vendorData, error: vendorError } = await supabase
     .from('vendors')
-    .insert({ ...vendor, local_score: localScore })
+    .insert({
+      id,
+      company_name: vendor.company_name || 'Unnamed Vendor',
+      created_at: new Date().toISOString(),
+      local_score: localScore
+    })
     .select()
     .single();
 
   if (vendorError) throw vendorError;
-
-  // Get credit rating based on local score
-  const [ratingCode, description] = getCreditRating(localScore);
   
-  // Insert credit rating
-  const { error: ratingError } = await supabase
-    .from('credit_ratings')
-    .insert({
-      vendor_id: vendorData.id,
-      rating_code: ratingCode,
-      description,
-      credit_limit: calculateCreditLimit(10), // Default 10M revenue
-      fetched_at: new Date().toISOString()
-    });
-
-  if (ratingError) throw ratingError;
-
   return vendorData;
 }
 
 /**
- * Fetch a credit report from external API
+ * Fetch a credit report for a vendor (triggers edge function)
  */
 export async function fetchCreditReport(vendorId: string) {
-  const { data, error } = await supabase.functions.invoke('fetch-credit-report', {
-    body: { vendorId }
-  });
-
+  const { data, error } = await supabase
+    .functions.invoke('fetch-credit-report', {
+      body: { vendor_id: vendorId }
+    });
+  
   if (error) throw error;
+  
   return data;
 }

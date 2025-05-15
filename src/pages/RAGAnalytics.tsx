@@ -22,9 +22,10 @@ const RAGAnalytics: React.FC = () => {
   const { score: healthScore, trend: healthTrend, loading: healthLoading } = useSystemHealthScore();
 
   // Define navigation categories for this module
-  const navCategories: NavCategory[] = [
+  const sidebarCategories: NavCategory[] = [
     {
       name: "RAG Dashboard",
+      label: "RAG Dashboard", // Adding the required label property
       items: [
         { label: "Overview", path: "/dashboard/rag", icon: BarChart3 },
         { label: "Analytics", path: "/dashboard/rag/analytics", icon: LineChartIcon },
@@ -83,7 +84,7 @@ const RAGAnalytics: React.FC = () => {
   return (
     <SharedDashboardLayout
       moduleTitle="RAG Analytics"
-      navCategories={navCategories}
+      navCategories={sidebarCategories}
       sidebarClassName="bg-gradient-to-b from-indigo-950 via-blue-950 to-slate-950"
       removeBottomToggle={true}
       showTopLeftToggle={true}

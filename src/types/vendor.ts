@@ -9,6 +9,12 @@ export interface Vendor {
   created_at?: string;
 }
 
+export interface VendorWithDetails extends Vendor {
+  credit_ratings?: CreditRating[];
+  vendor_reports?: VendorReport[];
+  performance_data?: VendorPerformance[];
+}
+
 export interface CreditRating {
   id: number;
   vendor_id: string;

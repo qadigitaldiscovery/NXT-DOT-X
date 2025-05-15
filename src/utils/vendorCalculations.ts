@@ -64,3 +64,27 @@ export function calculatePerformanceEMA(
     return alpha * point.score + (1 - alpha) * ema;
   }, 0);
 }
+
+/**
+ * Format currency values with appropriate symbols
+ */
+export function formatCurrency(amount: number, currency: string = 'USD'): string {
+  return new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: currency,
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
+  }).format(amount);
+}
+
+/**
+ * Format date strings into readable format
+ */
+export function formatDate(dateString: string): string {
+  const options: Intl.DateTimeFormatOptions = { 
+    year: 'numeric', 
+    month: 'short', 
+    day: 'numeric' 
+  };
+  return new Date(dateString).toLocaleDateString('en-US', options);
+}
