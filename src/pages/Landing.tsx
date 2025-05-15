@@ -90,7 +90,7 @@ const Landing = () => {
                   </div>
                 </div>
                 
-                <Button type="submit" className="w-full bg-gradient-to-r from-red-800 to-red-600 hover:from-red-700 hover:to-red-500 text-white h-12 border border-red-700 shadow-[0_0_10px_rgba(220,38,38,0.6)]" disabled={isLoading}>
+                <Button type="submit" disabled={isLoading} className="w-full bg-gradient-to-r from-red-800 to-red-600 hover:from-red-700 hover:to-red-500 h-12 border border-red-700 shadow-[0_0_10px_rgba(220,38,38,0.6)] text-gray-300 py-0 bg-[#0ab2f6]">
                   <LogIn className="w-4 h-4 mr-2" />
                   {isLoading ? 'AUTHENTICATING' : 'ACCESS SYSTEM'}
                 </Button>
