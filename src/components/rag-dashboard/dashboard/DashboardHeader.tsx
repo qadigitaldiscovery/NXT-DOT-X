@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { RefreshCw, Settings } from 'lucide-react';
@@ -8,7 +7,8 @@ interface DashboardHeaderProps {
   onBatchOperationsOpen: () => void;
 }
 
-const DashboardHeader: React.FC<DashboardHeaderProps> = ({
+// Change to named export to match how it's being imported in RAGDashboardPage
+export const DashboardHeader: React.FC<DashboardHeaderProps> = ({
   onBatchOperationsOpen
 }) => {
   const { handleRefresh, isRefreshing } = useDashboardContext();
@@ -34,4 +34,5 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({
   );
 };
 
+// Keep the default export for backward compatibility
 export default DashboardHeader;
