@@ -1,9 +1,12 @@
 
+import { IconType } from 'react-icons';
+import { LucideIcon } from 'lucide-react';
+
 export interface Vendor {
   id: string;
   company_name: string;
-  local_score: number | null;
-  created_at: string;
+  local_score?: number;
+  created_at?: string;
 }
 
 export interface CreditRating {
@@ -12,7 +15,7 @@ export interface CreditRating {
   rating_code: 'A' | 'B' | 'C' | 'D' | 'E';
   description: string;
   credit_limit: number;
-  fetched_at: string | null;
+  fetched_at: string;
 }
 
 export interface VendorPerformance {
@@ -29,24 +32,17 @@ export interface VendorReport {
   fetched_at: string;
 }
 
-export interface VendorWithDetails extends Vendor {
-  credit_ratings: CreditRating[];
-  vendor_performance: VendorPerformance[];
-  vendor_reports: VendorReport[];
-}
-
 export interface TabItem {
   key: string;
   label: string;
-  icon: React.FC;
-  permissions?: string[];
+  icon: LucideIcon;
 }
 
 export interface SidebarItem {
   key: string;
   label: string;
   path: string;
-  icon: React.FC<any>;
+  icon: LucideIcon;
   permissions?: string[];
   children?: SidebarItem[];
 }

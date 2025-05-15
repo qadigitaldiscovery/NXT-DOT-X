@@ -38,6 +38,7 @@ export const generateAdminSidebarItems = (
   // Define admin sidebar structure
   const adminSidebarGroups: NavCategory = {
     name: 'Administration',
+    label: 'Administration', // Added the required label property
     items: [
       {
         label: 'User Management',

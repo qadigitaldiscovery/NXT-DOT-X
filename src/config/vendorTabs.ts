@@ -2,7 +2,7 @@
 import { 
   Database, 
   LineChart, 
-  FileContract, 
+  FileText, 
   CalendarClock,
   MessageSquare, 
   Files, 
@@ -19,7 +19,7 @@ import { TabItem } from '@/types/vendor';
 export const vendorDetailTabs: TabItem[] = [
   { key: 'data', label: 'Data', icon: Database },
   { key: 'market-iq', label: 'Market IQ', icon: LineChart },
-  { key: 'contracts', label: 'Contracts', icon: FileContract },
+  { key: 'contracts', label: 'Contracts', icon: FileText },
   { key: 'events', label: 'Events', icon: CalendarClock },
   { key: 'messages', label: 'Messages', icon: MessageSquare },
   { key: 'files', label: 'Files', icon: Files },

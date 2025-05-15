@@ -2,7 +2,7 @@
 import { 
   LayoutDashboard, 
   Building2, 
-  FileContract, 
+  FileText, 
   FolderKanban,
   Briefcase, 
   Users, 
@@ -21,7 +21,7 @@ import { SidebarItem } from '@/types/vendor';
 export const sidebarMenu: SidebarItem[] = [
   { key: 'dashboards', label: 'Dashboards', path: '/dashboards', icon: LayoutDashboard },
   { key: 'vendors', label: 'Vendors', path: '/vendors', icon: Building2 },
-  { key: 'contracts', label: 'Contracts', path: '/contracts', icon: FileContract },
+  { key: 'contracts', label: 'Contracts', path: '/contracts', icon: FileText },
   { key: 'categories', label: 'Categories', path: '/categories', icon: FolderKanban },
   { key: 'projects', label: 'Projects', path: '/projects', icon: Briefcase },
   { key: 'teams', label: 'Teams', path: '/teams', icon: Users },

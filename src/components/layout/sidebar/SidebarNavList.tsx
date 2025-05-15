@@ -72,7 +72,7 @@ export const SidebarNavList = ({
             key={`${item.label}-${index}`}
             item={item}
             isActive={isItemActive(item)}
-            onItemClick={() => handleItemToggle(item)} 
+            onClick={() => handleItemToggle(item)} 
             hasChildren={item.children && item.children.length > 0}
             isExpanded={isExpanded}
             textColor={textColor}
