@@ -18,7 +18,7 @@ export default function TechHub() {
       </CardHeader>
       <CardContent className="pb-2">
         <p className="text-sm text-gray-500">
-          Access AI tools, manage APIs, and configure technical integrations.
+          Access AI tools, manage APIs, configure integrations, and manage technical assets.
         </p>
         <div className="mt-4 space-y-3">
           <div className="flex items-center gap-2">
@@ -31,11 +31,11 @@ export default function TechHub() {
           </div>
           <div className="flex items-center gap-2">
             <div className="w-2 h-2 rounded-full bg-green-500"></div>
-            <span className="text-sm">System Technical Configuration</span>
+            <span className="text-sm">System Integrations</span>
           </div>
           <div className="flex items-center gap-2">
             <div className="w-2 h-2 rounded-full bg-green-500"></div>
-            <span className="text-sm">Cloud Services</span>
+            <span className="text-sm">Technical Configuration</span>
           </div>
         </div>
       </CardContent>

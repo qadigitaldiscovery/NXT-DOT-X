@@ -4,7 +4,7 @@ import { SharedSidebar } from './SharedSidebar';
 import { SharedNavbar } from './SharedNavbar';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { cn } from '@/lib/utils';
-import { BrainCircuit, Bot, Cloud, Cog, Home } from 'lucide-react';
+import { BrainCircuit, Bot, Cloud, Cog, Home, Link, Database, ShoppingCart } from 'lucide-react';
 
 interface NavItem {
   label: string;
@@ -14,7 +14,8 @@ interface NavItem {
 }
 
 interface NavCategory {
-  name: string;
+  label: string;
+  name?: string;
   items: NavItem[];
 }
 
@@ -24,10 +25,20 @@ interface TechHubLayoutProps {
 
 const techHubNavItems: NavCategory[] = [
   {
+    label: "TECH HUB",
     name: "TECH HUB",
     items: [
       { label: 'AI Personas', icon: BrainCircuit, path: '/tech-hub/personas' },
       { label: 'API Management', icon: Bot, path: '/tech-hub/api-management' },
+      { 
+        label: 'Integrations', 
+        icon: Link, 
+        path: '/tech-hub/integrations',
+        children: [
+          { label: 'Odoo ERP', icon: Database, path: '/tech-hub/integrations/odoo' },
+          { label: 'WooCommerce', icon: ShoppingCart, path: '/tech-hub/integrations/woocommerce' },
+        ] 
+      },
       { label: 'Cloud Services', icon: Cloud, path: '/tech-hub/cloud-services' },
       { label: 'Settings', icon: Cog, path: '/tech-hub/settings' },
     ]

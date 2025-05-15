@@ -1,55 +1,68 @@
 
 import React from 'react';
-import { RAGDashboardGrid } from '@/components/rag-dashboard/RAGDashboardGrid';
 import { DashboardProvider } from '@/components/rag-dashboard/providers/DashboardProvider';
-import { ModuleStatusFilter } from '@/components/rag-dashboard/ModuleStatusFilter';
-import { DashboardHeader } from '@/components/rag-dashboard/dashboard/DashboardHeader';
-import { PermissionGuard } from '@/components/rag-dashboard/PermissionGuard';
+import RAGDashboardGrid from '@/components/rag-dashboard/RAGDashboardGrid';
+import { Button } from '@/components/ui/button';
+import ModuleStatusFilter from '@/components/rag-dashboard/ModuleStatusFilter';
+import { PlusCircle } from 'lucide-react';
+import PermissionGuard from '@/components/rag-dashboard/PermissionGuard';
+import SharedDashboardLayout from '@/components/layout/SharedDashboardLayout';
+import { ragDashboardNavigation } from '@/components/rag-dashboard/config/dashboardNavigation';
 
-// Sample implementation of needed functions for DashboardProvider
-const refreshModules = async () => {
-  console.log('Refreshing modules...');
-  // Implementation would go here
-  return [];
-};
+const RAGDashboardPage = () => {
+  const [showBatchOperations, setShowBatchOperations] = React.useState(false);
 
-const resolveAlert = async (alertId: string) => {
-  console.log(`Resolving alert ${alertId}...`);
-  // Implementation would go here
-  return true;
-};
+  const refreshModules = async (): Promise<{ success: boolean }> => {
+    // Placeholder for actual implementation
+    return { success: true };
+  };
 
-const addRule = async (rule: any) => {
-  console.log('Adding rule:', rule);
-  // Implementation would go here
-  return { id: 'new-rule-id', ...rule };
-};
+  const resolveAlert = async (id: string): Promise<{ success: boolean }> => {
+    // Placeholder for actual implementation
+    return { success: true };
+  };
 
-const deleteRule = async (ruleId: string) => {
-  console.log(`Deleting rule ${ruleId}...`);
-  // Implementation would go here
-  return true;
-};
+  const addRule = async (data: any): Promise<{ success: boolean }> => {
+    // Placeholder for actual implementation
+    return { success: true };
+  };
 
-const RAGDashboardPage: React.FC = () => {
+  const deleteRule = async (id: string): Promise<{ success: boolean }> => {
+    // Placeholder for actual implementation
+    return { success: true };
+  };
+
   return (
-    <DashboardProvider 
+    <DashboardProvider
       refreshModules={refreshModules}
       resolveAlert={resolveAlert}
       addRule={addRule}
       deleteRule={deleteRule}
     >
-      <div className="container mx-auto px-4 py-6 max-w-7xl">
-        <DashboardHeader />
-        
-        <div className="mb-6">
-          <ModuleStatusFilter />
-        </div>
-        
-        <PermissionGuard requiredRole="admin">
+      <SharedDashboardLayout 
+        moduleTitle="RAG Dashboard" 
+        navCategories={ragDashboardNavigation}
+        notificationArea={
+          <PermissionGuard requiredRole="admin">
+            <Button 
+              size="sm" 
+              className="ml-2" 
+              onClick={() => setShowBatchOperations(true)}
+            >
+              <PlusCircle className="w-4 h-4 mr-1" />
+              Add Alert Rule
+            </Button>
+          </PermissionGuard>
+        }
+      >
+        <div className="space-y-6">
+          <div className="flex justify-between items-center">
+            <h1 className="text-2xl font-bold">Module Status</h1>
+            <ModuleStatusFilter />
+          </div>
           <RAGDashboardGrid />
-        </PermissionGuard>
-      </div>
+        </div>
+      </SharedDashboardLayout>
     </DashboardProvider>
   );
 };
