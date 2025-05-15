@@ -42,7 +42,7 @@ export const CollapsedSidebar = ({
     if (item.activeMatchPattern) {
       if (typeof item.activeMatchPattern === 'string') {
         return location.pathname.includes(item.activeMatchPattern);
-      } else {
+      } else if (item.activeMatchPattern instanceof RegExp) {
         return item.activeMatchPattern.test(location.pathname);
       }
     }
@@ -53,7 +53,7 @@ export const CollapsedSidebar = ({
 
   // Collect all items that are not children
   const allItems = navItems.flatMap(category => category.items)
-    .filter(item => shouldShowItem(item) && !item.children);
+    .filter(item => shouldShowItem(item) && !(item.children && item.children.length > 0));
     
   // If homeItem is provided, add it to the bottom
   const displayItems = homeItem ? [...allItems, homeItem] : allItems;

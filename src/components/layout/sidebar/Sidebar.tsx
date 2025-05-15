@@ -11,14 +11,14 @@ import { useAuth } from '@/context/AuthContext';
 import { SidebarToggleButton } from './SidebarToggleButton';
 
 // Helper function to normalize navigation items
-const normalizeNavItems = (items: NavItem[]): NavItem[] => {
+const normalizeNavItems = (items: NavItem[] = []): NavItem[] => {
   return items.map(item => ({
     ...item,
     href: item.href || item.path || '#' // Ensure href is always present
   }));
 };
 
-const normalizeNavCategories = (categories: NavCategory[]): NavCategory[] => {
+const normalizeNavCategories = (categories: NavCategory[] = []): NavCategory[] => {
   return categories.map(category => ({
     ...category,
     items: category.items.map(item => ({
@@ -33,6 +33,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   onToggle,
   navItems = [],
   navCategories = [],
+  items = [],
   homeItem,
   customFooterContent,
   className,
@@ -48,9 +49,17 @@ export const Sidebar: React.FC<SidebarProps> = ({
   const isOpen = open !== undefined ? open : internalOpen;
   const toggleSidebar = onToggle || (() => setInternalOpen(!internalOpen));
 
-  // Normalize all navigation items to ensure href is present
-  const normalizedNavItems = normalizeNavItems(navItems);
-  const normalizedNavCategories = normalizeNavCategories(navCategories);
+  // Combine different ways to pass nav items (items, navItems, navCategories)
+  const allCategories = [...normalizeNavCategories(navCategories), ...normalizeNavCategories(items)];
+  const allNavItems = [...normalizeNavItems(navItems)];
+
+  // If there are plain navItems without categories
+  if (allNavItems.length > 0 && allCategories.length === 0) {
+    allCategories.push({
+      label: "Navigation",
+      items: allNavItems
+    });
+  }
 
   // Updated styling with more reasonable sizing
   const sidebarBgColor = className || 'bg-gradient-to-b from-indigo-950 via-blue-950 to-slate-950';
@@ -89,7 +98,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
           !isOpen && "hidden" // Hide when sidebar is collapsed
         )}>
           <SidebarNavList 
-            items={normalizedNavCategories?.flatMap(category => category.items) || []}
+            items={allCategories.flatMap(category => category.items)}
             userRole={user?.role}
             expandedItems={expandedItems}
             onToggleExpand={toggleExpanded}
@@ -104,7 +113,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
         {/* Icon-Only Navigation (Visible when collapsed on desktop) */}
         {!isOpen && !isMobile && (
           <CollapsedSidebar 
-            navItems={normalizedNavCategories || []}
+            navItems={allCategories}
             textColor={textColor}
             activeBgColor={activeBgColor}
             activeTextColor={activeTextColor}
@@ -128,7 +137,12 @@ export const Sidebar: React.FC<SidebarProps> = ({
       </aside>
 
       {/* Bottom sidebar toggle button (if not removed) */}
-      {!removeBottomToggle && showToggleButton && <SidebarToggleButton open={isOpen} onToggle={toggleSidebar} />}
+      {!removeBottomToggle && showToggleButton && (
+        <SidebarToggleButton 
+          open={isOpen} 
+          onToggle={toggleSidebar} 
+        />
+      )}
     </>
   );
 };
