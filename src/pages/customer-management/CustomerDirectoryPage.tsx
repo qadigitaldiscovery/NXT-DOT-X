@@ -21,15 +21,14 @@ const CustomerDirectoryPage = () => {
   };
   
   return (
-    <div className="space-y-6">
+    <div className="h-full w-full space-y-6">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">Customer Directory</h1>
-        <p className="text-muted-foreground mt-2">
+        <p className="text-muted-foreground">
           Manage your customer information and relationships
         </p>
       </div>
       
-      <Card>
+      <Card className="w-full">
         <CardHeader>
           <CardTitle>Customers</CardTitle>
           <CardDescription>
