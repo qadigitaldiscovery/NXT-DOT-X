@@ -16,6 +16,7 @@ import UploadsPage from "@/pages/UploadsPage";
 import NewUploadPage from "@/pages/NewUploadPage";
 import DocumentsPage from "@/pages/data-management/documents/DocumentsPage";
 import SuppliersPage from "@/pages/SuppliersPage";
+import DataManagementSettings from "@/pages/DataManagementSettings";
 import NotFound from "@/pages/NotFound";
 
 export const dataNavCategories: NavCategory[] = [
@@ -60,6 +61,15 @@ export const DataManagementRoutes = () => {
           </ProtectedRoute>
         } />
         
+        {/* Settings Page */}
+        <Route path="settings" element={
+          <ProtectedRoute>
+            <PlatformLayout moduleTitle="Data Management Settings" navCategories={dataNavCategories}>
+              <DataManagementSettings />
+            </PlatformLayout>
+          </ProtectedRoute>
+        } />
+        
         {/* Supplier Management */}
         <Route path="suppliers" element={
           <ProtectedRoute>
@@ -68,6 +78,7 @@ export const DataManagementRoutes = () => {
             </PlatformLayout>
           </ProtectedRoute>
         } />
+        
         <Route path="supplier-costing" element={
           <ProtectedRoute>
             <PlatformLayout moduleTitle="Supplier Costing" navCategories={dataNavCategories}>
@@ -84,6 +95,7 @@ export const DataManagementRoutes = () => {
             </PlatformLayout>
           </ProtectedRoute>
         } />
+        
         <Route path="cost-analysis" element={
           <ProtectedRoute>
             <PlatformLayout moduleTitle="Cost Analysis" navCategories={dataNavCategories}>
@@ -100,6 +112,7 @@ export const DataManagementRoutes = () => {
             </PlatformLayout>
           </ProtectedRoute>
         } />
+        
         <Route path="pricing/price-management" element={
           <ProtectedRoute>
             <PlatformLayout moduleTitle="Price Management" navCategories={dataNavCategories}>
@@ -116,6 +129,7 @@ export const DataManagementRoutes = () => {
             </PlatformLayout>
           </ProtectedRoute>
         } />
+        
         <Route path="uploads/new" element={
           <ProtectedRoute>
             <PlatformLayout moduleTitle="New Upload" navCategories={dataNavCategories}>
@@ -123,6 +137,7 @@ export const DataManagementRoutes = () => {
             </PlatformLayout>
           </ProtectedRoute>
         } />
+        
         <Route path="uploads/holding" element={
           <ProtectedRoute>
             <PlatformLayout moduleTitle="Upload Holding" navCategories={dataNavCategories}>
@@ -130,6 +145,7 @@ export const DataManagementRoutes = () => {
             </PlatformLayout>
           </ProtectedRoute>
         } />
+        
         <Route path="uploads/bulk-import" element={
           <ProtectedRoute>
             <PlatformLayout moduleTitle="Bulk Import" navCategories={dataNavCategories}>

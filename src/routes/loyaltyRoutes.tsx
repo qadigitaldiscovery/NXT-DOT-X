@@ -53,6 +53,15 @@ export const LoyaltyRoutes = () => {
           </LoyaltyLayout>
         </PermissionGuard>
       } />
+      
+      {/* Shorthand route for legacy compatibility */}
+      <Route path="/loyalty" element={
+        <PermissionGuard requiredPermission="modules.loyalty">
+          <LoyaltyLayout>
+            <LoyaltyDashboard />
+          </LoyaltyLayout>
+        </PermissionGuard>
+      } />
     </>
   );
 };
