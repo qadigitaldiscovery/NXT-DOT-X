@@ -21,7 +21,7 @@ const CustomerDirectoryPage = () => {
   };
   
   return (
-    <div className="h-full w-full space-y-6">
+    <div className="w-full h-full space-y-6">
       <div>
         <p className="text-muted-foreground">
           Manage your customer information and relationships

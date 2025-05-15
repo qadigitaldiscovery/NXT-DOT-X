@@ -1,7 +1,6 @@
 
 import { Route } from "react-router-dom";
 import ProtectedRoute from "@/components/ProtectedRoute";
-import { TradingSystemLayout } from "@/components/layout/TradingSystemLayout";
 import { PlatformLayout } from "@/components/layouts/PlatformLayout";
 import { Users, Settings, BarChart3, FileUp, Home } from 'lucide-react';
 import { NavCategory } from '@/components/layout/sidebar/types';
@@ -19,11 +18,19 @@ import DocumentsPage from "@/pages/data-management/documents/DocumentsPage";
 import SuppliersPage from "@/pages/SuppliersPage";
 import NotFound from "@/pages/NotFound";
 
-// Customer Management Pages
-import CustomerDirectoryPage from "@/pages/customer-management/CustomerDirectoryPage";
-import CustomerSettings from "@/pages/customer-management/CustomerSettings";
-import NewCustomerPage from "@/pages/customer-management/NewCustomerPage";
-import EditCustomerPage from "@/pages/customer-management/EditCustomerPage";
+const dataNavCategories: NavCategory[] = [
+  {
+    name: "DATA MANAGEMENT",
+    label: "DATA MANAGEMENT",
+    items: [
+      { label: 'Dashboard', icon: Home, path: '/data-management' },
+      { label: 'Uploads', icon: FileUp, path: '/data-management/uploads' },
+      { label: 'Analytics', icon: BarChart3, path: '/data-management/cost-analysis' },
+      { label: 'Suppliers', icon: Users, path: '/data-management/suppliers' },
+      { label: 'Settings', icon: Settings, path: '/data-management/settings' }
+    ]
+  }
+];
 
 const customerNavCategories: NavCategory[] = [
   {
@@ -43,62 +50,111 @@ export const DataManagementRoutes = () => {
   return (
     <>
       {/* Data Management Module Routes */}
-      <Route
-        path="/data-management"
-        element={
-          <ProtectedRoute>
-            <TradingSystemLayout />
-          </ProtectedRoute>
-        }
-      >
+      <Route path="/data-management">
         {/* Main Dashboard */}
-        <Route index element={<DashboardHome />} />
+        <Route index element={
+          <ProtectedRoute>
+            <PlatformLayout moduleTitle="Data Management Dashboard" navCategories={dataNavCategories}>
+              <DashboardHome />
+            </PlatformLayout>
+          </ProtectedRoute>
+        } />
         
         {/* Supplier Management */}
-        <Route path="suppliers" element={<SuppliersPage />} />
-        <Route path="supplier-costing" element={<SupplierCosting />} />
-        
-        {/* Customer Management */}
-        <Route path="customers" element={
-          <PlatformLayout moduleTitle="Customer Directory" navCategories={customerNavCategories}>
-            <CustomerDirectoryPage />
-          </PlatformLayout>
+        <Route path="suppliers" element={
+          <ProtectedRoute>
+            <PlatformLayout moduleTitle="Suppliers" navCategories={dataNavCategories}>
+              <SuppliersPage />
+            </PlatformLayout>
+          </ProtectedRoute>
         } />
-        <Route path="customers/new" element={
-          <PlatformLayout moduleTitle="New Customer" navCategories={customerNavCategories}>
-            <NewCustomerPage />
-          </PlatformLayout>
-        } />
-        <Route path="customers/:customerId" element={
-          <PlatformLayout moduleTitle="Edit Customer" navCategories={customerNavCategories}>
-            <EditCustomerPage />
-          </PlatformLayout>
-        } />
-        <Route path="customers/settings" element={
-          <PlatformLayout moduleTitle="Customer Settings" navCategories={customerNavCategories}>
-            <CustomerSettings />
-          </PlatformLayout>
+        <Route path="supplier-costing" element={
+          <ProtectedRoute>
+            <PlatformLayout moduleTitle="Supplier Costing" navCategories={dataNavCategories}>
+              <SupplierCosting />
+            </PlatformLayout>
+          </ProtectedRoute>
         } />
         
         {/* Cost Management */}
-        <Route path="cost-management" element={<CostDashboard />} />
-        <Route path="cost-analysis" element={<CostAnalysis />} />
+        <Route path="cost-management" element={
+          <ProtectedRoute>
+            <PlatformLayout moduleTitle="Cost Management" navCategories={dataNavCategories}>
+              <CostDashboard />
+            </PlatformLayout>
+          </ProtectedRoute>
+        } />
+        <Route path="cost-analysis" element={
+          <ProtectedRoute>
+            <PlatformLayout moduleTitle="Cost Analysis" navCategories={dataNavCategories}>
+              <CostAnalysis />
+            </PlatformLayout>
+          </ProtectedRoute>
+        } />
         
         {/* Pricing */}
-        <Route path="pricing/competitor-pricing" element={<CompetitorPricing />} />
-        <Route path="pricing/price-management" element={<PriceManagement />} />
+        <Route path="pricing/competitor-pricing" element={
+          <ProtectedRoute>
+            <PlatformLayout moduleTitle="Competitor Pricing" navCategories={dataNavCategories}>
+              <CompetitorPricing />
+            </PlatformLayout>
+          </ProtectedRoute>
+        } />
+        <Route path="pricing/price-management" element={
+          <ProtectedRoute>
+            <PlatformLayout moduleTitle="Price Management" navCategories={dataNavCategories}>
+              <PriceManagement />
+            </PlatformLayout>
+          </ProtectedRoute>
+        } />
         
         {/* File Uploads */}
-        <Route path="uploads" element={<UploadsPage />} />
-        <Route path="uploads/new" element={<NewUploadPage />} />
-        <Route path="uploads/holding" element={<UploadsPage />} />
-        <Route path="uploads/bulk-import" element={<UploadsPage />} />
+        <Route path="uploads" element={
+          <ProtectedRoute>
+            <PlatformLayout moduleTitle="File Uploads" navCategories={dataNavCategories}>
+              <UploadsPage />
+            </PlatformLayout>
+          </ProtectedRoute>
+        } />
+        <Route path="uploads/new" element={
+          <ProtectedRoute>
+            <PlatformLayout moduleTitle="New Upload" navCategories={dataNavCategories}>
+              <NewUploadPage />
+            </PlatformLayout>
+          </ProtectedRoute>
+        } />
+        <Route path="uploads/holding" element={
+          <ProtectedRoute>
+            <PlatformLayout moduleTitle="Upload Holding" navCategories={dataNavCategories}>
+              <UploadsPage />
+            </PlatformLayout>
+          </ProtectedRoute>
+        } />
+        <Route path="uploads/bulk-import" element={
+          <ProtectedRoute>
+            <PlatformLayout moduleTitle="Bulk Import" navCategories={dataNavCategories}>
+              <UploadsPage />
+            </PlatformLayout>
+          </ProtectedRoute>
+        } />
         
         {/* Document Repository */}
-        <Route path="documents" element={<DocumentsPage />} />
+        <Route path="documents" element={
+          <ProtectedRoute>
+            <PlatformLayout moduleTitle="Documents" navCategories={dataNavCategories}>
+              <DocumentsPage />
+            </PlatformLayout>
+          </ProtectedRoute>
+        } />
         
         {/* Catch-all for invalid Data Management routes */}
-        <Route path="*" element={<NotFound />} />
+        <Route path="*" element={
+          <ProtectedRoute>
+            <PlatformLayout moduleTitle="Not Found" navCategories={dataNavCategories}>
+              <NotFound />
+            </PlatformLayout>
+          </ProtectedRoute>
+        } />
       </Route>
     </>
   );
