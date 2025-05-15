@@ -66,7 +66,7 @@ const Landing = () => {
               </div>
 
               {/* Login Form - Repositioned to align with background */}
-              <form onSubmit={handleLogin} className="w-full space-y-3 max-w-[380px] px-[27px] mt-16 my-[21px] py-[12px]">
+              <form onSubmit={handleLogin} className="w-full space-y-3 max-w-[380px] mt-16 px-[20px] mx-0 my-[45px] py-[20px]">
                 <div className="space-y-2">
                   <div className="relative">
                     <Input id="usernameOrEmail" type="text" placeholder="username" value={usernameOrEmail} onChange={e => setUsernameOrEmail(e.target.value)} required className="bg-gray-100/90 border-gray-300 focus:border-red-500 h-9 pl-10 text-black rounded-full py-0 my-[4px]" />
