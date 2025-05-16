@@ -14,12 +14,14 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { user } = useAuth();
+  const [localTheme, setLocalTheme] = useState<Theme>(getInitialTheme());
   
   // Use database persistence with fallback to localStorage for unauthenticated users
   const { preferences, setPreferences, loading } = useUserPreferences({
     module: 'system',
     key: 'theme',
-    defaultValue: getInitialTheme()
+    defaultValue: localTheme,
+    skipFetch: !user // Skip fetching if no user to prevent invalid format errors
   });
   
   // Get theme from localStorage or system preference as initial value
@@ -34,8 +36,8 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     return "light";
   }
   
-  // Extract the theme value from preferences
-  const theme = (preferences as Theme) || "light";
+  // Extract the theme value from preferences or use local state as fallback
+  const theme = user ? (preferences as Theme || localTheme) : localTheme;
 
   useEffect(() => {
     // Apply theme to document immediately and effectively
@@ -47,14 +49,10 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     
     // Save theme preference to localStorage as fallback
     localStorage.setItem("theme", theme);
-    
-    // Log for debugging
-    console.log("Theme changed to:", theme);
   }, [theme]);
 
   const toggleTheme = async () => {
     const newTheme = theme === "light" ? "dark" : "light";
-    console.log("Toggling theme from", theme, "to", newTheme);
     
     // Update in database if authenticated
     if (user) {
@@ -62,6 +60,7 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     } else {
       // Fall back to localStorage for unauthenticated users
       localStorage.setItem("theme", newTheme);
+      setLocalTheme(newTheme); // Update local state for immediate effect
     }
   };
 
