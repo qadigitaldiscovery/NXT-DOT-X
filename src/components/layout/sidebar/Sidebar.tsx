@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -28,7 +27,7 @@ const normalizeNavCategories = (categories: NavCategory[] = []): NavCategory[] =
   }));
 };
 
-export const Sidebar: React.FC<SidebarProps> = ({
+const Sidebar: React.FC<SidebarProps> = ({
   open,
   onToggle,
   navItems = [],
@@ -170,4 +169,4 @@ export const Sidebar: React.FC<SidebarProps> = ({
   );
 };
 
-export default Sidebar;
+export { Sidebar };

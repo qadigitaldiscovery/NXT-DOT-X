@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 import { cn } from '@/lib/utils';
@@ -8,7 +7,7 @@ import { useLocation } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
 
 interface CollapsedSidebarProps {
-  navItems: NavCategory[];
+  navItems: NavCategory[] | NavItem[];
   textColor: string;
   activeBgColor: string;
   activeTextColor: string;
@@ -51,12 +50,20 @@ export const CollapsedSidebar = ({
       (path !== '/' && path !== '' && location.pathname.startsWith(path));
   };
 
+  // Determine if navItems is an array of NavItems or NavCategory
+  const isNavItemArray = navItems.length > 0 && 'label' in navItems[0] && !('items' in navItems[0]);
+  
   // Collect all items that are not children
-  const allItems = navItems.flatMap(category => category.items)
+  const allItems = isNavItemArray 
+    ? navItems as NavItem[]
+    : (navItems as NavCategory[]).flatMap(category => category.items);
+    
+  // Filter items based on role and exclude parent items with children
+  const filteredItems = allItems
     .filter(item => shouldShowItem(item) && !(item.children && item.children.length > 0));
     
   // If homeItem is provided, add it to the bottom
-  const displayItems = homeItem ? [...allItems, homeItem] : allItems;
+  const displayItems = homeItem ? [...filteredItems, homeItem] : filteredItems;
 
   return (
     <div className="py-4 flex flex-col items-center space-y-2 overflow-y-auto">
