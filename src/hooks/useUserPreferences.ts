@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/context/AuthContext';
@@ -22,10 +21,17 @@ export function useUserPreferences({ module, key, defaultValue }: PreferencesOpt
   const fetchInProgressRef = useRef(false);
   const fetchAttemptCount = useRef(0);
 
-  // Validate user ID format (UUID)
+  // Validate user ID format (simple strings or UUID)
   const isValidUserId = useCallback((userId: any): boolean => {
-    return typeof userId === 'string' && 
-      /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(userId);
+    if (typeof userId === 'string') {
+      // Accept simple numeric IDs used in the mock auth system
+      if (/^[0-9]+$/.test(userId)) {
+        return true;
+      }
+      // Also accept UUIDs for future compatibility
+      return /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(userId);
+    }
+    return false;
   }, []);
 
   // Effect cleanup

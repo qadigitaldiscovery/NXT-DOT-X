@@ -1,4 +1,3 @@
-
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import { toast } from 'sonner';
 
@@ -58,6 +57,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     
     if (storedUser && isAuth) {
       setUser(JSON.parse(storedUser));
+    } else {
+      // Auto-login for development
+      console.log('Auto-logging in as admin for development');
+      const adminUser = mockUsers.find(u => u.username === 'admin');
+      if (adminUser) {
+        const { password, ...userWithoutPassword } = adminUser;
+        setUser(userWithoutPassword as User);
+        localStorage.setItem('isAuthenticated', 'true');
+        localStorage.setItem('user', JSON.stringify(userWithoutPassword));
+      }
     }
   }, []);
 

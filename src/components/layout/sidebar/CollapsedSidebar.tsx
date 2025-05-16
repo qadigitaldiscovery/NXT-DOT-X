@@ -78,7 +78,8 @@ export const CollapsedSidebar = ({
   const displayItems = homeItem ? [...filteredItems, homeItem] : filteredItems;
 
   // Log for debugging
-  console.log('CollapsedSidebar - displayItems count:', displayItems.length);
+  console.log('CollapsedSidebar - displayItems:', displayItems);
+  console.log('CollapsedSidebar - Current user role:', user?.role);
 
   return (
     <div className="py-4 flex flex-col items-center space-y-2 overflow-y-auto">

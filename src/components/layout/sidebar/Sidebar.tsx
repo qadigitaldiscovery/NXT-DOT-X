@@ -83,6 +83,10 @@ const Sidebar: React.FC<SidebarProps> = ({
     });
   }
 
+  // Log navigation data for debugging
+  console.log('Sidebar - Navigation Categories:', allCategories);
+  console.log('Sidebar - Plain Nav Items:', allNavItems);
+
   // Updated styling with more reasonable sizing
   const sidebarBgColor = className || 'bg-gradient-to-b from-indigo-950 via-blue-950 to-slate-950';
   const textColor = 'text-blue-200';
