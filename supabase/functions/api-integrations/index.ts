@@ -66,7 +66,7 @@ async function handleOdoo(req: Request, data: { action: string; [key: string]: a
         .select('*')
         .eq('id', data.integration_id)
         .eq('integration_type', 'odoo')
-        .single();
+        .maybeSingle();
       
       if (error) throw error;
       if (!configs) throw new Error("Odoo configuration not found");
@@ -216,17 +216,27 @@ serve(async (req) => {
       if (!userError && user) {
         isAuthorized = true;
         userId = user.id;
+        console.log("User authenticated via auth header:", userId);
+      } else if (userError) {
+        console.error("Auth header verification error:", userError);
       }
     }
     
     // If not authorized via auth header, check for valid API key
-    // This is a simplified check - in a real app you'd verify against stored API keys
-    const configuredApiKey = Deno.env.get("ODOO_API_KEY");
-    if (!isAuthorized && apiKey && configuredApiKey && apiKey === configuredApiKey) {
-      isAuthorized = true;
+    if (!isAuthorized && apiKey) {
+      // Get the configured API key from environment
+      const configuredApiKey = Deno.env.get("ODOO_API_KEY");
+      
+      if (configuredApiKey && apiKey === configuredApiKey) {
+        isAuthorized = true;
+        console.log("Request authorized via API key");
+      } else {
+        console.error("Invalid API key provided:", apiKey);
+      }
     }
     
     if (!isAuthorized) {
+      console.error("Unauthorized request, auth header:", !!authHeader, "API key header:", !!apiKey);
       return new Response(
         JSON.stringify({ error: 'Unauthorized', details: 'Valid authentication required' }),
         { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
@@ -235,6 +245,10 @@ serve(async (req) => {
 
     // Parse the request body
     const requestData = await req.json();
+    
+    // Log the incoming request
+    console.log("Request endpoint:", req.url);
+    console.log("Request data:", JSON.stringify(requestData));
     
     // Route the request to the appropriate handler
     let result;
@@ -247,12 +261,13 @@ serve(async (req) => {
     }
     
     // Return the result
+    console.log("Response:", JSON.stringify(result));
     return new Response(
       JSON.stringify(result),
       { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   } catch (error) {
-    console.error(error);
+    console.error("Error processing request:", error);
     return new Response(
       JSON.stringify({ error: error.message }),
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }

@@ -11,6 +11,7 @@ import { toast } from "sonner";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsList, TabsContent, TabsTrigger } from "@/components/ui/tabs";
+import { tryUseEdgeFunction } from "@/utils/api-clients/common/edge-function-utils";
 
 interface OdooFormData {
   url: string;
@@ -170,8 +171,7 @@ const OdooIntegration = () => {
   const testConnection = async (data: OdooFormData) => {
     setIsTesting(true);
     try {
-      // Get the session for auth
-      const { data: session } = await supabase.auth.getSession();
+      console.log("Testing connection with auth method:", data.auth_method);
       
       // Prepare request data based on authentication method
       const requestData: Record<string, any> = {
@@ -188,65 +188,35 @@ const OdooIntegration = () => {
         requestData.password = data.password;
       }
       
-      let response;
+      let result;
       
-      // Use supabase edge function instead of direct fetch if API key is provided for direct API testing
+      // Using tryUseEdgeFunction with API key when applicable
       if (data.auth_method === 'api_key' && data.api_key) {
-        // Try to use the edge function directly with API key
-        const { data: edgeData, error } = await supabase.functions.invoke('api-integrations', {
-          body: {
-            endpoint: 'odoo',
-            action: 'test_connection',
-            url: data.url,
-            db_name: data.db_name,
-            api_key: data.api_key,
-          },
-          headers: {
-            'X-API-Key': data.api_key
-          }
-        });
-        
-        if (error) {
-          console.error("Edge function error:", error);
-          throw new Error(error.message || "Connection test failed");
-        }
-        
-        if (edgeData.success) {
-          setConnectionStatus('success');
-          toast.success("Successfully connected to Odoo ERP!");
-          return true;
-        } else {
-          throw new Error(edgeData.message || "Connection test failed");
-        }
-      } else if (session?.session?.access_token) {
-        // Call the edge function with auth token if available
-        const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-        if (!supabaseUrl) {
-          throw new Error("Supabase URL not configured");
-        }
-        
-        response = await fetch(`${supabaseUrl}/functions/v1/api-integrations/odoo`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${session.session.access_token}`
-          },
-          body: JSON.stringify(requestData)
+        console.log("Testing with API key authentication");
+        result = await tryUseEdgeFunction('api-integrations', {
+          endpoint: 'odoo',
+          action: 'test_connection',
+          url: data.url,
+          db_name: data.db_name,
+          api_key: data.api_key
+        }, {
+          apiKey: data.api_key
         });
       } else {
-        throw new Error("Authentication required");
+        console.log("Testing with credentials authentication");
+        result = await tryUseEdgeFunction('api-integrations', {
+          endpoint: 'odoo',
+          action: 'test_connection',
+          url: data.url,
+          db_name: data.db_name,
+          username: data.username,
+          password: data.password
+        });
       }
       
-      if (!response) {
-        throw new Error("No response from server");
+      if (!result) {
+        throw new Error("Connection test failed - no response from server");
       }
-      
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || "Connection test failed");
-      }
-      
-      const result = await response.json();
       
       if (result.success) {
         setConnectionStatus('success');
@@ -482,39 +452,20 @@ const OdooIntegration = () => {
         return;
       }
       
-      const { data: session } = await supabase.auth.getSession();
-      if (!session?.session?.access_token) {
-        toast.error("Authentication required");
-        setIsLoading(false);
-        return;
+      // Use the API key if available in the config
+      const apiKey = odooConfig.config.api_key;
+      
+      // Call the edge function using utility
+      const result = await tryUseEdgeFunction('api-integrations', {
+        endpoint: 'odoo',
+        action: 'start_sync',
+        integration_id: odooConfig.id,
+        entities: enabledSettings.map(s => s.entity_type)
+      }, apiKey ? { apiKey } : undefined);
+      
+      if (!result) {
+        throw new Error("Synchronization failed - no response from server");
       }
-      
-      // Get the Supabase URL from environment
-      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-      if (!supabaseUrl) {
-        throw new Error("Supabase URL not configured");
-      }
-      
-      // Call the edge function with the correct URL
-      const response = await fetch(`${supabaseUrl}/functions/v1/api-integrations/odoo`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${session.session.access_token}`
-        },
-        body: JSON.stringify({
-          action: 'start_sync',
-          integration_id: odooConfig.id,
-          entities: enabledSettings.map(s => s.entity_type)
-        })
-      });
-      
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || "Synchronization failed");
-      }
-      
-      const result = await response.json();
       
       if (result.success) {
         toast.success("Synchronization started successfully!");
@@ -665,7 +616,7 @@ const OdooIntegration = () => {
                       <p className="text-sm text-red-500">{errors.api_key.message}</p>
                     )}
                     <p className="text-xs text-muted-foreground">
-                      API keys can be generated from your Odoo ERP account settings.
+                      API keys can be generated from your Odoo ERP account settings. You'll also need to set this API key in the Supabase Edge Function secrets.
                     </p>
                   </div>
                 )}

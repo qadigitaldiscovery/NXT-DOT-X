@@ -34,6 +34,7 @@ export async function tryUseEdgeFunction<T>(
     // Add API key header if provided
     if (options.apiKey) {
       headers['X-API-Key'] = options.apiKey;
+      console.log("Adding API key to request headers");
     }
     
     // Call the edge function with the payload
