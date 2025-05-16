@@ -25,6 +25,7 @@ interface DashboardDialogsProps {
   onDeleteRule: (id: string) => void;
   isBatchOperationsOpen: boolean;
   onBatchOperationsClose: () => void;
+  modules: Module[]; // Added this required prop
 }
 
 export const DashboardDialogs: React.FC<DashboardDialogsProps> = ({
@@ -43,7 +44,8 @@ export const DashboardDialogs: React.FC<DashboardDialogsProps> = ({
   onAddRule,
   onDeleteRule,
   isBatchOperationsOpen,
-  onBatchOperationsClose
+  onBatchOperationsClose,
+  modules // Added parameter for the prop
 }) => {
   return (
     <>
@@ -69,6 +71,7 @@ export const DashboardDialogs: React.FC<DashboardDialogsProps> = ({
       <BatchOperationsDialog
         isOpen={isBatchOperationsOpen}
         onClose={onBatchOperationsClose}
+        modules={modules} // Passing the modules prop
       />
     </>
   );

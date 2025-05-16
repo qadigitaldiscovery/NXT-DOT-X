@@ -3,7 +3,6 @@ import React, { useState } from 'react';
 import RAGDashboardGrid from './RAGDashboardGrid';
 import { useModules } from '@/hooks/useModules';
 import { useAlerts } from '@/hooks/useAlerts';
-import ModuleStatusFilter from './ModuleStatusFilter'; // Fixed import
 import { useDashboardState } from './hooks/useDashboardState';
 import OverviewStats from './OverviewStats';
 import ModulesGrid from './dashboard/ModulesGrid';
@@ -14,6 +13,7 @@ import { useThresholdRules } from '@/hooks/useThresholdRules';
 import { useCustomerImpacts } from '@/hooks/useCustomerImpacts';
 import { Input } from '@/components/ui/input';
 import { Search } from 'lucide-react';
+import { DashboardFilters } from './dashboard/DashboardFilters';
 
 const RAGDashboardGridContainer: React.FC = () => {
   const { modules, loading: modulesLoading, error: modulesError, refreshModules } = useModules();
@@ -85,25 +85,12 @@ const RAGDashboardGridContainer: React.FC = () => {
       </div>
 
       {/* Search and Filter */}
-      <div className="mb-6">
-        <div className="flex flex-col md:flex-row gap-4">
-          <div className="relative flex-grow">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
-            <Input
-              placeholder="Search modules..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-9"
-            />
-          </div>
-          <ModuleStatusFilter 
-            selectedStatus={selectedStatus} 
-            onStatusSelect={setSelectedStatus}
-            searchQuery={searchQuery}
-            onSearchChange={setSearchQuery}
-          />
-        </div>
-      </div>
+      <DashboardFilters
+        selectedStatus={selectedStatus}
+        onStatusSelect={setSelectedStatus}
+        searchQuery={searchQuery}
+        onSearchChange={setSearchQuery}
+      />
 
       {/* Stats Overview */}
       <OverviewStats modules={modules || []} alerts={alerts || []} />
