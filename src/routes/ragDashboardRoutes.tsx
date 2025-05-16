@@ -4,8 +4,9 @@ import RAGDashboardPage from "@/pages/rag-dashboard/RAGDashboardPage";
 import RAGAnalytics from "@/pages/RAGAnalytics";
 import PermissionGuard from "@/components/PermissionGuard";
 import { PlatformLayout } from '@/components/layouts/PlatformLayout';
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import React, { Suspense } from "react";
+import { ragDashboardNavigation } from "@/components/rag-dashboard/config/dashboardNavigation";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 // Lazy-loaded components for better performance
 const RAGSettings = React.lazy(() => import("@/pages/auto/RAGSettings"));
@@ -13,7 +14,7 @@ const RAGAlerts = React.lazy(() => import("@/pages/auto/RAGAlerts"));
 
 // Loading fallback component
 const LoadingFallback = () => (
-  <PlatformLayout>
+  <PlatformLayout moduleTitle="Loading..." navCategories={ragDashboardNavigation}>
     <div className="container p-4">
       <Card>
         <CardHeader>
@@ -37,31 +38,33 @@ const LoadingFallback = () => (
 
 export const RAGDashboardRoutes = () => {
   return (
-    <Route path="/dashboard/rag">
-      <Route index element={
-        <PermissionGuard requiredPermission="modules.rag">
-          <RAGDashboardPage />
-        </PermissionGuard>
-      } />
-      <Route path="analytics" element={
-        <PermissionGuard requiredPermission="modules.rag">
-          <RAGAnalytics />
-        </PermissionGuard>
-      } />
-      <Route path="alerts" element={
-        <PermissionGuard requiredPermission="modules.rag">
-          <Suspense fallback={<LoadingFallback />}>
-            <RAGAlerts />
-          </Suspense>
-        </PermissionGuard>
-      } />
-      <Route path="settings" element={
-        <PermissionGuard requiredPermission="modules.rag.admin">
-          <Suspense fallback={<LoadingFallback />}>
-            <RAGSettings />
-          </Suspense>
-        </PermissionGuard>
-      } />
-    </Route>
+    <>
+      <Route path="/dashboard/rag">
+        <Route index element={
+          <PermissionGuard requiredPermission="modules.rag">
+            <RAGDashboardPage />
+          </PermissionGuard>
+        } />
+        <Route path="analytics" element={
+          <PermissionGuard requiredPermission="modules.rag">
+            <RAGAnalytics />
+          </PermissionGuard>
+        } />
+        <Route path="alerts" element={
+          <PermissionGuard requiredPermission="modules.rag">
+            <Suspense fallback={<LoadingFallback />}>
+              <RAGAlerts />
+            </Suspense>
+          </PermissionGuard>
+        } />
+        <Route path="settings" element={
+          <PermissionGuard requiredPermission="modules.rag.admin">
+            <Suspense fallback={<LoadingFallback />}>
+              <RAGSettings />
+            </Suspense>
+          </PermissionGuard>
+        } />
+      </Route>
+    </>
   );
 };

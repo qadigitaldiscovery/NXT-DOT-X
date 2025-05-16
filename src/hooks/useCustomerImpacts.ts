@@ -1,21 +1,19 @@
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 
 export interface CustomerImpact {
   id: string;
   module_id: string;
-  impact_type: string;
+  impact_level: 'low' | 'medium' | 'high' | 'critical';
+  affected_customers: number;
   description: string;
-  affected_users: number;
-  severity: 'low' | 'medium' | 'high' | 'critical';
-  started_at: string;
-  resolved_at: string | null;
   created_at: string;
+  resolved_at: string | null;
 }
 
-export function useCustomerImpacts() {
+export const useCustomerImpacts = () => {
   const [impacts, setImpacts] = useState<CustomerImpact[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
 
   const fetchImpacts = useCallback(async () => {
@@ -23,35 +21,32 @@ export function useCustomerImpacts() {
     setError(null);
     
     try {
-      // Mock data for now
+      // Mock data for now - in a real app, this would fetch from an API
       const mockImpacts: CustomerImpact[] = [
         {
           id: '1',
-          module_id: '1',
-          impact_type: 'service_degradation',
-          description: 'Increased response times affecting user experience',
-          affected_users: 250,
-          severity: 'medium',
-          started_at: new Date(Date.now() - 7200000).toISOString(),
-          resolved_at: null,
-          created_at: new Date(Date.now() - 7200000).toISOString()
+          module_id: 'module-1',
+          impact_level: 'medium',
+          affected_customers: 120,
+          description: 'Customers experiencing intermittent login issues',
+          created_at: new Date(Date.now() - 3600000).toISOString(),
+          resolved_at: null
         },
         {
           id: '2',
-          module_id: '2',
-          impact_type: 'service_unavailable',
-          description: 'Complete outage preventing customer access',
-          affected_users: 1500,
-          severity: 'critical',
-          started_at: new Date(Date.now() - 86400000).toISOString(),
-          resolved_at: new Date(Date.now() - 82800000).toISOString(),
-          created_at: new Date(Date.now() - 86400000).toISOString()
+          module_id: 'module-2',
+          impact_level: 'high',
+          affected_customers: 500,
+          description: 'Order processing delays of up to 1 hour',
+          created_at: new Date(Date.now() - 7200000).toISOString(),
+          resolved_at: null
         }
       ];
       
       setImpacts(mockImpacts);
     } catch (err: any) {
-      setError(err instanceof Error ? err : new Error('Unknown error'));
+      setError(err);
+      console.error('Error fetching customer impacts:', err);
     } finally {
       setLoading(false);
     }
@@ -61,11 +56,10 @@ export function useCustomerImpacts() {
     fetchImpacts();
   }, [fetchImpacts]);
 
-  const getImpactsByModuleId = useCallback((moduleId: string) => {
-    return Promise.resolve(
-      impacts.filter(impact => impact.module_id === moduleId)
-    );
-  }, [impacts]);
-
-  return { impacts, loading, error, getImpactsByModuleId };
-}
+  return {
+    impacts,
+    loading,
+    error,
+    fetchImpacts
+  };
+};

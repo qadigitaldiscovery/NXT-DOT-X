@@ -1,16 +1,15 @@
 
 import React from 'react';
 import { useAuth } from '@/context/AuthContext';
-import RAGDashboardGrid from '@/components/rag-dashboard/RAGDashboardGrid';
-// Changed import from named to default import
+import RAGDashboardGridContainer from '@/components/rag-dashboard/RAGDashboardGridContainer';
 import PermissionGuard from '@/components/rag-dashboard/PermissionGuard';
 import { useModules } from '@/hooks/useModules';
-import { useKpiIndicators } from '@/hooks/useKpiIndicators';
 import { useNotifications } from '@/hooks/useNotifications';
 import { useAlerts } from '@/hooks/useAlerts';
 import { useThresholdRules } from '@/hooks/useThresholdRules';
 import { DashboardProvider } from '@/components/rag-dashboard/providers/DashboardProvider';
-import { DashboardHeader } from '@/components/rag-dashboard/dashboard/DashboardHeader'; 
+import { PlatformLayout } from '@/components/layouts/PlatformLayout';
+import { ragDashboardNavigation } from '@/components/rag-dashboard/config/dashboardNavigation';
 
 const RAGDashboardPage: React.FC = () => {
   const { user } = useAuth();
@@ -32,12 +31,9 @@ const RAGDashboardPage: React.FC = () => {
         addRule={addRule}
         deleteRule={deleteRule}
       >
-        <div className="container mx-auto px-4 py-6">
-          <DashboardHeader onBatchOperationsOpen={handleBatchOperationsOpen} />
-          <div className="mt-6">
-            <RAGDashboardGrid />
-          </div>
-        </div>
+        <PlatformLayout moduleTitle="RAG Dashboard" navCategories={ragDashboardNavigation}>
+          <RAGDashboardGridContainer />
+        </PlatformLayout>
       </DashboardProvider>
     </PermissionGuard>
   );

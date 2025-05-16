@@ -1,119 +1,88 @@
 
-import { useState, useEffect } from 'react';
-import { supabase } from '@/integrations/supabase/client';
+import { useState, useEffect, useCallback } from 'react';
 
-export type Notification = {
+interface Notification {
   id: string;
   title: string;
   content: string;
   type: 'info' | 'warning' | 'error' | 'success';
-  is_read: boolean;
-  created_at: string;
-  entity_id?: string;
-  entity_type?: string;
-};
+  createdAt: string;
+  isRead: boolean;
+}
 
-export function useNotifications(limit: number = 10) {
+export const useNotifications = () => {
   const [notifications, setNotifications] = useState<Notification[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<Error | null>(null);
-  const [unreadCount, setUnreadCount] = useState<number>(0);
-
-  useEffect(() => {
-    // For now, we're returning mock data
-    const mockNotifications: Notification[] = [
-      {
-        id: '1',
-        title: 'Module status changed',
-        content: 'Authentication module changed from "green" to "orange"',
-        type: 'warning',
-        is_read: false,
-        created_at: new Date(Date.now() - 3600000).toISOString(), // 1 hour ago
-        entity_id: '1',
-        entity_type: 'module'
-      },
-      {
-        id: '2',
-        title: 'New alert detected',
-        content: 'High CPU usage detected on Database module',
-        type: 'error',
-        is_read: false,
-        created_at: new Date(Date.now() - 86400000).toISOString(), // 1 day ago
-        entity_id: '2',
-        entity_type: 'alert'
-      },
-      {
-        id: '3',
-        title: 'Alert resolved',
-        content: 'Memory leak issue has been resolved',
-        type: 'success',
-        is_read: true,
-        created_at: new Date(Date.now() - 172800000).toISOString(), // 2 days ago
-        entity_id: '3',
-        entity_type: 'alert'
-      },
-      {
-        id: '4',
-        title: 'Threshold rule added',
-        content: 'New monitoring rule added for network latency',
-        type: 'info',
-        is_read: true,
-        created_at: new Date(Date.now() - 259200000).toISOString(), // 3 days ago
-        entity_id: '1',
-        entity_type: 'rule'
-      }
-    ];
-
-    setNotifications(mockNotifications);
-    setUnreadCount(mockNotifications.filter(n => !n.is_read).length);
-    setLoading(false);
-  }, [limit]);
-
-  const markAsRead = async (id: string) => {
-    // In a real implementation, this would update the database
-    setNotifications(prev => 
-      prev.map(notification => 
-        notification.id === id 
-          ? { ...notification, is_read: true } 
-          : notification
+  const [loading, setLoading] = useState(true);
+  const [unreadCount, setUnreadCount] = useState(0);
+  
+  // Fetch notifications
+  const fetchNotifications = useCallback(async () => {
+    setLoading(true);
+    try {
+      // For demonstration purposes, we're using mock data
+      // In a real application, this would be a call to an API
+      const mockNotifications: Notification[] = [
+        {
+          id: '1',
+          title: 'System Alert',
+          content: 'Authentication module showing degraded performance.',
+          type: 'warning',
+          createdAt: new Date(Date.now() - 3600000).toISOString(),
+          isRead: false
+        },
+        {
+          id: '2',
+          title: 'Maintenance Notice',
+          content: 'Scheduled maintenance tonight at 2:00 AM UTC.',
+          type: 'info',
+          createdAt: new Date(Date.now() - 86400000).toISOString(),
+          isRead: true
+        }
+      ];
+      
+      setNotifications(mockNotifications);
+      setUnreadCount(mockNotifications.filter(n => !n.isRead).length);
+    } catch (error) {
+      console.error('Error fetching notifications:', error);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+  
+  // Mark notification as read
+  const markAsRead = useCallback(async (id: string) => {
+    setNotifications(prevNotifications =>
+      prevNotifications.map(notification =>
+        notification.id === id ? { ...notification, isRead: true } : notification
       )
     );
-
+    
     setUnreadCount(prev => Math.max(0, prev - 1));
     
-    return { success: true, error: null };
-  };
-
-  const markAllAsRead = async () => {
-    // In a real implementation, this would update the database
-    setNotifications(prev => 
-      prev.map(notification => ({ ...notification, is_read: true }))
+    // In a real app, we would call an API to update the notification status
+  }, []);
+  
+  // Mark all notifications as read
+  const markAllAsRead = useCallback(async () => {
+    setNotifications(prevNotifications =>
+      prevNotifications.map(notification => ({ ...notification, isRead: true }))
     );
-
+    
     setUnreadCount(0);
     
-    return { success: true, error: null };
-  };
-
-  const deleteNotification = async (id: string) => {
-    // In a real implementation, this would update the database
-    const notificationToDelete = notifications.find(n => n.id === id);
-    setNotifications(prev => prev.filter(notification => notification.id !== id));
-    
-    if (notificationToDelete && !notificationToDelete.is_read) {
-      setUnreadCount(prev => Math.max(0, prev - 1));
-    }
-    
-    return { success: true, error: null };
-  };
-
-  return { 
-    notifications, 
-    loading, 
-    error, 
-    unreadCount, 
+    // In a real app, we would call an API to update all notifications
+  }, []);
+  
+  useEffect(() => {
+    fetchNotifications();
+  }, [fetchNotifications]);
+  
+  return {
+    notifications,
+    loading,
+    unreadCount,
     markAsRead,
     markAllAsRead,
-    deleteNotification
+    refreshNotifications: fetchNotifications
   };
-}
+};

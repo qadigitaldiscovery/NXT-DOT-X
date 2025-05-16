@@ -1,12 +1,11 @@
 
 import { NavCategory } from '@/components/layout/sidebar/types';
-import { BarChart3, LineChart, AlertTriangle, Settings } from 'lucide-react';
+import { Activity, AlertTriangle, BarChart3, LineChart, Settings } from 'lucide-react';
 
-// Define navigation categories for the RAG Dashboard module
 export const ragDashboardNavigation: NavCategory[] = [
   {
-    label: "RAG Dashboard",
-    name: "RAG Dashboard", // For backward compatibility
+    name: "RAG Dashboard",
+    label: "RAG Dashboard", 
     items: [
       { label: "Overview", path: "/dashboard/rag", icon: BarChart3 },
       { label: "Analytics", path: "/dashboard/rag/analytics", icon: LineChart },

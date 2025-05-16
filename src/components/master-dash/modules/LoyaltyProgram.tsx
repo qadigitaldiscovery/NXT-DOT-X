@@ -2,7 +2,7 @@
 import React from 'react';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Award } from "lucide-react";
+import { Award, BarChart3 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 export default function LoyaltyProgram() {
@@ -30,8 +30,8 @@ export default function LoyaltyProgram() {
             <span className="text-sm">Reward programs</span>
           </div>
           <div className="flex items-center gap-2">
-            <div className="w-2 h-2 rounded-full bg-green-500"></div>
-            <span className="text-sm">Analytics</span>
+            <div className="w-2 h-2 rounded-full bg-amber-500"></div>
+            <span className="text-sm">System Status <Button variant="link" className="px-1 py-0 h-auto text-amber-400 text-xs" onClick={() => navigate('/dashboard/rag')}>View RAG Dashboard</Button></span>
           </div>
         </div>
       </CardContent>

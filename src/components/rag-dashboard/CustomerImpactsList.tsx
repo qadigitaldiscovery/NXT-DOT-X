@@ -1,97 +1,89 @@
 
 import React from 'react';
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { AlertTriangle, Users } from 'lucide-react';
 import { type CustomerImpact } from '@/hooks/useCustomerImpacts';
-import { formatDistanceToNow } from 'date-fns';
-import { Users } from 'lucide-react';
+import { format } from 'date-fns';
 
-type CustomerImpactsListProps = {
+interface CustomerImpactsListProps {
   impacts: CustomerImpact[];
-  loading?: boolean;
+  loading: boolean;
 }
 
-export default function CustomerImpactsList({ impacts, loading = false }: CustomerImpactsListProps) {
+const CustomerImpactsList: React.FC<CustomerImpactsListProps> = ({ impacts, loading }) => {
   if (loading) {
     return (
       <Card>
-        <CardHeader className="pb-3">
-          <CardTitle className="text-lg">Customer Impact</CardTitle>
+        <CardHeader>
+          <CardTitle>Customer Impacts</CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-muted-foreground">Loading customer impact data...</p>
+          <div className="flex justify-center py-8">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+          </div>
         </CardContent>
       </Card>
     );
   }
 
-  if (impacts.length === 0) {
-    return (
-      <Card>
-        <CardHeader className="pb-3">
-          <CardTitle className="text-lg">Customer Impact</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <p className="text-muted-foreground">No customer impact reported.</p>
-        </CardContent>
-      </Card>
-    );
-  }
-
-  const getSeverityVariant = (severity: string | null): "default" | "destructive" | "outline" | "secondary" => {
-    switch (severity?.toLowerCase()) {
-      case 'low':
-        return 'secondary';
-      case 'medium':
-        return 'default';
-      case 'high':
-        return 'destructive';
-      case 'critical':
-        return 'destructive';
-      default:
-        return 'outline';
+  const getImpactColor = (level: string) => {
+    switch (level) {
+      case 'low': return 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-300';
+      case 'medium': return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-300';
+      case 'high': return 'bg-orange-100 text-orange-800 dark:bg-orange-900/20 dark:text-orange-300';
+      case 'critical': return 'bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-300';
+      default: return 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300';
     }
   };
 
   return (
     <Card>
-      <CardHeader className="pb-3">
-        <CardTitle className="text-lg">Customer Impact</CardTitle>
+      <CardHeader>
+        <CardTitle className="flex items-center">
+          <AlertTriangle className="h-5 w-5 mr-2 text-amber-500" />
+          Customer Impacts
+        </CardTitle>
       </CardHeader>
       <CardContent>
-        <ul className="space-y-4">
-          {impacts.map((impact) => (
-            <li key={impact.id} className="flex flex-col gap-2 border-b pb-3 last:border-0">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  {impact.severity && (
-                    <Badge variant={getSeverityVariant(impact.severity)}>
-                      {impact.severity.charAt(0).toUpperCase() + impact.severity.slice(1)} Impact
+        {impacts.length === 0 ? (
+          <div className="text-center py-6 text-muted-foreground">
+            No customer impacts reported.
+          </div>
+        ) : (
+          <div className="space-y-4">
+            {impacts.map((impact) => (
+              <div 
+                key={impact.id} 
+                className="p-4 border rounded-md"
+              >
+                <div className="flex justify-between items-start mb-2">
+                  <div className="flex items-center gap-2">
+                    <Badge className={getImpactColor(impact.impact_level)}>
+                      {impact.impact_level.charAt(0).toUpperCase() + impact.impact_level.slice(1)} Impact
                     </Badge>
-                  )}
-                  <span className="text-sm text-muted-foreground">
-                    {formatDistanceToNow(new Date(impact.started_at), { addSuffix: true })}
-                  </span>
+                    <div className="flex items-center text-sm text-muted-foreground">
+                      <Users className="h-3 w-3 mr-1" />
+                      {impact.affected_customers} affected customers
+                    </div>
+                  </div>
+                  <div className="text-xs text-muted-foreground">
+                    {format(new Date(impact.created_at), 'MMM dd, yyyy HH:mm')}
+                  </div>
                 </div>
-                {impact.impact_type && <span className="text-sm font-medium">{impact.impact_type}</span>}
+                <p className="text-sm">{impact.description}</p>
+                {impact.resolved_at && (
+                  <div className="mt-2 text-xs text-green-600 dark:text-green-400">
+                    ✓ Resolved on {format(new Date(impact.resolved_at), 'MMM dd, yyyy HH:mm')}
+                  </div>
+                )}
               </div>
-              
-              {impact.affected_users && (
-                <div className="flex items-center gap-1 text-sm">
-                  <Users className="h-4 w-4 text-muted-foreground" />
-                  <span>
-                    <span className="font-semibold">{impact.affected_users.toLocaleString()}</span> users affected
-                  </span>
-                </div>
-              )}
-              
-              {impact.description && (
-                <p className="text-sm mt-1">{impact.description}</p>
-              )}
-            </li>
-          ))}
-        </ul>
+            ))}
+          </div>
+        )}
       </CardContent>
     </Card>
   );
-}
+};
+
+export default CustomerImpactsList;
