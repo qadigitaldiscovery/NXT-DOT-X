@@ -190,29 +190,45 @@ serve(async (req) => {
   try {
     // Get the authorization header
     const authHeader = req.headers.get('Authorization');
-    if (!authHeader) {
-      return new Response(
-        JSON.stringify({ error: 'Unauthorized' }),
-        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+    
+    // Check for API key in header for direct API testing without auth
+    const apiKey = req.headers.get('X-API-Key');
+    
+    // Allow either authenticated user or valid API key
+    let isAuthorized = false;
+    let userId = null;
+    
+    // Verify authentication header if present
+    if (authHeader) {
+      // Create authenticated Supabase client
+      const supabaseClient = createClient(
+        supabaseUrl,
+        supabaseAnonKey,
+        { global: { headers: { Authorization: authHeader } } }
       );
+      
+      // Get the user from the auth header
+      const {
+        data: { user },
+        error: userError,
+      } = await supabaseClient.auth.getUser();
+      
+      if (!userError && user) {
+        isAuthorized = true;
+        userId = user.id;
+      }
     }
-
-    // Create authenticated Supabase client
-    const supabaseClient = createClient(
-      supabaseUrl,
-      supabaseAnonKey,
-      { global: { headers: { Authorization: authHeader } } }
-    );
-
-    // Get the user from the auth header
-    const {
-      data: { user },
-      error: userError,
-    } = await supabaseClient.auth.getUser();
-
-    if (userError || !user) {
+    
+    // If not authorized via auth header, check for valid API key
+    // This is a simplified check - in a real app you'd verify against stored API keys
+    const configuredApiKey = Deno.env.get("ODOO_DIRECT_API_KEY");
+    if (!isAuthorized && apiKey && configuredApiKey && apiKey === configuredApiKey) {
+      isAuthorized = true;
+    }
+    
+    if (!isAuthorized) {
       return new Response(
-        JSON.stringify({ error: 'Unauthorized', details: userError }),
+        JSON.stringify({ error: 'Unauthorized', details: 'Valid authentication required' }),
         { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }

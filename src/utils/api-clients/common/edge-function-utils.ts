@@ -4,6 +4,7 @@ import { supabase } from '@/integrations/supabase/client';
 interface EdgeFunctionOptions {
   timeout?: number;
   headers?: Record<string, string>;
+  apiKey?: string; // Added support for API key authentication
 }
 
 /**
@@ -27,12 +28,20 @@ export async function tryUseEdgeFunction<T>(
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), timeout);
     
+    // Prepare headers
+    const headers: Record<string, string> = options.headers || {};
+    
+    // Add API key header if provided
+    if (options.apiKey) {
+      headers['X-API-Key'] = options.apiKey;
+    }
+    
     // Call the edge function with the payload
     const { data, error } = await supabase.functions.invoke<T>(
       functionName, 
       {
         body: payload,
-        headers: options.headers
+        headers: headers
       }
     );
     
