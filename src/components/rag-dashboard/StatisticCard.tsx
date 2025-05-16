@@ -30,7 +30,7 @@ const StatisticCard: React.FC<StatisticCardProps> = ({
       case 'danger':
         return 'text-red-500';
       default:
-        return 'text-foreground';
+        return 'text-gray-900 dark:text-gray-100';
     }
   };
 
@@ -42,17 +42,17 @@ const StatisticCard: React.FC<StatisticCardProps> = ({
 
   return (
     <div className={cn(
-      "rounded-lg bg-card/50 backdrop-blur p-4 border border-border/50 shadow-sm",
+      "rounded-lg bg-white dark:bg-gray-800 p-4 border border-gray-100 dark:border-gray-700 shadow-sm",
       className
     )}>
       <div className="flex items-center justify-between mb-2">
-        <p className="text-xs font-medium text-muted-foreground">{label}</p>
-        {icon && <div className="text-muted-foreground">{icon}</div>}
+        <p className="text-xs font-medium text-gray-500 dark:text-gray-400">{label}</p>
+        {icon && <div className="text-gray-400 dark:text-gray-500">{icon}</div>}
       </div>
       <div className="flex items-end gap-2">
         <div className={cn("text-3xl font-bold", getColorClass())}>{value}</div>
         {trendValue && (
-          <div className="text-xs text-muted-foreground flex items-center space-x-1 mb-1">
+          <div className="text-xs text-gray-500 dark:text-gray-400 flex items-center space-x-1 mb-1">
             {getTrendIcon()}
             <span>{trendValue}</span>
           </div>

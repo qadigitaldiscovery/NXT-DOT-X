@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { ThemeToggle } from '@/components/ui/theme-toggle';
+import { ThemeToggle } from '@/components/theme-toggle';
 
 interface TopbarProps {
   moduleTitle?: string;
@@ -8,10 +8,10 @@ interface TopbarProps {
 
 const Topbar: React.FC<TopbarProps> = ({ moduleTitle = '' }) => {
   return (
-    <header className="bg-white dark:bg-gray-800 shadow-sm z-10 border-b border-blue-lightest">
+    <header className="bg-white dark:bg-gray-800 shadow-sm z-10 border-b border-gray-100 dark:border-gray-700">
       <div className="px-6 py-3 flex items-center justify-between">
         <div>
-          <h1 className="text-lg font-medium bg-clip-text text-transparent bg-gradient-to-r from-blue to-blue-light">
+          <h1 className="text-lg font-medium text-blue-600 dark:text-blue-400">
             {moduleTitle}
           </h1>
         </div>

@@ -1,7 +1,7 @@
 
 import React, { ReactNode } from 'react';
 import { NavCategory, NavItem } from '@/components/layout/sidebar/types';
-import { Sidebar } from '@/components/layout/sidebar'; // Importing named export instead of default
+import { Sidebar } from '@/components/layout/sidebar';
 import Topbar from '@/components/layouts/Topbar';
 
 export interface PlatformLayoutProps {
@@ -11,7 +11,7 @@ export interface PlatformLayoutProps {
   customFooterContent?: ReactNode;
   removeBottomToggle?: boolean;
   showTopLeftToggle?: boolean;
-  moduleTitle?: string; // Add moduleTitle prop
+  moduleTitle?: string;
 }
 
 export const PlatformLayout: React.FC<PlatformLayoutProps> = ({
@@ -24,7 +24,7 @@ export const PlatformLayout: React.FC<PlatformLayoutProps> = ({
   moduleTitle = '',
 }) => {
   return (
-    <div className="flex h-screen bg-blue-lightest dark:bg-gray-900">
+    <div className="flex h-screen bg-gray-50 dark:bg-gray-900">
       <Sidebar
         navItems={navItems}
         navCategories={navCategories}
@@ -34,7 +34,7 @@ export const PlatformLayout: React.FC<PlatformLayoutProps> = ({
       />
       <div className="flex flex-col flex-1 overflow-hidden">
         <Topbar moduleTitle={moduleTitle} />
-        <main className="flex-1 overflow-y-auto p-4 bg-gradient-to-br from-white to-blue-lightest">
+        <main className="flex-1 overflow-y-auto p-4 bg-white dark:bg-gray-900">
           {children}
         </main>
       </div>
