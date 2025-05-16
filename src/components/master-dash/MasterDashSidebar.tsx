@@ -13,7 +13,8 @@ import {
   BarChart3,
   Building,
   UserCog,
-  ClipboardList
+  ClipboardList,
+  CalendarClock
 } from 'lucide-react';
 import { SidebarProvider } from '@/components/ui/sidebar';
 
@@ -75,6 +76,12 @@ const MasterDashSidebar: React.FC<MasterDashSidebarProps> = ({ activePath }) => 
           label="Project Management"
           active={activePath === '/projects'} 
           onClick={() => handleNavigation('/projects')}
+        />
+        <SidebarItem 
+          icon={<CalendarClock className="w-5 h-5" />} 
+          label="Events"
+          active={activePath === '/events'} 
+          onClick={() => handleNavigation('/events')}
         />
         
         {/* Administration Section */}
