@@ -16,8 +16,10 @@ const supabase = createClient(supabaseUrl, supabaseAnonKey);
 interface OdooConfig {
   url: string;
   db_name: string;
-  username: string;
-  password: string;
+  // Support both authentication methods
+  username?: string;
+  password?: string;
+  api_key?: string;
 }
 
 interface WooCommerceConfig {
@@ -34,8 +36,8 @@ async function handleOdoo(req: Request, data: { action: string; [key: string]: a
       console.log('Testing Odoo connection with provided credentials:', {
         url: data.url,
         db_name: data.db_name,
-        username: data.username,
-        // Don't log password
+        // Log authentication method being used
+        auth_method: data.api_key ? 'API Key' : 'Username/Password',
       });
       
       // Validate URL format
@@ -43,6 +45,11 @@ async function handleOdoo(req: Request, data: { action: string; [key: string]: a
         new URL(data.url);
       } catch (e) {
         return { success: false, message: "Invalid URL format" };
+      }
+      
+      // Validate that we have either (username+password) OR api_key
+      if (!data.api_key && (!data.username || !data.password)) {
+        return { success: false, message: "Either API key or username/password credentials are required" };
       }
       
       // For demo purposes, we'll consider the connection successful
@@ -65,6 +72,11 @@ async function handleOdoo(req: Request, data: { action: string; [key: string]: a
       if (!configs) throw new Error("Odoo configuration not found");
       
       config = configs.config as OdooConfig;
+      
+      // Check if we have valid authentication details
+      if (!config.api_key && (!config.username || !config.password)) {
+        throw new Error("Invalid authentication configuration");
+      }
     } else {
       throw new Error("Integration ID is required");
     }
