@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Routes } from 'react-router-dom';
 
@@ -26,6 +25,7 @@ import { FilesRoutes } from "./filesRoutes";
 import { EventsRoutes } from "./eventsRoutes";
 import { RiskRegisterRoutes } from "./riskRegisterRoutes";
 import { RequestsRoutes } from "./requestsRoutes";
+import { BetaRoutes } from "./betaRoutes";
 
 // Core app routes
 import { AppRoutes } from './AppRoutes';
@@ -56,5 +56,6 @@ export {
   FilesRoutes,
   EventsRoutes,
   RiskRegisterRoutes,
-  RequestsRoutes
+  RequestsRoutes,
+  BetaRoutes
 };

@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { PlatformLayout } from '@/components/layouts/PlatformLayout';
@@ -40,6 +39,7 @@ import { FilesRoutes } from "./filesRoutes";
 import { EventsRoutes } from "./eventsRoutes";
 import { RiskRegisterRoutes } from "./riskRegisterRoutes";
 import { RequestsRoutes } from "./requestsRoutes";
+import { BetaRoutes } from "./betaRoutes";
 
 // Import layout configuration
 import { navCategories } from '@/components/layout/sidebar/NavigationConfig';
@@ -114,6 +114,7 @@ export const AppRoutes = () => {
         {EventsRoutes()}
         {RiskRegisterRoutes()}
         {RequestsRoutes()}
+        {BetaRoutes()}
         
         {/* Legacy route redirects */}
         <Route path="/prototypes" element={<Navigate to="/" replace />} />

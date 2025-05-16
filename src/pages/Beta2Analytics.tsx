@@ -1,139 +1,73 @@
-
 import React from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 const Beta2Analytics = () => {
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold tracking-tight">Loyalty Analytics</h1>
-        <p className="text-muted-foreground">Track and analyze your loyalty program performance.</p>
-      </div>
-      
-      <Tabs defaultValue="overview">
-        <TabsList className="mb-4">
-          <TabsTrigger value="overview">Program Overview</TabsTrigger>
-          <TabsTrigger value="members">Member Metrics</TabsTrigger>
-          <TabsTrigger value="rewards">Reward Activity</TabsTrigger>
-        </TabsList>
+    <div className="p-6">
+      <h1 className="text-2xl font-bold mb-4">Loyalty Analytics</h1>
+      <div className="bg-white shadow-md rounded-lg p-6">
+        <p className="text-gray-600 mb-6">
+          View analytics and insights for your loyalty program.
+        </p>
         
-        <TabsContent value="overview">
-          <div className="grid gap-6 md:grid-cols-2">
-            <Card>
-              <CardHeader>
-                <CardTitle>Program Performance</CardTitle>
-                <CardDescription>Key loyalty program metrics</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="h-64 bg-slate-100 rounded-md flex items-center justify-center">
-                  <span className="text-muted-foreground">Program metrics chart placeholder</span>
-                </div>
-              </CardContent>
-            </Card>
-            
-            <Card>
-              <CardHeader>
-                <CardTitle>Membership Growth</CardTitle>
-                <CardDescription>New members over time</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="h-64 bg-slate-100 rounded-md flex items-center justify-center">
-                  <span className="text-muted-foreground">Membership growth chart placeholder</span>
-                </div>
-              </CardContent>
-            </Card>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="border rounded-lg p-4">
+            <h3 className="font-semibold text-lg mb-4">Member Growth</h3>
+            <div className="h-64 bg-gray-100 rounded flex items-center justify-center">
+              <p className="text-gray-500">Chart: Member Growth - Last 12 Months</p>
+            </div>
           </div>
-        </TabsContent>
+          
+          <div className="border rounded-lg p-4">
+            <h3 className="font-semibold text-lg mb-4">Points Issued vs Redeemed</h3>
+            <div className="h-64 bg-gray-100 rounded flex items-center justify-center">
+              <p className="text-gray-500">Chart: Points Issued vs Redeemed</p>
+            </div>
+          </div>
+        </div>
         
-        <TabsContent value="members">
-          <Card>
-            <CardHeader>
-              <CardTitle>Member Analysis</CardTitle>
-              <CardDescription>Detailed metrics about program members</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-6">
-                <div className="h-64 bg-slate-100 rounded-md flex items-center justify-center">
-                  <span className="text-muted-foreground">Member segments chart placeholder</span>
-                </div>
-                
-                <div className="grid gap-4 md:grid-cols-3">
-                  <div className="p-4 border rounded-md">
-                    <p className="text-sm text-muted-foreground">Total Members</p>
-                    <p className="text-2xl font-bold">12,543</p>
-                  </div>
-                  
-                  <div className="p-4 border rounded-md">
-                    <p className="text-sm text-muted-foreground">Active Rate</p>
-                    <p className="text-2xl font-bold">68%</p>
-                  </div>
-                  
-                  <div className="p-4 border rounded-md">
-                    <p className="text-sm text-muted-foreground">Avg. Points Balance</p>
-                    <p className="text-2xl font-bold">2,450</p>
-                  </div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
+        <div className="mt-6 border rounded-lg p-4">
+          <h3 className="font-semibold text-lg mb-4">Member Engagement by Channel</h3>
+          <div className="h-64 bg-gray-100 rounded flex items-center justify-center">
+            <p className="text-gray-500">Chart: Member Engagement by Channel</p>
+          </div>
+        </div>
         
-        <TabsContent value="rewards">
-          <Card>
-            <CardHeader>
-              <CardTitle>Reward Redemptions</CardTitle>
-              <CardDescription>Analysis of reward program usage</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-6">
-                <div className="h-64 bg-slate-100 rounded-md flex items-center justify-center">
-                  <span className="text-muted-foreground">Redemption trends chart placeholder</span>
-                </div>
-                
-                <div className="border rounded-md overflow-hidden">
-                  <table className="w-full">
-                    <thead className="bg-muted/50">
-                      <tr>
-                        <th className="text-left p-3 font-medium">Reward Type</th>
-                        <th className="text-left p-3 font-medium">Redemption Count</th>
-                        <th className="text-left p-3 font-medium">Points Used</th>
-                        <th className="text-left p-3 font-medium">Popularity</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr className="border-t">
-                        <td className="p-3">Free Product</td>
-                        <td className="p-3">1,245</td>
-                        <td className="p-3">62,250</td>
-                        <td className="p-3">High</td>
-                      </tr>
-                      <tr className="border-t">
-                        <td className="p-3">Discount Coupon</td>
-                        <td className="p-3">843</td>
-                        <td className="p-3">25,290</td>
-                        <td className="p-3">Medium</td>
-                      </tr>
-                      <tr className="border-t">
-                        <td className="p-3">Exclusive Access</td>
-                        <td className="p-3">312</td>
-                        <td className="p-3">31,200</td>
-                        <td className="p-3">Medium</td>
-                      </tr>
-                      <tr className="border-t">
-                        <td className="p-3">Gift Card</td>
-                        <td className="p-3">196</td>
-                        <td className="p-3">49,000</td>
-                        <td className="p-3">Low</td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-      </Tabs>
+        <div className="mt-6">
+          <h3 className="font-semibold text-lg mb-4">Top Performing Rewards</h3>
+          <div className="border rounded-lg overflow-hidden">
+            <table className="min-w-full divide-y divide-gray-200">
+              <thead className="bg-gray-50">
+                <tr>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Reward</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Redemptions</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Points Cost</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Satisfaction</th>
+                </tr>
+              </thead>
+              <tbody className="bg-white divide-y divide-gray-200">
+                <tr>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm">$25 Gift Card</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm">1,245</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm">2,500</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm">94%</td>
+                </tr>
+                <tr>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm">Free Shipping</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm">978</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm">1,000</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm">89%</td>
+                </tr>
+                <tr>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm">Member Exclusive</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm">654</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm">5,000</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm">97%</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };

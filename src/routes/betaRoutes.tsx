@@ -1,5 +1,7 @@
+import React from 'react';
 import { Route } from "react-router-dom";
 import ProtectedRoute from "@/components/ProtectedRoute";
+import BetaPermissionGuard from "@/components/beta/BetaPermissionGuard";
 import { PlatformLayout } from "@/components/layouts/PlatformLayout";
 import { NavCategory } from '@/components/layout/sidebar/types';
 import { Home, Settings, Users, BarChart3, Award } from 'lucide-react';
@@ -48,26 +50,32 @@ export const BetaRoutes = () => {
       <Route path="/beta1">
         <Route index element={
           <ProtectedRoute>
-            <PlatformLayout moduleTitle="Data Platform Beta" navCategories={beta1NavCategories}>
-              <Beta1Dashboard />
-            </PlatformLayout>
+            <BetaPermissionGuard betaModule="beta1">
+              <PlatformLayout moduleTitle="Data Platform Beta" navCategories={beta1NavCategories}>
+                <Beta1Dashboard />
+              </PlatformLayout>
+            </BetaPermissionGuard>
           </ProtectedRoute>
         } />
         
         <Route path="settings" element={
           <ProtectedRoute>
-            <PlatformLayout moduleTitle="Beta 1 Settings" navCategories={beta1NavCategories}>
-              <Beta1Settings />
-            </PlatformLayout>
+            <BetaPermissionGuard betaModule="beta1">
+              <PlatformLayout moduleTitle="Beta 1 Settings" navCategories={beta1NavCategories}>
+                <Beta1Settings />
+              </PlatformLayout>
+            </BetaPermissionGuard>
           </ProtectedRoute>
         } />
 
         {/* Catch-all for invalid Beta1 routes */}
         <Route path="*" element={
           <ProtectedRoute>
-            <PlatformLayout moduleTitle="Not Found" navCategories={beta1NavCategories}>
-              <NotFound />
-            </PlatformLayout>
+            <BetaPermissionGuard betaModule="beta1">
+              <PlatformLayout moduleTitle="Not Found" navCategories={beta1NavCategories}>
+                <NotFound />
+              </PlatformLayout>
+            </BetaPermissionGuard>
           </ProtectedRoute>
         } />
       </Route>
@@ -76,50 +84,62 @@ export const BetaRoutes = () => {
       <Route path="/beta2">
         <Route index element={
           <ProtectedRoute>
-            <PlatformLayout moduleTitle="Loyalty Platform Beta" navCategories={beta2NavCategories}>
-              <Beta2Dashboard />
-            </PlatformLayout>
+            <BetaPermissionGuard betaModule="beta2">
+              <PlatformLayout moduleTitle="Loyalty Platform Beta" navCategories={beta2NavCategories}>
+                <Beta2Dashboard />
+              </PlatformLayout>
+            </BetaPermissionGuard>
           </ProtectedRoute>
         } />
         
         <Route path="members" element={
           <ProtectedRoute>
-            <PlatformLayout moduleTitle="Beta 2 Members" navCategories={beta2NavCategories}>
-              <Beta2Members />
-            </PlatformLayout>
+            <BetaPermissionGuard betaModule="beta2">
+              <PlatformLayout moduleTitle="Beta 2 Members" navCategories={beta2NavCategories}>
+                <Beta2Members />
+              </PlatformLayout>
+            </BetaPermissionGuard>
           </ProtectedRoute>
         } />
         
         <Route path="rewards" element={
           <ProtectedRoute>
-            <PlatformLayout moduleTitle="Beta 2 Rewards" navCategories={beta2NavCategories}>
-              <Beta2Rewards />
-            </PlatformLayout>
+            <BetaPermissionGuard betaModule="beta2">
+              <PlatformLayout moduleTitle="Beta 2 Rewards" navCategories={beta2NavCategories}>
+                <Beta2Rewards />
+              </PlatformLayout>
+            </BetaPermissionGuard>
           </ProtectedRoute>
         } />
         
         <Route path="analytics" element={
           <ProtectedRoute>
-            <PlatformLayout moduleTitle="Beta 2 Analytics" navCategories={beta2NavCategories}>
-              <Beta2Analytics />
-            </PlatformLayout>
+            <BetaPermissionGuard betaModule="beta2">
+              <PlatformLayout moduleTitle="Beta 2 Analytics" navCategories={beta2NavCategories}>
+                <Beta2Analytics />
+              </PlatformLayout>
+            </BetaPermissionGuard>
           </ProtectedRoute>
         } />
         
         <Route path="settings" element={
           <ProtectedRoute>
-            <PlatformLayout moduleTitle="Beta 2 Settings" navCategories={beta2NavCategories}>
-              <Beta2Settings />
-            </PlatformLayout>
+            <BetaPermissionGuard betaModule="beta2">
+              <PlatformLayout moduleTitle="Beta 2 Settings" navCategories={beta2NavCategories}>
+                <Beta2Settings />
+              </PlatformLayout>
+            </BetaPermissionGuard>
           </ProtectedRoute>
         } />
 
         {/* Catch-all for invalid Beta2 routes */}
         <Route path="*" element={
           <ProtectedRoute>
-            <PlatformLayout moduleTitle="Not Found" navCategories={beta2NavCategories}>
-              <NotFound />
-            </PlatformLayout>
+            <BetaPermissionGuard betaModule="beta2">
+              <PlatformLayout moduleTitle="Not Found" navCategories={beta2NavCategories}>
+                <NotFound />
+              </PlatformLayout>
+            </BetaPermissionGuard>
           </ProtectedRoute>
         } />
       </Route>
@@ -127,4 +147,4 @@ export const BetaRoutes = () => {
   );
 };
 
-export default BetaRoutes; 
+export default BetaRoutes;

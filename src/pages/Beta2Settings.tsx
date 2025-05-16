@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
@@ -24,158 +23,248 @@ const Beta2Settings = () => {
   };
   
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">Program Settings</h1>
-          <p className="text-muted-foreground">Configure your loyalty program settings.</p>
-        </div>
+    <div className="p-6">
+      <h1 className="text-2xl font-bold mb-4">Loyalty Program Settings</h1>
+      <div className="bg-white shadow-md rounded-lg p-6">
+        <p className="text-gray-600 mb-6">
+          Configure your loyalty program settings and preferences.
+        </p>
         
-        <div className="flex items-center gap-2">
-          <Button variant="outline" onClick={() => navigate('/prototypes')}>
-            Back to Selector
-          </Button>
-        </div>
-      </div>
-      
-      <div className="grid gap-6 md:grid-cols-2">
-        <CollapsibleSettingsSection 
-          title="Program Details" 
-          description="Basic configuration for your loyalty program"
-          defaultOpen={true}
-        >
-          <div className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="program-name">Program Name</Label>
-              <Input id="program-name" defaultValue="Premium Rewards Club" />
-            </div>
-            
-            <div className="space-y-2">
-              <Label htmlFor="point-name">Point Name</Label>
-              <Input id="point-name" defaultValue="Stars" />
-            </div>
-            
-            <div className="space-y-2">
-              <Label htmlFor="conversion-rate">Points Conversion Rate</Label>
-              <Select defaultValue="10">
-                <SelectTrigger>
-                  <SelectValue placeholder="Select rate" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="5">$1 = 5 points</SelectItem>
-                  <SelectItem value="10">$1 = 10 points</SelectItem>
-                  <SelectItem value="20">$1 = 20 points</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-        </CollapsibleSettingsSection>
-        
-        <CollapsibleSettingsSection 
-          title="Member Communications" 
-          description="Configure member notifications and emails"
-          defaultOpen={true}
-        >
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
+        <div className="space-y-8">
+          {/* Program Details */}
+          <div>
+            <h2 className="text-xl font-semibold mb-4">Program Details</h2>
+            <div className="border rounded-lg p-6 space-y-4">
               <div>
-                <Label htmlFor="welcome-email">Welcome Email</Label>
-                <p className="text-sm text-muted-foreground">
-                  Send welcome email to new members
-                </p>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Program Name</label>
+                <input
+                  type="text"
+                  className="w-full border-gray-300 rounded-md shadow-sm px-4 py-2"
+                  defaultValue="Premier Rewards"
+                  aria-label="Program Name"
+                />
               </div>
-              <Switch id="welcome-email" defaultChecked />
-            </div>
-            
-            <div className="flex items-center justify-between">
+              
               <div>
-                <Label htmlFor="points-update">Points Updates</Label>
-                <p className="text-sm text-muted-foreground">
-                  Notify members when points balance changes
-                </p>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                <textarea
+                  className="w-full border-gray-300 rounded-md shadow-sm px-4 py-2"
+                  rows={3}
+                  defaultValue="Our loyalty program rewards members with points for purchases that can be redeemed for exclusive benefits."
+                  aria-label="Program Description"
+                />
               </div>
-              <Switch id="points-update" defaultChecked />
-            </div>
-            
-            <div className="flex items-center justify-between">
-              <div>
-                <Label htmlFor="reward-expiry">Reward Expiry Notifications</Label>
-                <p className="text-sm text-muted-foreground">
-                  Alert members before rewards expire
-                </p>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Points Currency Name</label>
+                  <input
+                    type="text"
+                    className="w-full border-gray-300 rounded-md shadow-sm px-4 py-2"
+                    defaultValue="Reward Points"
+                    aria-label="Points Currency Name"
+                  />
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Earning Ratio ($ to points)</label>
+                  <input
+                    type="text"
+                    className="w-full border-gray-300 rounded-md shadow-sm px-4 py-2"
+                    defaultValue="1:1"
+                    aria-label="Earning Ratio"
+                  />
+                </div>
               </div>
-              <Switch id="reward-expiry" defaultChecked />
-            </div>
-          </div>
-        </CollapsibleSettingsSection>
-      </div>
-      
-      <CollapsibleSettingsSection 
-        title="Tier Configuration" 
-        description="Configure membership tiers and benefits"
-        defaultOpen={true}
-        footerContent={
-          <>
-            <Button variant="outline">Reset to Defaults</Button>
-            <Button onClick={handleSave} disabled={saving}>
-              {saving ? 'Saving...' : 'Save Changes'}
-            </Button>
-          </>
-        }
-      >
-        <div className="space-y-4">
-          <div className="grid gap-4 md:grid-cols-2">
-            <div className="space-y-2">
-              <Label htmlFor="tier-system">Tier System</Label>
-              <Select defaultValue="points-based">
-                <SelectTrigger>
-                  <SelectValue placeholder="Select tier system" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="points-based">Points Based</SelectItem>
-                  <SelectItem value="visit-based">Visit Based</SelectItem>
-                  <SelectItem value="spend-based">Spend Based</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            
-            <div className="space-y-2">
-              <Label htmlFor="tier-reset">Tier Reset Period</Label>
-              <Select defaultValue="annual">
-                <SelectTrigger>
-                  <SelectValue placeholder="Select reset period" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="never">Never</SelectItem>
-                  <SelectItem value="monthly">Monthly</SelectItem>
-                  <SelectItem value="quarterly">Quarterly</SelectItem>
-                  <SelectItem value="annual">Annual</SelectItem>
-                </SelectContent>
-              </Select>
             </div>
           </div>
           
-          <div className="flex items-center justify-between">
-            <div>
-              <Label htmlFor="birthday-bonus">Birthday Bonus</Label>
-              <p className="text-sm text-muted-foreground">
-                Offer bonus points on member birthdays
-              </p>
+          {/* Tier Levels */}
+          <div>
+            <h2 className="text-xl font-semibold mb-4">Tier Levels</h2>
+            <div className="border rounded-lg overflow-hidden">
+              <table className="min-w-full divide-y divide-gray-200">
+                <thead className="bg-gray-50">
+                  <tr>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tier Name</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Required Points</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Benefits</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                  </tr>
+                </thead>
+                <tbody className="bg-white divide-y divide-gray-200">
+                  <tr>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <input
+                        type="text"
+                        className="border-gray-300 rounded-md shadow-sm px-3 py-1"
+                        defaultValue="Bronze"
+                        aria-label="Bronze Tier Name"
+                      />
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <input
+                        type="number"
+                        className="border-gray-300 rounded-md shadow-sm px-3 py-1 w-24"
+                        defaultValue="0"
+                        aria-label="Bronze Required Points"
+                      />
+                    </td>
+                    <td className="px-6 py-4">
+                      <input
+                        type="text"
+                        className="border-gray-300 rounded-md shadow-sm px-3 py-1 w-full"
+                        defaultValue="Basic rewards access"
+                        aria-label="Bronze Tier Benefits"
+                      />
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <button className="text-red-600 hover:text-red-800 text-sm mr-2">Delete</button>
+                    </td>
+                  </tr>
+                  
+                  <tr>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <input
+                        type="text"
+                        className="border-gray-300 rounded-md shadow-sm px-3 py-1"
+                        defaultValue="Silver"
+                        aria-label="Silver Tier Name"
+                      />
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <input
+                        type="number"
+                        className="border-gray-300 rounded-md shadow-sm px-3 py-1 w-24"
+                        defaultValue="1000"
+                        aria-label="Silver Required Points"
+                      />
+                    </td>
+                    <td className="px-6 py-4">
+                      <input
+                        type="text"
+                        className="border-gray-300 rounded-md shadow-sm px-3 py-1 w-full"
+                        defaultValue="Free shipping, Birthday gift"
+                        aria-label="Silver Tier Benefits"
+                      />
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <button className="text-red-600 hover:text-red-800 text-sm mr-2">Delete</button>
+                    </td>
+                  </tr>
+                  
+                  <tr>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <input
+                        type="text"
+                        className="border-gray-300 rounded-md shadow-sm px-3 py-1"
+                        defaultValue="Gold"
+                        aria-label="Gold Tier Name"
+                      />
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <input
+                        type="number"
+                        className="border-gray-300 rounded-md shadow-sm px-3 py-1 w-24"
+                        defaultValue="5000"
+                        aria-label="Gold Required Points"
+                      />
+                    </td>
+                    <td className="px-6 py-4">
+                      <input
+                        type="text"
+                        className="border-gray-300 rounded-md shadow-sm px-3 py-1 w-full"
+                        defaultValue="Silver benefits + Early access, Exclusive rewards"
+                        aria-label="Gold Tier Benefits"
+                      />
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <button className="text-red-600 hover:text-red-800 text-sm mr-2">Delete</button>
+                    </td>
+                  </tr>
+                  
+                  <tr>
+                    <td colSpan={4} className="px-6 py-4">
+                      <button className="text-blue-600 hover:text-blue-800 flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                        </svg>
+                        Add Tier Level
+                      </button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
-            <Switch id="birthday-bonus" defaultChecked />
           </div>
           
-          <div className="flex items-center justify-between">
-            <div>
-              <Label htmlFor="referral-bonus">Referral Bonus</Label>
-              <p className="text-sm text-muted-foreground">
-                Reward members for successful referrals
-              </p>
+          {/* Program Rules */}
+          <div>
+            <h2 className="text-xl font-semibold mb-4">Program Rules</h2>
+            <div className="border rounded-lg p-6 space-y-4">
+              <div className="flex items-center justify-between py-2 border-b">
+                <div>
+                  <h3 className="font-medium">Point Expiration</h3>
+                  <p className="text-sm text-gray-500">Set how long points remain valid</p>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <input
+                    type="number"
+                    className="border-gray-300 rounded-md shadow-sm px-3 py-1 w-16"
+                    defaultValue="12"
+                    aria-label="Point Expiration Value"
+                  />
+                  <select
+                    className="border-gray-300 rounded-md shadow-sm px-3 py-1"
+                    aria-label="Point Expiration Unit"
+                  >
+                    <option>Months</option>
+                    <option>Years</option>
+                  </select>
+                </div>
+              </div>
+              
+              <div className="flex items-center justify-between py-2 border-b">
+                <div>
+                  <h3 className="font-medium">Points Rounding</h3>
+                  <p className="text-sm text-gray-500">How to round partial points</p>
+                </div>
+                <select
+                  className="border-gray-300 rounded-md shadow-sm px-3 py-1"
+                  aria-label="Points Rounding Method"
+                >
+                  <option>Round up</option>
+                  <option>Round down</option>
+                  <option>Round to nearest</option>
+                </select>
+              </div>
+              
+              <div className="flex items-center justify-between py-2">
+                <div>
+                  <h3 className="font-medium">Point Cancelation</h3>
+                  <p className="text-sm text-gray-500">When returns occur</p>
+                </div>
+                <select
+                  className="border-gray-300 rounded-md shadow-sm px-3 py-1"
+                  aria-label="Point Cancelation Policy"
+                >
+                  <option>Deduct points</option>
+                  <option>Maintain points</option>
+                </select>
+              </div>
             </div>
-            <Switch id="referral-bonus" defaultChecked />
+          </div>
+          
+          <div className="flex justify-end mt-6">
+            <button className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600 mr-2">
+              Cancel
+            </button>
+            <button className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+              Save Changes
+            </button>
           </div>
         </div>
-      </CollapsibleSettingsSection>
+      </div>
     </div>
   );
 };
