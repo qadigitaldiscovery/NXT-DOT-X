@@ -20,8 +20,7 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const { preferences, setPreferences, loading } = useUserPreferences({
     module: 'system',
     key: 'theme',
-    defaultValue: localTheme,
-    skipFetch: !user // Skip fetching if no user to prevent invalid format errors
+    defaultValue: localTheme
   });
   
   // Get theme from localStorage or system preference as initial value
