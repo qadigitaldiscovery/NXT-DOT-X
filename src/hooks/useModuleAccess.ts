@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
@@ -62,15 +63,24 @@ export function useModuleAccess(): {
 
       if (modulesError) throw modulesError;
 
+      // Convert database result to ModuleAccess[] format
+      const modules: ModuleAccess[] = modulesData?.map(item => ({
+        id: item.id,
+        module_slug: item.module_slug,
+        submenu_slug: item.submenu_slug || undefined,
+        category: item.category || undefined,
+        is_enabled: item.is_enabled
+      })) || [];
+
       const userAccess: UserRoleInfo = {
         roles,
-        modules: modulesData || [],
+        modules,
         isAdmin,
         hasAccess: (moduleSlug, submenuSlug) => {
           if (isAdmin) return true; // Admins have access to everything
           
           // Check if the module is enabled for this user
-          const module = modulesData?.find(m => 
+          const module = modules?.find(m => 
             m.module_slug === moduleSlug && 
             (submenuSlug ? m.submenu_slug === submenuSlug : true)
           );

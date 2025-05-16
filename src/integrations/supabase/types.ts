@@ -425,6 +425,80 @@ export type Database = {
           },
         ]
       }
+      integration_configs: {
+        Row: {
+          config: Json
+          created_at: string | null
+          created_by: string | null
+          id: string
+          integration_type: string
+          is_active: boolean | null
+          name: string
+          updated_at: string | null
+        }
+        Insert: {
+          config: Json
+          created_at?: string | null
+          created_by?: string | null
+          id?: string
+          integration_type: string
+          is_active?: boolean | null
+          name: string
+          updated_at?: string | null
+        }
+        Update: {
+          config?: Json
+          created_at?: string | null
+          created_by?: string | null
+          id?: string
+          integration_type?: string
+          is_active?: boolean | null
+          name?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      integration_sync_settings: {
+        Row: {
+          created_at: string | null
+          entity_type: string
+          id: string
+          integration_id: string | null
+          is_enabled: boolean | null
+          last_synced_at: string | null
+          sync_frequency: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          entity_type: string
+          id?: string
+          integration_id?: string | null
+          is_enabled?: boolean | null
+          last_synced_at?: string | null
+          sync_frequency?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          entity_type?: string
+          id?: string
+          integration_id?: string | null
+          is_enabled?: boolean | null
+          last_synced_at?: string | null
+          sync_frequency?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "integration_sync_settings_integration_id_fkey"
+            columns: ["integration_id"]
+            isOneToOne: false
+            referencedRelation: "integration_configs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       kpi_indicators: {
         Row: {
           id: string
@@ -1766,6 +1840,16 @@ export type Database = {
       recommend_credit_limit: {
         Args: { annual_revenue: number; leverage_factor?: number }
         Returns: number
+      }
+      store_encrypted_credentials: {
+        Args: {
+          p_integration_id: string
+          p_url: string
+          p_db_name: string
+          p_username: string
+          p_password: string
+        }
+        Returns: Json
       }
     }
     Enums: {

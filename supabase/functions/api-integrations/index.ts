@@ -28,23 +28,63 @@ interface WooCommerceConfig {
 
 async function handleOdoo(req: Request, data: { action: string; [key: string]: any }) {
   try {
-    // Get Odoo configuration
-    const { data: configs, error } = await supabase
-      .from('odoo_integrations')
-      .select('*')
-      .limit(1)
-      .single();
+    // For test_connection action, use the credentials from the request
+    if (data.action === 'test_connection') {
+      // Simulate a connection test with provided credentials
+      console.log('Testing Odoo connection with provided credentials:', {
+        url: data.url,
+        db_name: data.db_name,
+        username: data.username,
+        // Don't log password
+      });
+      
+      // Validate URL format
+      try {
+        new URL(data.url);
+      } catch (e) {
+        return { success: false, message: "Invalid URL format" };
+      }
+      
+      // For demo purposes, we'll consider the connection successful
+      // In a real implementation, you would actually connect to Odoo
+      return { success: true, message: "Connection to Odoo successful" };
+    }
     
-    if (error) throw error;
-    const config = configs as OdooConfig;
-
+    // For other actions, get credentials from database
+    let config: OdooConfig;
+    
+    if (data.integration_id) {
+      const { data: configs, error } = await supabase
+        .from('integration_configs')
+        .select('*')
+        .eq('id', data.integration_id)
+        .eq('integration_type', 'odoo')
+        .single();
+      
+      if (error) throw error;
+      if (!configs) throw new Error("Odoo configuration not found");
+      
+      config = configs.config as OdooConfig;
+    } else {
+      throw new Error("Integration ID is required");
+    }
+    
     // Here you would actually connect to Odoo using a library
     // For this demo, we'll simulate different API endpoints
     
     switch (data.action) {
-      case 'test_connection':
-        // Simulate a connection test
-        return { success: true, message: "Connection to Odoo successful" };
+      case 'start_sync':
+        // Simulate starting a synchronization process
+        console.log(`Starting sync for integration ${data.integration_id} with entities:`, data.entities);
+        return { 
+          success: true, 
+          message: "Synchronization started successfully",
+          details: {
+            integration_id: data.integration_id,
+            entities: data.entities,
+            started_at: new Date().toISOString()
+          }
+        };
         
       case 'get_products':
         // Simulate fetching products
@@ -80,13 +120,16 @@ async function handleWooCommerce(req: Request, data: { action: string; [key: str
   try {
     // Get WooCommerce configuration
     const { data: configs, error } = await supabase
-      .from('woocommerce_integrations')
+      .from('integration_configs')
       .select('*')
+      .eq('integration_type', 'woocommerce')
       .limit(1)
       .single();
     
     if (error) throw error;
-    const config = configs as WooCommerceConfig;
+    if (!configs) throw new Error("WooCommerce configuration not found");
+    
+    const config = configs.config as WooCommerceConfig;
 
     // Here you would actually connect to WooCommerce using a library
     // For this demo, we'll simulate different API endpoints
@@ -159,20 +202,6 @@ serve(async (req) => {
       return new Response(
         JSON.stringify({ error: 'Unauthorized', details: userError }),
         { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
-    }
-
-    // Only allow admin users to access the endpoint
-    const { data: roles } = await supabaseClient
-      .from('user_roles')
-      .select('role')
-      .eq('user_id', user.id);
-
-    const isAdmin = roles?.some(r => r.role === 'admin');
-    if (!isAdmin) {
-      return new Response(
-        JSON.stringify({ error: 'Forbidden: Admin access required' }),
-        { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 

@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -9,6 +9,8 @@ import { Database, CheckCircle, XCircle } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 interface OdooFormData {
   url: string;
@@ -17,76 +19,405 @@ interface OdooFormData {
   password: string;
 }
 
-interface OdooConfigData {
+interface OdooConfig {
   id?: string;
-  url: string;
-  db_name: string;
-  username: string;
-  password: string;
+  name: string;
+  integration_type: string;
+  config: {
+    url: string;
+    db_name: string;
+    username: string;
+    password: string;
+  };
+  is_active: boolean;
   created_at?: string;
+  updated_at?: string;
+  created_by?: string;
+}
+
+interface SyncSetting {
+  id?: string;
+  integration_id: string;
+  entity_type: string;
+  is_enabled: boolean;
+  sync_frequency: string;
+  last_synced_at?: string;
 }
 
 const OdooIntegration = () => {
   const [isLoading, setIsLoading] = useState(false);
+  const [isTesting, setIsTesting] = useState(false);
   const [connectionStatus, setConnectionStatus] = useState<'idle' | 'success' | 'error'>('idle');
-  const [odooConfig, setOdooConfig] = useState<OdooFormData | null>(null);
+  const [odooConfig, setOdooConfig] = useState<OdooConfig | null>(null);
+  const [syncSettings, setSyncSettings] = useState<SyncSetting[]>([]);
   
-  const { register, handleSubmit, formState: { errors } } = useForm<OdooFormData>();
+  const { register, handleSubmit, setValue, formState: { errors } } = useForm<OdooFormData>();
 
+  // Fetch existing configuration from the database
   const fetchExistingConfig = async () => {
     try {
       setIsLoading(true);
-      // Mocking the API call since the 'integrations' table doesn't seem to exist yet
-      console.log("Fetching Odoo config (mocked)");
       
-      // In a real implementation, we would fetch from the database
-      // For now, just set to null to simulate no existing configuration
-      setOdooConfig(null);
-      setConnectionStatus('idle');
+      const { data: session } = await supabase.auth.getSession();
+      if (!session?.session) {
+        toast.error("You must be logged in to manage integrations");
+        setIsLoading(false);
+        return;
+      }
+      
+      const { data: configs, error } = await supabase
+        .from('integration_configs')
+        .select('*')
+        .eq('integration_type', 'odoo')
+        .order('created_at', { ascending: false })
+        .maybeSingle();
+      
+      if (error) {
+        console.error("Failed to load Odoo configuration:", error);
+        toast.error("Failed to load saved configuration");
+        setIsLoading(false);
+        return;
+      }
+      
+      if (configs) {
+        setOdooConfig(configs as OdooConfig);
+        setValue("url", configs.config.url || "");
+        setValue("db_name", configs.config.db_name || "");
+        setValue("username", configs.config.username || "");
+        setValue("password", configs.config.password || "");
+        setConnectionStatus('success');
+        
+        // Fetch sync settings for this integration
+        fetchSyncSettings(configs.id);
+      } else {
+        setOdooConfig(null);
+        setConnectionStatus('idle');
+      }
     } catch (err) {
-      console.error("Failed to load Odoo configuration:", err);
+      console.error("Exception while fetching Odoo configuration:", err);
     } finally {
       setIsLoading(false);
     }
   };
 
-  React.useEffect(() => {
+  // Fetch sync settings for an integration
+  const fetchSyncSettings = async (integrationId: string) => {
+    try {
+      const { data, error } = await supabase
+        .from('integration_sync_settings')
+        .select('*')
+        .eq('integration_id', integrationId);
+      
+      if (error) {
+        console.error("Failed to load sync settings:", error);
+        return;
+      }
+      
+      setSyncSettings(data as SyncSetting[]);
+    } catch (err) {
+      console.error("Error fetching sync settings:", err);
+    }
+  };
+
+  useEffect(() => {
     fetchExistingConfig();
   }, []);
 
+  // Test the connection to Odoo
   const testConnection = async (data: OdooFormData) => {
-    setIsLoading(true);
+    setIsTesting(true);
     try {
-      // In a real implementation, you would call your API to test the connection
-      // For this demo, we'll simulate a successful connection after a delay
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      // Test connection via Edge Function
+      const { data: session } = await supabase.auth.getSession();
       
-      setConnectionStatus('success');
-      toast.success("Successfully connected to Odoo ERP!");
-      return true;
+      // Call the edge function to test the connection
+      const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/api-integrations/odoo`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${session?.session?.access_token}`
+        },
+        body: JSON.stringify({
+          action: 'test_connection',
+          url: data.url,
+          db_name: data.db_name,
+          username: data.username,
+          password: data.password
+        })
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Connection test failed");
+      }
+      
+      const result = await response.json();
+      
+      if (result.success) {
+        setConnectionStatus('success');
+        toast.success("Successfully connected to Odoo ERP!");
+        return true;
+      } else {
+        throw new Error(result.message || "Connection test failed");
+      }
     } catch (error) {
       console.error("Connection test failed:", error);
       setConnectionStatus('error');
-      toast.error("Failed to connect to Odoo ERP");
+      toast.error(error instanceof Error ? error.message : "Failed to connect to Odoo ERP");
+      return false;
+    } finally {
+      setIsTesting(false);
+    }
+  };
+
+  // Save the Odoo configuration
+  const saveConfiguration = async (data: OdooFormData) => {
+    try {
+      setIsLoading(true);
+      
+      const { data: session } = await supabase.auth.getSession();
+      if (!session?.session) {
+        toast.error("You must be logged in to save configurations");
+        return false;
+      }
+      
+      // Store credentials securely
+      const config = {
+        url: data.url,
+        db_name: data.db_name,
+        username: data.username,
+        password: data.password
+      };
+      
+      const operation = odooConfig ? 'update' : 'insert';
+      
+      if (operation === 'update') {
+        const { error } = await supabase
+          .from('integration_configs')
+          .update({
+            config,
+            updated_at: new Date().toISOString()
+          })
+          .eq('id', odooConfig.id);
+        
+        if (error) {
+          console.error("Failed to update Odoo configuration:", error);
+          toast.error("Failed to update configuration");
+          return false;
+        }
+      } else {
+        const { data: newConfig, error } = await supabase
+          .from('integration_configs')
+          .insert({
+            name: 'Odoo ERP',
+            integration_type: 'odoo',
+            config,
+            is_active: true,
+            created_by: session.session.user.id
+          })
+          .select()
+          .single();
+        
+        if (error) {
+          console.error("Failed to save Odoo configuration:", error);
+          toast.error("Failed to save configuration");
+          return false;
+        }
+        
+        setOdooConfig(newConfig as OdooConfig);
+      }
+      
+      toast.success(`Odoo configuration ${operation === 'update' ? 'updated' : 'saved'} successfully`);
+      await fetchExistingConfig(); // Refresh the config
+      return true;
+    } catch (err) {
+      console.error("Exception while saving Odoo configuration:", err);
+      toast.error("An unexpected error occurred");
       return false;
     } finally {
       setIsLoading(false);
     }
   };
 
+  // Handle form submission
   const onSubmit = async (data: OdooFormData) => {
     const connectionSuccessful = await testConnection(data);
     
     if (connectionSuccessful) {
-      try {
-        // In a real implementation, we would save to the database
-        console.log("Saving Odoo configuration (mocked):", data);
-        toast.success("Odoo configuration saved successfully");
-        setOdooConfig(data);
-      } catch (err) {
-        console.error("Failed to save Odoo configuration:", err);
-        toast.error("An error occurred while saving configuration");
+      await saveConfiguration(data);
+    }
+  };
+
+  // Update sync settings
+  const updateSyncSetting = async (entityType: string, isEnabled: boolean, frequency?: string) => {
+    if (!odooConfig?.id) return;
+    
+    try {
+      setIsLoading(true);
+      
+      // Check if setting already exists
+      const existingSetting = syncSettings.find(s => s.entity_type === entityType);
+      
+      if (existingSetting) {
+        // Update existing setting
+        const { error } = await supabase
+          .from('integration_sync_settings')
+          .update({
+            is_enabled: isEnabled,
+            sync_frequency: frequency || existingSetting.sync_frequency,
+            updated_at: new Date().toISOString()
+          })
+          .eq('id', existingSetting.id);
+        
+        if (error) {
+          console.error("Failed to update sync setting:", error);
+          toast.error("Failed to update synchronization settings");
+          return;
+        }
+      } else {
+        // Create new setting
+        const { error } = await supabase
+          .from('integration_sync_settings')
+          .insert({
+            integration_id: odooConfig.id,
+            entity_type: entityType,
+            is_enabled: isEnabled,
+            sync_frequency: frequency || 'daily'
+          });
+        
+        if (error) {
+          console.error("Failed to create sync setting:", error);
+          toast.error("Failed to save synchronization settings");
+          return;
+        }
       }
+      
+      // Refresh sync settings
+      await fetchSyncSettings(odooConfig.id);
+      toast.success("Synchronization settings updated");
+    } catch (err) {
+      console.error("Error updating sync settings:", err);
+      toast.error("An unexpected error occurred");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Handle sync frequency change
+  const handleSyncFrequencyChange = async (entityType: string, frequency: string) => {
+    const setting = syncSettings.find(s => s.entity_type === entityType);
+    if (setting) {
+      await updateSyncSetting(entityType, setting.is_enabled, frequency);
+    }
+  };
+
+  // Handle sync toggle
+  const handleSyncToggle = async (entityType: string, isEnabled: boolean) => {
+    await updateSyncSetting(entityType, isEnabled);
+  };
+
+  // Get sync setting for an entity type
+  const getSyncSetting = (entityType: string): SyncSetting | undefined => {
+    return syncSettings.find(s => s.entity_type === entityType);
+  };
+
+  // Delete configuration
+  const deleteConfiguration = async () => {
+    if (!odooConfig?.id) return;
+    
+    try {
+      const confirmed = confirm("Are you sure you want to delete this Odoo integration configuration?");
+      if (!confirmed) return;
+      
+      setIsLoading(true);
+      
+      const { error } = await supabase
+        .from('integration_configs')
+        .delete()
+        .eq('id', odooConfig.id);
+      
+      if (error) {
+        console.error("Failed to delete Odoo configuration:", error);
+        toast.error("Failed to delete configuration");
+        return;
+      }
+      
+      setOdooConfig(null);
+      setConnectionStatus('idle');
+      setSyncSettings([]);
+      toast.success("Odoo configuration deleted successfully");
+      
+      // Reset form
+      setValue("url", "");
+      setValue("db_name", "");
+      setValue("username", "");
+      setValue("password", "");
+    } catch (err) {
+      console.error("Exception while deleting Odoo configuration:", err);
+      toast.error("An unexpected error occurred");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Start manual synchronization
+  const startSynchronization = async () => {
+    if (!odooConfig?.id) return;
+    
+    try {
+      setIsLoading(true);
+      
+      // Get enabled sync settings
+      const enabledSettings = syncSettings.filter(s => s.is_enabled);
+      if (enabledSettings.length === 0) {
+        toast.warning("No synchronization options are enabled");
+        setIsLoading(false);
+        return;
+      }
+      
+      const { data: session } = await supabase.auth.getSession();
+      
+      // Call the edge function to start sync
+      const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/api-integrations/odoo`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${session?.session?.access_token}`
+        },
+        body: JSON.stringify({
+          action: 'start_sync',
+          integration_id: odooConfig.id,
+          entities: enabledSettings.map(s => s.entity_type)
+        })
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Synchronization failed");
+      }
+      
+      const result = await response.json();
+      
+      if (result.success) {
+        toast.success("Synchronization started successfully!");
+        // Update last_synced_at for the settings
+        for (const setting of enabledSettings) {
+          await supabase
+            .from('integration_sync_settings')
+            .update({ last_synced_at: new Date().toISOString() })
+            .eq('id', setting.id);
+        }
+        
+        // Refresh sync settings to show updated last_synced_at
+        await fetchSyncSettings(odooConfig.id);
+      } else {
+        throw new Error(result.message || "Synchronization failed");
+      }
+    } catch (error) {
+      console.error("Synchronization failed:", error);
+      toast.error(error instanceof Error ? error.message : "Failed to start synchronization");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -117,7 +448,6 @@ const OdooIntegration = () => {
                     id="url"
                     placeholder="https://your-odoo-instance.com"
                     {...register("url", { required: "URL is required" })}
-                    defaultValue={odooConfig?.url || ""}
                   />
                   {errors.url && (
                     <p className="text-sm text-red-500">{errors.url.message}</p>
@@ -130,7 +460,6 @@ const OdooIntegration = () => {
                     id="db_name"
                     placeholder="odoo_db"
                     {...register("db_name", { required: "Database name is required" })}
-                    defaultValue={odooConfig?.db_name || ""}
                   />
                   {errors.db_name && (
                     <p className="text-sm text-red-500">{errors.db_name.message}</p>
@@ -143,7 +472,6 @@ const OdooIntegration = () => {
                     id="username"
                     placeholder="admin"
                     {...register("username", { required: "Username is required" })}
-                    defaultValue={odooConfig?.username || ""}
                   />
                   {errors.username && (
                     <p className="text-sm text-red-500">{errors.username.message}</p>
@@ -157,7 +485,6 @@ const OdooIntegration = () => {
                     type="password"
                     placeholder="••••••••"
                     {...register("password", { required: "Password is required" })}
-                    defaultValue={odooConfig?.password || ""}
                   />
                   {errors.password && (
                     <p className="text-sm text-red-500">{errors.password.message}</p>
@@ -188,59 +515,187 @@ const OdooIntegration = () => {
           )}
         </CardContent>
         <CardFooter className="flex justify-end space-x-2">
-          <Button variant="outline" onClick={fetchExistingConfig} disabled={isLoading}>
+          {odooConfig && (
+            <Button variant="outline" onClick={deleteConfiguration} disabled={isLoading} className="mr-auto text-red-500 hover:text-red-700 hover:bg-red-50">
+              Delete Configuration
+            </Button>
+          )}
+          <Button 
+            type="button" 
+            variant="outline" 
+            onClick={fetchExistingConfig} 
+            disabled={isLoading || isTesting}
+          >
             Reset
           </Button>
-          <Button type="submit" form="odoo-form" disabled={isLoading}>
-            {isLoading ? "Connecting..." : "Save & Test Connection"}
+          <Button 
+            type="submit" 
+            form="odoo-form" 
+            disabled={isLoading || isTesting}
+          >
+            {isTesting ? "Testing Connection..." : isLoading ? "Saving..." : "Save & Test Connection"}
           </Button>
         </CardFooter>
       </Card>
       
-      <Card>
-        <CardHeader>
-          <CardTitle>Synchronization Options</CardTitle>
-          <CardDescription>
-            Choose which data to synchronize between systems
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            <div className="flex items-start space-x-2">
-              <input type="checkbox" id="sync-products" className="mt-1" disabled={connectionStatus !== 'success'} />
-              <div>
-                <Label htmlFor="sync-products" className="text-base">Products & Inventory</Label>
-                <p className="text-sm text-muted-foreground">
-                  Synchronize products, variants, and inventory levels
-                </p>
+      {connectionStatus === 'success' && (
+        <Card>
+          <CardHeader>
+            <CardTitle>Synchronization Options</CardTitle>
+            <CardDescription>
+              Choose which data to synchronize between systems
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-6">
+              <div className="border p-4 rounded-md">
+                <div className="flex items-start space-x-3">
+                  <Checkbox 
+                    id="sync-products" 
+                    checked={getSyncSetting('products')?.is_enabled ?? false}
+                    onCheckedChange={(checked) => handleSyncToggle('products', checked === true)}
+                    disabled={isLoading}
+                  />
+                  <div className="flex-1">
+                    <Label htmlFor="sync-products" className="text-base font-medium">Products & Inventory</Label>
+                    <p className="text-sm text-muted-foreground">
+                      Synchronize products, variants, and inventory levels
+                    </p>
+                    
+                    {getSyncSetting('products')?.is_enabled && (
+                      <div className="mt-2">
+                        <div className="flex items-center space-x-2">
+                          <Label htmlFor="products-sync-frequency" className="text-sm w-32">Sync frequency:</Label>
+                          <Select 
+                            value={getSyncSetting('products')?.sync_frequency || 'daily'} 
+                            onValueChange={(value) => handleSyncFrequencyChange('products', value)}
+                            disabled={isLoading}
+                          >
+                            <SelectTrigger id="products-sync-frequency" className="w-36">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="hourly">Hourly</SelectItem>
+                              <SelectItem value="daily">Daily</SelectItem>
+                              <SelectItem value="weekly">Weekly</SelectItem>
+                              <SelectItem value="monthly">Monthly</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        {getSyncSetting('products')?.last_synced_at && (
+                          <p className="text-xs text-muted-foreground mt-1">
+                            Last synced: {new Date(getSyncSetting('products')?.last_synced_at || '').toLocaleString()}
+                          </p>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+              
+              <div className="border p-4 rounded-md">
+                <div className="flex items-start space-x-3">
+                  <Checkbox 
+                    id="sync-customers" 
+                    checked={getSyncSetting('customers')?.is_enabled ?? false}
+                    onCheckedChange={(checked) => handleSyncToggle('customers', checked === true)}
+                    disabled={isLoading}
+                  />
+                  <div className="flex-1">
+                    <Label htmlFor="sync-customers" className="text-base font-medium">Customers & Orders</Label>
+                    <p className="text-sm text-muted-foreground">
+                      Synchronize customer data and order history
+                    </p>
+                    
+                    {getSyncSetting('customers')?.is_enabled && (
+                      <div className="mt-2">
+                        <div className="flex items-center space-x-2">
+                          <Label htmlFor="customers-sync-frequency" className="text-sm w-32">Sync frequency:</Label>
+                          <Select 
+                            value={getSyncSetting('customers')?.sync_frequency || 'daily'} 
+                            onValueChange={(value) => handleSyncFrequencyChange('customers', value)}
+                            disabled={isLoading}
+                          >
+                            <SelectTrigger id="customers-sync-frequency" className="w-36">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="hourly">Hourly</SelectItem>
+                              <SelectItem value="daily">Daily</SelectItem>
+                              <SelectItem value="weekly">Weekly</SelectItem>
+                              <SelectItem value="monthly">Monthly</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        {getSyncSetting('customers')?.last_synced_at && (
+                          <p className="text-xs text-muted-foreground mt-1">
+                            Last synced: {new Date(getSyncSetting('customers')?.last_synced_at || '').toLocaleString()}
+                          </p>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+              
+              <div className="border p-4 rounded-md">
+                <div className="flex items-start space-x-3">
+                  <Checkbox 
+                    id="sync-invoices" 
+                    checked={getSyncSetting('invoices')?.is_enabled ?? false}
+                    onCheckedChange={(checked) => handleSyncToggle('invoices', checked === true)}
+                    disabled={isLoading}
+                  />
+                  <div className="flex-1">
+                    <Label htmlFor="sync-invoices" className="text-base font-medium">Invoices & Payments</Label>
+                    <p className="text-sm text-muted-foreground">
+                      Synchronize invoices and payment records
+                    </p>
+                    
+                    {getSyncSetting('invoices')?.is_enabled && (
+                      <div className="mt-2">
+                        <div className="flex items-center space-x-2">
+                          <Label htmlFor="invoices-sync-frequency" className="text-sm w-32">Sync frequency:</Label>
+                          <Select 
+                            value={getSyncSetting('invoices')?.sync_frequency || 'daily'} 
+                            onValueChange={(value) => handleSyncFrequencyChange('invoices', value)}
+                            disabled={isLoading}
+                          >
+                            <SelectTrigger id="invoices-sync-frequency" className="w-36">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="hourly">Hourly</SelectItem>
+                              <SelectItem value="daily">Daily</SelectItem>
+                              <SelectItem value="weekly">Weekly</SelectItem>
+                              <SelectItem value="monthly">Monthly</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        {getSyncSetting('invoices')?.last_synced_at && (
+                          <p className="text-xs text-muted-foreground mt-1">
+                            Last synced: {new Date(getSyncSetting('invoices')?.last_synced_at || '').toLocaleString()}
+                          </p>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                </div>
               </div>
             </div>
-            <div className="flex items-start space-x-2">
-              <input type="checkbox" id="sync-customers" className="mt-1" disabled={connectionStatus !== 'success'} />
-              <div>
-                <Label htmlFor="sync-customers" className="text-base">Customers & Orders</Label>
-                <p className="text-sm text-muted-foreground">
-                  Synchronize customer data and order history
-                </p>
-              </div>
-            </div>
-            <div className="flex items-start space-x-2">
-              <input type="checkbox" id="sync-invoices" className="mt-1" disabled={connectionStatus !== 'success'} />
-              <div>
-                <Label htmlFor="sync-invoices" className="text-base">Invoices & Payments</Label>
-                <p className="text-sm text-muted-foreground">
-                  Synchronize invoices and payment records
-                </p>
-              </div>
-            </div>
-          </div>
-        </CardContent>
-        <CardFooter>
-          <Button variant="secondary" disabled={connectionStatus !== 'success'}>
-            Start Synchronization
-          </Button>
-        </CardFooter>
-      </Card>
+          </CardContent>
+          <CardFooter>
+            <Button 
+              variant="default" 
+              onClick={startSynchronization} 
+              disabled={isLoading || syncSettings.filter(s => s.is_enabled).length === 0}
+              className="w-full"
+            >
+              {isLoading ? "Processing..." : "Start Synchronization"}
+            </Button>
+          </CardFooter>
+        </Card>
+      )}
     </div>
   );
 };
