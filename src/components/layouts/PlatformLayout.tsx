@@ -1,6 +1,6 @@
 import React, { ReactNode, memo, useCallback } from 'react';
 import { NavCategory, NavItem } from '@/components/layout/sidebar/types';
-import { Sidebar } from '@/components/layout/sidebar/Sidebar';
+import { Sidebar } from '@/components/layout/sidebar';
 import Topbar from '@/components/layouts/Topbar';
 import { navCategories as globalNavCategories } from '@/components/layout/sidebar/NavigationConfig';
 

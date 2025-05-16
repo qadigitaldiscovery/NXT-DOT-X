@@ -135,7 +135,7 @@ const Sidebar: React.FC<SidebarProps> = ({
         {/* Icon-Only Navigation (Visible when collapsed on desktop) */}
         {!isOpen && !isMobile && (
           <CollapsedSidebar 
-            navItems={allCategories}
+            navItems={allCategories.flatMap(cat => cat.items)}
             textColor={textColor}
             activeBgColor={activeBgColor}
             activeTextColor={activeTextColor}

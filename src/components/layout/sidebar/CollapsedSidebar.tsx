@@ -51,7 +51,7 @@ export const CollapsedSidebar = ({
   };
 
   // Determine if navItems is an array of NavItems or NavCategory
-  const isNavItemArray = navItems.length > 0 && 'label' in navItems[0] && !('items' in navItems[0]);
+  const isNavItemArray = navItems.length > 0 && 'href' in navItems[0];
   
   // Collect all items that are not children
   const allItems = isNavItemArray 

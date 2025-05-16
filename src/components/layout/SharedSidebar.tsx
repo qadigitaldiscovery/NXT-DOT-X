@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -86,7 +85,7 @@ export const SharedSidebar = ({
         {/* Icon-Only Navigation (Visible when collapsed on desktop) */}
         {!open && !isMobile && (
           <CollapsedSidebar 
-            navItems={navItems}
+            navItems={navItems.flatMap(cat => cat.items)}
             textColor={textColor}
             activeBgColor={activeBgColor}
             activeTextColor={activeTextColor}
