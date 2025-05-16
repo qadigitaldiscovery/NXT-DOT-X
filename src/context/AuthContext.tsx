@@ -21,6 +21,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
+  const [isInitialized, setIsInitialized] = useState(false);
   
   // Mock users for demonstration
   const mockUsers = [
@@ -52,23 +53,48 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   // Check if user is already logged in
   useEffect(() => {
-    const storedUser = localStorage.getItem('user');
-    const isAuth = localStorage.getItem('isAuthenticated') === 'true';
-    
-    if (storedUser && isAuth) {
-      setUser(JSON.parse(storedUser));
-    } else {
-      // Auto-login for development
-      console.log('Auto-logging in as admin for development');
-      const adminUser = mockUsers.find(u => u.username === 'admin');
-      if (adminUser) {
-        const { password, ...userWithoutPassword } = adminUser;
-        setUser(userWithoutPassword as User);
-        localStorage.setItem('isAuthenticated', 'true');
-        localStorage.setItem('user', JSON.stringify(userWithoutPassword));
+    const initAuth = () => {
+      try {
+        const storedUser = localStorage.getItem('user');
+        const isAuth = localStorage.getItem('isAuthenticated') === 'true';
+        
+        if (storedUser && isAuth) {
+          const parsedUser = JSON.parse(storedUser);
+          console.log('Found stored user:', parsedUser);
+          setUser(parsedUser);
+        } else {
+          // Auto-login for development
+          console.log('Auto-logging in as admin for development');
+          const adminUser = mockUsers.find(u => u.username === 'admin');
+          if (adminUser) {
+            const { password, ...userWithoutPassword } = adminUser;
+            const userToStore = userWithoutPassword as User;
+            setUser(userToStore);
+            localStorage.setItem('isAuthenticated', 'true');
+            localStorage.setItem('user', JSON.stringify(userToStore));
+            console.log('Auto-login complete, user stored in localStorage and state');
+          } else {
+            console.error('Admin user not found in mock data');
+          }
+        }
+      } catch (error) {
+        console.error('Error during authentication initialization:', error);
+      } finally {
+        setIsInitialized(true);
       }
-    }
+    };
+
+    initAuth();
   }, []);
+
+  // Make sure user is properly set in localStorage when it changes
+  useEffect(() => {
+    if (isInitialized && user) {
+      localStorage.setItem('isAuthenticated', 'true');
+      localStorage.setItem('user', JSON.stringify(user));
+      console.log('User state updated and saved to localStorage:', user);
+    }
+  }, [isInitialized, user]);
 
   const login = async (usernameOrEmail: string, password: string): Promise<boolean> => {
     // In a real app, this would be an API call

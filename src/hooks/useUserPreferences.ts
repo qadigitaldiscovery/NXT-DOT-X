@@ -46,7 +46,7 @@ export function useUserPreferences({ module, key, defaultValue }: PreferencesOpt
     if (fetchInProgressRef.current) return;
     
     // Limit fetch attempts to prevent refresh loops
-    if (fetchAttemptCount.current > 2 && !user?.id) {
+    if (fetchAttemptCount.current > 3 && !user?.id) {
       setLoading(false);
       return;
     }
@@ -74,13 +74,17 @@ export function useUserPreferences({ module, key, defaultValue }: PreferencesOpt
     const fetchPreferences = async () => {
       try {
         fetchInProgressRef.current = true;
+        console.log(`Fetching preferences for user ${user.id}, module ${module}, key ${key}`);
+        
+        // Sanitize key to ensure it doesn't have invalid characters
+        const sanitizedKey = key.replace(/[^a-zA-Z0-9_-]/g, '_');
         
         const { data, error } = await supabase
           .from('user_preferences')
           .select('value')
           .eq('user_id', user.id)
           .eq('module', module)
-          .eq('key', key)
+          .eq('key', sanitizedKey)
           .maybeSingle();
 
         if (!isMounted.current) return;
@@ -90,9 +94,11 @@ export function useUserPreferences({ module, key, defaultValue }: PreferencesOpt
         }
 
         if (data) {
+          console.log(`Found preferences for user ${user.id}:`, data.value);
           setPreferences(data.value);
         } else {
           // No stored preferences, use default
+          console.log(`No stored preferences found, using default for ${module}.${sanitizedKey}`);
           setPreferences(defaultValue);
           
           // Only save default if we have a valid user ID
@@ -101,7 +107,7 @@ export function useUserPreferences({ module, key, defaultValue }: PreferencesOpt
               await supabase.from('user_preferences').insert({
                 user_id: user.id,
                 module,
-                key,
+                key: sanitizedKey,
                 value: defaultValue,
               });
             } catch (insertErr) {
@@ -155,13 +161,16 @@ export function useUserPreferences({ module, key, defaultValue }: PreferencesOpt
         console.log('Invalid user ID format, preferences will not be saved');
         return { success: false };
       }
+      
+      // Sanitize key to ensure it doesn't have invalid characters
+      const sanitizedKey = key.replace(/[^a-zA-Z0-9_-]/g, '_');
 
       const { data, error } = await supabase
         .from('user_preferences')
         .select('id')
         .eq('user_id', user.id)
         .eq('module', module)
-        .eq('key', key)
+        .eq('key', sanitizedKey)
         .maybeSingle();
 
       if (error && error.code !== 'PGRST116') {
@@ -179,7 +188,7 @@ export function useUserPreferences({ module, key, defaultValue }: PreferencesOpt
         await supabase.from('user_preferences').insert({
           user_id: user.id,
           module,
-          key,
+          key: sanitizedKey,
           value: newValue,
         });
       }
