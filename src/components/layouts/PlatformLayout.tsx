@@ -1,8 +1,8 @@
-
 import React, { ReactNode, memo, useCallback } from 'react';
 import { NavCategory, NavItem } from '@/components/layout/sidebar/types';
 import { Sidebar } from '@/components/layout/sidebar';
 import Topbar from '@/components/layouts/Topbar';
+import { navCategories as globalNavCategories } from '@/components/layout/sidebar/NavigationConfig';
 
 export interface PlatformLayoutProps {
   children: ReactNode;
@@ -14,6 +14,7 @@ export interface PlatformLayoutProps {
   moduleTitle?: string;
   onSidebarStateChange?: (state: string) => void;
   initialSidebarState?: string;
+  useGlobalNavigation?: boolean;
 }
 
 // Use memo to prevent unnecessary re-renders
@@ -27,6 +28,7 @@ export const PlatformLayout: React.FC<PlatformLayoutProps> = memo(({
   moduleTitle = '',
   onSidebarStateChange,
   initialSidebarState,
+  useGlobalNavigation = true,
 }) => {
   // Memoize the handler to prevent re-renders and adapt the function signature
   const handleSidebarToggle = useCallback(() => {
@@ -37,11 +39,16 @@ export const PlatformLayout: React.FC<PlatformLayoutProps> = memo(({
     }
   }, [onSidebarStateChange, initialSidebarState]);
 
+  // Use provided navigation or fall back to global navigation
+  const navigationCategories = navCategories.length > 0 
+    ? navCategories 
+    : (useGlobalNavigation ? globalNavCategories : []);
+
   return (
     <div className="flex h-screen bg-gray-50 dark:bg-gray-900">
       <Sidebar
         navItems={navItems}
-        navCategories={navCategories}
+        navCategories={navigationCategories}
         customFooterContent={customFooterContent}
         removeBottomToggle={removeBottomToggle}
         showToggleButton={showTopLeftToggle}

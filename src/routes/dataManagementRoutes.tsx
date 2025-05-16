@@ -3,6 +3,7 @@ import ProtectedRoute from "@/components/ProtectedRoute";
 import { PlatformLayout } from "@/components/layouts/PlatformLayout";
 import { Users, Settings, BarChart3, FileUp, Home, Database, Truck, Building, Calculator, LineChart, ArrowDownUp, FileDown, FileArchive, BrainCircuit, Server } from 'lucide-react';
 import { NavCategory } from '@/components/layout/sidebar/types';
+import { navCategories as globalNavCategories } from '@/components/layout/sidebar/NavigationConfig';
 
 // Data Management Pages
 import DashboardHome from "@/pages/data-management/DashboardHome";
@@ -24,7 +25,10 @@ import DataConnections from "@/pages/data-management/connections/DataConnections
 import ExportData from "@/pages/data-management/data/ExportData";
 import CustomersPage from "@/pages/data-management/customers/CustomersPage";
 
-export const dataNavCategories: NavCategory[] = [
+// Filter the data management category from global navigation
+const dataManagementCategory = globalNavCategories.find(category => category.label === "Data Management");
+
+export const dataNavCategories: NavCategory[] = dataManagementCategory ? [dataManagementCategory] : [
   {
     name: "DATA MANAGEMENT",
     label: "DATA MANAGEMENT",
@@ -69,7 +73,7 @@ export const DataManagementRoutes = () => {
         {/* Main Dashboard */}
         <Route index element={
           <ProtectedRoute>
-            <PlatformLayout moduleTitle="Data Management Dashboard" navCategories={dataNavCategories}>
+            <PlatformLayout moduleTitle="Data Management Dashboard" useGlobalNavigation={true}>
               <DashboardHome />
             </PlatformLayout>
           </ProtectedRoute>
@@ -78,7 +82,7 @@ export const DataManagementRoutes = () => {
         {/* Settings Page */}
         <Route path="settings" element={
           <ProtectedRoute>
-            <PlatformLayout moduleTitle="Data Management Settings" navCategories={dataNavCategories}>
+            <PlatformLayout moduleTitle="Data Management Settings" useGlobalNavigation={true}>
               <DataManagementSettings />
             </PlatformLayout>
           </ProtectedRoute>
@@ -87,7 +91,7 @@ export const DataManagementRoutes = () => {
         {/* Supplier Management */}
         <Route path="suppliers" element={
           <ProtectedRoute>
-            <PlatformLayout moduleTitle="Suppliers" navCategories={dataNavCategories}>
+            <PlatformLayout moduleTitle="Suppliers" useGlobalNavigation={true}>
               <SuppliersPage />
             </PlatformLayout>
           </ProtectedRoute>
@@ -96,7 +100,7 @@ export const DataManagementRoutes = () => {
         {/* Customer Management */}
         <Route path="customers" element={
           <ProtectedRoute>
-            <PlatformLayout moduleTitle="Customers" navCategories={dataNavCategories}>
+            <PlatformLayout moduleTitle="Customers" useGlobalNavigation={true}>
               <CustomersPage />
             </PlatformLayout>
           </ProtectedRoute>
@@ -104,7 +108,7 @@ export const DataManagementRoutes = () => {
         
         <Route path="supplier-costing" element={
           <ProtectedRoute>
-            <PlatformLayout moduleTitle="Supplier Costing" navCategories={dataNavCategories}>
+            <PlatformLayout moduleTitle="Supplier Costing" useGlobalNavigation={true}>
               <SupplierCosting />
             </PlatformLayout>
           </ProtectedRoute>
@@ -113,7 +117,7 @@ export const DataManagementRoutes = () => {
         {/* Cost Management */}
         <Route path="cost-management" element={
           <ProtectedRoute>
-            <PlatformLayout moduleTitle="Cost Management" navCategories={dataNavCategories}>
+            <PlatformLayout moduleTitle="Cost Management" useGlobalNavigation={true}>
               <CostDashboard />
             </PlatformLayout>
           </ProtectedRoute>
@@ -121,7 +125,7 @@ export const DataManagementRoutes = () => {
         
         <Route path="cost-analysis" element={
           <ProtectedRoute>
-            <PlatformLayout moduleTitle="Cost Analysis" navCategories={dataNavCategories}>
+            <PlatformLayout moduleTitle="Cost Analysis" useGlobalNavigation={true}>
               <CostAnalysis />
             </PlatformLayout>
           </ProtectedRoute>
@@ -130,7 +134,7 @@ export const DataManagementRoutes = () => {
         {/* Pricing */}
         <Route path="pricing/competitor-pricing" element={
           <ProtectedRoute>
-            <PlatformLayout moduleTitle="Competitor Pricing" navCategories={dataNavCategories}>
+            <PlatformLayout moduleTitle="Competitor Pricing" useGlobalNavigation={true}>
               <CompetitorPricing />
             </PlatformLayout>
           </ProtectedRoute>
@@ -138,7 +142,7 @@ export const DataManagementRoutes = () => {
         
         <Route path="pricing/price-management" element={
           <ProtectedRoute>
-            <PlatformLayout moduleTitle="Price Management" navCategories={dataNavCategories}>
+            <PlatformLayout moduleTitle="Price Management" useGlobalNavigation={true}>
               <PriceManagement />
             </PlatformLayout>
           </ProtectedRoute>
@@ -147,7 +151,7 @@ export const DataManagementRoutes = () => {
         {/* File Uploads */}
         <Route path="uploads" element={
           <ProtectedRoute>
-            <PlatformLayout moduleTitle="File Uploads" navCategories={dataNavCategories}>
+            <PlatformLayout moduleTitle="File Uploads" useGlobalNavigation={true}>
               <UploadsPage />
             </PlatformLayout>
           </ProtectedRoute>
@@ -155,7 +159,7 @@ export const DataManagementRoutes = () => {
         
         <Route path="uploads/new" element={
           <ProtectedRoute>
-            <PlatformLayout moduleTitle="New Upload" navCategories={dataNavCategories}>
+            <PlatformLayout moduleTitle="New Upload" useGlobalNavigation={true}>
               <NewUploadPage />
             </PlatformLayout>
           </ProtectedRoute>
@@ -163,7 +167,7 @@ export const DataManagementRoutes = () => {
         
         <Route path="uploads/holding" element={
           <ProtectedRoute>
-            <PlatformLayout moduleTitle="Upload Holding" navCategories={dataNavCategories}>
+            <PlatformLayout moduleTitle="Upload Holding" useGlobalNavigation={true}>
               <UploadsPage />
             </PlatformLayout>
           </ProtectedRoute>
@@ -171,7 +175,7 @@ export const DataManagementRoutes = () => {
         
         <Route path="uploads/bulk-import" element={
           <ProtectedRoute>
-            <PlatformLayout moduleTitle="Bulk Import" navCategories={dataNavCategories}>
+            <PlatformLayout moduleTitle="Bulk Import" useGlobalNavigation={true}>
               <UploadsPage />
             </PlatformLayout>
           </ProtectedRoute>
@@ -180,7 +184,7 @@ export const DataManagementRoutes = () => {
         {/* Document Repository */}
         <Route path="documents" element={
           <ProtectedRoute>
-            <PlatformLayout moduleTitle="Documents" navCategories={dataNavCategories}>
+            <PlatformLayout moduleTitle="Documents" useGlobalNavigation={true}>
               <DocumentsPage />
             </PlatformLayout>
           </ProtectedRoute>
@@ -189,7 +193,7 @@ export const DataManagementRoutes = () => {
         {/* Export Data - New integrated route */}
         <Route path="export-data" element={
           <ProtectedRoute>
-            <PlatformLayout moduleTitle="Export Data" navCategories={dataNavCategories}>
+            <PlatformLayout moduleTitle="Export Data" useGlobalNavigation={true}>
               <ExportData />
             </PlatformLayout>
           </ProtectedRoute>
@@ -198,7 +202,7 @@ export const DataManagementRoutes = () => {
         {/* Data Insights - New integrated route */}
         <Route path="insights" element={
           <ProtectedRoute>
-            <PlatformLayout moduleTitle="Data Insights" navCategories={dataNavCategories}>
+            <PlatformLayout moduleTitle="Data Insights" useGlobalNavigation={true}>
               <DataInsights />
             </PlatformLayout>
           </ProtectedRoute>
@@ -207,7 +211,7 @@ export const DataManagementRoutes = () => {
         {/* Data Connections - New integrated route */}
         <Route path="connections" element={
           <ProtectedRoute>
-            <PlatformLayout moduleTitle="Data Connections" navCategories={dataNavCategories}>
+            <PlatformLayout moduleTitle="Data Connections" useGlobalNavigation={true}>
               <DataConnections />
             </PlatformLayout>
           </ProtectedRoute>
@@ -216,7 +220,7 @@ export const DataManagementRoutes = () => {
         {/* Catch-all for invalid Data Management routes */}
         <Route path="*" element={
           <ProtectedRoute>
-            <PlatformLayout moduleTitle="Not Found" navCategories={dataNavCategories}>
+            <PlatformLayout moduleTitle="Not Found" useGlobalNavigation={true}>
               <NotFound />
             </PlatformLayout>
           </ProtectedRoute>
