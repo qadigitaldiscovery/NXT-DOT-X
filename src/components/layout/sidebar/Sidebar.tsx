@@ -58,16 +58,16 @@ export const Sidebar: React.FC<SidebarProps> = ({
   const isOpen = open !== undefined ? open : internalOpen;
   
   const toggleSidebar = () => {
-    const newState = !isOpen;
+    // Call the provided onToggle without arguments
     if (onToggle) {
       onToggle();
     } else {
-      setInternalOpen(newState);
+      setInternalOpen(!internalOpen);
     }
     
     // Call onStateChange with the new state if provided
     if (onStateChange) {
-      onStateChange(newState ? 'expanded' : 'collapsed');
+      onStateChange(isOpen ? 'collapsed' : 'expanded');
     }
   };
 

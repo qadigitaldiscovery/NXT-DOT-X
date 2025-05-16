@@ -28,12 +28,14 @@ export const PlatformLayout: React.FC<PlatformLayoutProps> = memo(({
   onSidebarStateChange,
   initialSidebarState,
 }) => {
-  // Memoize the handler to prevent re-renders
-  const handleSidebarStateChange = useCallback((state: string) => {
+  // Memoize the handler to prevent re-renders and adapt the function signature
+  const handleSidebarToggle = useCallback(() => {
     if (onSidebarStateChange) {
-      onSidebarStateChange(state);
+      // Toggle the state - if it was 'expanded', make it 'collapsed' and vice versa
+      const newState = initialSidebarState === 'expanded' ? 'collapsed' : 'expanded';
+      onSidebarStateChange(newState);
     }
-  }, [onSidebarStateChange]);
+  }, [onSidebarStateChange, initialSidebarState]);
 
   return (
     <div className="flex h-screen bg-gray-50 dark:bg-gray-900">
@@ -44,7 +46,7 @@ export const PlatformLayout: React.FC<PlatformLayoutProps> = memo(({
         removeBottomToggle={removeBottomToggle}
         showToggleButton={showTopLeftToggle}
         open={initialSidebarState === 'expanded'}
-        onToggle={handleSidebarStateChange}
+        onToggle={handleSidebarToggle}
       />
       <div className="flex flex-col flex-1 overflow-hidden">
         <Topbar moduleTitle={moduleTitle} />
