@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -75,7 +74,8 @@ const Landing = () => {
                       value={usernameOrEmail} 
                       onChange={e => setUsernameOrEmail(e.target.value)} 
                       required 
-                      className="bg-white/90 border-blue-lighter focus:border-blue h-11 pl-10 text-blue-dark rounded-xl" 
+                      className="bg-white/90 border-blue-lighter focus:border-blue h-11 pl-10 text-blue-dark rounded-xl"
+                      autoComplete="username" 
                     />
                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                       <span className="text-blue-light">👤</span>
@@ -92,7 +92,8 @@ const Landing = () => {
                       value={password} 
                       onChange={e => setPassword(e.target.value)} 
                       required 
-                      className="bg-white/90 border-blue-lighter focus:border-blue h-11 pl-10 text-blue-dark rounded-xl" 
+                      className="bg-white/90 border-blue-lighter focus:border-blue h-11 pl-10 text-blue-dark rounded-xl"
+                      autoComplete="current-password"
                     />
                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                       <span className="text-blue-light">🔒</span>

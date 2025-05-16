@@ -150,8 +150,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setLoading(true);
       
       // Development mode - check for hard-coded admin credentials
+      console.log(`Login attempt with: ${email}`);
+      
+      // Check for development credentials
       if (email === 'admin@example.com' && password === 'Pass1') {
-        console.log('Using development admin login');
+        console.log('Development mode: Using local admin authentication');
         
         // Create admin user
         const adminUser = {
@@ -166,17 +169,21 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         localStorage.setItem('isAuthenticated', 'true');
         localStorage.setItem('user', JSON.stringify(adminUser));
         toast.success(`Welcome back, ${adminUser.username}!`);
+        
+        console.log('Development login successful');
+        setLoading(false);
         return true;
       }
       
       // Production mode - use Supabase auth
+      console.log('Attempting Supabase authentication...');
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
 
       if (error) {
-        console.error('Login error:', error.message);
+        console.error('Supabase login error:', error.message);
         toast.error(error.message || 'Invalid credentials');
         return false;
       }
