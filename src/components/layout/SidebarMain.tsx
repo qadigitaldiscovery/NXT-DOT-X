@@ -3,7 +3,7 @@ import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { ChevronLeft, MenuIcon, Home, Settings, HelpCircle } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
-import { SidebarNavList } from './sidebar/SidebarNavList';
+import { SidebarNavigation } from './sidebar/SidebarNavigation';
 import { CollapsedSidebar } from './sidebar/CollapsedSidebar';
 import { NavItem, NavCategory, SidebarProps } from './sidebar/types';
 import { useAuth } from '@/context/AuthContext';
@@ -44,7 +44,6 @@ export const SidebarMain: React.FC<SidebarProps> = ({
   onStateChange
 }) => {
   const isMobile = useIsMobile();
-  const [expandedItems, setExpandedItems] = useState<string[]>([]);
   const { user } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
@@ -95,16 +94,7 @@ export const SidebarMain: React.FC<SidebarProps> = ({
 
   // Updated styling with more reasonable sizing
   const sidebarBgColor = className || 'bg-gradient-to-b from-indigo-950 via-blue-950 to-slate-950';
-  const textColor = 'text-blue-200';
-  const textHoverColor = 'hover:text-blue-300';
-  const activeBgColor = 'bg-gradient-to-r from-blue-800 to-indigo-700';
-  const activeTextColor = 'text-white';
-  const hoverBgColor = 'hover:bg-indigo-900/50';
   
-  const toggleExpanded = (label: string) => {
-    setExpandedItems(prev => prev.includes(label) ? prev.filter(item => item !== label) : [...prev, label]);
-  };
-
   // Navigation handlers for quick access buttons
   const handleDashboardClick = () => {
     navigate('/');
@@ -142,17 +132,9 @@ export const SidebarMain: React.FC<SidebarProps> = ({
           "flex-1 pt-4 px-2 overflow-y-auto scrollbar-thin scrollbar-thumb-blue-800/50 scrollbar-track-slate-900/50",
           !isOpen && "hidden" // Hide when sidebar is collapsed
         )}>
-          <SidebarNavList 
+          <SidebarNavigation 
             categories={allCategories}
             userRole={user?.role}
-            expandedCategories={expandedItems}
-            onCategoryToggle={toggleExpanded}
-            textColor={textColor}
-            textHoverColor={textHoverColor}
-            activeBgColor={activeBgColor}
-            activeTextColor={activeTextColor}
-            hoverBgColor={hoverBgColor}
-            activeItemKey={location.pathname}
           />
         </nav>
 
@@ -160,10 +142,10 @@ export const SidebarMain: React.FC<SidebarProps> = ({
         {!isOpen && !isMobile && (
           <CollapsedSidebar 
             navItems={allCategories.flatMap(cat => cat.items)}
-            textColor={textColor}
-            activeBgColor={activeBgColor}
-            activeTextColor={activeTextColor}
-            hoverBgColor={hoverBgColor}
+            textColor="text-blue-200"
+            activeBgColor="bg-gradient-to-r from-blue-800 to-indigo-700"
+            activeTextColor="text-white"
+            hoverBgColor="hover:bg-indigo-900/50"
             homeItem={homeItem}
           />
         )}

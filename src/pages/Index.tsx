@@ -8,9 +8,10 @@ import { NavCategory } from '@/components/layout/sidebar/types';
 import { useAuth } from '@/context/AuthContext';
 import { useUserPreferences } from '@/hooks/useUserPreferences';
 
+// This component handles the root path and redirects based on authentication status
 const Index = () => {
+  const { user, loading } = useAuth();
   const navigate = useNavigate();
-  const { user, isAuthenticated } = useAuth();
   const { preferences, setPreferences } = useUserPreferences({
     module: 'home',
     key: 'last_visited',
@@ -19,18 +20,24 @@ const Index = () => {
   
   // Update last visited timestamp
   useEffect(() => {
-    if (isAuthenticated) {
+    if (user) {
       setPreferences({ timestamp: new Date().toISOString() });
     }
-  }, [isAuthenticated, setPreferences]);
+  }, [user, setPreferences]);
 
-  // Redirect to login if not authenticated
   useEffect(() => {
-    if (!isAuthenticated) {
-      navigate('/landing');
+    // Wait until auth state is loaded
+    if (!loading) {
+      if (user) {
+        console.log('User authenticated, redirecting to dashboard');
+        navigate('/master', { replace: true });
+      } else {
+        console.log('User not authenticated, redirecting to landing page');
+        navigate('/landing', { replace: true });
+      }
     }
-  }, [isAuthenticated, navigate]);
-  
+  }, [user, loading, navigate]);
+
   // Define navigation categories for this page
   const categories: NavCategory[] = [
     {
@@ -78,82 +85,14 @@ const Index = () => {
     </div>
   );
 
-  // If not authenticated, show loading until redirect happens
-  if (!isAuthenticated) {
-    return (
-      <div className="flex items-center justify-center h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-gray-900"></div>
-      </div>
-    );
-  }
-
+  // Return loading state while determining where to redirect
   return (
-    <PlatformLayout
-      moduleTitle="Welcome"
-      navCategories={categories}
-      customFooterContent={navigationFooter}
-      removeBottomToggle={false}
-      showTopLeftToggle={true}
-    >
-      <div className="container mx-auto p-4">
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          <Card>
-            <CardHeader>
-              <CardTitle>Business Management Platform</CardTitle>
-              <CardDescription>Your all-in-one business management solution</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <p>Welcome to your centralized business management platform. Navigate through the various modules using the sidebar.</p>
-            </CardContent>
-            <CardFooter>
-              <Button onClick={() => navigate('/master')}>Go to Dashboard</Button>
-            </CardFooter>
-          </Card>
-          
-          <Card>
-            <CardHeader>
-              <CardTitle>Project Management</CardTitle>
-              <CardDescription>Manage your projects efficiently</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <p>Access your projects, tasks, and team coordination tools through the Project Management module.</p>
-            </CardContent>
-            <CardFooter>
-              <Button onClick={() => navigate('/projects')}>View Projects</Button>
-            </CardFooter>
-          </Card>
-          
-          <Card>
-            <CardHeader>
-              <CardTitle>Brand Marketing</CardTitle>
-              <CardDescription>Monitor and manage your brand</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <p>Analyze brand performance, monitor market perception, and manage SEO through the Brand Marketing module.</p>
-            </CardContent>
-            <CardFooter>
-              <Button onClick={() => navigate('/brand-marketing')}>View Brand Analytics</Button>
-            </CardFooter>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>RAG Dashboard</CardTitle>
-              <CardDescription>Monitor system health and stability</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <p>Track the status of system modules with a comprehensive Red-Amber-Green dashboard and manage alerts.</p>
-            </CardContent>
-            <CardFooter>
-              <Button onClick={() => navigate('/dashboard/rag')} className="flex items-center">
-                <AlertTriangle className="mr-2 h-4 w-4" />
-                View Status Dashboard
-              </Button>
-            </CardFooter>
-          </Card>
-        </div>
+    <div className="flex h-screen w-full items-center justify-center bg-gray-100">
+      <div className="text-center">
+        <h2 className="text-xl font-semibold text-gray-700">Loading...</h2>
+        <p className="mt-2 text-gray-500">Preparing your experience</p>
       </div>
-    </PlatformLayout>
+    </div>
   );
 };
 
