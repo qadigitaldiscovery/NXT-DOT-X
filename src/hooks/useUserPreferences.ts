@@ -8,6 +8,28 @@ interface PreferencesOptions {
   defaultValue: any;
 }
 
+// Create a localStorage-based preferences fallback
+const localStoragePreferences = {
+  getItem: (userId: string, module: string, key: string): any => {
+    try {
+      const storageKey = `preferences_${userId}_${module}_${key}`;
+      const stored = localStorage.getItem(storageKey);
+      return stored ? JSON.parse(stored) : null;
+    } catch (error) {
+      console.error('Error reading from localStorage:', error);
+      return null;
+    }
+  },
+  setItem: (userId: string, module: string, key: string, value: any): void => {
+    try {
+      const storageKey = `preferences_${userId}_${module}_${key}`;
+      localStorage.setItem(storageKey, JSON.stringify(value));
+    } catch (error) {
+      console.error('Error writing to localStorage:', error);
+    }
+  }
+};
+
 export function useUserPreferences({ module, key, defaultValue }: PreferencesOptions) {
   const [preferences, setPreferences] = useState<any>(defaultValue);
   const [loading, setLoading] = useState<boolean>(true);
@@ -20,19 +42,6 @@ export function useUserPreferences({ module, key, defaultValue }: PreferencesOpt
   const lastFetchedUserId = useRef<string | null>(null);
   const fetchInProgressRef = useRef(false);
   const fetchAttemptCount = useRef(0);
-
-  // Validate user ID format (simple strings or UUID)
-  const isValidUserId = useCallback((userId: any): boolean => {
-    if (typeof userId === 'string') {
-      // Accept simple numeric IDs used in the mock auth system
-      if (/^[0-9]+$/.test(userId)) {
-        return true;
-      }
-      // Also accept UUIDs for future compatibility
-      return /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(userId);
-    }
-    return false;
-  }, []);
 
   // Effect cleanup
   useEffect(() => {
@@ -57,16 +66,12 @@ export function useUserPreferences({ module, key, defaultValue }: PreferencesOpt
       return;
     }
     
-    // If no user or invalid ID, use default value
-    if (!user?.id || !isValidUserId(user.id)) {
-      if (!user?.id) {
-        console.log('No user ID available, using default preferences');
-      } else {
-        console.warn('Invalid user ID format, using default preferences');
-      }
+    // If no user, use default value
+    if (!user?.id) {
+      console.log('No user ID available, using default preferences');
       setPreferences(defaultValue);
       setLoading(false);
-      fetchedRef.current = true; // Mark as fetched to prevent repeated attempts
+      fetchedRef.current = true;
       fetchAttemptCount.current++;
       return;
     }
@@ -74,10 +79,10 @@ export function useUserPreferences({ module, key, defaultValue }: PreferencesOpt
     const fetchPreferences = async () => {
       try {
         fetchInProgressRef.current = true;
-        console.log(`Fetching preferences for user ${user.id}, module ${module}, key ${key}`);
-        
         // Sanitize key to ensure it doesn't have invalid characters
         const sanitizedKey = key.replace(/[^a-zA-Z0-9_-]/g, '_');
+        
+        console.log(`Fetching preferences from Supabase for user ${user.id}, module ${module}, key ${sanitizedKey}`);
         
         const { data, error } = await supabase
           .from('user_preferences')
@@ -89,31 +94,41 @@ export function useUserPreferences({ module, key, defaultValue }: PreferencesOpt
 
         if (!isMounted.current) return;
 
-        if (error && error.code !== 'PGRST116') {
-          throw error;
-        }
-
-        if (data) {
-          console.log(`Found preferences for user ${user.id}:`, data.value);
+        if (error) {
+          // Check if error is about non-existing table or permission issues
+          if (error.code === '42P01' || error.code === '42501') {
+            console.warn('User preferences table not found or no access. Using localStorage fallback');
+            // Fallback to localStorage
+            const localData = localStoragePreferences.getItem(user.id, module, sanitizedKey);
+            if (localData) {
+              setPreferences(localData);
+            } else {
+              setPreferences(defaultValue);
+              localStoragePreferences.setItem(user.id, module, sanitizedKey, defaultValue);
+            }
+          } else {
+            throw error;
+          }
+        } else if (data) {
+          console.log(`Found preferences in Supabase for user ${user.id}:`, data.value);
           setPreferences(data.value);
         } else {
           // No stored preferences, use default
-          console.log(`No stored preferences found, using default for ${module}.${sanitizedKey}`);
+          console.log(`No stored preferences found in Supabase, using default for ${module}.${sanitizedKey}`);
           setPreferences(defaultValue);
           
-          // Only save default if we have a valid user ID
-          if (isValidUserId(user.id)) {
-            try {
-              await supabase.from('user_preferences').insert({
-                user_id: user.id,
-                module,
-                key: sanitizedKey,
-                value: defaultValue,
-              });
-            } catch (insertErr) {
-              console.warn('Error saving default preferences:', insertErr);
-              // Non-fatal error, just log it
-            }
+          // Save default
+          try {
+            await supabase.from('user_preferences').insert({
+              user_id: user.id,
+              module,
+              key: sanitizedKey,
+              value: defaultValue,
+            });
+          } catch (insertErr) {
+            console.warn('Error saving default preferences to Supabase:', insertErr);
+            // Fallback to localStorage
+            localStoragePreferences.setItem(user.id, module, sanitizedKey, defaultValue);
           }
         }
         
@@ -124,8 +139,19 @@ export function useUserPreferences({ module, key, defaultValue }: PreferencesOpt
         if (!isMounted.current) return;
         console.error('Error fetching preferences:', err);
         setError(err as Error);
-        // Fall back to default preferences on error
-        setPreferences(defaultValue);
+        
+        // Try localStorage as fallback on error
+        try {
+          const localData = localStoragePreferences.getItem(user.id, module, key.replace(/[^a-zA-Z0-9_-]/g, '_'));
+          if (localData) {
+            setPreferences(localData);
+          } else {
+            setPreferences(defaultValue);
+          }
+        } catch {
+          // Final fallback to default
+          setPreferences(defaultValue);
+        }
       } finally {
         if (isMounted.current) {
           setLoading(false);
@@ -144,7 +170,7 @@ export function useUserPreferences({ module, key, defaultValue }: PreferencesOpt
         lastFetchedUserId.current = null;
       }
     };
-  }, [module, key, defaultValue, user?.id, isValidUserId]);
+  }, [module, key, defaultValue, user?.id]);
 
   const setPreferencesValue = useCallback(async (newValue: any) => {
     // Update local state immediately
@@ -156,15 +182,10 @@ export function useUserPreferences({ module, key, defaultValue }: PreferencesOpt
     }
 
     try {
-      // Validate user ID format
-      if (!isValidUserId(user.id)) {
-        console.log('Invalid user ID format, preferences will not be saved');
-        return { success: false };
-      }
-      
       // Sanitize key to ensure it doesn't have invalid characters
       const sanitizedKey = key.replace(/[^a-zA-Z0-9_-]/g, '_');
 
+      // Try to save to Supabase
       const { data, error } = await supabase
         .from('user_preferences')
         .select('id')
@@ -174,31 +195,50 @@ export function useUserPreferences({ module, key, defaultValue }: PreferencesOpt
         .maybeSingle();
 
       if (error && error.code !== 'PGRST116') {
-        throw error;
+        console.warn('Error checking preferences, falling back to localStorage:', error);
+        localStoragePreferences.setItem(user.id, module, sanitizedKey, newValue);
+        return { success: true };
       }
 
       if (data?.id) {
         // Update existing preference
-        await supabase
+        const { error: updateError } = await supabase
           .from('user_preferences')
           .update({ value: newValue })
           .eq('id', data.id);
+          
+        if (updateError) {
+          console.warn('Error updating preference in Supabase, using localStorage fallback:', updateError);
+          localStoragePreferences.setItem(user.id, module, sanitizedKey, newValue);
+        }
       } else {
         // Insert new preference
-        await supabase.from('user_preferences').insert({
+        const { error: insertError } = await supabase.from('user_preferences').insert({
           user_id: user.id,
           module,
           key: sanitizedKey,
           value: newValue,
         });
+        
+        if (insertError) {
+          console.warn('Error inserting preference in Supabase, using localStorage fallback:', insertError);
+          localStoragePreferences.setItem(user.id, module, sanitizedKey, newValue);
+        }
       }
       
       return { success: true };
     } catch (err) {
       console.error('Error saving preferences:', err);
-      return { success: false, error: err };
+      
+      // Fallback to localStorage on error
+      try {
+        localStoragePreferences.setItem(user.id, module, key.replace(/[^a-zA-Z0-9_-]/g, '_'), newValue);
+        return { success: true };
+      } catch (localErr) {
+        return { success: false, error: err };
+      }
     }
-  }, [user?.id, module, key, isValidUserId]);
+  }, [user?.id, module, key]);
 
   return {
     preferences,

@@ -1,5 +1,6 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import { toast } from 'sonner';
+import { supabase } from '@/integrations/supabase/client';
 
 interface User {
   id: string;
@@ -12,114 +13,183 @@ interface User {
 interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean;
-  login: (usernameOrEmail: string, password: string) => Promise<boolean>;
+  login: (email: string, password: string) => Promise<boolean>;
   logout: () => void;
   hasPermission: (permission: string) => boolean;
+  loading: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
   const [isInitialized, setIsInitialized] = useState(false);
-  
-  // Mock users for demonstration
-  const mockUsers = [
-    {
-      id: '1',
-      username: 'admin',
-      email: 'admin@example.com',
-      password: 'pass1',
-      role: 'admin',
-      permissions: ['users.view', 'users.create', 'users.edit', 'users.delete', 'settings.access', 'modules.all', 'modules.rag']
-    },
-    {
-      id: '2',
-      username: 'manager',
-      email: 'manager@example.com',
-      password: 'manager1',
-      role: 'manager',
-      permissions: ['users.view', 'settings.access', 'modules.data', 'modules.loyalty']
-    },
-    {
-      id: '3',
-      username: 'user',
-      email: 'user@example.com',
-      password: 'user1',
-      role: 'user',
-      permissions: ['modules.data']
-    }
-  ];
 
   // Check if user is already logged in
   useEffect(() => {
-    const initAuth = () => {
+    const initAuth = async () => {
+      setLoading(true);
       try {
-        const storedUser = localStorage.getItem('user');
-        const isAuth = localStorage.getItem('isAuthenticated') === 'true';
+        // Try to get session from Supabase
+        const { data: sessionData } = await supabase.auth.getSession();
         
-        if (storedUser && isAuth) {
-          const parsedUser = JSON.parse(storedUser);
-          console.log('Found stored user:', parsedUser);
-          setUser(parsedUser);
+        if (sessionData?.session?.user) {
+          // Get user profile data
+          const { data: userData, error: userError } = await supabase
+            .from('profiles')
+            .select('*')
+            .eq('id', sessionData.session.user.id)
+            .single();
+            
+          if (userError) {
+            console.error('Error fetching user profile:', userError);
+            setUser(null);
+          } else if (userData) {
+            // Set user with complete profile data
+            const loggedInUser: User = {
+              id: sessionData.session.user.id,
+              username: userData.username || sessionData.session.user.email?.split('@')[0] || 'User',
+              email: sessionData.session.user.email || '',
+              role: userData.role || 'user',
+              permissions: userData.permissions || []
+            };
+            setUser(loggedInUser);
+            console.log('User authenticated from session:', loggedInUser);
+          }
         } else {
-          // Auto-login for development
-          console.log('Auto-logging in as admin for development');
-          const adminUser = mockUsers.find(u => u.username === 'admin');
-          if (adminUser) {
-            const { password, ...userWithoutPassword } = adminUser;
-            const userToStore = userWithoutPassword as User;
-            setUser(userToStore);
-            localStorage.setItem('isAuthenticated', 'true');
-            localStorage.setItem('user', JSON.stringify(userToStore));
-            console.log('Auto-login complete, user stored in localStorage and state');
+          // Check localStorage for legacy support
+          const storedUser = localStorage.getItem('user');
+          const isAuth = localStorage.getItem('isAuthenticated') === 'true';
+          
+          if (storedUser && isAuth) {
+            const parsedUser = JSON.parse(storedUser);
+            console.log('Found stored user in localStorage:', parsedUser);
+            setUser(parsedUser);
           } else {
-            console.error('Admin user not found in mock data');
+            setUser(null);
           }
         }
       } catch (error) {
         console.error('Error during authentication initialization:', error);
+        setUser(null);
       } finally {
         setIsInitialized(true);
+        setLoading(false);
       }
     };
 
     initAuth();
   }, []);
 
-  // Make sure user is properly set in localStorage when it changes
+  // Set up auth state listener
+  useEffect(() => {
+    const { data: authListener } = supabase.auth.onAuthStateChange(
+      async (event, session) => {
+        if (event === 'SIGNED_IN' && session?.user) {
+          // Get user profile data when signed in
+          const { data: userData, error: userError } = await supabase
+            .from('profiles')
+            .select('*')
+            .eq('id', session.user.id)
+            .single();
+            
+          if (userError) {
+            console.error('Error fetching user profile on auth change:', userError);
+          } else if (userData) {
+            const loggedInUser: User = {
+              id: session.user.id,
+              username: userData.username || session.user.email?.split('@')[0] || 'User',
+              email: session.user.email || '',
+              role: userData.role || 'user',
+              permissions: userData.permissions || []
+            };
+            setUser(loggedInUser);
+            console.log('User authenticated on auth change:', loggedInUser);
+          }
+        } else if (event === 'SIGNED_OUT') {
+          setUser(null);
+          localStorage.removeItem('user');
+          localStorage.removeItem('isAuthenticated');
+        }
+      }
+    );
+
+    return () => {
+      authListener.subscription.unsubscribe();
+    };
+  }, []);
+
+  // Legacy support - make sure user is properly set in localStorage when it changes
   useEffect(() => {
     if (isInitialized && user) {
       localStorage.setItem('isAuthenticated', 'true');
       localStorage.setItem('user', JSON.stringify(user));
-      console.log('User state updated and saved to localStorage:', user);
     }
   }, [isInitialized, user]);
 
-  const login = async (usernameOrEmail: string, password: string): Promise<boolean> => {
-    // In a real app, this would be an API call
-    const foundUser = mockUsers.find(
-      u => (u.email === usernameOrEmail || u.username === usernameOrEmail) && u.password === password
-    );
-    
-    if (foundUser) {
-      const { password, ...userWithoutPassword } = foundUser;
-      setUser(userWithoutPassword as User);
-      localStorage.setItem('isAuthenticated', 'true');
-      localStorage.setItem('user', JSON.stringify(userWithoutPassword));
-      toast.success(`Welcome back, ${foundUser.username}!`);
-      return true;
+  const login = async (email: string, password: string): Promise<boolean> => {
+    try {
+      setLoading(true);
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+      if (error) {
+        console.error('Login error:', error.message);
+        toast.error(error.message || 'Invalid credentials');
+        return false;
+      }
+
+      if (data?.user) {
+        // Get user profile data
+        const { data: userData, error: userError } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', data.user.id)
+          .single();
+          
+        if (userError) {
+          console.error('Error fetching user profile after login:', userError);
+        } else if (userData) {
+          const loggedInUser: User = {
+            id: data.user.id,
+            username: userData.username || data.user.email?.split('@')[0] || 'User',
+            email: data.user.email || '',
+            role: userData.role || 'user',
+            permissions: userData.permissions || []
+          };
+          setUser(loggedInUser);
+          toast.success(`Welcome back, ${loggedInUser.username}!`);
+        }
+        return true;
+      }
+      
+      return false;
+    } catch (err) {
+      console.error('Login error:', err);
+      toast.error('An error occurred during login');
+      return false;
+    } finally {
+      setLoading(false);
     }
-    
-    toast.error('Invalid credentials');
-    return false;
   };
 
-  const logout = () => {
-    setUser(null);
-    localStorage.removeItem('isAuthenticated');
-    localStorage.removeItem('user');
-    toast.info('You have been logged out');
+  const logout = async () => {
+    try {
+      setLoading(true);
+      await supabase.auth.signOut();
+      setUser(null);
+      localStorage.removeItem('isAuthenticated');
+      localStorage.removeItem('user');
+      toast.info('You have been logged out');
+    } catch (error) {
+      console.error('Logout error:', error);
+      toast.error('Error logging out');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const hasPermission = (permission: string): boolean => {
@@ -128,7 +198,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     // Admin always has all permissions
     if (user.role === 'admin') return true;
     
-    return user.permissions.includes(permission) || user.permissions.includes('modules.all');
+    return user.permissions?.includes(permission) || user.permissions?.includes('modules.all') || false;
   };
 
   return (
@@ -137,7 +207,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       isAuthenticated: !!user,
       login, 
       logout,
-      hasPermission
+      hasPermission,
+      loading
     }}>
       {children}
     </AuthContext.Provider>
