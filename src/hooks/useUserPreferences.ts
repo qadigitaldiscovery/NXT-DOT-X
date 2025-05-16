@@ -30,6 +30,12 @@ const localStoragePreferences = {
   }
 };
 
+// UUID validation function
+const isValidUUID = (id: string): boolean => {
+  const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+  return uuidRegex.test(id);
+};
+
 export function useUserPreferences({ module, key, defaultValue }: PreferencesOptions) {
   const [preferences, setPreferences] = useState<any>(defaultValue);
   const [loading, setLoading] = useState<boolean>(true);
@@ -42,6 +48,7 @@ export function useUserPreferences({ module, key, defaultValue }: PreferencesOpt
   const lastFetchedUserId = useRef<string | null>(null);
   const fetchInProgressRef = useRef(false);
   const fetchAttemptCount = useRef(0);
+  const usingLocalStorageFallbackRef = useRef(false);
 
   // Effect cleanup
   useEffect(() => {
@@ -81,6 +88,32 @@ export function useUserPreferences({ module, key, defaultValue }: PreferencesOpt
         fetchInProgressRef.current = true;
         // Sanitize key to ensure it doesn't have invalid characters
         const sanitizedKey = key.replace(/[^a-zA-Z0-9_-]/g, '_');
+        
+        // Check if user ID is a valid UUID for Supabase
+        const shouldUseSupabase = isValidUUID(user.id);
+        
+        if (!shouldUseSupabase) {
+          usingLocalStorageFallbackRef.current = true;
+          console.log(`User ID ${user.id} is not a valid UUID, using localStorage fallback`);
+          
+          // Attempt to fetch from localStorage
+          const localData = localStoragePreferences.getItem(user.id, module, sanitizedKey);
+          if (localData) {
+            setPreferences(localData);
+          } else {
+            setPreferences(defaultValue);
+            localStoragePreferences.setItem(user.id, module, sanitizedKey, defaultValue);
+          }
+          
+          if (isMounted.current) {
+            setLoading(false);
+          }
+          fetchedRef.current = true;
+          lastFetchedUserId.current = user.id;
+          fetchInProgressRef.current = false;
+          fetchAttemptCount.current++;
+          return;
+        }
         
         console.log(`Fetching preferences from Supabase for user ${user.id}, module ${module}, key ${sanitizedKey}`);
         
@@ -184,6 +217,13 @@ export function useUserPreferences({ module, key, defaultValue }: PreferencesOpt
     try {
       // Sanitize key to ensure it doesn't have invalid characters
       const sanitizedKey = key.replace(/[^a-zA-Z0-9_-]/g, '_');
+
+      // Check if we should use Supabase or localStorage based on UUID validation
+      if (!isValidUUID(user.id) || usingLocalStorageFallbackRef.current) {
+        console.log(`Using localStorage for preferences (user ID ${user.id})`);
+        localStoragePreferences.setItem(user.id, module, sanitizedKey, newValue);
+        return { success: true };
+      }
 
       // Try to save to Supabase
       const { data, error } = await supabase

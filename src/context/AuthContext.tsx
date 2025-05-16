@@ -10,6 +10,17 @@ interface User {
   permissions: string[];
 }
 
+// Define a type for the profile data structure
+interface ProfileData {
+  id: string;
+  username?: string;
+  email?: string;
+  role?: 'admin' | 'manager' | 'user';
+  permissions?: string[];
+  created_at?: string;
+  updated_at?: string;
+}
+
 interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean;
@@ -46,13 +57,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             console.error('Error fetching user profile:', userError);
             setUser(null);
           } else if (userData) {
+            // Cast the userData to our ProfileData type
+            const profileData = userData as unknown as ProfileData;
+            
             // Set user with complete profile data
             const loggedInUser: User = {
               id: sessionData.session.user.id,
-              username: userData.username || sessionData.session.user.email?.split('@')[0] || 'User',
+              username: profileData.username || sessionData.session.user.email?.split('@')[0] || 'User',
               email: sessionData.session.user.email || '',
-              role: userData.role || 'user',
-              permissions: userData.permissions || []
+              role: profileData.role || 'user',
+              permissions: profileData.permissions || []
             };
             setUser(loggedInUser);
             console.log('User authenticated from session:', loggedInUser);
@@ -97,12 +111,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           if (userError) {
             console.error('Error fetching user profile on auth change:', userError);
           } else if (userData) {
+            // Cast the userData to our ProfileData type
+            const profileData = userData as unknown as ProfileData;
+            
             const loggedInUser: User = {
               id: session.user.id,
-              username: userData.username || session.user.email?.split('@')[0] || 'User',
+              username: profileData.username || session.user.email?.split('@')[0] || 'User',
               email: session.user.email || '',
-              role: userData.role || 'user',
-              permissions: userData.permissions || []
+              role: profileData.role || 'user',
+              permissions: profileData.permissions || []
             };
             setUser(loggedInUser);
             console.log('User authenticated on auth change:', loggedInUser);
@@ -153,12 +170,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         if (userError) {
           console.error('Error fetching user profile after login:', userError);
         } else if (userData) {
+          // Cast the userData to our ProfileData type
+          const profileData = userData as unknown as ProfileData;
+          
           const loggedInUser: User = {
             id: data.user.id,
-            username: userData.username || data.user.email?.split('@')[0] || 'User',
+            username: profileData.username || data.user.email?.split('@')[0] || 'User',
             email: data.user.email || '',
-            role: userData.role || 'user',
-            permissions: userData.permissions || []
+            role: profileData.role || 'user',
+            permissions: profileData.permissions || []
           };
           setUser(loggedInUser);
           toast.success(`Welcome back, ${loggedInUser.username}!`);
