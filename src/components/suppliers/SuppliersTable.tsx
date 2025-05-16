@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -81,7 +80,7 @@ export function SuppliersTable() {
             Manage your supplier information and cost data
           </CardDescription>
         </div>
-        <Button onClick={() => navigate("/beta1/suppliers/new")}>
+        <Button onClick={() => navigate("/data-management/suppliers/new")}>
           <PlusCircle className="h-4 w-4 mr-2" />
           New Supplier
         </Button>
@@ -139,11 +138,11 @@ export function SuppliersTable() {
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
                           <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                          <DropdownMenuItem onClick={() => navigate(`/beta1/suppliers/${supplier.id}`)}>
+                          <DropdownMenuItem onClick={() => navigate(`/data-management/suppliers/${supplier.id}`)}>
                             <Edit className="h-4 w-4 mr-2" />
                             Edit Supplier
                           </DropdownMenuItem>
-                          <DropdownMenuItem onClick={() => navigate(`/beta1/suppliers/${supplier.id}/costs`)}>
+                          <DropdownMenuItem onClick={() => navigate(`/data-management/suppliers/${supplier.id}/costs`)}>
                             <FileText className="h-4 w-4 mr-2" />
                             View Costs
                           </DropdownMenuItem>

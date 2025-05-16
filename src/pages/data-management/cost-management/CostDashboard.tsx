@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -12,12 +11,14 @@ import { Users, FileUp, FileText, Calculator, BarChart3, History, Search, Chevro
 import { useNavigate } from "react-router-dom";
 import { useSupplierUploads } from '@/hooks/use-supplier-uploads';
 import { SupplierUploadsTable } from '@/components/uploads/SupplierUploadsTable';
+import { toast } from 'sonner';
 
 export default function CostDashboard() {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
   const { data: uploads = [], isLoading } = useSupplierUploads();
   const [baseCurrency, setBaseCurrency] = useState('ZAR');
+  const [activeTab, setActiveTab] = useState('file-uploads');
   
   const handleUploadClick = () => {
     navigate('/data-management/uploads/new');
@@ -25,6 +26,39 @@ export default function CostDashboard() {
 
   const handleAnalysisClick = () => {
     navigate('/data-management/cost-analysis');
+  };
+
+  const handleSupplierManagementClick = () => {
+    navigate('/data-management/suppliers');
+  };
+
+  const handleLandedCostsClick = () => {
+    toast.info('Landed costs configuration will be available soon');
+  };
+
+  const handleCostHistoryClick = () => {
+    toast.info('Cost history view will be available soon');
+  };
+
+  const handleTabChange = (value: string) => {
+    setActiveTab(value);
+    
+    // Navigate to appropriate route based on tab selection
+    switch(value) {
+      case 'supplier-management':
+        handleSupplierManagementClick();
+        break;
+      case 'cost-analysis':
+        handleAnalysisClick();
+        break;
+      case 'landed-costs':
+        handleLandedCostsClick();
+        break;
+      case 'cost-history':
+        handleCostHistoryClick();
+        break;
+      // file-uploads tab doesn't need navigation - it's displayed inline
+    }
   };
 
   return (
@@ -51,7 +85,7 @@ export default function CostDashboard() {
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
         <Card 
           className="hover:shadow-md transition-shadow backdrop-blur-md bg-white/30 border border-white/10 cursor-pointer"
-          onClick={() => navigate('/data-management/suppliers')}
+          onClick={handleSupplierManagementClick}
         >
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Supplier Management</CardTitle>
@@ -83,7 +117,7 @@ export default function CostDashboard() {
 
         <Card 
           className="hover:shadow-md transition-shadow backdrop-blur-md bg-white/30 border border-white/10 cursor-pointer"
-          onClick={() => navigate('/data-management/cost-management')}
+          onClick={handleLandedCostsClick}
         >
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Landed Costs</CardTitle>
@@ -115,12 +149,12 @@ export default function CostDashboard() {
       </div>
 
       {/* Tab navigation */}
-      <Tabs defaultValue="file-uploads" className="space-y-6">
+      <Tabs value={activeTab} onValueChange={handleTabChange} className="space-y-6">
         <TabsList className="grid grid-cols-2 md:grid-cols-5 gap-4 h-auto p-1">
           <TabsTrigger value="supplier-management" className="py-2">Supplier Management</TabsTrigger>
           <TabsTrigger value="file-uploads" className="py-2">File Uploads</TabsTrigger>
           <TabsTrigger value="landed-costs" className="py-2">Landed Costs</TabsTrigger>
-          <TabsTrigger value="cost-analysis" className="py-2" onClick={handleAnalysisClick}>Cost Analysis</TabsTrigger>
+          <TabsTrigger value="cost-analysis" className="py-2">Cost Analysis</TabsTrigger>
           <TabsTrigger value="cost-history" className="py-2">Cost History</TabsTrigger>
         </TabsList>
 
@@ -144,6 +178,9 @@ export default function CostDashboard() {
               <p className="text-sm text-muted-foreground">
                 This tab will display supplier management functionality.
               </p>
+              <Button onClick={handleSupplierManagementClick}>
+                Go to Supplier Management
+              </Button>
             </CardContent>
           </Card>
         </TabsContent>
@@ -174,6 +211,9 @@ export default function CostDashboard() {
               <p className="text-sm text-muted-foreground">
                 This tab will display landed cost configuration functionality.
               </p>
+              <Button onClick={handleLandedCostsClick}>
+                Configure Landed Costs
+              </Button>
             </CardContent>
           </Card>
         </TabsContent>
@@ -190,6 +230,9 @@ export default function CostDashboard() {
               <p className="text-sm text-muted-foreground">
                 This tab will display cost analysis tools and visualizations.
               </p>
+              <Button onClick={handleAnalysisClick}>
+                Go to Cost Analysis
+              </Button>
             </CardContent>
           </Card>
         </TabsContent>
@@ -206,6 +249,9 @@ export default function CostDashboard() {
               <p className="text-sm text-muted-foreground">
                 This tab will display cost history and changes.
               </p>
+              <Button onClick={handleCostHistoryClick}>
+                View Cost History
+              </Button>
             </CardContent>
           </Card>
         </TabsContent>
