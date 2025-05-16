@@ -1,6 +1,6 @@
 import React, { ReactNode, memo, useCallback } from 'react';
 import { NavCategory, NavItem } from '@/components/layout/sidebar/types';
-import { SidebarMain } from '@/components/layout/SidebarMain';
+import Sidebar from '@/components/layout/sidebar';
 import Topbar from '@/components/layouts/Topbar';
 import { navCategories as globalNavCategories } from '@/components/layout/sidebar/NavigationConfig';
 
@@ -46,7 +46,7 @@ export const PlatformLayout: React.FC<PlatformLayoutProps> = memo(({
 
   return (
     <div className="flex h-screen bg-gray-50 dark:bg-gray-900">
-      <SidebarMain
+      <Sidebar
         navItems={navItems}
         navCategories={navigationCategories}
         customFooterContent={customFooterContent}
