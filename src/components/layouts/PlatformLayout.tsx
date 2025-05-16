@@ -1,8 +1,9 @@
-import React, { ReactNode, memo, useCallback } from 'react';
+import React, { ReactNode, memo, useCallback, useEffect } from 'react';
 import { NavCategory, NavItem } from '@/components/layout/sidebar/types';
 import { SidebarMain } from '@/components/layout/SidebarMain';
 import Topbar from '@/components/layouts/Topbar';
 import { navCategories as globalNavCategories } from '@/components/layout/sidebar/NavigationConfig';
+import { useLocation } from 'react-router-dom';
 
 export interface PlatformLayoutProps {
   children: ReactNode;
@@ -30,6 +31,16 @@ export const PlatformLayout: React.FC<PlatformLayoutProps> = memo(({
   initialSidebarState = 'expanded',
   useGlobalNavigation = true,
 }) => {
+  const location = useLocation();
+  
+  // For debugging purposes
+  useEffect(() => {
+    console.log('PlatformLayout rendered for path:', location.pathname);
+    console.log('Using global navigation:', useGlobalNavigation);
+    console.log('Module title:', moduleTitle);
+    console.log('Initial sidebar state:', initialSidebarState);
+  }, [location.pathname, useGlobalNavigation, moduleTitle, initialSidebarState]);
+
   // Memoize the handler to prevent re-renders and adapt the function signature
   const handleSidebarToggle = useCallback(() => {
     if (onSidebarStateChange) {

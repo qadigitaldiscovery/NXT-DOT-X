@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -26,7 +25,7 @@ const DashboardHome = () => {
             <Button 
               variant="outline" 
               className="w-full" 
-              onClick={() => navigate('/supplier-management')}
+              onClick={() => navigate('/data-management/suppliers')}
             >
               Access <ArrowRight className="h-4 w-4 ml-2" />
             </Button>
@@ -43,7 +42,7 @@ const DashboardHome = () => {
             <Button 
               variant="outline" 
               className="w-full" 
-              onClick={() => navigate('/customer-management')}
+              onClick={() => navigate('/data-management/customers')}
             >
               Access <ArrowRight className="h-4 w-4 ml-2" />
             </Button>
@@ -60,7 +59,7 @@ const DashboardHome = () => {
             <Button 
               variant="outline" 
               className="w-full" 
-              onClick={() => navigate('/data-management/cost-management')}
+              onClick={() => navigate('/data-management/supplier-costing')}
             >
               Access <ArrowRight className="h-4 w-4 ml-2" />
             </Button>
@@ -148,6 +147,23 @@ const DashboardHome = () => {
               onClick={() => navigate('/data-management/uploads')}
             >
               Upload Files <ArrowRight className="h-4 w-4 ml-2" />
+            </Button>
+          </CardContent>
+        </Card>
+        
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-lg font-medium">Data Insights</CardTitle>
+            <BarChart3 className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <p className="text-sm text-muted-foreground mb-4">Analyze and visualize your data for better decision making.</p>
+            <Button 
+              variant="outline" 
+              className="w-full" 
+              onClick={() => navigate('/data-management/insights')}
+            >
+              View Insights <ArrowRight className="h-4 w-4 ml-2" />
             </Button>
           </CardContent>
         </Card>

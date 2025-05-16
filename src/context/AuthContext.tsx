@@ -1,6 +1,7 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
+import type { Database } from '@/integrations/supabase/types';
 
 interface User {
   id: string;
@@ -19,6 +20,13 @@ interface ProfileData {
   permissions?: string[];
   created_at?: string;
   updated_at?: string;
+}
+
+// Define a profiles table type for casting
+type ProfilesTable = {
+  Row: ProfileData;
+  Insert: ProfileData;
+  Update: Partial<ProfileData>;
 }
 
 interface AuthContextType {
@@ -48,7 +56,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         if (sessionData?.session?.user) {
           // Get user profile data
           const { data: userData, error: userError } = await supabase
-            .from('profiles')
+            .from('profiles' as any)
             .select('*')
             .eq('id', sessionData.session.user.id)
             .single();
@@ -103,7 +111,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         if (event === 'SIGNED_IN' && session?.user) {
           // Get user profile data when signed in
           const { data: userData, error: userError } = await supabase
-            .from('profiles')
+            .from('profiles' as any)
             .select('*')
             .eq('id', session.user.id)
             .single();
@@ -156,12 +164,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (email === 'admin@example.com' && password === 'Pass1') {
         console.log('Development mode: Using local admin authentication');
         
-        // Create admin user
-        const adminUser = {
+        // Create admin user with correct type for role
+        const adminUser: User = {
           id: '1',
           username: 'admin',
           email: 'admin@example.com',
-          role: 'admin',
+          role: 'admin', // This matches the User interface type
           permissions: ['users.view', 'users.create', 'users.edit', 'users.delete', 'settings.access', 'modules.all']
         };
         
@@ -191,7 +199,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (data?.user) {
         // Get user profile data
         const { data: userData, error: userError } = await supabase
-          .from('profiles')
+          .from('profiles' as any)
           .select('*')
           .eq('id', data.user.id)
           .single();
