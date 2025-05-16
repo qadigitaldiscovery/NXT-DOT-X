@@ -1,22 +1,24 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Database, CheckCircle, XCircle } from "lucide-react";
+import { Database, CheckCircle, XCircle, Key } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Tabs, TabsList, TabsContent, TabsTrigger } from "@/components/ui/tabs";
 
 interface OdooFormData {
   url: string;
   db_name: string;
-  username: string;
-  password: string;
+  username?: string;
+  password?: string;
+  api_key?: string;
+  auth_method: 'credentials' | 'api_key';
 }
 
 interface OdooConfig {
@@ -26,8 +28,10 @@ interface OdooConfig {
   config: {
     url: string;
     db_name: string;
-    username: string;
-    password: string;
+    username?: string;
+    password?: string;
+    api_key?: string;
+    auth_method: 'credentials' | 'api_key';
   };
   is_active: boolean;
   created_at?: string;
@@ -50,8 +54,15 @@ const OdooIntegration = () => {
   const [connectionStatus, setConnectionStatus] = useState<'idle' | 'success' | 'error'>('idle');
   const [odooConfig, setOdooConfig] = useState<OdooConfig | null>(null);
   const [syncSettings, setSyncSettings] = useState<SyncSetting[]>([]);
+  const [authMethod, setAuthMethod] = useState<'credentials' | 'api_key'>('credentials');
   
-  const { register, handleSubmit, setValue, formState: { errors } } = useForm<OdooFormData>();
+  const { register, handleSubmit, setValue, watch, formState: { errors } } = useForm<OdooFormData>({
+    defaultValues: {
+      auth_method: 'credentials'
+    }
+  });
+  
+  const currentAuthMethod = watch('auth_method');
 
   // Fetch existing configuration from the database
   const fetchExistingConfig = async () => {
@@ -81,14 +92,39 @@ const OdooIntegration = () => {
       
       if (configs) {
         setOdooConfig(configs as OdooConfig);
-        setValue("url", configs.config.url || "");
-        setValue("db_name", configs.config.db_name || "");
-        setValue("username", configs.config.username || "");
-        setValue("password", configs.config.password || "");
+        
+        // Safely access config properties with type checking
+        if (configs.config && typeof configs.config === 'object') {
+          const configObj = configs.config as Record<string, any>;
+          setValue("url", configObj.url || "");
+          setValue("db_name", configObj.db_name || "");
+          
+          // Set authentication method
+          const storedAuthMethod = configObj.auth_method || 
+              (configObj.api_key ? 'api_key' : 'credentials');
+          setValue("auth_method", storedAuthMethod);
+          setAuthMethod(storedAuthMethod);
+          
+          // Set appropriate credentials based on auth method
+          if (storedAuthMethod === 'api_key') {
+            setValue("api_key", configObj.api_key || "");
+            // Clear credentials
+            setValue("username", "");
+            setValue("password", "");
+          } else {
+            setValue("username", configObj.username || "");
+            setValue("password", configObj.password || "");
+            // Clear API key
+            setValue("api_key", "");
+          }
+        }
+        
         setConnectionStatus('success');
         
         // Fetch sync settings for this integration
-        fetchSyncSettings(configs.id);
+        if (configs.id) {
+          fetchSyncSettings(configs.id);
+        }
       } else {
         setOdooConfig(null);
         setConnectionStatus('idle');
@@ -123,12 +159,34 @@ const OdooIntegration = () => {
     fetchExistingConfig();
   }, []);
 
+  // Handle authentication method change
+  useEffect(() => {
+    if (currentAuthMethod) {
+      setAuthMethod(currentAuthMethod);
+    }
+  }, [currentAuthMethod]);
+
   // Test the connection to Odoo
   const testConnection = async (data: OdooFormData) => {
     setIsTesting(true);
     try {
       // Test connection via Edge Function
       const { data: session } = await supabase.auth.getSession();
+      
+      // Prepare request data based on authentication method
+      const requestData: Record<string, any> = {
+        action: 'test_connection',
+        url: data.url,
+        db_name: data.db_name,
+      };
+      
+      // Add authentication details based on method
+      if (data.auth_method === 'api_key') {
+        requestData.api_key = data.api_key;
+      } else {
+        requestData.username = data.username;
+        requestData.password = data.password;
+      }
       
       // Call the edge function to test the connection
       const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/api-integrations/odoo`, {
@@ -137,13 +195,7 @@ const OdooIntegration = () => {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${session?.session?.access_token}`
         },
-        body: JSON.stringify({
-          action: 'test_connection',
-          url: data.url,
-          db_name: data.db_name,
-          username: data.username,
-          password: data.password
-        })
+        body: JSON.stringify(requestData)
       });
       
       if (!response.ok) {
@@ -181,17 +233,24 @@ const OdooIntegration = () => {
         return false;
       }
       
-      // Store credentials securely
-      const config = {
+      // Build the config object based on the authentication method
+      const config: Record<string, any> = {
         url: data.url,
         db_name: data.db_name,
-        username: data.username,
-        password: data.password
+        auth_method: data.auth_method,
       };
+      
+      // Add credentials based on auth method
+      if (data.auth_method === 'api_key') {
+        config.api_key = data.api_key;
+      } else {
+        config.username = data.username;
+        config.password = data.password;
+      }
       
       const operation = odooConfig ? 'update' : 'insert';
       
-      if (operation === 'update') {
+      if (operation === 'update' && odooConfig?.id) {
         const { error } = await supabase
           .from('integration_configs')
           .update({
@@ -293,7 +352,9 @@ const OdooIntegration = () => {
       }
       
       // Refresh sync settings
-      await fetchSyncSettings(odooConfig.id);
+      if (odooConfig.id) {
+        await fetchSyncSettings(odooConfig.id);
+      }
       toast.success("Synchronization settings updated");
     } catch (err) {
       console.error("Error updating sync settings:", err);
@@ -352,6 +413,9 @@ const OdooIntegration = () => {
       setValue("db_name", "");
       setValue("username", "");
       setValue("password", "");
+      setValue("api_key", "");
+      setValue("auth_method", "credentials");
+      setAuthMethod("credentials");
     } catch (err) {
       console.error("Exception while deleting Odoo configuration:", err);
       toast.error("An unexpected error occurred");
@@ -376,13 +440,18 @@ const OdooIntegration = () => {
       }
       
       const { data: session } = await supabase.auth.getSession();
+      if (!session?.session?.access_token) {
+        toast.error("Authentication required");
+        setIsLoading(false);
+        return;
+      }
       
       // Call the edge function to start sync
       const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/api-integrations/odoo`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${session?.session?.access_token}`
+          'Authorization': `Bearer ${session.session.access_token}`
         },
         body: JSON.stringify({
           action: 'start_sync',
@@ -402,14 +471,18 @@ const OdooIntegration = () => {
         toast.success("Synchronization started successfully!");
         // Update last_synced_at for the settings
         for (const setting of enabledSettings) {
-          await supabase
-            .from('integration_sync_settings')
-            .update({ last_synced_at: new Date().toISOString() })
-            .eq('id', setting.id);
+          if (setting.id) {
+            await supabase
+              .from('integration_sync_settings')
+              .update({ last_synced_at: new Date().toISOString() })
+              .eq('id', setting.id);
+          }
         }
         
         // Refresh sync settings to show updated last_synced_at
-        await fetchSyncSettings(odooConfig.id);
+        if (odooConfig.id) {
+          await fetchSyncSettings(odooConfig.id);
+        }
       } else {
         throw new Error(result.message || "Synchronization failed");
       }
@@ -466,30 +539,87 @@ const OdooIntegration = () => {
                   )}
                 </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="username">Username</Label>
-                  <Input
-                    id="username"
-                    placeholder="admin"
-                    {...register("username", { required: "Username is required" })}
-                  />
-                  {errors.username && (
-                    <p className="text-sm text-red-500">{errors.username.message}</p>
-                  )}
+                <div className="space-y-2 mb-4">
+                  <Label>Authentication Method</Label>
+                  <div className="flex space-x-4">
+                    <label className="flex items-center space-x-2">
+                      <input
+                        type="radio"
+                        value="credentials"
+                        {...register("auth_method")}
+                        className="h-4 w-4"
+                        checked={authMethod === "credentials"}
+                        onChange={() => setAuthMethod("credentials")}
+                      />
+                      <span>Username & Password</span>
+                    </label>
+                    <label className="flex items-center space-x-2">
+                      <input
+                        type="radio"
+                        value="api_key"
+                        {...register("auth_method")}
+                        className="h-4 w-4"
+                        checked={authMethod === "api_key"}
+                        onChange={() => setAuthMethod("api_key")}
+                      />
+                      <span>API Key</span>
+                    </label>
+                  </div>
                 </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="password">Password</Label>
-                  <Input
-                    id="password"
-                    type="password"
-                    placeholder="••••••••"
-                    {...register("password", { required: "Password is required" })}
-                  />
-                  {errors.password && (
-                    <p className="text-sm text-red-500">{errors.password.message}</p>
-                  )}
-                </div>
+                {authMethod === "credentials" ? (
+                  <>
+                    <div className="space-y-2">
+                      <Label htmlFor="username">Username</Label>
+                      <Input
+                        id="username"
+                        placeholder="admin"
+                        {...register("username", { 
+                          required: authMethod === "credentials" ? "Username is required" : false 
+                        })}
+                      />
+                      {errors.username && (
+                        <p className="text-sm text-red-500">{errors.username.message}</p>
+                      )}
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="password">Password</Label>
+                      <Input
+                        id="password"
+                        type="password"
+                        placeholder="••••••••"
+                        {...register("password", { 
+                          required: authMethod === "credentials" ? "Password is required" : false 
+                        })}
+                      />
+                      {errors.password && (
+                        <p className="text-sm text-red-500">{errors.password.message}</p>
+                      )}
+                    </div>
+                  </>
+                ) : (
+                  <div className="space-y-2">
+                    <Label htmlFor="api_key">API Key</Label>
+                    <div className="flex items-center space-x-2">
+                      <Key className="h-4 w-4 text-gray-400" />
+                      <Input
+                        id="api_key"
+                        type="password"
+                        placeholder="Enter your Odoo API key"
+                        {...register("api_key", { 
+                          required: authMethod === "api_key" ? "API key is required" : false 
+                        })}
+                      />
+                    </div>
+                    {errors.api_key && (
+                      <p className="text-sm text-red-500">{errors.api_key.message}</p>
+                    )}
+                    <p className="text-xs text-muted-foreground">
+                      API keys can be generated from your Odoo ERP account settings.
+                    </p>
+                  </div>
+                )}
               </div>
             </div>
           </form>
