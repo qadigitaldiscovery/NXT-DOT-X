@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import RAGDashboardGrid from './RAGDashboardGrid';
 import { useModules } from '@/hooks/useModules';
 import { useAlerts } from '@/hooks/useAlerts';
-import { ModuleStatusFilter } from './ModuleStatusFilter';
+import ModuleStatusFilter from './ModuleStatusFilter'; // Fixed import
 import { useDashboardState } from './hooks/useDashboardState';
 import OverviewStats from './OverviewStats';
 import ModulesGrid from './dashboard/ModulesGrid';
@@ -98,7 +98,9 @@ const RAGDashboardGridContainer: React.FC = () => {
           </div>
           <ModuleStatusFilter 
             selectedStatus={selectedStatus} 
-            onChange={setSelectedStatus} 
+            onStatusSelect={setSelectedStatus}
+            searchQuery={searchQuery}
+            onSearchChange={setSearchQuery}
           />
         </div>
       </div>

@@ -2,27 +2,26 @@
 import React from 'react';
 import { Bell } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { 
-  Popover, 
-  PopoverContent, 
-  PopoverTrigger 
-} from '@/components/ui/popover';
-import { Notification, useNotifications } from '@/hooks/useNotifications';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { formatDistanceToNow } from 'date-fns';
-import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
+import { Badge } from '@/components/ui/badge';
+import { useNotifications } from '@/hooks/useNotifications';
+import { formatDistanceToNow } from 'date-fns';
 
-const NotificationsPopover: React.FC = () => {
+export interface NotificationsPopoverProps {}
+
+const NotificationsPopover: React.FC<NotificationsPopoverProps> = () => {
   const { 
     notifications, 
+    loading, 
     unreadCount, 
-    markAsRead, 
-    markAllAsRead, 
-    deleteNotification 
+    markAsRead,
+    markAllAsRead,
+    refreshNotifications
   } = useNotifications();
 
-  const handleMarkAsRead = async (id: string) => {
+  const handleNotificationClick = async (id: string) => {
     await markAsRead(id);
   };
 
@@ -30,116 +29,104 @@ const NotificationsPopover: React.FC = () => {
     await markAllAsRead();
   };
 
-  const getNotificationTypeStyles = (type: Notification['type']) => {
-    switch (type) {
-      case 'error':
-        return 'bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-300';
-      case 'warning':
-        return 'bg-amber-100 text-amber-800 dark:bg-amber-900/20 dark:text-amber-300';
-      case 'success':
-        return 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-300';
-      default:
-        return 'bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-300';
-    }
-  };
-
-  const getNotificationIconClass = (type: Notification['type']) => {
-    switch (type) {
-      case 'error':
-        return 'bg-red-200 dark:bg-red-800';
-      case 'warning':
-        return 'bg-amber-200 dark:bg-amber-800';
-      case 'success':
-        return 'bg-green-200 dark:bg-green-800';
-      default:
-        return 'bg-blue-200 dark:bg-blue-800';
-    }
+  const handleRefresh = async () => {
+    await refreshNotifications();
   };
 
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <Button variant="ghost" size="icon" className="relative">
-          <Bell className="h-5 w-5" />
+        <Button variant="outline" size="icon" className="relative">
+          <Bell className="h-[1.2rem] w-[1.2rem]" />
           {unreadCount > 0 && (
-            <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-[10px] font-medium text-white">
-              {unreadCount > 9 ? '9+' : unreadCount}
-            </span>
+            <Badge 
+              variant="destructive" 
+              className="absolute -top-2 -right-2 min-w-[1.1rem] h-[1.1rem] flex items-center justify-center p-0 text-[0.7rem]"
+            >
+              {unreadCount}
+            </Badge>
           )}
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-80 p-0" align="end">
-        <div className="flex items-center justify-between p-4 border-b">
-          <h4 className="font-medium">Notifications</h4>
-          {unreadCount > 0 && (
+      <PopoverContent className="w-80" align="end">
+        <div className="flex items-center justify-between pb-2">
+          <h4 className="font-medium text-sm">Notifications</h4>
+          <div className="flex gap-1">
             <Button 
               variant="ghost" 
               size="sm" 
+              className="h-8 px-2 text-xs"
               onClick={handleMarkAllAsRead}
-              className="text-xs"
+              disabled={loading || unreadCount === 0}
             >
               Mark all as read
             </Button>
-          )}
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-8 px-2 text-xs"
+              onClick={handleRefresh}
+              disabled={loading}
+            >
+              Refresh
+            </Button>
+          </div>
         </div>
-        <ScrollArea className="h-[calc(80vh-12rem)] max-h-[400px]">
-          {notifications.length === 0 ? (
-            <div className="p-4 text-center text-sm text-muted-foreground">
-              No notifications
+        <Separator />
+        <ScrollArea className="h-80">
+          {loading ? (
+            <div className="flex items-center justify-center h-full">
+              <p className="text-sm text-muted-foreground">Loading notifications...</p>
             </div>
-          ) : (
-            <div>
-              {notifications.map((notification, index) => (
-                <div key={notification.id}>
-                  <div 
-                    className={`p-4 ${!notification.is_read ? 'bg-muted/50' : ''}`}
-                  >
-                    <div className="flex gap-3">
-                      <div className={`flex h-8 w-8 rounded-full items-center justify-center ${getNotificationIconClass(notification.type)}`}>
-                        {notification.type === 'error' && '❌'}
-                        {notification.type === 'warning' && '⚠️'}
-                        {notification.type === 'success' && '✅'}
-                        {notification.type === 'info' && 'ℹ️'}
-                      </div>
-                      <div className="flex flex-col gap-1 flex-1">
-                        <div className="flex justify-between items-start">
-                          <p className="text-sm font-medium">{notification.title}</p>
-                          <Badge variant="outline" className="ml-auto">
-                            {formatDistanceToNow(new Date(notification.created_at), { 
-                              addSuffix: true 
-                            })}
-                          </Badge>
-                        </div>
-                        <p className="text-xs text-muted-foreground">
-                          {notification.content}
-                        </p>
-                        {!notification.is_read && (
-                          <Button 
-                            variant="ghost" 
-                            size="sm" 
-                            onClick={() => handleMarkAsRead(notification.id)}
-                            className="text-xs self-start mt-1 h-7 px-2"
-                          >
-                            Mark as read
-                          </Button>
-                        )}
-                      </div>
-                    </div>
+          ) : notifications.length > 0 ? (
+            <div className="space-y-1 py-1">
+              {notifications.map((notification) => (
+                <div
+                  key={notification.id}
+                  className={`p-2 hover:bg-accent hover:text-accent-foreground rounded-md transition-colors cursor-pointer ${
+                    !notification.isRead ? "bg-muted/50" : ""
+                  }`}
+                  onClick={() => handleNotificationClick(notification.id)}
+                >
+                  <div className="flex items-center gap-2">
+                    <div className={`w-2 h-2 rounded-full ${getNotificationTypeColor(notification.type)}`} />
+                    <span className="text-sm font-medium">{notification.title}</span>
                   </div>
-                  {index < notifications.length - 1 && <Separator />}
+                  <p className="text-xs text-muted-foreground ml-4 mt-1">{notification.content}</p>
+                  <div className="flex justify-between items-center mt-1">
+                    <span className="text-xs text-muted-foreground ml-4">
+                      {formatDistanceToNow(new Date(notification.createdAt), { addSuffix: true })}
+                    </span>
+                    {!notification.isRead && (
+                      <Badge variant="secondary" className="text-xs">New</Badge>
+                    )}
+                  </div>
                 </div>
               ))}
             </div>
+          ) : (
+            <div className="flex items-center justify-center h-full">
+              <p className="text-sm text-muted-foreground">No notifications</p>
+            </div>
           )}
         </ScrollArea>
-        <div className="p-4 border-t">
-          <Button variant="outline" size="sm" className="w-full">
-            View all
-          </Button>
-        </div>
       </PopoverContent>
     </Popover>
   );
 };
+
+function getNotificationTypeColor(type: string): string {
+  switch (type) {
+    case 'error':
+      return 'bg-red-500';
+    case 'warning':
+      return 'bg-amber-500';
+    case 'success':
+      return 'bg-green-500';
+    case 'info':
+    default:
+      return 'bg-blue-500';
+  }
+}
 
 export default NotificationsPopover;

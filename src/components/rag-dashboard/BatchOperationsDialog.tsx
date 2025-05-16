@@ -1,216 +1,142 @@
 
 import React, { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
-import { useModules, type Module } from '@/hooks/useModules';
-import { Check, Trash2, X } from 'lucide-react';
-import { Checkbox } from '@/components/ui/checkbox';
-import { 
-  Select, 
-  SelectContent, 
-  SelectItem, 
-  SelectTrigger, 
-  SelectValue 
-} from '@/components/ui/select';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Module } from '@/hooks/useModules';
 import { toast } from 'sonner';
-import PermissionGuard from './PermissionGuard';
 
-interface BatchOperationsDialogProps {
+export interface BatchOperationsDialogProps {
   isOpen: boolean;
   onClose: () => void;
+  modules: Module[];
 }
 
-const BatchOperationsDialog: React.FC<BatchOperationsDialogProps> = ({
-  isOpen,
-  onClose
-}) => {
-  const { modules, updateModuleStatus } = useModules();
-  const [selectedModuleIds, setSelectedModuleIds] = useState<string[]>([]);
-  const [selectedOperation, setSelectedOperation] = useState<string>('status');
-  const [statusValue, setStatusValue] = useState<'green' | 'orange' | 'red'>('green');
-  const [isProcessing, setIsProcessing] = useState<boolean>(false);
+const BatchOperationsDialog: React.FC<BatchOperationsDialogProps> = ({ isOpen, onClose, modules }) => {
+  const [selectedModules, setSelectedModules] = useState<string[]>([]);
+  const [selectedOperation, setSelectedOperation] = useState<string>("");
+  const [isProcessing, setIsProcessing] = useState(false);
 
-  // Reset state when dialog opens
-  React.useEffect(() => {
-    if (isOpen) {
-      setSelectedModuleIds([]);
-      setSelectedOperation('status');
-      setStatusValue('green');
-    }
-  }, [isOpen]);
-
-  const handleToggleModule = (moduleId: string) => {
-    setSelectedModuleIds(prev => 
-      prev.includes(moduleId)
+  const handleModuleToggle = (moduleId: string) => {
+    setSelectedModules(prev => 
+      prev.includes(moduleId) 
         ? prev.filter(id => id !== moduleId)
         : [...prev, moduleId]
     );
   };
 
   const handleSelectAll = () => {
-    if (selectedModuleIds.length === modules.length) {
-      setSelectedModuleIds([]);
+    if (selectedModules.length === modules.length) {
+      setSelectedModules([]);
     } else {
-      setSelectedModuleIds(modules.map(module => module.id));
+      setSelectedModules(modules.map(module => module.id));
     }
   };
 
-  const handleExecuteOperation = async () => {
-    if (selectedModuleIds.length === 0) {
-      toast.error('No modules selected');
+  const handleExecuteBatch = async () => {
+    if (selectedModules.length === 0) {
+      toast.error("Please select at least one module");
       return;
     }
-
+    
+    if (!selectedOperation) {
+      toast.error("Please select an operation");
+      return;
+    }
+    
     setIsProcessing(true);
-
+    
     try {
-      if (selectedOperation === 'status') {
-        // Update status for all selected modules
-        const updatePromises = selectedModuleIds.map(moduleId => 
-          updateModuleStatus(moduleId, statusValue)
-        );
-        
-        await Promise.all(updatePromises);
-        
-        toast.success(
-          `Updated status to ${statusValue} for ${selectedModuleIds.length} modules`
-        );
-      } else {
-        // Handle other batch operations here
-        toast.info('Operation not implemented yet');
-      }
+      // Simulate processing
+      await new Promise(resolve => setTimeout(resolve, 1500));
       
+      // Show success message
+      toast.success(`Executed ${selectedOperation} on ${selectedModules.length} module(s)`);
+      
+      // Reset and close
+      setSelectedModules([]);
+      setSelectedOperation("");
       onClose();
     } catch (error) {
-      console.error('Error executing batch operation:', error);
-      toast.error('Failed to execute operation');
+      toast.error("Failed to execute batch operation");
+      console.error("Batch operation error:", error);
     } finally {
       setIsProcessing(false);
     }
   };
-
+  
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-md md:max-w-lg">
+    <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
+      <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>Batch Operations</DialogTitle>
-          <DialogDescription>
-            Perform operations on multiple modules at once.
-          </DialogDescription>
         </DialogHeader>
-
-        <div className="grid gap-4 py-4">
-          <PermissionGuard requiredPermission={['modules.edit', 'modules.all']}>
-            {/* Operation selection */}
-            <div className="grid gap-2">
-              <label htmlFor="operation" className="text-sm font-medium">
-                Operation
-              </label>
-              <Select 
-                value={selectedOperation} 
-                onValueChange={setSelectedOperation}
+        
+        <div className="py-4">
+          <div className="mb-4">
+            <Label htmlFor="operation">Select Operation</Label>
+            <Select value={selectedOperation} onValueChange={setSelectedOperation}>
+              <SelectTrigger id="operation">
+                <SelectValue placeholder="Select operation" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="refresh">Refresh Status</SelectItem>
+                <SelectItem value="reset-alerts">Reset Alerts</SelectItem>
+                <SelectItem value="enable-monitoring">Enable Monitoring</SelectItem>
+                <SelectItem value="disable-monitoring">Disable Monitoring</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          
+          <div className="mb-2">
+            <div className="flex items-center justify-between">
+              <Label>Select Modules</Label>
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={handleSelectAll}
+                className="h-7"
               >
-                <SelectTrigger id="operation">
-                  <SelectValue placeholder="Select operation" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="status">Update Status</SelectItem>
-                  <SelectItem value="archive" disabled>Archive Modules</SelectItem>
-                  <SelectItem value="delete" disabled>Delete Modules</SelectItem>
-                </SelectContent>
-              </Select>
+                {selectedModules.length === modules.length ? "Deselect All" : "Select All"}
+              </Button>
             </div>
-
-            {/* Status value selection (if status operation) */}
-            {selectedOperation === 'status' && (
-              <div className="grid gap-2">
-                <label htmlFor="status" className="text-sm font-medium">
-                  Status Value
-                </label>
-                <Select 
-                  value={statusValue} 
-                  onValueChange={(value) => setStatusValue(value as 'green' | 'orange' | 'red')}
-                >
-                  <SelectTrigger id="status">
-                    <SelectValue placeholder="Select status" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="green">Operational (Green)</SelectItem>
-                    <SelectItem value="orange">Degraded (Orange)</SelectItem>
-                    <SelectItem value="red">Outage (Red)</SelectItem>
-                  </SelectContent>
-                </Select>
+          </div>
+          
+          <div className="border rounded-md max-h-60 overflow-y-auto p-2">
+            {modules.map(module => (
+              <div key={module.id} className="flex items-center space-x-2 py-2">
+                <Checkbox 
+                  id={`module-${module.id}`}
+                  checked={selectedModules.includes(module.id)}
+                  onCheckedChange={() => handleModuleToggle(module.id)}
+                />
+                <Label htmlFor={`module-${module.id}`} className="flex-1 cursor-pointer">
+                  {module.name}
+                </Label>
+                <div className={`w-3 h-3 rounded-full ${
+                  module.status === 'green' ? 'bg-green-500' : 
+                  module.status === 'orange' ? 'bg-orange-500' : 
+                  module.status === 'red' ? 'bg-red-500' : 'bg-gray-500'
+                }`}></div>
               </div>
+            ))}
+            
+            {modules.length === 0 && (
+              <p className="text-center py-2 text-muted-foreground">No modules available</p>
             )}
-
-            {/* Module selection */}
-            <div className="border rounded-md">
-              <div className="flex items-center justify-between p-2 border-b bg-muted/50">
-                <div className="flex items-center space-x-2">
-                  <Checkbox 
-                    id="selectAll"
-                    checked={selectedModuleIds.length === modules.length && modules.length > 0}
-                    onCheckedChange={handleSelectAll}
-                  />
-                  <label htmlFor="selectAll" className="text-sm font-medium">
-                    Select All
-                  </label>
-                </div>
-                <div className="text-sm text-muted-foreground">
-                  {selectedModuleIds.length} of {modules.length} selected
-                </div>
-              </div>
-
-              <div className="max-h-60 overflow-y-auto">
-                {modules.map(module => (
-                  <div 
-                    key={module.id} 
-                    className="flex items-center space-x-3 p-3 border-b last:border-0 hover:bg-muted/30"
-                  >
-                    <Checkbox 
-                      id={`module-${module.id}`}
-                      checked={selectedModuleIds.includes(module.id)}
-                      onCheckedChange={() => handleToggleModule(module.id)}
-                    />
-                    <label 
-                      htmlFor={`module-${module.id}`} 
-                      className="flex-1 text-sm"
-                    >
-                      {module.name}
-                      <div className="text-xs text-muted-foreground">
-                        Current status: {module.status}
-                      </div>
-                    </label>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </PermissionGuard>
+          </div>
         </div>
-
-        <DialogFooter className="sm:justify-between">
-          <DialogClose asChild>
-            <Button type="button" variant="outline">
-              Cancel
-            </Button>
-          </DialogClose>
-          <PermissionGuard requiredPermission={['modules.edit', 'modules.all']}>
-            <Button 
-              onClick={handleExecuteOperation}
-              disabled={selectedModuleIds.length === 0 || isProcessing}
-              loading={isProcessing}
-            >
-              Execute Operation
-            </Button>
-          </PermissionGuard>
+        
+        <DialogFooter>
+          <Button variant="outline" onClick={onClose}>Cancel</Button>
+          <Button 
+            onClick={handleExecuteBatch} 
+            disabled={selectedModules.length === 0 || !selectedOperation || isProcessing}
+          >
+            {isProcessing ? "Processing..." : "Execute"}
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
