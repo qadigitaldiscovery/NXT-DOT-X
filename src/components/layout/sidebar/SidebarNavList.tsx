@@ -34,6 +34,7 @@ export function SidebarNavList({
   hoverBgColor = "hover:bg-gray-50",
   expandedCategories = [],
   onCategoryToggle,
+  userRole,
   expandedItems,
   onToggleExpand
 }: SidebarNavListProps) {
@@ -60,13 +61,38 @@ export function SidebarNavList({
       items: items
     }] : [];
   
-  if (allCategories.length === 0) {
+  // Filter items that the user has access to based on their role
+  const filterItemsByRole = (items: NavItem[], role?: string): NavItem[] => {
+    if (!role) return items;
+    
+    return items.filter(item => {
+      // If no roles specified, everyone can see it
+      if (!item.roles || item.roles.length === 0) return true;
+      
+      // Otherwise, check if user role is in the allowed roles
+      return item.roles.includes(role);
+    });
+  };
+  
+  // Process categories to filter items based on user role
+  const processedCategories = allCategories.map(category => ({
+    ...category,
+    items: filterItemsByRole(category.items, userRole)
+  })).filter(category => category.items.length > 0); // Remove empty categories
+  
+  // Improved debugging logs
+  console.log('SidebarNavList - User role:', userRole);
+  console.log('SidebarNavList - All categories before filtering:', allCategories);
+  console.log('SidebarNavList - Categories after role filtering:', processedCategories);
+  console.log('SidebarNavList - Expanded categories:', expandedCategories);
+  
+  if (processedCategories.length === 0) {
     return null;
   }
   
   return (
     <div className={cn("space-y-4", isCollapsed && "items-center")}>
-      {allCategories.map((category) => {
+      {processedCategories.map((category) => {
         const isExpanded = expandedCategories.includes(category.name || '') || 
                           (expandedItems && category.label && expandedItems.includes(category.label));
         

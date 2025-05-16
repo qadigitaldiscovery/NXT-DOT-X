@@ -1,6 +1,6 @@
 import React, { ReactNode, memo, useCallback } from 'react';
 import { NavCategory, NavItem } from '@/components/layout/sidebar/types';
-import Sidebar from '@/components/layout/sidebar';
+import { SidebarMain } from '@/components/layout/SidebarMain';
 import Topbar from '@/components/layouts/Topbar';
 import { navCategories as globalNavCategories } from '@/components/layout/sidebar/NavigationConfig';
 
@@ -27,7 +27,7 @@ export const PlatformLayout: React.FC<PlatformLayoutProps> = memo(({
   showTopLeftToggle = true,
   moduleTitle = '',
   onSidebarStateChange,
-  initialSidebarState,
+  initialSidebarState = 'expanded',
   useGlobalNavigation = true,
 }) => {
   // Memoize the handler to prevent re-renders and adapt the function signature
@@ -46,7 +46,7 @@ export const PlatformLayout: React.FC<PlatformLayoutProps> = memo(({
 
   return (
     <div className="flex h-screen bg-gray-50 dark:bg-gray-900">
-      <Sidebar
+      <SidebarMain
         navItems={navItems}
         navCategories={navigationCategories}
         customFooterContent={customFooterContent}
@@ -54,6 +54,8 @@ export const PlatformLayout: React.FC<PlatformLayoutProps> = memo(({
         showToggleButton={showTopLeftToggle}
         open={initialSidebarState === 'expanded'}
         onToggle={handleSidebarToggle}
+        initialState={initialSidebarState}
+        onStateChange={onSidebarStateChange}
       />
       <div className="flex flex-col flex-1 overflow-hidden">
         <Topbar moduleTitle={moduleTitle} />

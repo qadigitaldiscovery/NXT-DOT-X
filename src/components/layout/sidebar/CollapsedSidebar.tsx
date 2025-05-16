@@ -77,9 +77,16 @@ export const CollapsedSidebar = ({
   // If homeItem is provided, add it to the bottom
   const displayItems = homeItem ? [...filteredItems, homeItem] : filteredItems;
 
-  // Log for debugging
-  console.log('CollapsedSidebar - displayItems:', displayItems);
-  console.log('CollapsedSidebar - Current user role:', user?.role);
+  // Enhanced logging for debugging
+  console.log('CollapsedSidebar - User:', {
+    id: user?.id,
+    username: user?.username,
+    role: user?.role,
+    permissions: user?.permissions
+  });
+  console.log('CollapsedSidebar - All items before filtering:', allItems);
+  console.log('CollapsedSidebar - Items after role filtering:', filteredItems);
+  console.log('CollapsedSidebar - Final display items:', displayItems);
 
   return (
     <div className="py-4 flex flex-col items-center space-y-2 overflow-y-auto">
