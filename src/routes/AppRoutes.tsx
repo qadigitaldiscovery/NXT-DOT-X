@@ -39,7 +39,6 @@ import { FilesRoutes } from "./filesRoutes";
 import { EventsRoutes } from "./eventsRoutes";
 import { RiskRegisterRoutes } from "./riskRegisterRoutes";
 import { RequestsRoutes } from "./requestsRoutes";
-import { BetaRoutes } from "./betaRoutes";
 
 // Import layout configuration
 import { navCategories } from '@/components/layout/sidebar/NavigationConfig';
@@ -114,7 +113,10 @@ export const AppRoutes = () => {
         {EventsRoutes()}
         {RiskRegisterRoutes()}
         {RequestsRoutes()}
-        {BetaRoutes()}
+        
+        {/* Add legacy beta redirects */}
+        <Route path="/beta1/*" element={<Navigate to="/data-management" replace />} />
+        <Route path="/beta2/*" element={<Navigate to="/loyalty-rewards" replace />} />
         
         {/* Legacy route redirects */}
         <Route path="/prototypes" element={<Navigate to="/" replace />} />

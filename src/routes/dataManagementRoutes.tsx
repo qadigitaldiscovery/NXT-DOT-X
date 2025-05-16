@@ -1,8 +1,7 @@
-
 import { Route } from "react-router-dom";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import { PlatformLayout } from "@/components/layouts/PlatformLayout";
-import { Users, Settings, BarChart3, FileUp, Home } from 'lucide-react';
+import { Users, Settings, BarChart3, FileUp, Home, Database, Truck, Building, Calculator, LineChart, ArrowDownUp, FileDown, FileArchive, BrainCircuit, Server } from 'lucide-react';
 import { NavCategory } from '@/components/layout/sidebar/types';
 
 // Data Management Pages
@@ -19,15 +18,30 @@ import SuppliersPage from "@/pages/SuppliersPage";
 import DataManagementSettings from "@/pages/DataManagementSettings";
 import NotFound from "@/pages/NotFound";
 
+// Import Beta pages that need to be integrated
+import DataInsights from "@/pages/data-management/insights/DataInsights";
+import DataConnections from "@/pages/data-management/connections/DataConnections";
+import ExportData from "@/pages/data-management/data/ExportData";
+import CustomersPage from "@/pages/data-management/customers/CustomersPage";
+
 export const dataNavCategories: NavCategory[] = [
   {
     name: "DATA MANAGEMENT",
     label: "DATA MANAGEMENT",
     items: [
-      { label: 'Dashboard', icon: Home, path: '/data-management' },
-      { label: 'Uploads', icon: FileUp, path: '/data-management/uploads' },
-      { label: 'Analytics', icon: BarChart3, path: '/data-management/cost-analysis' },
-      { label: 'Suppliers', icon: Users, path: '/data-management/suppliers' },
+      { label: 'Dashboard', icon: Database, path: '/data-management' },
+      { label: 'Supplier Directory', icon: Truck, path: '/data-management/suppliers' },
+      { label: 'Customer Directory', icon: Building, path: '/data-management/customers' },
+      { label: 'Supplier Costing', icon: Calculator, path: '/data-management/supplier-costing' },
+      { label: 'Cost Analysis', icon: BarChart3, path: '/data-management/cost-analysis' },
+      { label: 'Cost Management', icon: Database, path: '/data-management/cost-management' },
+      { label: 'Competitor Pricing', icon: LineChart, path: '/data-management/pricing/competitor-pricing' },
+      { label: 'Price Management', icon: ArrowDownUp, path: '/data-management/pricing/price-management' },
+      { label: 'File Uploads', icon: FileUp, path: '/data-management/uploads' },
+      { label: 'Document Repository', icon: FileArchive, path: '/data-management/documents' },
+      { label: 'Export Data', icon: FileDown, path: '/data-management/export-data' },
+      { label: 'Data Insights', icon: BrainCircuit, path: '/data-management/insights' },
+      { label: 'Data Connections', icon: Server, path: '/data-management/connections' },
       { label: 'Settings', icon: Settings, path: '/data-management/settings' }
     ]
   }
@@ -75,6 +89,15 @@ export const DataManagementRoutes = () => {
           <ProtectedRoute>
             <PlatformLayout moduleTitle="Suppliers" navCategories={dataNavCategories}>
               <SuppliersPage />
+            </PlatformLayout>
+          </ProtectedRoute>
+        } />
+        
+        {/* Customer Management */}
+        <Route path="customers" element={
+          <ProtectedRoute>
+            <PlatformLayout moduleTitle="Customers" navCategories={dataNavCategories}>
+              <CustomersPage />
             </PlatformLayout>
           </ProtectedRoute>
         } />
@@ -159,6 +182,33 @@ export const DataManagementRoutes = () => {
           <ProtectedRoute>
             <PlatformLayout moduleTitle="Documents" navCategories={dataNavCategories}>
               <DocumentsPage />
+            </PlatformLayout>
+          </ProtectedRoute>
+        } />
+        
+        {/* Export Data - New integrated route */}
+        <Route path="export-data" element={
+          <ProtectedRoute>
+            <PlatformLayout moduleTitle="Export Data" navCategories={dataNavCategories}>
+              <ExportData />
+            </PlatformLayout>
+          </ProtectedRoute>
+        } />
+        
+        {/* Data Insights - New integrated route */}
+        <Route path="insights" element={
+          <ProtectedRoute>
+            <PlatformLayout moduleTitle="Data Insights" navCategories={dataNavCategories}>
+              <DataInsights />
+            </PlatformLayout>
+          </ProtectedRoute>
+        } />
+        
+        {/* Data Connections - New integrated route */}
+        <Route path="connections" element={
+          <ProtectedRoute>
+            <PlatformLayout moduleTitle="Data Connections" navCategories={dataNavCategories}>
+              <DataConnections />
             </PlatformLayout>
           </ProtectedRoute>
         } />
