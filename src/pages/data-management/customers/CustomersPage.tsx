@@ -21,9 +21,9 @@ const CustomersPage = () => {
 
   // Add new customer handler
   const handleAddCustomer = () => {
-    navigate('/data-management/customers/new');
-    // Alternative for testing without the actual page
-    // toast.info('Add customer page will be implemented in the next release');
+    // navigate('/data-management/customers/new');
+    // Use toast notification until the actual page is implemented
+    toast.info('Add customer page will be implemented in the next release');
   };
 
   // Handle filter action
@@ -40,16 +40,16 @@ const CustomersPage = () => {
 
   // Handle view customer details
   const handleViewCustomer = (customerId: number) => {
-    navigate(`/data-management/customers/${customerId}`);
-    // Alternative for testing without the actual page
-    // toast.info(`Viewing details for customer ID: ${customerId}`);
+    // navigate(`/data-management/customers/${customerId}`);
+    // Use toast notification until the actual page is implemented
+    toast.info(`Viewing details for customer ID: ${customerId}`);
   };
 
   // Handle edit customer
   const handleEditCustomer = (customerId: number) => {
-    navigate(`/data-management/customers/${customerId}/edit`);
-    // Alternative for testing without the actual page
-    // toast.info(`Editing customer ID: ${customerId}`);
+    // navigate(`/data-management/customers/${customerId}/edit`);
+    // Use toast notification until the actual page is implemented
+    toast.info(`Editing customer ID: ${customerId}`);
   };
 
   // Filter customers based on search term

@@ -21,14 +21,17 @@ export default function CostDashboard() {
   const [activeTab, setActiveTab] = useState('file-uploads');
   
   const handleUploadClick = () => {
-    navigate('/data-management/uploads/new');
+    toast.info('Upload page will be available soon');
+    // navigate('/data-management/uploads/new');
   };
 
   const handleAnalysisClick = () => {
-    navigate('/data-management/cost-analysis');
+    toast.info('Cost analysis tools will be available soon');
+    // navigate('/data-management/cost-analysis');
   };
 
   const handleSupplierManagementClick = () => {
+    toast.info('Navigating to supplier management...');
     navigate('/data-management/suppliers');
   };
 
@@ -43,21 +46,10 @@ export default function CostDashboard() {
   const handleTabChange = (value: string) => {
     setActiveTab(value);
     
-    // Navigate to appropriate route based on tab selection
-    switch(value) {
-      case 'supplier-management':
-        handleSupplierManagementClick();
-        break;
-      case 'cost-analysis':
-        handleAnalysisClick();
-        break;
-      case 'landed-costs':
-        handleLandedCostsClick();
-        break;
-      case 'cost-history':
-        handleCostHistoryClick();
-        break;
-      // file-uploads tab doesn't need navigation - it's displayed inline
+    // For tabs, we just show the content and don't navigate away from this page
+    // This prevents navigation to potentially non-existent pages
+    if (value !== 'file-uploads' && value !== activeTab) {
+      toast.info(`Showing ${value.replace('-', ' ')} tab content`);
     }
   };
 

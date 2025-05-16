@@ -28,6 +28,7 @@ import {
 import { PlusCircle, Search, MoreHorizontal, Edit, Trash2, FileText } from "lucide-react";
 import { Supplier, useSuppliers, useDeleteSupplier } from '@/hooks/use-suppliers';
 import { Badge } from '@/components/ui/badge';
+import { toast } from 'sonner';
 
 export function SuppliersTable() {
   const navigate = useNavigate();
@@ -44,6 +45,21 @@ export function SuppliersTable() {
     if (window.confirm(`Are you sure you want to delete supplier "${name}"?`)) {
       deleteSupplier(id);
     }
+  };
+
+  const handleNewSupplier = () => {
+    toast.info('New supplier page will be available soon');
+    // navigate("/data-management/suppliers/new");
+  };
+
+  const handleEditSupplier = (supplierId: string) => {
+    toast.info(`Editing supplier: ${supplierId}`);
+    // navigate(`/data-management/suppliers/${supplierId}`);
+  };
+
+  const handleViewCosts = (supplierId: string) => {
+    toast.info(`Viewing costs for supplier: ${supplierId}`);
+    // navigate(`/data-management/suppliers/${supplierId}/costs`);
   };
 
   if (isLoading) {
@@ -80,7 +96,7 @@ export function SuppliersTable() {
             Manage your supplier information and cost data
           </CardDescription>
         </div>
-        <Button onClick={() => navigate("/data-management/suppliers/new")}>
+        <Button onClick={handleNewSupplier}>
           <PlusCircle className="h-4 w-4 mr-2" />
           New Supplier
         </Button>
@@ -138,11 +154,11 @@ export function SuppliersTable() {
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
                           <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                          <DropdownMenuItem onClick={() => navigate(`/data-management/suppliers/${supplier.id}`)}>
+                          <DropdownMenuItem onClick={() => handleEditSupplier(supplier.id)}>
                             <Edit className="h-4 w-4 mr-2" />
                             Edit Supplier
                           </DropdownMenuItem>
-                          <DropdownMenuItem onClick={() => navigate(`/data-management/suppliers/${supplier.id}/costs`)}>
+                          <DropdownMenuItem onClick={() => handleViewCosts(supplier.id)}>
                             <FileText className="h-4 w-4 mr-2" />
                             View Costs
                           </DropdownMenuItem>
