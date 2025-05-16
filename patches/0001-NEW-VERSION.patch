@@ -1,0 +1,3128 @@
+From 923f3186995f49b3017555496d09cd4d029b76f2 Mon Sep 17 00:00:00 2001
+From: qadigitaldiscovery <qadigitaldiscovery@gmail.com>
+Date: Fri, 16 May 2025 12:15:44 +0200
+Subject: [PATCH 1/2] NEW VERSION
+
+---
+ NXT-DOT-X/docs/rbac-improvements.md         |   3 +
+ docs/beta-routes-plan.md                    |   0
+ docs/component-standardization.md           |   0
+ docs/platform-review.md                     | 162 --------
+ docs/project-overview.md                    | 195 ----------
+ docs/rbac-improvements.md                   |   0
+ package-lock.json                           | 288 +++++++-------
+ package.json                                |   5 +-
+ src/components/beta/BetaPermissionGuard.tsx |  49 +++
+ src/pages/Beta1Dashboard.tsx                |  56 +--
+ src/pages/Beta1Settings.tsx                 |  73 ++--
+ src/pages/Beta2Analytics.tsx                | 190 +++-------
+ src/pages/Beta2Dashboard.tsx                |  89 ++++-
+ src/pages/Beta2Rewards.tsx                  | 397 ++++++--------------
+ src/pages/Beta2Settings.tsx                 | 363 +++++++++++-------
+ src/routes/AppRoutes.tsx                    |   3 +-
+ src/routes/betaRoutes.tsx                   |  76 ++--
+ src/routes/index.tsx                        |   5 +-
+ 18 files changed, 808 insertions(+), 1146 deletions(-)
+ create mode 100644 NXT-DOT-X/docs/rbac-improvements.md
+ create mode 100644 docs/beta-routes-plan.md
+ create mode 100644 docs/component-standardization.md
+ create mode 100644 docs/rbac-improvements.md
+ create mode 100644 src/components/beta/BetaPermissionGuard.tsx
+
+diff --git a/NXT-DOT-X/docs/rbac-improvements.md b/NXT-DOT-X/docs/rbac-improvements.md
+new file mode 100644
+index 0000000..cfb40d7
+--- /dev/null
++++ b/NXT-DOT-X/docs/rbac-improvements.md
+@@ -0,0 +1,3 @@
++# Role-Based Access Control (RBAC) Improvements
++
++This document outlines the improvements made to the RBAC system.
+diff --git a/docs/beta-routes-plan.md b/docs/beta-routes-plan.md
+new file mode 100644
+index 0000000..e69de29
+diff --git a/docs/component-standardization.md b/docs/component-standardization.md
+new file mode 100644
+index 0000000..e69de29
+diff --git a/docs/platform-review.md b/docs/platform-review.md
+index 0bfcdbf..e69de29 100644
+--- a/docs/platform-review.md
++++ b/docs/platform-review.md
+@@ -1,162 +0,0 @@
+-# NXT-DOT-X Platform Review
+-
+-## Issues Identified
+-
+-After a comprehensive review of the NXT-DOT-X platform, I've identified several issues related to the theme system, user role-based access, and navigation structure:
+-
+-### 1. Theme System Issues
+-
+-- **Inconsistent Theme Implementation**: The platform uses a ThemeContext for light/dark mode switching, but some components don't properly consume this context.
+-- **Preference Persistence**: Theme preferences are stored in both localStorage and potentially in a database (via useUserPreferences), creating potential synchronization issues.
+-- **Missing Theme Transitions**: No smooth transitions when switching themes.
+-
+-### 2. Role-Based Access Control (RBAC) Issues
+-
+-- **Incomplete Implementation**: The RBAC system is partially implemented with placeholder logic in many places.
+-- **Missing Module Access Checks**: Many routes don't properly check for module access permissions.
+-- **Hardcoded Admin Access**: Several components hardcode 'admin' role checks rather than using the permission system.
+-- **Inconsistent Permission Structure**: Permissions are defined in multiple places with different formats.
+-
+-### 3. Navigation & Routing Issues
+-
+-- **Unlinked Pages**: Several pages (Beta1, Beta2, etc.) exist but are not linked in the navigation.
+-- **Inconsistent Route Structure**: Some routes use module-specific layouts while others use the general layout.
+-- **Mismatched Navigation Items**: Navigation items in NavigationConfig.tsx don't match all available routes.
+-- **Redundant Route Definitions**: Routes are defined in multiple places with potential conflicts.
+-
+-### 4. Component Structure Issues
+-
+-- **Inconsistent Layout Implementation**: Some pages use PlatformLayout while others implement their own layouts.
+-- **Mixed Component Patterns**: Different components follow different patterns for props, styling, and state management.
+-- **Unused or Duplicate Components**: Several components are defined but never used.
+-
+-## Fix Plan
+-
+-### 1. Theme System Fixes
+-
+-1. **Standardize Theme Implementation**
+-   - Ensure all components consume ThemeContext consistently
+-   - Implement a theme provider higher in the component tree
+-   - Add proper theme class application to all layout components
+-
+-2. **Unified Persistence Strategy**
+-   - Use a single source of truth for theme preferences
+-   - Implement proper fallback mechanism when database is unavailable
+-   - Ensure proper synchronization between local storage and database
+-
+-3. **Add Theme Transitions**
+-   - Implement CSS transitions for theme changes
+-   - Add transition classes to the tailwind configuration
+-
+-### 2. RBAC System Fixes
+-
+-1. **Complete RBAC Implementation**
+-   - Implement proper permission checking in all routes
+-   - Replace placeholder logic with actual permission checks
+-   - Create a comprehensive permissions list
+-
+-2. **Route Protection**
+-   - Ensure all routes use ProtectedRoute component with proper permissions
+-   - Implement module-specific access checks
+-   - Add permission guards to sensitive UI components
+-
+-3. **Permission Management UI**
+-   - Create/update the role and permission management UI
+-   - Implement proper permission assignment interface
+-   - Add test accounts with different permission levels
+-
+-### 3. Navigation & Routing Fixes
+-
+-1. **Link All Pages**
+-   - Identify all unlinked pages (Beta1Dashboard, Beta2Dashboard, etc.)
+-   - Either add them to navigation or deprecate them
+-   - Create a navigation registry for all pages
+-
+-2. **Standardize Route Structure**
+-   - Implement a consistent routing pattern across all modules
+-   - Move all route definitions to their respective module files
+-   - Create proper route hierarchy with parent/child relationships
+-
+-3. **Navigation-Route Synchronization**
+-   - Ensure all navigation items point to valid routes
+-   - Implement automatic navigation generation from route definitions
+-   - Add active state indicators for current route
+-
+-### 4. Component Structure Fixes
+-
+-1. **Standardize Layout Implementation**
+-   - Ensure all pages use PlatformLayout consistently
+-   - Implement proper layout composition
+-   - Create layout variants for different page types
+-
+-2. **Component Pattern Standardization**
+-   - Define and document standard component patterns
+-   - Refactor components to follow these patterns
+-   - Implement proper prop typing for all components
+-
+-3. **Component Cleanup**
+-   - Remove unused components
+-   - Consolidate duplicate components
+-   - Create a component registry
+-
+-## Implementation Priority
+-
+-1. **Critical Fixes** (Immediate)
+-   - Fix route protection to ensure security
+-   - Fix broken navigation links
+-   - Fix theme application issues
+-
+-2. **Important Fixes** (Short-term)
+-   - Implement proper RBAC system
+-   - Standardize layout components
+-   - Fix unlinked pages
+-
+-3. **Enhancement Fixes** (Medium-term)
+-   - Improve theme transitions
+-   - Enhance navigation experience
+-   - Refactor component patterns
+-
+-4. **Optimization Fixes** (Long-term)
+-   - Clean up unused components
+-   - Optimize route definitions
+-   - Enhance developer experience
+-
+-## Detailed Fix Implementations
+-
+-### Specific Fix: Unlinked Beta Pages
+-
+-The Beta1Dashboard and Beta2Dashboard pages exist but aren't linked in the navigation. Options:
+-
+-1. **Add to navigation**:
+-   - Add to appropriate section in NavigationConfig.tsx
+-   - Create proper routes in a betaRoutes.tsx file
+-   - Include in the AppRoutes.tsx file
+-
+-2. **Deprecate if no longer needed**:
+-   - Mark with a deprecation comment
+-   - Create a migration plan for any used features
+-   - Eventually remove from the codebase
+-
+-### Specific Fix: Theme Consistency
+-
+-1. **Create a ThemeProvider wrapper**:
+-   - Ensure it's applied at the app root level
+-   - Implement proper context distribution
+-   - Add theme-aware styling utilities
+-
+-2. **Add theme-aware component variants**:
+-   - Update UI components to use theme classes
+-   - Ensure proper dark/light mode support in all components
+-   - Add theme-specific styles to tailwind.config.ts
+-
+-### Specific Fix: RBAC Implementation
+-
+-1. **Complete the isModuleEnabled function**:
+-   - Replace placeholder logic with actual database checks
+-   - Cache permission results for performance
+-   - Add proper error handling
+-
+-2. **Implement PermissionGuard consistently**:
+-   - Use for all sensitive UI components
+-   - Add proper permission check prop types
+-   - Create composable permission rules 
+\ No newline at end of file
+diff --git a/docs/project-overview.md b/docs/project-overview.md
+index 6bcf43a..e69de29 100644
+--- a/docs/project-overview.md
++++ b/docs/project-overview.md
+@@ -1,195 +0,0 @@
+-# NXT-DOT-X Platform Documentation
+-
+-## Overview
+-
+-NXT-DOT-X is a comprehensive business management platform built with modern web technologies. It provides a modular system for managing various business operations including data management, supplier tracking, cost analysis, customer management, and more.
+-
+-## Tech Stack
+-
+-- **Frontend Framework**: React with TypeScript
+-- **Build Tool**: Vite
+-- **UI Library**: Shadcn UI components (based on Radix UI)
+-- **Styling**: Tailwind CSS
+-- **Routing**: React Router DOM
+-- **State Management**: Context API and React Query
+-- **Backend**: Supabase (PostgreSQL database with authentication)
+-
+-## Project Structure
+-
+-### Core Application Files
+-- **Entry Points**: 
+-  - `src/main.tsx` - Application entry point
+-  - `src/App.tsx` - Main App component with providers
+-  - `src/routes/index.tsx` - Route export and organization
+-  - `src/routes/AppRoutes.tsx` - Main routing configuration
+-
+-### Configuration Files
+-- `vite.config.ts` - Vite build configuration
+-- `tailwind.config.ts` - Tailwind CSS configuration
+-- `tsconfig.json` - TypeScript configuration
+-- `components.json` - UI components configuration
+-
+-### State Management
+-- `src/context/AuthContext.tsx` - Authentication context
+-- `src/context/ThemeContext.tsx` - Theme context
+-- `src/context/UserManagementContext.tsx` - User management state
+-
+-### Backend Integration
+-- `src/integrations/supabase/client.ts` - Supabase client
+-- `src/integrations/supabase/migrate.ts` - Database migrations
+-- `src/integrations/supabase/types.ts` - Database types
+-
+-### Core UI Components
+-- `src/components/layouts/PlatformLayout.tsx` - Main layout wrapper
+-- `src/components/layout/sidebar/Sidebar.tsx` - Sidebar navigation
+-- `src/components/layout/sidebar/NavigationConfig.tsx` - Navigation structure
+-
+-## Key Feature Modules
+-
+-### 1. Master Dashboard
+-The central hub for navigating between all modules.
+-- **Key Files**:
+-  - `src/pages/MasterDash.tsx` - Top-level dashboard
+-
+-### 2. Data Management
+-Tools for handling data, suppliers, costs, and pricing.
+-- **Key Files**:
+-  - `src/pages/data-management/` - Data-related pages
+-  - `src/pages/SuppliersPage.tsx` - Supplier management
+-  - `src/pages/CostAnalysis.tsx` - Cost analysis tools
+-  - `src/pages/PriceManagement.tsx` - Price management
+-
+-### 3. RAG Dashboard (Retrieval Augmented Generation)
+-AI-powered dashboard for knowledge retrieval and generation.
+-- **Key Files**:
+-  - `src/components/rag-dashboard/` - Dashboard components
+-  - `src/pages/rag-dashboard/` - RAG pages
+-  - `src/components/rag-dashboard/RAGDashboardGridContainer.tsx` - Main dashboard layout
+-
+-### 4. Tech Hub
+-Management for technology integrations and AI tools.
+-- **Key Files**:
+-  - `src/components/tech-hub/` - Tech tools components
+-  - `src/pages/TechHubPersonas.tsx` - AI personas management
+-  - `src/components/tech-hub/api-management/` - API management tools
+-
+-### 5. Admin Tools
+-Administrative interfaces for user and system management.
+-- **Key Files**:
+-  - `src/pages/admin/` - Admin panel pages
+-  - `src/pages/UserManagement.tsx` - User management interface
+-  - `src/components/admin/users/` - User admin components
+-
+-### 6. Supplier Management
+-Tools for managing suppliers and vendor relationships.
+-- **Key Files**:
+-  - `src/pages/supplier-management/` - Supplier-related pages
+-  - `src/components/suppliers/` - Supplier components
+-
+-### 7. Customer Management
+-Tools for managing customer relationships.
+-- **Key Files**:
+-  - `src/pages/customer-management/` - Customer-related pages
+-  - `src/components/customers/` - Customer components
+-
+-## API Integrations
+-
+-### OpenAI Integration
+-- **Key Files**:
+-  - `src/hooks/api-clients/openai/` - OpenAI API client hooks
+-  - `src/hooks/api-clients/openai/use-openai-client.ts` - OpenAI client hook
+-  - `src/utils/api-clients/openai/` - OpenAI utilities
+-
+-### Requesty (Custom API Tool)
+-- **Key Files**:
+-  - `src/hooks/api-clients/requesty/` - Custom API client
+-  - `src/components/requesty/` - Requesty components
+-
+-## Serverless Functions (Supabase Edge Functions)
+-
+-The platform uses Supabase Edge Functions for server-side processing:
+-
+-- `supabase/functions/api-proxy/` - API proxy function
+-- `supabase/functions/threshold-checker/` - Monitoring function
+-- `supabase/functions/extract-zip/` - File extraction service
+-- `supabase/functions/fetch-credit-report/` - Credit report service
+-- `supabase/functions/api-integrations/` - API integration functions
+-
+-## Security and Access Control
+-
+-- **Authentication**: Managed through AuthContext using Supabase Auth
+-- **Role-Based Access Control (RBAC)**: 
+-  - `src/utils/rbac/` - Role-based access control utilities
+-  - `src/components/rag-dashboard/PermissionGuard.tsx` - Permission-based component guard
+-
+-## Key Utilities
+-
+-- `src/lib/` - Common utilities
+-- `src/utils/` - Application utilities
+-- `src/utils/upload-service.ts` - File upload service
+-- `src/utils/vendorCalculations.ts` - Vendor pricing calculations
+-
+-## Navigation Structure
+-
+-The platform uses a hierarchical navigation system with categories and items:
+-
+-```typescript
+-// Example from NavigationConfig.tsx
+-export const navCategories: NavCategory[] = [
+-  {
+-    label: "Data Management",
+-    items: [
+-      { label: 'Dashboard', icon: Database, href: '/data-management' },
+-      { label: 'Supplier Directory', icon: Truck, href: '/data-management/suppliers' },
+-      { label: 'Customer Directory', icon: Building, href: '/data-management/customers' },
+-      { label: 'Supplier Costing', icon: BarChart3, href: '/data-management/supplier-costing' },
+-      { label: 'Cost Analysis', icon: BarChart3, href: '/data-management/cost-analysis' },
+-      // ...more items
+-    ]
+-  },
+-  // ...more categories
+-];
+-```
+-
+-## Development Workflow
+-
+-1. Local development: `npm run dev`
+-2. Building for production: `npm run build`
+-3. Adding new pages: Create in `src/pages/` and add routes in `src/routes/`
+-4. Adding new components: Create in `src/components/` following existing patterns
+-5. Supabase migrations: Handled through `src/integrations/supabase/migrate.ts`
+-
+-## Authentication System
+-
+-The platform uses a simple authentication system with role-based permissions:
+-
+-```typescript
+-// From AuthContext.tsx
+-interface User {
+-  id: string;
+-  username: string;
+-  email: string;
+-  role: 'admin' | 'manager' | 'user';
+-  permissions: string[];
+-}
+-```
+-
+-The system includes built-in roles (admin, manager, user) with different permission sets.
+-
+-## Styling System
+-
+-The platform uses Tailwind CSS with a custom theme configuration. The `className` pattern is heavily used for styling components, with helper utilities like `cn()` for conditional class names.
+-
+-## Future Development Areas
+-
+-Based on the codebase exploration, potential areas for future development include:
+-
+-1. Enhanced AI integration with the RAG dashboard
+-2. Expanded supplier and customer management tools
+-3. Improved data visualization and reporting
+-4. More advanced user role management
+-5. Integration with additional external APIs and services
+-
+----
+-
+-This document serves as a high-level overview of the NXT-DOT-X platform architecture and can be used as a reference guide for future development and maintenance work. 
+\ No newline at end of file
+diff --git a/docs/rbac-improvements.md b/docs/rbac-improvements.md
+new file mode 100644
+index 0000000..e69de29
+diff --git a/package-lock.json b/package-lock.json
+index 8eba6e1..8c936c7 100644
+--- a/package-lock.json
++++ b/package-lock.json
+@@ -70,8 +70,9 @@
+         "@eslint/js": "^9.9.0",
+         "@tailwindcss/typography": "^0.5.15",
+         "@types/node": "^22.5.5",
+-        "@types/react": "^18.3.3",
+-        "@types/react-dom": "^18.3.0",
++        "@types/react": "^18.3.21",
++        "@types/react-dom": "^18.3.7",
++        "@types/react-router-dom": "^5.3.3",
+         "@vitejs/plugin-react-swc": "^3.9.0",
+         "autoprefixer": "^10.4.20",
+         "eslint": "^9.9.0",
+@@ -98,7 +99,6 @@
+       "version": "5.2.0",
+       "resolved": "https://registry.npmjs.org/@alloc/quick-lru/-/quick-lru-5.2.0.tgz",
+       "integrity": "sha512-UrcABB+4bUrFABwbluTIBErXwvbsU/V7TZWfmbgJfbkwiBuziS9gxdODUyuiecfdGQ85jglMW6juS3+z5TsKLw==",
+-      "dev": true,
+       "license": "MIT",
+       "engines": {
+         "node": ">=10"
+@@ -186,7 +186,7 @@
+       "version": "0.8.1",
+       "resolved": "https://registry.npmjs.org/@cspotcode/source-map-support/-/source-map-support-0.8.1.tgz",
+       "integrity": "sha512-IchNf6dN4tHoMFIn/7OE8LWZ19Y6q/67Bmf6vnGREv8RSbBVb9LPJxEcnwrcwX6ixSvaiGoomAUvu4YSxXrVgw==",
+-      "dev": true,
++      "devOptional": true,
+       "license": "MIT",
+       "dependencies": {
+         "@jridgewell/trace-mapping": "0.3.9"
+@@ -199,7 +199,7 @@
+       "version": "0.3.9",
+       "resolved": "https://registry.npmjs.org/@jridgewell/trace-mapping/-/trace-mapping-0.3.9.tgz",
+       "integrity": "sha512-3Belt6tdc8bPgAtbcmdtNJlirVoTmEb5e2gC94PnkwEW9jI6CAHUeoG85tjWP5WquqfavoMtMwiG4P926ZKKuQ==",
+-      "dev": true,
++      "devOptional": true,
+       "license": "MIT",
+       "dependencies": {
+         "@jridgewell/resolve-uri": "^3.0.3",
+@@ -870,7 +870,6 @@
+       "version": "8.0.2",
+       "resolved": "https://registry.npmjs.org/@isaacs/cliui/-/cliui-8.0.2.tgz",
+       "integrity": "sha512-O8jcjabXaleOG9DQ0+ARXWZBTfnP4WNAqzuiJK7ll44AmxGKv/J2M4TPjxjY3znBCfvBXFzucm1twdyFybFqEA==",
+-      "dev": true,
+       "license": "ISC",
+       "dependencies": {
+         "string-width": "^5.1.2",
+@@ -929,7 +928,6 @@
+       "version": "0.3.5",
+       "resolved": "https://registry.npmjs.org/@jridgewell/gen-mapping/-/gen-mapping-0.3.5.tgz",
+       "integrity": "sha512-IzL8ZoEDIBRWEzlCcRhOaCupYyN5gdIK+Q6fbFdPDg6HqX6jpkItn7DFIpW9LQzXG6Df9sA7+OKnq0qlz/GaQg==",
+-      "dev": true,
+       "license": "MIT",
+       "dependencies": {
+         "@jridgewell/set-array": "^1.2.1",
+@@ -944,7 +942,6 @@
+       "version": "3.1.2",
+       "resolved": "https://registry.npmjs.org/@jridgewell/resolve-uri/-/resolve-uri-3.1.2.tgz",
+       "integrity": "sha512-bRISgCIjP20/tbWSPWMEi54QVPRZExkuD9lJL+UIxUKtwVJA8wW1Trb1jMs1RFXo1CBTNZ/5hpC9QvmKWdopKw==",
+-      "dev": true,
+       "license": "MIT",
+       "engines": {
+         "node": ">=6.0.0"
+@@ -954,7 +951,6 @@
+       "version": "1.2.1",
+       "resolved": "https://registry.npmjs.org/@jridgewell/set-array/-/set-array-1.2.1.tgz",
+       "integrity": "sha512-R8gLRTZeyp03ymzP/6Lil/28tGeGEzhx1q2k703KGWRAI1VdvPIXdG70VJc2pAMw3NA6JKL5hhFu1sJX0Mnn/A==",
+-      "dev": true,
+       "license": "MIT",
+       "engines": {
+         "node": ">=6.0.0"
+@@ -964,14 +960,12 @@
+       "version": "1.5.0",
+       "resolved": "https://registry.npmjs.org/@jridgewell/sourcemap-codec/-/sourcemap-codec-1.5.0.tgz",
+       "integrity": "sha512-gv3ZRaISU3fjPAgNsriBRqGWQL6quFx04YMPW/zD8XMLsU32mhCCbfbO6KZFLjvYpCZ8zyDEgqsgf+PwPaM7GQ==",
+-      "dev": true,
+       "license": "MIT"
+     },
+     "node_modules/@jridgewell/trace-mapping": {
+       "version": "0.3.25",
+       "resolved": "https://registry.npmjs.org/@jridgewell/trace-mapping/-/trace-mapping-0.3.25.tgz",
+       "integrity": "sha512-vNk6aEwybGtawWmy/PzwnGDOjCkLWSD2wqvjGGAgOAwCGWySYXfYoxt00IJkTF+8Lb57DwOb3Aa0o9CApepiYQ==",
+-      "dev": true,
+       "license": "MIT",
+       "dependencies": {
+         "@jridgewell/resolve-uri": "^3.1.0",
+@@ -982,7 +976,6 @@
+       "version": "2.1.5",
+       "resolved": "https://registry.npmjs.org/@nodelib/fs.scandir/-/fs.scandir-2.1.5.tgz",
+       "integrity": "sha512-vq24Bq3ym5HEQm2NKCr3yXDwjc7vTsEThRDnkp2DK9p1uqLR+DHurm/NOTo0KG7HYHU7eppKZj3MyqYuMBf62g==",
+-      "dev": true,
+       "license": "MIT",
+       "dependencies": {
+         "@nodelib/fs.stat": "2.0.5",
+@@ -996,7 +989,6 @@
+       "version": "2.0.5",
+       "resolved": "https://registry.npmjs.org/@nodelib/fs.stat/-/fs.stat-2.0.5.tgz",
+       "integrity": "sha512-RkhPPp2zrqDAQA/2jNhnztcPAlv64XdhIp7a7454A5ovI7Bukxgt7MX7udwAu3zg1DcpPU0rz3VV1SeaqvY4+A==",
+-      "dev": true,
+       "license": "MIT",
+       "engines": {
+         "node": ">= 8"
+@@ -1006,7 +998,6 @@
+       "version": "1.2.8",
+       "resolved": "https://registry.npmjs.org/@nodelib/fs.walk/-/fs.walk-1.2.8.tgz",
+       "integrity": "sha512-oGB+UxlgWcgQkgwo8GcEGwemoTFt3FIO9ababBmaGwXIoBKZ+GTy0pP185beGg7Llih/NSHSV2XAs1lnznocSg==",
+-      "dev": true,
+       "license": "MIT",
+       "dependencies": {
+         "@nodelib/fs.scandir": "2.1.5",
+@@ -1020,7 +1011,6 @@
+       "version": "0.11.0",
+       "resolved": "https://registry.npmjs.org/@pkgjs/parseargs/-/parseargs-0.11.0.tgz",
+       "integrity": "sha512-+1VkjdD0QBLPodGrJUeqarH8VAIvQODIbwh9XpP5Syisf7YoQgsJKPNFoqqLQlu+VQ/tVSshMR6loPMn8U+dPg==",
+-      "dev": true,
+       "license": "MIT",
+       "optional": true,
+       "engines": {
+@@ -3025,6 +3015,88 @@
+         "react": "^18 || ^19"
+       }
+     },
++    "node_modules/@testing-library/dom": {
++      "version": "10.4.0",
++      "resolved": "https://registry.npmjs.org/@testing-library/dom/-/dom-10.4.0.tgz",
++      "integrity": "sha512-pemlzrSESWbdAloYml3bAJMEfNh1Z7EduzqPKprCH5S341frlpYnUEW0H72dLxa6IsYr+mPno20GiSm+h9dEdQ==",
++      "license": "MIT",
++      "peer": true,
++      "dependencies": {
++        "@babel/code-frame": "^7.10.4",
++        "@babel/runtime": "^7.12.5",
++        "@types/aria-query": "^5.0.1",
++        "aria-query": "5.3.0",
++        "chalk": "^4.1.0",
++        "dom-accessibility-api": "^0.5.9",
++        "lz-string": "^1.5.0",
++        "pretty-format": "^27.0.2"
++      },
++      "engines": {
++        "node": ">=18"
++      }
++    },
++    "node_modules/@testing-library/dom/node_modules/ansi-regex": {
++      "version": "5.0.1",
++      "resolved": "https://registry.npmjs.org/ansi-regex/-/ansi-regex-5.0.1.tgz",
++      "integrity": "sha512-quJQXlTSUGL2LH9SUXo8VwsY4soanhgo6LNSm84E1LBcE8s3O0wpdiRzyR9z/ZZJMlMWv37qOOb9pdJlMUEKFQ==",
++      "license": "MIT",
++      "peer": true,
++      "engines": {
++        "node": ">=8"
++      }
++    },
++    "node_modules/@testing-library/dom/node_modules/ansi-styles": {
++      "version": "5.2.0",
++      "resolved": "https://registry.npmjs.org/ansi-styles/-/ansi-styles-5.2.0.tgz",
++      "integrity": "sha512-Cxwpt2SfTzTtXcfOlzGEee8O+c+MmUgGrNiBcXnuWxuFJHe6a5Hz7qwhwe5OgaSYI0IJvkLqWX1ASG+cJOkEiA==",
++      "license": "MIT",
++      "peer": true,
++      "engines": {
++        "node": ">=10"
++      },
++      "funding": {
++        "url": "https://github.com/chalk/ansi-styles?sponsor=1"
++      }
++    },
++    "node_modules/@testing-library/dom/node_modules/aria-query": {
++      "version": "5.3.0",
++      "resolved": "https://registry.npmjs.org/aria-query/-/aria-query-5.3.0.tgz",
++      "integrity": "sha512-b0P0sZPKtyu8HkeRAfCq0IfURZK+SuwMjY1UXGBU27wpAiTwQAIlq56IbIO+ytk/JjS1fMR14ee5WBBfKi5J6A==",
++      "license": "Apache-2.0",
++      "peer": true,
++      "dependencies": {
++        "dequal": "^2.0.3"
++      }
++    },
++    "node_modules/@testing-library/dom/node_modules/dom-accessibility-api": {
++      "version": "0.5.16",
++      "resolved": "https://registry.npmjs.org/dom-accessibility-api/-/dom-accessibility-api-0.5.16.tgz",
++      "integrity": "sha512-X7BJ2yElsnOJ30pZF4uIIDfBEVgF4XEBxL9Bxhy6dnrm5hkzqmsWHGTiHqRiITNhMyFLyAiWndIJP7Z1NTteDg==",
++      "license": "MIT",
++      "peer": true
++    },
++    "node_modules/@testing-library/dom/node_modules/pretty-format": {
++      "version": "27.5.1",
++      "resolved": "https://registry.npmjs.org/pretty-format/-/pretty-format-27.5.1.tgz",
++      "integrity": "sha512-Qb1gy5OrP5+zDf2Bvnzdl3jsTf1qXVMazbvCoKhtKqVs4/YK4ozX4gKQJJVyNe+cajNPn0KoC0MC3FUmaHWEmQ==",
++      "license": "MIT",
++      "peer": true,
++      "dependencies": {
++        "ansi-regex": "^5.0.1",
++        "ansi-styles": "^5.0.0",
++        "react-is": "^17.0.1"
++      },
++      "engines": {
++        "node": "^10.13.0 || ^12.13.0 || ^14.15.0 || >=15.0.0"
++      }
++    },
++    "node_modules/@testing-library/dom/node_modules/react-is": {
++      "version": "17.0.2",
++      "resolved": "https://registry.npmjs.org/react-is/-/react-is-17.0.2.tgz",
++      "integrity": "sha512-w2GsyukL62IJnlaff/nRegPQR94C/XXamvMWmSHRJ4y7Ts/4ocGRmTHvOs8PSE6pB3dWOrD/nueuU5sduBsQ4w==",
++      "license": "MIT",
++      "peer": true
++    },
+     "node_modules/@testing-library/jest-dom": {
+       "version": "6.6.3",
+       "resolved": "https://registry.npmjs.org/@testing-library/jest-dom/-/jest-dom-6.6.3.tgz",
+@@ -3089,30 +3161,37 @@
+       "version": "1.0.11",
+       "resolved": "https://registry.npmjs.org/@tsconfig/node10/-/node10-1.0.11.tgz",
+       "integrity": "sha512-DcRjDCujK/kCk/cUe8Xz8ZSpm8mS3mNNpta+jGCA6USEDfktlNvm1+IuZ9eTcDbNk41BHwpHHeW+N1lKCz4zOw==",
+-      "dev": true,
++      "devOptional": true,
+       "license": "MIT"
+     },
+     "node_modules/@tsconfig/node12": {
+       "version": "1.0.11",
+       "resolved": "https://registry.npmjs.org/@tsconfig/node12/-/node12-1.0.11.tgz",
+       "integrity": "sha512-cqefuRsh12pWyGsIoBKJA9luFu3mRxCA+ORZvA4ktLSzIuCUtWVxGIuXigEwO5/ywWFMZ2QEGKWvkZG1zDMTag==",
+-      "dev": true,
++      "devOptional": true,
+       "license": "MIT"
+     },
+     "node_modules/@tsconfig/node14": {
+       "version": "1.0.3",
+       "resolved": "https://registry.npmjs.org/@tsconfig/node14/-/node14-1.0.3.tgz",
+       "integrity": "sha512-ysT8mhdixWK6Hw3i1V2AeRqZ5WfXg1G43mqoYlM2nc6388Fq5jcXyr5mRsqViLx/GJYdoL0bfXD8nmF+Zn/Iow==",
+-      "dev": true,
++      "devOptional": true,
+       "license": "MIT"
+     },
+     "node_modules/@tsconfig/node16": {
+       "version": "1.0.4",
+       "resolved": "https://registry.npmjs.org/@tsconfig/node16/-/node16-1.0.4.tgz",
+       "integrity": "sha512-vxhUy4J8lyeyinH7Azl1pdd43GJhZH/tP2weN8TntQblOY+A0XbT8DJk1/oCPuOOyg/Ja757rG0CgHcWC8OfMA==",
+-      "dev": true,
++      "devOptional": true,
+       "license": "MIT"
+     },
++    "node_modules/@types/aria-query": {
++      "version": "5.0.4",
++      "resolved": "https://registry.npmjs.org/@types/aria-query/-/aria-query-5.0.4.tgz",
++      "integrity": "sha512-rfT93uj5s0PRL7EzccGMs3brplhcrghnDoV26NqKhCAS1hVo+WdNsPvE/yb6ilfr5hi2MEk6d5EWJTKdxg8jVw==",
++      "license": "MIT",
++      "peer": true
++    },
+     "node_modules/@types/d3-array": {
+       "version": "3.2.1",
+       "resolved": "https://registry.npmjs.org/@types/d3-array/-/d3-array-3.2.1.tgz",
+@@ -3209,6 +3288,13 @@
+         "@types/unist": "*"
+       }
+     },
++    "node_modules/@types/history": {
++      "version": "4.7.11",
++      "resolved": "https://registry.npmjs.org/@types/history/-/history-4.7.11.tgz",
++      "integrity": "sha512-qjDJRrmvBMiTx+jyLxvLfJU7UznFuokDv4f3WRuriHKERccVpFU+8XMQUAbDzoiJCsmexxRExQeMwwCdamSKDA==",
++      "dev": true,
++      "license": "MIT"
++    },
+     "node_modules/@types/istanbul-lib-coverage": {
+       "version": "2.0.6",
+       "resolved": "https://registry.npmjs.org/@types/istanbul-lib-coverage/-/istanbul-lib-coverage-2.0.6.tgz",
+@@ -3284,14 +3370,12 @@
+       "version": "15.7.13",
+       "resolved": "https://registry.npmjs.org/@types/prop-types/-/prop-types-15.7.13.tgz",
+       "integrity": "sha512-hCZTSvwbzWGvhqxp/RqVqwU999pBf2vp7hzIjiYOsl8wqOmUxkQ6ddw1cV3l8811+kdUFus/q4d1Y3E3SyEifA==",
+-      "dev": true,
+       "license": "MIT"
+     },
+     "node_modules/@types/react": {
+-      "version": "18.3.12",
+-      "resolved": "https://registry.npmjs.org/@types/react/-/react-18.3.12.tgz",
+-      "integrity": "sha512-D2wOSq/d6Agt28q7rSI3jhU7G6aiuzljDGZ2hTZHIkrTLUI+AF3WMeKkEZ9nN2fkBAlcktT6vcZjDFiIhMYEQw==",
+-      "dev": true,
++      "version": "18.3.21",
++      "resolved": "https://registry.npmjs.org/@types/react/-/react-18.3.21.tgz",
++      "integrity": "sha512-gXLBtmlcRJeT09/sI4PxVwyrku6SaNUj/6cMubjE6T6XdY1fDmBL7r0nX0jbSZPU/Xr0KuwLLZh6aOYY5d91Xw==",
+       "license": "MIT",
+       "dependencies": {
+         "@types/prop-types": "*",
+@@ -3299,15 +3383,38 @@
+       }
+     },
+     "node_modules/@types/react-dom": {
+-      "version": "18.3.1",
+-      "resolved": "https://registry.npmjs.org/@types/react-dom/-/react-dom-18.3.1.tgz",
+-      "integrity": "sha512-qW1Mfv8taImTthu4KoXgDfLuk4bydU6Q/TkADnDWWHwi4NX4BR+LWfTp2sVmTqRrsHvyDDTelgelxJ+SsejKKQ==",
++      "version": "18.3.7",
++      "resolved": "https://registry.npmjs.org/@types/react-dom/-/react-dom-18.3.7.tgz",
++      "integrity": "sha512-MEe3UeoENYVFXzoXEWsvcpg6ZvlrFNlOQ7EOsvhI3CfAXwzPfO8Qwuxd40nepsYKqyyVQnTdEfv68q91yLcKrQ==",
++      "devOptional": true,
++      "license": "MIT",
++      "peerDependencies": {
++        "@types/react": "^18.0.0"
++      }
++    },
++    "node_modules/@types/react-router": {
++      "version": "5.1.20",
++      "resolved": "https://registry.npmjs.org/@types/react-router/-/react-router-5.1.20.tgz",
++      "integrity": "sha512-jGjmu/ZqS7FjSH6owMcD5qpq19+1RS9DeVRqfl1FeBMxTDQAGwlMWOcs52NDoXaNKyG3d1cYQFMs9rCrb88o9Q==",
+       "dev": true,
+       "license": "MIT",
+       "dependencies": {
++        "@types/history": "^4.7.11",
+         "@types/react": "*"
+       }
+     },
++    "node_modules/@types/react-router-dom": {
++      "version": "5.3.3",
++      "resolved": "https://registry.npmjs.org/@types/react-router-dom/-/react-router-dom-5.3.3.tgz",
++      "integrity": "sha512-kpqnYK4wcdm5UaWI3fLcELopqLrHgLqNsdpHauzlQktfkHL3npOSwtj1Uz9oKBAzs7lFtVkV8j83voAz2D8fhw==",
++      "dev": true,
++      "license": "MIT",
++      "dependencies": {
++        "@types/history": "^4.7.11",
++        "@types/react": "*",
++        "@types/react-router": "*"
++      }
++    },
+     "node_modules/@types/stack-utils": {
+       "version": "2.0.3",
+       "resolved": "https://registry.npmjs.org/@types/stack-utils/-/stack-utils-2.0.3.tgz",
+@@ -3596,7 +3703,7 @@
+       "version": "8.13.0",
+       "resolved": "https://registry.npmjs.org/acorn/-/acorn-8.13.0.tgz",
+       "integrity": "sha512-8zSiw54Oxrdym50NlZ9sUusyO1Z1ZchgRLWRaK6c86XJFClyCgFKetdowBg5bKxyp/u+CDBJG4Mpp0m3HLZl9w==",
+-      "dev": true,
++      "devOptional": true,
+       "license": "MIT",
+       "bin": {
+         "acorn": "bin/acorn"
+@@ -3619,7 +3726,7 @@
+       "version": "8.3.4",
+       "resolved": "https://registry.npmjs.org/acorn-walk/-/acorn-walk-8.3.4.tgz",
+       "integrity": "sha512-ueEepnujpqee2o5aIYnvHU6C0A42MNdsIDeqy5BydrkuC5R1ZuUFnm27EeFJGoEHJQgn3uleRvmTXaJgfXbt4g==",
+-      "dev": true,
++      "devOptional": true,
+       "license": "MIT",
+       "dependencies": {
+         "acorn": "^8.11.0"
+@@ -3649,7 +3756,6 @@
+       "version": "6.1.0",
+       "resolved": "https://registry.npmjs.org/ansi-regex/-/ansi-regex-6.1.0.tgz",
+       "integrity": "sha512-7HSX4QQb4CspciLpVFwyRe79O3xsIZDDLER21kERQ71oaPodF8jL725AgJMFAYbooIqolJoRLuM81SpeUkpkvA==",
+-      "dev": true,
+       "license": "MIT",
+       "engines": {
+         "node": ">=12"
+@@ -3677,14 +3783,12 @@
+       "version": "1.3.0",
+       "resolved": "https://registry.npmjs.org/any-promise/-/any-promise-1.3.0.tgz",
+       "integrity": "sha512-7UvmKalWRt1wgjL1RrGxoSJW/0QZFIegpeGvZG9kjp8vrRu55XTHbwnqq2GpXm9uLbcuhxm3IqX9OB4MZR1b2A==",
+-      "dev": true,
+       "license": "MIT"
+     },
+     "node_modules/anymatch": {
+       "version": "3.1.3",
+       "resolved": "https://registry.npmjs.org/anymatch/-/anymatch-3.1.3.tgz",
+       "integrity": "sha512-KMReFUr0B4t+D+OBkjR3KYqvocp2XaSzO55UcB6mgQMd3KbcE+mWTyvVV7D/zsdEbNnV6acZUutkiHQXvTr1Rw==",
+-      "dev": true,
+       "license": "ISC",
+       "dependencies": {
+         "normalize-path": "^3.0.0",
+@@ -3698,7 +3802,6 @@
+       "version": "5.0.2",
+       "resolved": "https://registry.npmjs.org/arg/-/arg-5.0.2.tgz",
+       "integrity": "sha512-PYjyFOLKQ9y57JvQ6QLo8dAgNqswh8M1RMJYdQduT6xbWSgK36P/Z/v+p888pM69jMMfS8Xd8F6I1kQ/I9HUGg==",
+-      "dev": true,
+       "license": "MIT"
+     },
+     "node_modules/argparse": {
+@@ -3781,14 +3884,12 @@
+       "version": "1.0.2",
+       "resolved": "https://registry.npmjs.org/balanced-match/-/balanced-match-1.0.2.tgz",
+       "integrity": "sha512-3oSeUO0TMV67hN1AmbXsK4yaqU7tjiHlbxRDZOpH0KW9+CeX4bRAaX0Anxt0tx2MrpRpWwQaPwIlISEJhYU5Pw==",
+-      "dev": true,
+       "license": "MIT"
+     },
+     "node_modules/binary-extensions": {
+       "version": "2.3.0",
+       "resolved": "https://registry.npmjs.org/binary-extensions/-/binary-extensions-2.3.0.tgz",
+       "integrity": "sha512-Ceh+7ox5qe7LJuLHoY0feh3pHuUDHAcRUeyL2VYghZwfpkNIy/+8Ocg0a3UuSoYzavmylwuLWQOf3hl0jjMMIw==",
+-      "dev": true,
+       "license": "MIT",
+       "engines": {
+         "node": ">=8"
+@@ -3867,7 +3968,6 @@
+       "version": "2.0.1",
+       "resolved": "https://registry.npmjs.org/camelcase-css/-/camelcase-css-2.0.1.tgz",
+       "integrity": "sha512-QOSvevhslijgYwRx6Rv7zKdMF8lbRmx+uQGx2+vDc+KI/eBnsy9kit5aj23AgGu3pa4t9AgwbnXWqS+iOY+2aA==",
+-      "dev": true,
+       "license": "MIT",
+       "engines": {
+         "node": ">= 6"
+@@ -3964,7 +4064,6 @@
+       "version": "3.6.0",
+       "resolved": "https://registry.npmjs.org/chokidar/-/chokidar-3.6.0.tgz",
+       "integrity": "sha512-7VT13fmjotKpGipCW9JEQAusEPE+Ei8nl6/g4FBAmIm0GOOLMua9NDDo/DWp0ZAxCr3cPq5ZpBqmPAQgDda2Pw==",
+-      "dev": true,
+       "license": "MIT",
+       "dependencies": {
+         "anymatch": "~3.1.2",
+@@ -3989,7 +4088,6 @@
+       "version": "5.1.2",
+       "resolved": "https://registry.npmjs.org/glob-parent/-/glob-parent-5.1.2.tgz",
+       "integrity": "sha512-AOIgSQCepiJYwP3ARnGx+5VnTu2HBYdzbGP45eLw1vr3zB3vZLeyed1sC9hnbcOc9/SrMyM5RPQrkGz4aS9Zow==",
+-      "dev": true,
+       "license": "ISC",
+       "dependencies": {
+         "is-glob": "^4.0.1"
+@@ -4443,7 +4541,6 @@
+       "version": "4.1.1",
+       "resolved": "https://registry.npmjs.org/commander/-/commander-4.1.1.tgz",
+       "integrity": "sha512-NOKm8xhkzAjzFx8B2v5OAHT+u5pRQc2UCa2Vq9jYL/31o2wi9mxBA7LIFs3sV5VSC49z6pEhfbMULvShKj26WA==",
+-      "dev": true,
+       "license": "MIT",
+       "engines": {
+         "node": ">= 6"
+@@ -4460,14 +4557,13 @@
+       "version": "1.1.1",
+       "resolved": "https://registry.npmjs.org/create-require/-/create-require-1.1.1.tgz",
+       "integrity": "sha512-dcKFX3jn0MpIaXjisoRvexIJVEKzaq7z2rZKxf+MSr9TkdmHmsU4m2lcLojrj/FHl8mk5VxMmYA+ftRkP/3oKQ==",
+-      "dev": true,
++      "devOptional": true,
+       "license": "MIT"
+     },
+     "node_modules/cross-spawn": {
+       "version": "7.0.6",
+       "resolved": "https://registry.npmjs.org/cross-spawn/-/cross-spawn-7.0.6.tgz",
+       "integrity": "sha512-uV2QOWP2nWzsy2aMp8aRibhi9dlzF5Hgh5SHaB9OiTGEyDTiJJyx0uy51QXdyWbtAHNua4XJzUKca3OzKUd3vA==",
+-      "dev": true,
+       "dependencies": {
+         "path-key": "^3.1.0",
+         "shebang-command": "^2.0.0",
+@@ -4487,7 +4583,6 @@
+       "version": "3.0.0",
+       "resolved": "https://registry.npmjs.org/cssesc/-/cssesc-3.0.0.tgz",
+       "integrity": "sha512-/Tb/JcjK111nNScGob5MNtsntNM1aCNUDipB/TkwZFhyDrrE47SOx/18wF2bbjgc3ZzCSKW1T5nt5EbFoAz/Vg==",
+-      "dev": true,
+       "license": "MIT",
+       "bin": {
+         "cssesc": "bin/cssesc"
+@@ -4708,14 +4803,13 @@
+       "version": "1.2.2",
+       "resolved": "https://registry.npmjs.org/didyoumean/-/didyoumean-1.2.2.tgz",
+       "integrity": "sha512-gxtyfqMg7GKyhQmb056K7M3xszy/myH8w+B4RT+QXBQsvAOdc3XymqDDPHx1BgPgsdAA5SIifona89YtRATDzw==",
+-      "dev": true,
+       "license": "Apache-2.0"
+     },
+     "node_modules/diff": {
+       "version": "4.0.2",
+       "resolved": "https://registry.npmjs.org/diff/-/diff-4.0.2.tgz",
+       "integrity": "sha512-58lmxKSA4BNyLz+HHMUzlOEpg09FV+ev6ZMe3vJihgdxzgcwZ8VoEEPmALCZG9LmqfVoNMMKpttIYTVG6uDY7A==",
+-      "dev": true,
++      "devOptional": true,
+       "license": "BSD-3-Clause",
+       "engines": {
+         "node": ">=0.3.1"
+@@ -4734,7 +4828,6 @@
+       "version": "1.1.3",
+       "resolved": "https://registry.npmjs.org/dlv/-/dlv-1.1.3.tgz",
+       "integrity": "sha512-+HlytyjlPKnIG8XuRG8WvmBP8xs8P71y+SKKS6ZXWoEgLuePxtDoUEiH7WkdePWrQ5JBpE6aoVqfZfJUQkjXwA==",
+-      "dev": true,
+       "license": "MIT"
+     },
+     "node_modules/dom-accessibility-api": {
+@@ -4757,7 +4850,6 @@
+       "version": "0.2.0",
+       "resolved": "https://registry.npmjs.org/eastasianwidth/-/eastasianwidth-0.2.0.tgz",
+       "integrity": "sha512-I88TYZWc9XiYHRQ4/3c5rjjfgkjhLyW2luGIheGERbNQ6OY7yTybanSpDXZa8y7VUP9YmDcYa+eyq4ca7iLqWA==",
+-      "dev": true,
+       "license": "MIT"
+     },
+     "node_modules/electron-to-chromium": {
+@@ -4799,7 +4891,6 @@
+       "version": "9.2.2",
+       "resolved": "https://registry.npmjs.org/emoji-regex/-/emoji-regex-9.2.2.tgz",
+       "integrity": "sha512-L18DaJsXSUk2+42pv8mLs5jJT2hqFkFE4j21wOmgbUqsZ2hL72NsUU785g9RXgo3s0ZNgVl42TiHp3ZtOv/Vyg==",
+-      "dev": true,
+       "license": "MIT"
+     },
+     "node_modules/esbuild": {
+@@ -5110,7 +5201,6 @@
+       "version": "3.3.2",
+       "resolved": "https://registry.npmjs.org/fast-glob/-/fast-glob-3.3.2.tgz",
+       "integrity": "sha512-oX2ruAFQwf/Orj8m737Y5adxDQO0LAB7/S5MnxCdTNDd4p6BsyIVsv9JQsATbTSq8KHRpLwIHbVlUNatxd+1Ow==",
+-      "dev": true,
+       "license": "MIT",
+       "dependencies": {
+         "@nodelib/fs.stat": "^2.0.2",
+@@ -5127,7 +5217,6 @@
+       "version": "5.1.2",
+       "resolved": "https://registry.npmjs.org/glob-parent/-/glob-parent-5.1.2.tgz",
+       "integrity": "sha512-AOIgSQCepiJYwP3ARnGx+5VnTu2HBYdzbGP45eLw1vr3zB3vZLeyed1sC9hnbcOc9/SrMyM5RPQrkGz4aS9Zow==",
+-      "dev": true,
+       "license": "ISC",
+       "dependencies": {
+         "is-glob": "^4.0.1"
+@@ -5154,7 +5243,6 @@
+       "version": "1.17.1",
+       "resolved": "https://registry.npmjs.org/fastq/-/fastq-1.17.1.tgz",
+       "integrity": "sha512-sRVD3lWVIXWg6By68ZN7vho9a1pQcN/WBFaAAsDDFzlJjvoGx0P8z7V1t72grFJfJhu3YPZBuu25f7Kaw2jN1w==",
+-      "dev": true,
+       "license": "ISC",
+       "dependencies": {
+         "reusify": "^1.0.4"
+@@ -5227,7 +5315,6 @@
+       "version": "3.3.0",
+       "resolved": "https://registry.npmjs.org/foreground-child/-/foreground-child-3.3.0.tgz",
+       "integrity": "sha512-Ld2g8rrAyMYFXBhEqMz8ZAHBi4J4uS1i/CxGMDnjyFWddMXLVcDp051DZfu+t7+ab7Wv6SMqpWmyFIj5UbfFvg==",
+-      "dev": true,
+       "license": "ISC",
+       "dependencies": {
+         "cross-spawn": "^7.0.0",
+@@ -5258,7 +5345,6 @@
+       "version": "2.3.3",
+       "resolved": "https://registry.npmjs.org/fsevents/-/fsevents-2.3.3.tgz",
+       "integrity": "sha512-5xoDfX+fL7faATnagmWPpbFtwh/R77WmMMqqHGS65C3vvB0YHrgF+B1YmZ3441tMj5n63k0212XNoJwzlhffQw==",
+-      "dev": true,
+       "hasInstallScript": true,
+       "license": "MIT",
+       "optional": true,
+@@ -5273,7 +5359,6 @@
+       "version": "1.1.2",
+       "resolved": "https://registry.npmjs.org/function-bind/-/function-bind-1.1.2.tgz",
+       "integrity": "sha512-7XHNxH7qX9xG5mIwxkhumTox/MIRNcOgDrxWsMt2pAr23WHp6MrRlN7FBSFpCpr+oVO0F744iUgR82nJMfG2SA==",
+-      "dev": true,
+       "license": "MIT",
+       "funding": {
+         "url": "https://github.com/sponsors/ljharb"
+@@ -5305,7 +5390,6 @@
+       "version": "10.4.5",
+       "resolved": "https://registry.npmjs.org/glob/-/glob-10.4.5.tgz",
+       "integrity": "sha512-7Bv8RF0k6xjo7d4A/PxYLbUCfb6c+Vpd2/mB2yRDlew7Jb5hEXiCD9ibfO7wpk8i4sevK6DFny9h7EYbM3/sHg==",
+-      "dev": true,
+       "license": "ISC",
+       "dependencies": {
+         "foreground-child": "^3.1.0",
+@@ -5326,7 +5410,6 @@
+       "version": "6.0.2",
+       "resolved": "https://registry.npmjs.org/glob-parent/-/glob-parent-6.0.2.tgz",
+       "integrity": "sha512-XxwI8EOhVQgWp6iDL+3b0r86f4d6AX6zSU55HfB4ydCEuXLXc5FcYeOu+nnGftS4TEju/11rt4KJPTMgbfmv4A==",
+-      "dev": true,
+       "license": "ISC",
+       "dependencies": {
+         "is-glob": "^4.0.3"
+@@ -5339,7 +5422,6 @@
+       "version": "2.0.1",
+       "resolved": "https://registry.npmjs.org/brace-expansion/-/brace-expansion-2.0.1.tgz",
+       "integrity": "sha512-XnAIvQ8eM+kC6aULx6wuQiwVsnzsi9d3WxzV3FpWTGA19F621kwdbsAcFKXgKUHZWsy+mY6iL1sHTxWEFCytDA==",
+-      "dev": true,
+       "license": "MIT",
+       "dependencies": {
+         "balanced-match": "^1.0.0"
+@@ -5349,7 +5431,6 @@
+       "version": "9.0.5",
+       "resolved": "https://registry.npmjs.org/minimatch/-/minimatch-9.0.5.tgz",
+       "integrity": "sha512-G6T0ZX48xgozx7587koeX9Ys2NYy6Gmv//P89sEte9V9whIapMNF4idKxnW2QtCcLiTWlb/wfCabAtAFWhhBow==",
+-      "dev": true,
+       "license": "ISC",
+       "dependencies": {
+         "brace-expansion": "^2.0.1"
+@@ -5400,7 +5481,6 @@
+       "version": "2.0.2",
+       "resolved": "https://registry.npmjs.org/hasown/-/hasown-2.0.2.tgz",
+       "integrity": "sha512-0hJU9SCPvmMzIBdZFqNPXWa6dqh7WdH0cII9y+CyS8rG3nL48Bclra9HmKhVVUHyPWNH5Y7xDwAB7bfgSjkUMQ==",
+-      "dev": true,
+       "license": "MIT",
+       "dependencies": {
+         "function-bind": "^1.1.2"
+@@ -5567,7 +5647,6 @@
+       "version": "2.1.0",
+       "resolved": "https://registry.npmjs.org/is-binary-path/-/is-binary-path-2.1.0.tgz",
+       "integrity": "sha512-ZMERYes6pDydyuGidse7OsHxtbI7WVeUEozgR/g7rd0xUimYNlvZRE/K2MgZTjWy725IfelLeVcEM97mmtRGXw==",
+-      "dev": true,
+       "license": "MIT",
+       "dependencies": {
+         "binary-extensions": "^2.0.0"
+@@ -5580,7 +5659,6 @@
+       "version": "2.15.1",
+       "resolved": "https://registry.npmjs.org/is-core-module/-/is-core-module-2.15.1.tgz",
+       "integrity": "sha512-z0vtXSwucUJtANQWldhbtbt7BnL0vxiFjIdDLAatwhDYty2bad6s+rijD6Ri4YuYJubLzIJLUidCh09e1djEVQ==",
+-      "dev": true,
+       "license": "MIT",
+       "dependencies": {
+         "hasown": "^2.0.2"
+@@ -5606,7 +5684,6 @@
+       "version": "2.1.1",
+       "resolved": "https://registry.npmjs.org/is-extglob/-/is-extglob-2.1.1.tgz",
+       "integrity": "sha512-SbKbANkN603Vi4jEZv49LeVJMn4yGwsbzZworEoyEiutsN3nJYdbO36zfhGJ6QEDpOZIFkDtnq5JRxmvl3jsoQ==",
+-      "dev": true,
+       "license": "MIT",
+       "engines": {
+         "node": ">=0.10.0"
+@@ -5616,7 +5693,6 @@
+       "version": "3.0.0",
+       "resolved": "https://registry.npmjs.org/is-fullwidth-code-point/-/is-fullwidth-code-point-3.0.0.tgz",
+       "integrity": "sha512-zymm5+u+sCsSWyD9qNaejV3DFvhCKclKdizYaJUuHA83RLjb7nSuGnddCHGv0hk+KY7BMAlsWeK4Ueg6EV6XQg==",
+-      "dev": true,
+       "license": "MIT",
+       "engines": {
+         "node": ">=8"
+@@ -5626,7 +5702,6 @@
+       "version": "4.0.3",
+       "resolved": "https://registry.npmjs.org/is-glob/-/is-glob-4.0.3.tgz",
+       "integrity": "sha512-xelSayHH36ZgE7ZWhli7pW34hNbNl8Ojv5KVmkJD4hBdD3th8Tfk9vYasLM+mXWOZhFkgZfxhLSnrwRr4elSSg==",
+-      "dev": true,
+       "license": "MIT",
+       "dependencies": {
+         "is-extglob": "^2.1.1"
+@@ -5670,14 +5745,12 @@
+       "version": "2.0.0",
+       "resolved": "https://registry.npmjs.org/isexe/-/isexe-2.0.0.tgz",
+       "integrity": "sha512-RHxMLp9lnKHGHRng9QFhRCMbYAcVpn69smSGcq3f36xjgVVWThj4qqLbTLlq7Ssj8B+fIQ1EuCEGI2lKsyQeIw==",
+-      "dev": true,
+       "license": "ISC"
+     },
+     "node_modules/jackspeak": {
+       "version": "3.4.3",
+       "resolved": "https://registry.npmjs.org/jackspeak/-/jackspeak-3.4.3.tgz",
+       "integrity": "sha512-OGlZQpz2yfahA/Rd1Y8Cd9SIEsqvXkLVoSw/cgwhnhFMDbsQFeZYoJJ7bIZBS9BcamUW96asq/npPWugM+RQBw==",
+-      "dev": true,
+       "license": "BlueOak-1.0.0",
+       "dependencies": {
+         "@isaacs/cliui": "^8.0.2"
+@@ -5769,7 +5842,6 @@
+       "version": "1.21.6",
+       "resolved": "https://registry.npmjs.org/jiti/-/jiti-1.21.6.tgz",
+       "integrity": "sha512-2yTgeWTWzMWkHu6Jp9NKgePDaYHbntiwvYuuJLbbN9vl7DC9DvXKOB2BC3ZZ92D3cvV/aflH0osDfwpHepQ53w==",
+-      "dev": true,
+       "license": "MIT",
+       "bin": {
+         "jiti": "bin/jiti.js"
+@@ -5843,7 +5915,6 @@
+       "version": "3.1.3",
+       "resolved": "https://registry.npmjs.org/lilconfig/-/lilconfig-3.1.3.tgz",
+       "integrity": "sha512-/vlFKAoH5Cgt3Ie+JLhRbwOsCQePABiU3tJ1egGvyQ+33R/vcwM2Zl2QR/LzjsBeItPt3oSVXapn+m4nQDvpzw==",
+-      "dev": true,
+       "license": "MIT",
+       "engines": {
+         "node": ">=14"
+@@ -5856,7 +5927,6 @@
+       "version": "1.2.4",
+       "resolved": "https://registry.npmjs.org/lines-and-columns/-/lines-and-columns-1.2.4.tgz",
+       "integrity": "sha512-7ylylesZQ/PV29jhEDl3Ufjo6ZX7gCqJr5F7PKrqc93v7fzSymt1BpwEU8nAUXs8qzzvqhbjhK5QZg6Mt/HkBg==",
+-      "dev": true,
+       "license": "MIT"
+     },
+     "node_modules/locate-path": {
+@@ -6376,7 +6446,6 @@
+       "version": "10.4.3",
+       "resolved": "https://registry.npmjs.org/lru-cache/-/lru-cache-10.4.3.tgz",
+       "integrity": "sha512-JNAzZcXrCt42VGLuYz0zfAzDfAvJWW6AfYlDBQyDV5DClI2m5sAmK+OIO7s59XfsRsWHp02jAJrRadPRGTt6SQ==",
+-      "dev": true,
+       "license": "ISC"
+     },
+     "node_modules/lucide-react": {
+@@ -6387,6 +6456,16 @@
+         "react": "^16.5.1 || ^17.0.0 || ^18.0.0 || ^19.0.0-rc"
+       }
+     },
++    "node_modules/lz-string": {
++      "version": "1.5.0",
++      "resolved": "https://registry.npmjs.org/lz-string/-/lz-string-1.5.0.tgz",
++      "integrity": "sha512-h5bgJWpxJNswbU7qCrV0tIKQCaS3blPDrqKWx+QxzuzL1zGUzij9XCWLrSLsJPu5t+eWA/ycetzYAO5IOMcWAQ==",
++      "license": "MIT",
++      "peer": true,
++      "bin": {
++        "lz-string": "bin/bin.js"
++      }
++    },
+     "node_modules/magic-string": {
+       "version": "0.30.12",
+       "resolved": "https://registry.npmjs.org/magic-string/-/magic-string-0.30.12.tgz",
+@@ -6401,7 +6480,7 @@
+       "version": "1.3.6",
+       "resolved": "https://registry.npmjs.org/make-error/-/make-error-1.3.6.tgz",
+       "integrity": "sha512-s8UhlNe7vPKomQhC1qFelMokr/Sc3AgNbso3n74mVPA5LTZwkB9NlXf4XPamLxJE8h0gh73rM94xvwRT2CVInw==",
+-      "dev": true,
++      "devOptional": true,
+       "license": "ISC"
+     },
+     "node_modules/mdast-util-from-markdown": {
+@@ -6561,7 +6640,6 @@
+       "version": "1.4.1",
+       "resolved": "https://registry.npmjs.org/merge2/-/merge2-1.4.1.tgz",
+       "integrity": "sha512-8q7VEgMJW4J8tcfVPy8g09NcQwZdbwFEqhe/WZkoIzjn/3TGDwtOCYtXGxA3O8tPzpczCCDgv+P2P5y00ZJOOg==",
+-      "dev": true,
+       "license": "MIT",
+       "engines": {
+         "node": ">= 8"
+@@ -7048,7 +7126,6 @@
+       "version": "7.1.2",
+       "resolved": "https://registry.npmjs.org/minipass/-/minipass-7.1.2.tgz",
+       "integrity": "sha512-qOOzS1cBTWYF4BH8fVePDBOO9iptMnGUEZwNc/cMWnTV2nVLZ7VoNWEPHkYczZA0pdoA7dl6e7FL659nX9S2aw==",
+-      "dev": true,
+       "license": "ISC",
+       "engines": {
+         "node": ">=16 || 14 >=14.17"
+@@ -7064,7 +7141,6 @@
+       "version": "2.7.0",
+       "resolved": "https://registry.npmjs.org/mz/-/mz-2.7.0.tgz",
+       "integrity": "sha512-z81GNO7nnYMEhrGh9LeymoE4+Yr0Wn5McHIZMK5cfQCl+NDX08sCZgUc9/6MHni9IWuFLm1Z3HTCXu2z9fN62Q==",
+-      "dev": true,
+       "license": "MIT",
+       "dependencies": {
+         "any-promise": "^1.0.0",
+@@ -7118,7 +7194,6 @@
+       "version": "3.0.0",
+       "resolved": "https://registry.npmjs.org/normalize-path/-/normalize-path-3.0.0.tgz",
+       "integrity": "sha512-6eZs5Ls3WtCisHWp9S2GUy8dqkpGi4BVSz3GaqiE6ezub0512ESztXUwUB6C6IKbQkY2Pnb/mD4WYojCRwcwLA==",
+-      "dev": true,
+       "license": "MIT",
+       "engines": {
+         "node": ">=0.10.0"
+@@ -7147,7 +7222,6 @@
+       "version": "3.0.0",
+       "resolved": "https://registry.npmjs.org/object-hash/-/object-hash-3.0.0.tgz",
+       "integrity": "sha512-RSn9F68PjH9HqtltsSnqYC1XXoWe9Bju5+213R98cNGttag9q9yAOTzdbsqvIa7aNm5WffBZFpWYr2aWrklWAw==",
+-      "dev": true,
+       "license": "MIT",
+       "engines": {
+         "node": ">= 6"
+@@ -7207,7 +7281,6 @@
+       "version": "1.0.1",
+       "resolved": "https://registry.npmjs.org/package-json-from-dist/-/package-json-from-dist-1.0.1.tgz",
+       "integrity": "sha512-UEZIS3/by4OC8vL3P2dTXRETpebLI2NiI5vIrjaD/5UtrkFX/tNbwjTSRAGC/+7CAo2pIcBaRgWmcBBHcsaCIw==",
+-      "dev": true,
+       "license": "BlueOak-1.0.0"
+     },
+     "node_modules/parent-module": {
+@@ -7262,7 +7335,6 @@
+       "version": "3.1.1",
+       "resolved": "https://registry.npmjs.org/path-key/-/path-key-3.1.1.tgz",
+       "integrity": "sha512-ojmeN0qd+y0jszEtoY48r0Peq5dwMEkIlCOu6Q5f41lfkswXuKtYrhgoTpLnyIcHm24Uhqx+5Tqm2InSwLhE6Q==",
+-      "dev": true,
+       "license": "MIT",
+       "engines": {
+         "node": ">=8"
+@@ -7272,14 +7344,12 @@
+       "version": "1.0.7",
+       "resolved": "https://registry.npmjs.org/path-parse/-/path-parse-1.0.7.tgz",
+       "integrity": "sha512-LDJzPVEEEPR+y48z93A0Ed0yXb8pAByGWo/k5YYdYgpY2/2EsOsksJrq7lOHxryrVOn1ejG6oAp8ahvOIQD8sw==",
+-      "dev": true,
+       "license": "MIT"
+     },
+     "node_modules/path-scurry": {
+       "version": "1.11.1",
+       "resolved": "https://registry.npmjs.org/path-scurry/-/path-scurry-1.11.1.tgz",
+       "integrity": "sha512-Xa4Nw17FS9ApQFJ9umLiJS4orGjm7ZzwUrwamcGQuHSzDyth9boKDaycYdDcZDuqYATXw4HFXgaqWTctW/v1HA==",
+-      "dev": true,
+       "license": "BlueOak-1.0.0",
+       "dependencies": {
+         "lru-cache": "^10.2.0",
+@@ -7314,7 +7384,6 @@
+       "version": "2.3.0",
+       "resolved": "https://registry.npmjs.org/pify/-/pify-2.3.0.tgz",
+       "integrity": "sha512-udgsAY+fTnvv7kI7aaxbqwWNb0AHiB0qBO89PZKPkoTmGOgdbrHDKD+0B2X4uTfJ/FT1R09r9gTsjUjNJotuog==",
+-      "dev": true,
+       "license": "MIT",
+       "engines": {
+         "node": ">=0.10.0"
+@@ -7324,7 +7393,6 @@
+       "version": "4.0.6",
+       "resolved": "https://registry.npmjs.org/pirates/-/pirates-4.0.6.tgz",
+       "integrity": "sha512-saLsH7WeYYPiD25LDuLRRY/i+6HaPYr6G1OUlN39otzkSTxKnubR9RTxS3/Kk50s1g2JTgFwWQDQyplC5/SHZg==",
+-      "dev": true,
+       "license": "MIT",
+       "engines": {
+         "node": ">= 6"
+@@ -7334,7 +7402,6 @@
+       "version": "8.4.47",
+       "resolved": "https://registry.npmjs.org/postcss/-/postcss-8.4.47.tgz",
+       "integrity": "sha512-56rxCq7G/XfB4EkXq9Egn5GCqugWvDFjafDOThIdMBsI15iqPqR5r15TfSr1YPYeEI19YeaXMCbY6u88Y76GLQ==",
+-      "dev": true,
+       "funding": [
+         {
+           "type": "opencollective",
+@@ -7363,7 +7430,6 @@
+       "version": "15.1.0",
+       "resolved": "https://registry.npmjs.org/postcss-import/-/postcss-import-15.1.0.tgz",
+       "integrity": "sha512-hpr+J05B2FVYUAXHeK1YyI267J/dDDhMU6B6civm8hSY1jYJnBXxzKDKDswzJmtLHryrjhnDjqqp/49t8FALew==",
+-      "dev": true,
+       "license": "MIT",
+       "dependencies": {
+         "postcss-value-parser": "^4.0.0",
+@@ -7381,7 +7447,6 @@
+       "version": "4.0.1",
+       "resolved": "https://registry.npmjs.org/postcss-js/-/postcss-js-4.0.1.tgz",
+       "integrity": "sha512-dDLF8pEO191hJMtlHFPRa8xsizHaM82MLfNkUHdUtVEV3tgTp5oj+8qbEqYM57SLfc74KSbw//4SeJma2LRVIw==",
+-      "dev": true,
+       "license": "MIT",
+       "dependencies": {
+         "camelcase-css": "^2.0.1"
+@@ -7401,7 +7466,6 @@
+       "version": "4.0.2",
+       "resolved": "https://registry.npmjs.org/postcss-load-config/-/postcss-load-config-4.0.2.tgz",
+       "integrity": "sha512-bSVhyJGL00wMVoPUzAVAnbEoWyqRxkjv64tUl427SKnPrENtq6hJwUojroMz2VB+Q1edmi4IfrAPpami5VVgMQ==",
+-      "dev": true,
+       "funding": [
+         {
+           "type": "opencollective",
+@@ -7437,7 +7501,6 @@
+       "version": "6.2.0",
+       "resolved": "https://registry.npmjs.org/postcss-nested/-/postcss-nested-6.2.0.tgz",
+       "integrity": "sha512-HQbt28KulC5AJzG+cZtj9kvKB93CFCdLvog1WFLf1D+xmMvPGlBstkpTEZfK5+AN9hfJocyBFCNiqyS48bpgzQ==",
+-      "dev": true,
+       "funding": [
+         {
+           "type": "opencollective",
+@@ -7463,7 +7526,6 @@
+       "version": "6.1.2",
+       "resolved": "https://registry.npmjs.org/postcss-selector-parser/-/postcss-selector-parser-6.1.2.tgz",
+       "integrity": "sha512-Q8qQfPiZ+THO/3ZrOrO0cJJKfpYCagtMUkXbnEfmgUjwXg6z/WBeOyS9APBBPCTSiDV+s4SwQGu8yFsiMRIudg==",
+-      "dev": true,
+       "license": "MIT",
+       "dependencies": {
+         "cssesc": "^3.0.0",
+@@ -7477,14 +7539,12 @@
+       "version": "4.2.0",
+       "resolved": "https://registry.npmjs.org/postcss-value-parser/-/postcss-value-parser-4.2.0.tgz",
+       "integrity": "sha512-1NNCs6uurfkVbeXG4S8JFT9t19m45ICnif8zWLd5oPSZ50QnwMfK+H3jv408d4jw/7Bttv5axS5IiHoLaVNHeQ==",
+-      "dev": true,
+       "license": "MIT"
+     },
+     "node_modules/postcss/node_modules/nanoid": {
+       "version": "3.3.11",
+       "resolved": "https://registry.npmjs.org/nanoid/-/nanoid-3.3.11.tgz",
+       "integrity": "sha512-N8SpfPUnUp1bK+PMYW8qSWdl9U+wwNWI4QKxOYDy9JAro3WMX7p2OeVRF9v+347pnakNevPmiHhNmZ2HbFA76w==",
+-      "dev": true,
+       "funding": [
+         {
+           "type": "github",
+@@ -7576,7 +7636,6 @@
+       "version": "1.2.3",
+       "resolved": "https://registry.npmjs.org/queue-microtask/-/queue-microtask-1.2.3.tgz",
+       "integrity": "sha512-NuaNSa6flKT5JaSYQzJok04JzTL1CA6aGhv5rfLW3PgqA+M2ChpZQnAC8h8i4ZFkBS8X5RqkDBHA7r4hej3K9A==",
+-      "dev": true,
+       "funding": [
+         {
+           "type": "github",
+@@ -7633,9 +7692,9 @@
+       }
+     },
+     "node_modules/react-hook-form": {
+-      "version": "7.53.1",
+-      "resolved": "https://registry.npmjs.org/react-hook-form/-/react-hook-form-7.53.1.tgz",
+-      "integrity": "sha512-6aiQeBda4zjcuaugWvim9WsGqisoUk+etmFEsSUMm451/Ic8L/UAb7sRtMj3V+Hdzm6mMjU1VhiSzYUZeBm0Vg==",
++      "version": "7.56.3",
++      "resolved": "https://registry.npmjs.org/react-hook-form/-/react-hook-form-7.56.3.tgz",
++      "integrity": "sha512-IK18V6GVbab4TAo1/cz3kqajxbDPGofdF0w7VHdCo0Nt8PrPlOZcuuDq9YYIV1BtjcX78x0XsldbQRQnQXWXmw==",
+       "license": "MIT",
+       "engines": {
+         "node": ">=18.0.0"
+@@ -7837,7 +7896,6 @@
+       "version": "1.0.0",
+       "resolved": "https://registry.npmjs.org/read-cache/-/read-cache-1.0.0.tgz",
+       "integrity": "sha512-Owdv/Ft7IjOgm/i0xvNDZ1LrRANRfew4b2prF3OWMQLxLfu3bS8FVhCsrSCMK4lR56Y9ya+AThoTpDCTxCmpRA==",
+-      "dev": true,
+       "license": "MIT",
+       "dependencies": {
+         "pify": "^2.3.0"
+@@ -7847,7 +7905,6 @@
+       "version": "3.6.0",
+       "resolved": "https://registry.npmjs.org/readdirp/-/readdirp-3.6.0.tgz",
+       "integrity": "sha512-hOS089on8RduqdbhvQ5Z37A0ESjsqz6qnRcffsMU3495FuTdqSm+7bhJ29JvIOsBDEEnan5DPu9t3To9VRlMzA==",
+-      "dev": true,
+       "license": "MIT",
+       "dependencies": {
+         "picomatch": "^2.2.1"
+@@ -7944,7 +8001,6 @@
+       "version": "1.22.8",
+       "resolved": "https://registry.npmjs.org/resolve/-/resolve-1.22.8.tgz",
+       "integrity": "sha512-oKWePCxqpd6FlLvGV1VU0x7bkPmmCNolxzjMf4NczoDnQcIWrAF+cPtZn5i6n+RfD2d9i0tzpKnG6Yk168yIyw==",
+-      "dev": true,
+       "license": "MIT",
+       "dependencies": {
+         "is-core-module": "^2.13.0",
+@@ -7982,7 +8038,6 @@
+       "version": "1.0.4",
+       "resolved": "https://registry.npmjs.org/reusify/-/reusify-1.0.4.tgz",
+       "integrity": "sha512-U9nH88a3fc/ekCF1l0/UP1IosiuIjyTh7hBvXVMHYgVcfGvt897Xguj2UOLDeI5BG2m7/uwyaLVT6fbtCwTyzw==",
+-      "dev": true,
+       "license": "MIT",
+       "engines": {
+         "iojs": ">=1.0.0",
+@@ -8029,7 +8084,6 @@
+       "version": "1.2.0",
+       "resolved": "https://registry.npmjs.org/run-parallel/-/run-parallel-1.2.0.tgz",
+       "integrity": "sha512-5l4VyZR86LZ/lDxZTR6jqL8AFE2S0IFLMP26AbjsLVADxHdhB/c0GUsH+y39UfCi3dzz8OlQuPmnaJOMoDHQBA==",
+-      "dev": true,
+       "funding": [
+         {
+           "type": "github",
+@@ -8075,7 +8129,6 @@
+       "version": "2.0.0",
+       "resolved": "https://registry.npmjs.org/shebang-command/-/shebang-command-2.0.0.tgz",
+       "integrity": "sha512-kHxr2zZpYtdmrN1qDjrrX/Z1rR1kG8Dx+gkpK1G4eXmvXswmcE1hTWBWYUzlraYw1/yZp6YuDY77YtvbN0dmDA==",
+-      "dev": true,
+       "license": "MIT",
+       "dependencies": {
+         "shebang-regex": "^3.0.0"
+@@ -8088,7 +8141,6 @@
+       "version": "3.0.0",
+       "resolved": "https://registry.npmjs.org/shebang-regex/-/shebang-regex-3.0.0.tgz",
+       "integrity": "sha512-7++dFhtcx3353uBaq8DDR4NuxBetBzC7ZQOhmTQInHEd6bSrXdiEyzCvG07Z44UYdLShWUyXt5M/yhz8ekcb1A==",
+-      "dev": true,
+       "license": "MIT",
+       "engines": {
+         "node": ">=8"
+@@ -8098,7 +8150,6 @@
+       "version": "4.1.0",
+       "resolved": "https://registry.npmjs.org/signal-exit/-/signal-exit-4.1.0.tgz",
+       "integrity": "sha512-bzyZ1e88w9O1iNJbKnOlvYTrWPDl46O1bG0D3XInv+9tkPrxrN8jUUTiFlDkkmKWgn1M6CfIA13SuGqOa9Korw==",
+-      "dev": true,
+       "license": "ISC",
+       "engines": {
+         "node": ">=14"
+@@ -8130,7 +8181,6 @@
+       "version": "1.2.1",
+       "resolved": "https://registry.npmjs.org/source-map-js/-/source-map-js-1.2.1.tgz",
+       "integrity": "sha512-UXWMKhLOwVKb728IUtQPXxfYU+usdybtUrK/8uGE8CQMvrhOpwvzDBwj0QhSL7MQc7vIsISBG8VQ8+IDQxpfQA==",
+-      "dev": true,
+       "license": "BSD-3-Clause",
+       "engines": {
+         "node": ">=0.10.0"
+@@ -8171,7 +8221,6 @@
+       "version": "5.1.2",
+       "resolved": "https://registry.npmjs.org/string-width/-/string-width-5.1.2.tgz",
+       "integrity": "sha512-HnLOCR3vjcY8beoNLtcjZ5/nxn2afmME6lhrDrebokqMap+XbeW8n9TXpPDOqdGK5qcI3oT0GKTW6wC7EMiVqA==",
+-      "dev": true,
+       "license": "MIT",
+       "dependencies": {
+         "eastasianwidth": "^0.2.0",
+@@ -8190,7 +8239,6 @@
+       "version": "4.2.3",
+       "resolved": "https://registry.npmjs.org/string-width/-/string-width-4.2.3.tgz",
+       "integrity": "sha512-wKyQRQpjJ0sIp62ErSZdGsjMJWsap5oRNihHhu6G7JVO/9jIB6UyevL+tXuOqrng8j/cxKTWyWUwvSTriiZz/g==",
+-      "dev": true,
+       "license": "MIT",
+       "dependencies": {
+         "emoji-regex": "^8.0.0",
+@@ -8205,7 +8253,6 @@
+       "version": "5.0.1",
+       "resolved": "https://registry.npmjs.org/ansi-regex/-/ansi-regex-5.0.1.tgz",
+       "integrity": "sha512-quJQXlTSUGL2LH9SUXo8VwsY4soanhgo6LNSm84E1LBcE8s3O0wpdiRzyR9z/ZZJMlMWv37qOOb9pdJlMUEKFQ==",
+-      "dev": true,
+       "license": "MIT",
+       "engines": {
+         "node": ">=8"
+@@ -8215,14 +8262,12 @@
+       "version": "8.0.0",
+       "resolved": "https://registry.npmjs.org/emoji-regex/-/emoji-regex-8.0.0.tgz",
+       "integrity": "sha512-MSjYzcWNOA0ewAHpz0MxpYFvwg6yjy1NG3xteoqz644VCo/RPgnr1/GGt+ic3iJTzQ8Eu3TdM14SawnVUmGE6A==",
+-      "dev": true,
+       "license": "MIT"
+     },
+     "node_modules/string-width-cjs/node_modules/strip-ansi": {
+       "version": "6.0.1",
+       "resolved": "https://registry.npmjs.org/strip-ansi/-/strip-ansi-6.0.1.tgz",
+       "integrity": "sha512-Y38VPSHcqkFrCpFnQ9vuSXmquuv5oXOKpGeT6aGrr3o3Gc9AlVa6JBfUSOCnbxGGZF+/0ooI7KrPuUSztUdU5A==",
+-      "dev": true,
+       "license": "MIT",
+       "dependencies": {
+         "ansi-regex": "^5.0.1"
+@@ -8249,7 +8294,6 @@
+       "version": "7.1.0",
+       "resolved": "https://registry.npmjs.org/strip-ansi/-/strip-ansi-7.1.0.tgz",
+       "integrity": "sha512-iq6eVVI64nQQTRYq2KtEg2d2uU7LElhTJwsH4YzIHZshxlgZms/wIc4VoDQTlG/IvVIrBKG06CrZnp0qv7hkcQ==",
+-      "dev": true,
+       "license": "MIT",
+       "dependencies": {
+         "ansi-regex": "^6.0.1"
+@@ -8266,7 +8310,6 @@
+       "version": "6.0.1",
+       "resolved": "https://registry.npmjs.org/strip-ansi/-/strip-ansi-6.0.1.tgz",
+       "integrity": "sha512-Y38VPSHcqkFrCpFnQ9vuSXmquuv5oXOKpGeT6aGrr3o3Gc9AlVa6JBfUSOCnbxGGZF+/0ooI7KrPuUSztUdU5A==",
+-      "dev": true,
+       "license": "MIT",
+       "dependencies": {
+         "ansi-regex": "^5.0.1"
+@@ -8279,7 +8322,6 @@
+       "version": "5.0.1",
+       "resolved": "https://registry.npmjs.org/ansi-regex/-/ansi-regex-5.0.1.tgz",
+       "integrity": "sha512-quJQXlTSUGL2LH9SUXo8VwsY4soanhgo6LNSm84E1LBcE8s3O0wpdiRzyR9z/ZZJMlMWv37qOOb9pdJlMUEKFQ==",
+-      "dev": true,
+       "license": "MIT",
+       "engines": {
+         "node": ">=8"
+@@ -8332,7 +8374,6 @@
+       "version": "3.35.0",
+       "resolved": "https://registry.npmjs.org/sucrase/-/sucrase-3.35.0.tgz",
+       "integrity": "sha512-8EbVDiu9iN/nESwxeSxDKe0dunta1GOlHufmSSXxMD2z2/tMZpDMpvXQGsc+ajGo8y2uYUmixaSRUc/QPoQ0GA==",
+-      "dev": true,
+       "license": "MIT",
+       "dependencies": {
+         "@jridgewell/gen-mapping": "^0.3.2",
+@@ -8367,7 +8408,6 @@
+       "version": "1.0.0",
+       "resolved": "https://registry.npmjs.org/supports-preserve-symlinks-flag/-/supports-preserve-symlinks-flag-1.0.0.tgz",
+       "integrity": "sha512-ot0WnXS9fgdkgIcePe6RHNk1WA8+muPa6cSjeR3V8K27q9BB1rTE3R1p7Hv0z1ZyAc8s6Vvv8DIyWf681MAt0w==",
+-      "dev": true,
+       "license": "MIT",
+       "engines": {
+         "node": ">= 0.4"
+@@ -8390,7 +8430,6 @@
+       "version": "3.4.17",
+       "resolved": "https://registry.npmjs.org/tailwindcss/-/tailwindcss-3.4.17.tgz",
+       "integrity": "sha512-w33E2aCvSDP0tW9RZuNXadXlkHXqFzSkQew/aIa2i/Sj8fThxwovwlXHSPXTbAHwEIhBFXAedUhP2tueAKP8Og==",
+-      "dev": true,
+       "license": "MIT",
+       "dependencies": {
+         "@alloc/quick-lru": "^5.2.0",
+@@ -8444,7 +8483,6 @@
+       "version": "3.3.1",
+       "resolved": "https://registry.npmjs.org/thenify/-/thenify-3.3.1.tgz",
+       "integrity": "sha512-RVZSIV5IG10Hk3enotrhvz0T9em6cyHBLkH/YAZuKqd8hRkKhSfCGIcP2KUY0EPxndzANBmNllzWPwak+bheSw==",
+-      "dev": true,
+       "license": "MIT",
+       "dependencies": {
+         "any-promise": "^1.0.0"
+@@ -8454,7 +8492,6 @@
+       "version": "1.6.0",
+       "resolved": "https://registry.npmjs.org/thenify-all/-/thenify-all-1.6.0.tgz",
+       "integrity": "sha512-RNxQH/qI8/t3thXJDwcstUO4zeqo64+Uy/+sNVRBx4Xn2OX+OZ9oP+iJnNFqplFra2ZUVeKCSa2oVWi3T4uVmA==",
+-      "dev": true,
+       "license": "MIT",
+       "dependencies": {
+         "thenify": ">= 3.1.0 < 4"
+@@ -8524,14 +8561,13 @@
+       "version": "0.1.13",
+       "resolved": "https://registry.npmjs.org/ts-interface-checker/-/ts-interface-checker-0.1.13.tgz",
+       "integrity": "sha512-Y/arvbn+rrz3JCKl9C4kVNfTfSm2/mEp5FSz5EsZSANGPSlQrpRI5M4PKF+mJnE52jOO90PnPSc3Ur3bTQw0gA==",
+-      "dev": true,
+       "license": "Apache-2.0"
+     },
+     "node_modules/ts-node": {
+       "version": "10.9.2",
+       "resolved": "https://registry.npmjs.org/ts-node/-/ts-node-10.9.2.tgz",
+       "integrity": "sha512-f0FFpIdcHgn8zcPSbf1dRevwt047YMnaiJM3u2w2RewrB+fob/zePZcrOyQoLMMO7aBIddLcQIEK5dYjkLnGrQ==",
+-      "dev": true,
++      "devOptional": true,
+       "license": "MIT",
+       "dependencies": {
+         "@cspotcode/source-map-support": "^0.8.0",
+@@ -8575,7 +8611,7 @@
+       "version": "4.1.3",
+       "resolved": "https://registry.npmjs.org/arg/-/arg-4.1.3.tgz",
+       "integrity": "sha512-58S9QDqG0Xx27YwPSt9fJxivjYl432YCwfDMfZ+71RAqUrZef7LrKQZ3LHLOwCS4FLNBplP533Zx895SeOCHvA==",
+-      "dev": true,
++      "devOptional": true,
+       "license": "MIT"
+     },
+     "node_modules/tslib": {
+@@ -9087,7 +9123,7 @@
+       "version": "5.6.3",
+       "resolved": "https://registry.npmjs.org/typescript/-/typescript-5.6.3.tgz",
+       "integrity": "sha512-hjcS1mhfuyi4WW8IWtjP7brDrG2cuDZukyrYrSauoXGNgx0S7zceP07adYkJycEr56BOUTNPzbInooiN3fn1qw==",
+-      "dev": true,
++      "devOptional": true,
+       "license": "Apache-2.0",
+       "bin": {
+         "tsc": "bin/tsc",
+@@ -9302,14 +9338,13 @@
+       "version": "1.0.2",
+       "resolved": "https://registry.npmjs.org/util-deprecate/-/util-deprecate-1.0.2.tgz",
+       "integrity": "sha512-EPD5q1uXyFxJpCrLnCc1nHnq3gOa6DZBocAIiI2TaSCA7VCJ1UJDMagCzIkXNsUYfD1daK//LTEQ8xiIbrHtcw==",
+-      "dev": true,
+       "license": "MIT"
+     },
+     "node_modules/v8-compile-cache-lib": {
+       "version": "3.0.1",
+       "resolved": "https://registry.npmjs.org/v8-compile-cache-lib/-/v8-compile-cache-lib-3.0.1.tgz",
+       "integrity": "sha512-wa7YjyUGfNZngI/vtK0UHAN+lgDCxBPCylVXGp0zu59Fz5aiGtNXaq3DhIov063MorB+VfufLh3JlF2KdTK3xg==",
+-      "dev": true,
++      "devOptional": true,
+       "license": "MIT"
+     },
+     "node_modules/vaul": {
+@@ -9455,7 +9490,6 @@
+       "version": "2.0.2",
+       "resolved": "https://registry.npmjs.org/which/-/which-2.0.2.tgz",
+       "integrity": "sha512-BLI3Tl1TW3Pvl70l3yq3Y64i+awpwXqsGBYWkkqMtnbXgrMD+yj7rhW0kuEDxzJaYXGjEW5ogapKNMEKNMjibA==",
+-      "dev": true,
+       "license": "ISC",
+       "dependencies": {
+         "isexe": "^2.0.0"
+@@ -9481,7 +9515,6 @@
+       "version": "8.1.0",
+       "resolved": "https://registry.npmjs.org/wrap-ansi/-/wrap-ansi-8.1.0.tgz",
+       "integrity": "sha512-si7QWI6zUMq56bESFvagtmzMdGOtoxfR+Sez11Mobfc7tm+VkUckk9bW2UeffTGVUbOksxmSw0AA2gs8g71NCQ==",
+-      "dev": true,
+       "license": "MIT",
+       "dependencies": {
+         "ansi-styles": "^6.1.0",
+@@ -9500,7 +9533,6 @@
+       "version": "7.0.0",
+       "resolved": "https://registry.npmjs.org/wrap-ansi/-/wrap-ansi-7.0.0.tgz",
+       "integrity": "sha512-YVGIj2kamLSTxw6NsZjoBxfSwsn0ycdesmc4p+Q21c5zPuZ1pl+NfxVdxPtdHvmNVOQ6XSYG4AUtyt/Fi7D16Q==",
+-      "dev": true,
+       "license": "MIT",
+       "dependencies": {
+         "ansi-styles": "^4.0.0",
+@@ -9518,7 +9550,6 @@
+       "version": "5.0.1",
+       "resolved": "https://registry.npmjs.org/ansi-regex/-/ansi-regex-5.0.1.tgz",
+       "integrity": "sha512-quJQXlTSUGL2LH9SUXo8VwsY4soanhgo6LNSm84E1LBcE8s3O0wpdiRzyR9z/ZZJMlMWv37qOOb9pdJlMUEKFQ==",
+-      "dev": true,
+       "license": "MIT",
+       "engines": {
+         "node": ">=8"
+@@ -9528,14 +9559,12 @@
+       "version": "8.0.0",
+       "resolved": "https://registry.npmjs.org/emoji-regex/-/emoji-regex-8.0.0.tgz",
+       "integrity": "sha512-MSjYzcWNOA0ewAHpz0MxpYFvwg6yjy1NG3xteoqz644VCo/RPgnr1/GGt+ic3iJTzQ8Eu3TdM14SawnVUmGE6A==",
+-      "dev": true,
+       "license": "MIT"
+     },
+     "node_modules/wrap-ansi-cjs/node_modules/string-width": {
+       "version": "4.2.3",
+       "resolved": "https://registry.npmjs.org/string-width/-/string-width-4.2.3.tgz",
+       "integrity": "sha512-wKyQRQpjJ0sIp62ErSZdGsjMJWsap5oRNihHhu6G7JVO/9jIB6UyevL+tXuOqrng8j/cxKTWyWUwvSTriiZz/g==",
+-      "dev": true,
+       "license": "MIT",
+       "dependencies": {
+         "emoji-regex": "^8.0.0",
+@@ -9550,7 +9579,6 @@
+       "version": "6.0.1",
+       "resolved": "https://registry.npmjs.org/strip-ansi/-/strip-ansi-6.0.1.tgz",
+       "integrity": "sha512-Y38VPSHcqkFrCpFnQ9vuSXmquuv5oXOKpGeT6aGrr3o3Gc9AlVa6JBfUSOCnbxGGZF+/0ooI7KrPuUSztUdU5A==",
+-      "dev": true,
+       "license": "MIT",
+       "dependencies": {
+         "ansi-regex": "^5.0.1"
+@@ -9563,7 +9591,6 @@
+       "version": "6.2.1",
+       "resolved": "https://registry.npmjs.org/ansi-styles/-/ansi-styles-6.2.1.tgz",
+       "integrity": "sha512-bN798gFfQX+viw3R7yrGWRqnrN2oRkEkUjjl4JNn4E8GxxbjtG3FbrEIIY3l8/hrwUwIeCZvi4QuOTP4MErVug==",
+-      "dev": true,
+       "license": "MIT",
+       "engines": {
+         "node": ">=12"
+@@ -9597,7 +9624,6 @@
+       "version": "2.6.0",
+       "resolved": "https://registry.npmjs.org/yaml/-/yaml-2.6.0.tgz",
+       "integrity": "sha512-a6ae//JvKDEra2kdi1qzCyrJW/WZCgFi8ydDV+eXExl95t+5R+ijnqHJbz9tmMh8FUjx3iv2fCQ4dclAQlO2UQ==",
+-      "dev": true,
+       "license": "ISC",
+       "bin": {
+         "yaml": "bin.mjs"
+@@ -9610,7 +9636,7 @@
+       "version": "3.1.1",
+       "resolved": "https://registry.npmjs.org/yn/-/yn-3.1.1.tgz",
+       "integrity": "sha512-Ux4ygGWsu2c7isFWe8Yu1YluJmqVhxqK2cLXNQA5AcC3QfbGNpM7fu0Y8b/z16pXLnFxZYvWhd3fhBY9DLmC6Q==",
+-      "dev": true,
++      "devOptional": true,
+       "license": "MIT",
+       "engines": {
+         "node": ">=6"
+diff --git a/package.json b/package.json
+index 9e1e1b7..afc95d6 100644
+--- a/package.json
++++ b/package.json
+@@ -73,8 +73,9 @@
+     "@eslint/js": "^9.9.0",
+     "@tailwindcss/typography": "^0.5.15",
+     "@types/node": "^22.5.5",
+-    "@types/react": "^18.3.3",
+-    "@types/react-dom": "^18.3.0",
++    "@types/react": "^18.3.21",
++    "@types/react-dom": "^18.3.7",
++    "@types/react-router-dom": "^5.3.3",
+     "@vitejs/plugin-react-swc": "^3.9.0",
+     "autoprefixer": "^10.4.20",
+     "eslint": "^9.9.0",
+diff --git a/src/components/beta/BetaPermissionGuard.tsx b/src/components/beta/BetaPermissionGuard.tsx
+new file mode 100644
+index 0000000..94e5a38
+--- /dev/null
++++ b/src/components/beta/BetaPermissionGuard.tsx
+@@ -0,0 +1,49 @@
++import React from 'react';
++import { Navigate } from 'react-router-dom';
++import { useAuth } from '@/context/AuthContext';
++
++interface BetaPermissionGuardProps {
++  betaModule: 'beta1' | 'beta2';
++  children: React.ReactNode;
++  fallbackPath?: string;
++}
++
++/**
++ * Permission guard component that specifically checks for Beta module access
++ * It restricts access to Beta features based on user permissions
++ */
++const BetaPermissionGuard: React.FC<BetaPermissionGuardProps> = ({ 
++  betaModule, 
++  children, 
++  fallbackPath = '/unauthorized'
++}) => {
++  const { isAuthenticated, hasPermission, user } = useAuth();
++  
++  // Log access check for debugging
++  console.log(`Beta permission check - Auth: ${isAuthenticated}, Module: ${betaModule}`);
++  
++  if (!isAuthenticated) {
++    console.log("Not authenticated, redirecting to landing");
++    return <Navigate to="/landing" replace />;
++  }
++
++  // Determine the required permission based on beta module
++  const requiredPermission = betaModule === 'beta1' 
++    ? 'modules.data' 
++    : 'modules.loyalty';
++  
++  // Admin users bypass all permission checks
++  if (user?.role === 'admin') {
++    return <>{children}</>;
++  }
++  
++  // For others, check specific module permission
++  if (!hasPermission(requiredPermission)) {
++    console.log(`Missing permission for beta module: ${requiredPermission}`);
++    return <Navigate to={fallbackPath} replace />;
++  }
++
++  return <>{children}</>;
++};
++
++export default BetaPermissionGuard; 
+\ No newline at end of file
+diff --git a/src/pages/Beta1Dashboard.tsx b/src/pages/Beta1Dashboard.tsx
+index 15db1a8..985014a 100644
+--- a/src/pages/Beta1Dashboard.tsx
++++ b/src/pages/Beta1Dashboard.tsx
+@@ -1,43 +1,27 @@
+-
+ import React from 'react';
+-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+ 
+ const Beta1Dashboard = () => {
+   return (
+-    <div className="space-y-6">
+-      <h1 className="text-3xl font-bold">Beta 1 Dashboard</h1>
+-      <p className="text-muted-foreground">Welcome to the DOT-X Data Management Platform</p>
+-      
+-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+-        <Card>
+-          <CardHeader>
+-            <CardTitle>Supplier Costing</CardTitle>
+-            <CardDescription>Monitor and analyze supplier costs</CardDescription>
+-          </CardHeader>
+-          <CardContent>
+-            <p>Access detailed supplier cost analytics and trends.</p>
+-          </CardContent>
+-        </Card>
+-        
+-        <Card>
+-          <CardHeader>
+-            <CardTitle>Cost Analysis</CardTitle>
+-            <CardDescription>Analyze cost data and metrics</CardDescription>
+-          </CardHeader>
+-          <CardContent>
+-            <p>Deep dive into cost structures and optimization opportunities.</p>
+-          </CardContent>
+-        </Card>
+-        
+-        <Card>
+-          <CardHeader>
+-            <CardTitle>Competitor Pricing</CardTitle>
+-            <CardDescription>Track competitor pricing strategies</CardDescription>
+-          </CardHeader>
+-          <CardContent>
+-            <p>Stay informed on market pricing and competitive positioning.</p>
+-          </CardContent>
+-        </Card>
++    <div className="p-6">
++      <h1 className="text-2xl font-bold mb-4">Data Platform Beta Dashboard</h1>
++      <div className="bg-white shadow-md rounded-lg p-6">
++        <p className="text-gray-600 mb-4">
++          Welcome to the Beta 1 Dashboard. This dashboard provides an overview of the data platform capabilities.
++        </p>
++        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">
++          <div className="bg-blue-50 p-4 rounded-lg">
++            <h3 className="font-semibold text-blue-700">Data Insights</h3>
++            <p className="text-sm text-gray-600">View and analyze your data insights</p>
++          </div>
++          <div className="bg-green-50 p-4 rounded-lg">
++            <h3 className="font-semibold text-green-700">Data Connections</h3>
++            <p className="text-sm text-gray-600">Manage your data source connections</p>
++          </div>
++          <div className="bg-purple-50 p-4 rounded-lg">
++            <h3 className="font-semibold text-purple-700">Reporting</h3>
++            <p className="text-sm text-gray-600">Access and customize reports</p>
++          </div>
++        </div>
+       </div>
+     </div>
+   );
+diff --git a/src/pages/Beta1Settings.tsx b/src/pages/Beta1Settings.tsx
+index 1586e3e..4ec0397 100644
+--- a/src/pages/Beta1Settings.tsx
++++ b/src/pages/Beta1Settings.tsx
+@@ -1,45 +1,56 @@
+-
+ import React from 'react';
+-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+-import { Input } from "@/components/ui/input";
+-import { Label } from "@/components/ui/label";
+-import { Button } from "@/components/ui/button";
+-import { Switch } from "@/components/ui/switch";
+ 
+ const Beta1Settings = () => {
+   return (
+-    <div className="space-y-6">
+-      <h1 className="text-3xl font-bold">Beta 1 Settings</h1>
+-      <p className="text-muted-foreground">Manage your application preferences</p>
+-      
+-      <Card>
+-        <CardHeader>
+-          <CardTitle>User Preferences</CardTitle>
+-        </CardHeader>
+-        <CardContent className="space-y-4">
+-          <div className="space-y-2">
+-            <Label htmlFor="displayName">Display Name</Label>
+-            <Input id="displayName" defaultValue="Admin User" />
++    <div className="p-6">
++      <h1 className="text-2xl font-bold mb-4">Data Platform Settings</h1>
++      <div className="bg-white shadow-md rounded-lg p-6">
++        <p className="text-gray-600 mb-6">
++          Configure your data platform settings and preferences.
++        </p>
++        
++        <div className="space-y-6">
++          <div className="border-b pb-4">
++            <h3 className="text-lg font-medium mb-2">Data Source Settings</h3>
++            <div className="flex items-center justify-between">
++              <span className="text-gray-600">Enable external data sources</span>
++              <div className="w-12 h-6 bg-gray-200 rounded-full flex items-center p-1 cursor-pointer">
++                <div className="w-4 h-4 bg-white rounded-full shadow-md"></div>
++              </div>
++            </div>
+           </div>
+           
+-          <div className="space-y-2">
+-            <Label htmlFor="email">Email Address</Label>
+-            <Input id="email" type="email" defaultValue="admin@example.com" />
++          <div className="border-b pb-4">
++            <h3 className="text-lg font-medium mb-2">Data Processing</h3>
++            <div className="flex items-center justify-between">
++              <span className="text-gray-600">Enable automatic data processing</span>
++              <div className="w-12 h-6 bg-gray-200 rounded-full flex items-center p-1 cursor-pointer">
++                <div className="w-4 h-4 bg-white rounded-full shadow-md"></div>
++              </div>
++            </div>
+           </div>
+           
+-          <div className="flex items-center justify-between">
+-            <Label htmlFor="darkMode">Dark Mode</Label>
+-            <Switch id="darkMode" />
++          <div className="border-b pb-4">
++            <h3 className="text-lg font-medium mb-2">Notifications</h3>
++            <div className="flex items-center justify-between">
++              <span className="text-gray-600">Enable email notifications</span>
++              <div className="w-12 h-6 bg-gray-200 rounded-full flex items-center p-1 cursor-pointer">
++                <div className="w-4 h-4 bg-white rounded-full shadow-md"></div>
++              </div>
++            </div>
+           </div>
+           
+-          <div className="flex items-center justify-between">
+-            <Label htmlFor="notifications">Email Notifications</Label>
+-            <Switch id="notifications" defaultChecked />
++          <div>
++            <h3 className="text-lg font-medium mb-2">API Access</h3>
++            <div className="flex items-center justify-between">
++              <span className="text-gray-600">Enable API access</span>
++              <div className="w-12 h-6 bg-gray-200 rounded-full flex items-center p-1 cursor-pointer">
++                <div className="w-4 h-4 bg-white rounded-full shadow-md"></div>
++              </div>
++            </div>
+           </div>
+-          
+-          <Button className="mt-4">Save Changes</Button>
+-        </CardContent>
+-      </Card>
++        </div>
++      </div>
+     </div>
+   );
+ };
+diff --git a/src/pages/Beta2Analytics.tsx b/src/pages/Beta2Analytics.tsx
+index 765a522..d3e7bfd 100644
+--- a/src/pages/Beta2Analytics.tsx
++++ b/src/pages/Beta2Analytics.tsx
+@@ -1,139 +1,73 @@
+-
+ import React from 'react';
+-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+ 
+ const Beta2Analytics = () => {
+   return (
+-    <div className="space-y-6">
+-      <div>
+-        <h1 className="text-3xl font-bold tracking-tight">Loyalty Analytics</h1>
+-        <p className="text-muted-foreground">Track and analyze your loyalty program performance.</p>
+-      </div>
+-      
+-      <Tabs defaultValue="overview">
+-        <TabsList className="mb-4">
+-          <TabsTrigger value="overview">Program Overview</TabsTrigger>
+-          <TabsTrigger value="members">Member Metrics</TabsTrigger>
+-          <TabsTrigger value="rewards">Reward Activity</TabsTrigger>
+-        </TabsList>
++    <div className="p-6">
++      <h1 className="text-2xl font-bold mb-4">Loyalty Analytics</h1>
++      <div className="bg-white shadow-md rounded-lg p-6">
++        <p className="text-gray-600 mb-6">
++          View analytics and insights for your loyalty program.
++        </p>
+         
+-        <TabsContent value="overview">
+-          <div className="grid gap-6 md:grid-cols-2">
+-            <Card>
+-              <CardHeader>
+-                <CardTitle>Program Performance</CardTitle>
+-                <CardDescription>Key loyalty program metrics</CardDescription>
+-              </CardHeader>
+-              <CardContent>
+-                <div className="h-64 bg-slate-100 rounded-md flex items-center justify-center">
+-                  <span className="text-muted-foreground">Program metrics chart placeholder</span>
+-                </div>
+-              </CardContent>
+-            </Card>
+-            
+-            <Card>
+-              <CardHeader>
+-                <CardTitle>Membership Growth</CardTitle>
+-                <CardDescription>New members over time</CardDescription>
+-              </CardHeader>
+-              <CardContent>
+-                <div className="h-64 bg-slate-100 rounded-md flex items-center justify-center">
+-                  <span className="text-muted-foreground">Membership growth chart placeholder</span>
+-                </div>
+-              </CardContent>
+-            </Card>
++        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
++          <div className="border rounded-lg p-4">
++            <h3 className="font-semibold text-lg mb-4">Member Growth</h3>
++            <div className="h-64 bg-gray-100 rounded flex items-center justify-center">
++              <p className="text-gray-500">Chart: Member Growth - Last 12 Months</p>
++            </div>
++          </div>
++          
++          <div className="border rounded-lg p-4">
++            <h3 className="font-semibold text-lg mb-4">Points Issued vs Redeemed</h3>
++            <div className="h-64 bg-gray-100 rounded flex items-center justify-center">
++              <p className="text-gray-500">Chart: Points Issued vs Redeemed</p>
++            </div>
+           </div>
+-        </TabsContent>
++        </div>
+         
+-        <TabsContent value="members">
+-          <Card>
+-            <CardHeader>
+-              <CardTitle>Member Analysis</CardTitle>
+-              <CardDescription>Detailed metrics about program members</CardDescription>
+-            </CardHeader>
+-            <CardContent>
+-              <div className="space-y-6">
+-                <div className="h-64 bg-slate-100 rounded-md flex items-center justify-center">
+-                  <span className="text-muted-foreground">Member segments chart placeholder</span>
+-                </div>
+-                
+-                <div className="grid gap-4 md:grid-cols-3">
+-                  <div className="p-4 border rounded-md">
+-                    <p className="text-sm text-muted-foreground">Total Members</p>
+-                    <p className="text-2xl font-bold">12,543</p>
+-                  </div>
+-                  
+-                  <div className="p-4 border rounded-md">
+-                    <p className="text-sm text-muted-foreground">Active Rate</p>
+-                    <p className="text-2xl font-bold">68%</p>
+-                  </div>
+-                  
+-                  <div className="p-4 border rounded-md">
+-                    <p className="text-sm text-muted-foreground">Avg. Points Balance</p>
+-                    <p className="text-2xl font-bold">2,450</p>
+-                  </div>
+-                </div>
+-              </div>
+-            </CardContent>
+-          </Card>
+-        </TabsContent>
++        <div className="mt-6 border rounded-lg p-4">
++          <h3 className="font-semibold text-lg mb-4">Member Engagement by Channel</h3>
++          <div className="h-64 bg-gray-100 rounded flex items-center justify-center">
++            <p className="text-gray-500">Chart: Member Engagement by Channel</p>
++          </div>
++        </div>
+         
+-        <TabsContent value="rewards">
+-          <Card>
+-            <CardHeader>
+-              <CardTitle>Reward Redemptions</CardTitle>
+-              <CardDescription>Analysis of reward program usage</CardDescription>
+-            </CardHeader>
+-            <CardContent>
+-              <div className="space-y-6">
+-                <div className="h-64 bg-slate-100 rounded-md flex items-center justify-center">
+-                  <span className="text-muted-foreground">Redemption trends chart placeholder</span>
+-                </div>
+-                
+-                <div className="border rounded-md overflow-hidden">
+-                  <table className="w-full">
+-                    <thead className="bg-muted/50">
+-                      <tr>
+-                        <th className="text-left p-3 font-medium">Reward Type</th>
+-                        <th className="text-left p-3 font-medium">Redemption Count</th>
+-                        <th className="text-left p-3 font-medium">Points Used</th>
+-                        <th className="text-left p-3 font-medium">Popularity</th>
+-                      </tr>
+-                    </thead>
+-                    <tbody>
+-                      <tr className="border-t">
+-                        <td className="p-3">Free Product</td>
+-                        <td className="p-3">1,245</td>
+-                        <td className="p-3">62,250</td>
+-                        <td className="p-3">High</td>
+-                      </tr>
+-                      <tr className="border-t">
+-                        <td className="p-3">Discount Coupon</td>
+-                        <td className="p-3">843</td>
+-                        <td className="p-3">25,290</td>
+-                        <td className="p-3">Medium</td>
+-                      </tr>
+-                      <tr className="border-t">
+-                        <td className="p-3">Exclusive Access</td>
+-                        <td className="p-3">312</td>
+-                        <td className="p-3">31,200</td>
+-                        <td className="p-3">Medium</td>
+-                      </tr>
+-                      <tr className="border-t">
+-                        <td className="p-3">Gift Card</td>
+-                        <td className="p-3">196</td>
+-                        <td className="p-3">49,000</td>
+-                        <td className="p-3">Low</td>
+-                      </tr>
+-                    </tbody>
+-                  </table>
+-                </div>
+-              </div>
+-            </CardContent>
+-          </Card>
+-        </TabsContent>
+-      </Tabs>
++        <div className="mt-6">
++          <h3 className="font-semibold text-lg mb-4">Top Performing Rewards</h3>
++          <div className="border rounded-lg overflow-hidden">
++            <table className="min-w-full divide-y divide-gray-200">
++              <thead className="bg-gray-50">
++                <tr>
++                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Reward</th>
++                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Redemptions</th>
++                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Points Cost</th>
++                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Satisfaction</th>
++                </tr>
++              </thead>
++              <tbody className="bg-white divide-y divide-gray-200">
++                <tr>
++                  <td className="px-6 py-4 whitespace-nowrap text-sm">$25 Gift Card</td>
++                  <td className="px-6 py-4 whitespace-nowrap text-sm">1,245</td>
++                  <td className="px-6 py-4 whitespace-nowrap text-sm">2,500</td>
++                  <td className="px-6 py-4 whitespace-nowrap text-sm">94%</td>
++                </tr>
++                <tr>
++                  <td className="px-6 py-4 whitespace-nowrap text-sm">Free Shipping</td>
++                  <td className="px-6 py-4 whitespace-nowrap text-sm">978</td>
++                  <td className="px-6 py-4 whitespace-nowrap text-sm">1,000</td>
++                  <td className="px-6 py-4 whitespace-nowrap text-sm">89%</td>
++                </tr>
++                <tr>
++                  <td className="px-6 py-4 whitespace-nowrap text-sm">Member Exclusive</td>
++                  <td className="px-6 py-4 whitespace-nowrap text-sm">654</td>
++                  <td className="px-6 py-4 whitespace-nowrap text-sm">5,000</td>
++                  <td className="px-6 py-4 whitespace-nowrap text-sm">97%</td>
++                </tr>
++              </tbody>
++            </table>
++          </div>
++        </div>
++      </div>
+     </div>
+   );
+ };
+diff --git a/src/pages/Beta2Dashboard.tsx b/src/pages/Beta2Dashboard.tsx
+index ea34ab2..77e6484 100644
+--- a/src/pages/Beta2Dashboard.tsx
++++ b/src/pages/Beta2Dashboard.tsx
+@@ -1,27 +1,76 @@
+-
+ import React from 'react';
+-import { DashboardHeader } from '@/components/beta2/dashboard/DashboardHeader';
+-import { LoyaltyStatusCard } from '@/components/beta2/dashboard/LoyaltyStatusCard';
+-import { QuickNavSection } from '@/components/beta2/dashboard/QuickNavSection';
+-import { GettingStartedGuide } from '@/components/beta2/dashboard/GettingStartedGuide';
+ 
+ const Beta2Dashboard = () => {
+   return (
+-    <div className="space-y-8">
+-      {/* Header */}
+-      <DashboardHeader 
+-        title="Loyalty Program Manager" 
+-        description="Welcome to the loyalty program management platform."
+-      />
+-      
+-      {/* Account status card */}
+-      <LoyaltyStatusCard />
+-      
+-      {/* Quick navigation cards */}
+-      <QuickNavSection />
+-      
+-      {/* Getting Started Guide */}
+-      <GettingStartedGuide />
++    <div className="p-6">
++      <h1 className="text-2xl font-bold mb-4">Loyalty Platform Dashboard</h1>
++      <div className="bg-white shadow-md rounded-lg p-6">
++        <p className="text-gray-600 mb-4">
++          Welcome to the Beta 2 Dashboard. This dashboard provides an overview of your loyalty program.
++        </p>
++        
++        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-6">
++          <div className="bg-blue-50 p-4 rounded-lg">
++            <h3 className="font-semibold text-blue-700">Total Members</h3>
++            <p className="text-xl font-bold">7,392</p>
++            <p className="text-xs text-green-600">↑ 12% from last month</p>
++          </div>
++          
++          <div className="bg-green-50 p-4 rounded-lg">
++            <h3 className="font-semibold text-green-700">Active Points</h3>
++            <p className="text-xl font-bold">1.2M</p>
++            <p className="text-xs text-green-600">↑ 8% from last month</p>
++          </div>
++          
++          <div className="bg-purple-50 p-4 rounded-lg">
++            <h3 className="font-semibold text-purple-700">Redemption Rate</h3>
++            <p className="text-xl font-bold">24%</p>
++            <p className="text-xs text-red-600">↓ 3% from last month</p>
++          </div>
++          
++          <div className="bg-orange-50 p-4 rounded-lg">
++            <h3 className="font-semibold text-orange-700">Avg. Engagement</h3>
++            <p className="text-xl font-bold">6.2 days</p>
++            <p className="text-xs text-green-600">↑ 5% from last month</p>
++          </div>
++        </div>
++        
++        <div className="mt-8">
++          <h3 className="text-lg font-semibold mb-4">Recent Activity</h3>
++          <div className="border rounded-lg overflow-hidden">
++            <table className="min-w-full divide-y divide-gray-200">
++              <thead className="bg-gray-50">
++                <tr>
++                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Member</th>
++                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Activity</th>
++                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Points</th>
++                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
++                </tr>
++              </thead>
++              <tbody className="bg-white divide-y divide-gray-200">
++                <tr>
++                  <td className="px-6 py-4 whitespace-nowrap text-sm">John Smith</td>
++                  <td className="px-6 py-4 whitespace-nowrap text-sm">Purchase</td>
++                  <td className="px-6 py-4 whitespace-nowrap text-sm">+125</td>
++                  <td className="px-6 py-4 whitespace-nowrap text-sm">Today</td>
++                </tr>
++                <tr>
++                  <td className="px-6 py-4 whitespace-nowrap text-sm">Mary Johnson</td>
++                  <td className="px-6 py-4 whitespace-nowrap text-sm">Reward Redemption</td>
++                  <td className="px-6 py-4 whitespace-nowrap text-sm">-500</td>
++                  <td className="px-6 py-4 whitespace-nowrap text-sm">Yesterday</td>
++                </tr>
++                <tr>
++                  <td className="px-6 py-4 whitespace-nowrap text-sm">Robert Davis</td>
++                  <td className="px-6 py-4 whitespace-nowrap text-sm">Referral Bonus</td>
++                  <td className="px-6 py-4 whitespace-nowrap text-sm">+250</td>
++                  <td className="px-6 py-4 whitespace-nowrap text-sm">Yesterday</td>
++                </tr>
++              </tbody>
++            </table>
++          </div>
++        </div>
++      </div>
+     </div>
+   );
+ };
+diff --git a/src/pages/Beta2Rewards.tsx b/src/pages/Beta2Rewards.tsx
+index 0ce9825..b405e48 100644
+--- a/src/pages/Beta2Rewards.tsx
++++ b/src/pages/Beta2Rewards.tsx
+@@ -1,290 +1,141 @@
+-
+-import React, { useState } from 'react';
+-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+-import { Button } from '@/components/ui/button';
+-import { Badge } from '@/components/ui/badge';
+-import {
+-  Dialog,
+-  DialogContent,
+-  DialogHeader,
+-  DialogTitle,
+-  DialogDescription,
+-  DialogFooter,
+-} from '@/components/ui/dialog';
+-import { AlertTriangle, GiftIcon, Loader2 } from 'lucide-react';
+-import { Skeleton } from '@/components/ui/skeleton';
+-import { toast } from 'sonner';
+-import { useLoyaltyAccount, useLoyaltyRewards } from '@/hooks/use-loyalty';
+-import { loyaltyService } from '@/services/loyaltyService';
+-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+-import { Input } from '@/components/ui/input';
++import React from 'react';
+ 
+ const Beta2Rewards = () => {
+-  const { account, loading: accountLoading } = useLoyaltyAccount();
+-  const { rewards, loading: rewardsLoading } = useLoyaltyRewards();
+-  
+-  const [selectedReward, setSelectedReward] = useState(null);
+-  const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
+-  const [processingRedemption, setProcessingRedemption] = useState(false);
+-  const [successDialogOpen, setSuccessDialogOpen] = useState(false);
+-  const [successMessage, setSuccessMessage] = useState('');
+-  
+-  // Points calculator
+-  const [purchaseAmount, setPurchaseAmount] = useState('');
+-  const estimatedPoints = loyaltyService.calculatePointsFromPurchase(Number(purchaseAmount) || 0);
+-  
+-  const handleRedeemClick = (reward) => {
+-    setSelectedReward(reward);
+-    setConfirmDialogOpen(true);
+-  };
+-  
+-  const handleConfirmRedemption = async () => {
+-    if (!account || !selectedReward) return;
+-    
+-    setProcessingRedemption(true);
+-    
+-    try {
+-      const result = await loyaltyService.redeemReward(account.loyalty_id, selectedReward.reward_id);
+-      
+-      if (result.success) {
+-        setSuccessMessage(result.message);
+-        setConfirmDialogOpen(false);
+-        setSuccessDialogOpen(true);
+-        
+-        // Refresh the page to update points balance after dialog is closed
+-        setTimeout(() => {
+-          window.location.reload();
+-        }, 2000);
+-      } else {
+-        toast.error(result.message);
+-        setConfirmDialogOpen(false);
+-      }
+-    } catch (error) {
+-      console.error('Redemption error:', error);
+-      toast.error('Failed to redeem reward. Please try again.');
+-    } finally {
+-      setProcessingRedemption(false);
+-    }
+-  };
+-  
+-  const handleCancelRedemption = () => {
+-    setSelectedReward(null);
+-    setConfirmDialogOpen(false);
+-  };
+-  
+   return (
+-    <div className="space-y-6">
+-      <div>
+-        <h1 className="text-3xl font-bold tracking-tight">Rewards</h1>
+-        <p className="text-muted-foreground">Redeem your points for exclusive rewards and benefits.</p>
+-      </div>
+-      
+-      {/* Points Balance Summary */}
+-      {accountLoading ? (
+-        <Card>
+-          <CardHeader>
+-            <Skeleton className="h-8 w-[250px]" />
+-            <Skeleton className="h-4 w-[200px]" />
+-          </CardHeader>
+-          <CardContent>
+-            <Skeleton className="h-20 w-full" />
+-          </CardContent>
+-        </Card>
+-      ) : account ? (
+-        <Card>
+-          <CardHeader>
+-            <CardTitle>Your Points Balance</CardTitle>
+-            <CardDescription>Available points to redeem for rewards</CardDescription>
+-          </CardHeader>
+-          <CardContent className="flex justify-between items-center">
+-            <div>
+-              <div className="flex items-baseline">
+-                <span className="text-4xl font-bold">{account.points_balance}</span>
+-                <span className="ml-2 text-muted-foreground">available points</span>
+-              </div>
+-              <p className="text-sm text-muted-foreground mt-1">
+-                Membership Level: {account.tier_level}
+-              </p>
++    <div className="p-6">
++      <h1 className="text-2xl font-bold mb-4">Loyalty Program Rewards</h1>
++      <div className="bg-white shadow-md rounded-lg p-6">
++        <p className="text-gray-600 mb-6">
++          Manage your loyalty program rewards and redemption options.
++        </p>
++        
++        <div className="flex justify-between items-center mb-6">
++          <div>
++            <h2 className="text-xl font-semibold">Available Rewards</h2>
++            <p className="text-sm text-gray-500">Create and manage reward options for your members</p>
++          </div>
++          <button className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
++            Create New Reward
++          </button>
++        </div>
++        
++        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
++          <div className="border rounded-lg p-4 hover:shadow-md transition-shadow">
++            <div className="flex justify-between items-start mb-2">
++              <h3 className="text-lg font-semibold">$25 Gift Card</h3>
++              <span className="bg-green-100 text-green-800 text-xs font-medium px-2 py-1 rounded">Active</span>
+             </div>
+-            
+-            <div>
+-              <Badge className="bg-purple-600 hover:bg-purple-700">
+-                {account.tier_level}
+-              </Badge>
++            <p className="text-sm text-gray-600 mb-4">Redeem points for a $25 gift card to use on any purchase.</p>
++            <div className="flex items-center justify-between">
++              <span className="font-medium">2,500 points</span>
++              <button className="text-blue-600 hover:text-blue-800 text-sm">Edit</button>
+             </div>
+-          </CardContent>
+-        </Card>
+-      ) : (
+-        <Alert>
+-          <AlertTriangle className="h-4 w-4" />
+-          <AlertTitle>Not Enrolled</AlertTitle>
+-          <AlertDescription>
+-            Sign in to create your loyalty account and access rewards.
+-          </AlertDescription>
+-        </Alert>
+-      )}
+-      
+-      {/* Points Calculator */}
+-      <Card>
+-        <CardHeader>
+-          <CardTitle>Points Calculator</CardTitle>
+-          <CardDescription>Estimate how many points you'll earn from a purchase</CardDescription>
+-        </CardHeader>
+-        <CardContent className="space-y-4">
+-          <div className="grid gap-4 sm:grid-cols-3">
+-            <div className="sm:col-span-2">
+-              <label htmlFor="purchase-amount" className="block text-sm font-medium mb-1">
+-                Enter Purchase Amount ($)
+-              </label>
+-              <Input
+-                id="purchase-amount"
+-                type="number"
+-                min="0"
+-                step="0.01"
+-                placeholder="0.00"
+-                value={purchaseAmount}
+-                onChange={(e) => setPurchaseAmount(e.target.value)}
+-                className="w-full"
+-              />
++          </div>
++          
++          <div className="border rounded-lg p-4 hover:shadow-md transition-shadow">
++            <div className="flex justify-between items-start mb-2">
++              <h3 className="text-lg font-semibold">Free Shipping</h3>
++              <span className="bg-green-100 text-green-800 text-xs font-medium px-2 py-1 rounded">Active</span>
+             </div>
+-            <div className="flex flex-col justify-end">
+-              <div className="bg-muted p-4 rounded-md text-center">
+-                <p className="text-sm text-muted-foreground">Estimated Points</p>
+-                <p className="text-2xl font-bold">{estimatedPoints}</p>
+-              </div>
++            <p className="text-sm text-gray-600 mb-4">Get free shipping on your next order, no minimum purchase.</p>
++            <div className="flex items-center justify-between">
++              <span className="font-medium">1,000 points</span>
++              <button className="text-blue-600 hover:text-blue-800 text-sm">Edit</button>
+             </div>
+           </div>
+-          <p className="text-sm text-muted-foreground">
+-            Points are calculated at a rate of 1 point per $1 spent
+-          </p>
+-        </CardContent>
+-      </Card>
+-      
+-      {/* Available Rewards */}
+-      <div className="mt-6">
+-        <h2 className="text-2xl font-semibold mb-4">Available Rewards</h2>
+-        
+-        {rewardsLoading ? (
+-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+-            {[1, 2, 3].map(i => (
+-              <Card key={i}>
+-                <CardHeader>
+-                  <Skeleton className="h-6 w-[200px]" />
+-                  <Skeleton className="h-4 w-[150px]" />
+-                </CardHeader>
+-                <CardContent>
+-                  <Skeleton className="h-20 w-full" />
+-                </CardContent>
+-                <CardFooter>
+-                  <Skeleton className="h-9 w-full" />
+-                </CardFooter>
+-              </Card>
+-            ))}
+-          </div>
+-        ) : rewards.length > 0 ? (
+-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+-            {rewards.map(reward => (
+-              <Card key={reward.reward_id} className="flex flex-col">
+-                <CardHeader>
+-                  <CardTitle>{reward.reward_name}</CardTitle>
+-                  {reward.value_monetary && (
+-                    <CardDescription>Value: ${reward.value_monetary.toFixed(2)}</CardDescription>
+-                  )}
+-                </CardHeader>
+-                <CardContent className="flex-grow">
+-                  <p className="text-sm">{reward.description_v1}</p>
+-                  <div className="flex items-center mt-4">
+-                    <Badge className="bg-purple-600 hover:bg-purple-700 font-medium">
+-                      {reward.points_cost} points
+-                    </Badge>
+-                  </div>
+-                </CardContent>
+-                <CardFooter>
+-                  <Button 
+-                    onClick={() => handleRedeemClick(reward)} 
+-                    className="w-full"
+-                    disabled={!account || account.points_balance < reward.points_cost}
+-                  >
+-                    {!account ? 'Sign In to Redeem' : 
+-                      account.points_balance < reward.points_cost ? 
+-                      `Need ${reward.points_cost - account.points_balance} more points` : 
+-                      'Redeem Reward'}
+-                  </Button>
+-                </CardFooter>
+-              </Card>
+-            ))}
+-          </div>
+-        ) : (
+-          <Card>
+-            <CardContent className="flex flex-col items-center justify-center py-8">
+-              <GiftIcon className="h-12 w-12 text-muted-foreground mb-4" />
+-              <p className="text-muted-foreground">No rewards available at the moment</p>
+-            </CardContent>
+-          </Card>
+-        )}
+-      </div>
+-      
+-      {/* Confirmation Dialog */}
+-      <Dialog open={confirmDialogOpen} onOpenChange={setConfirmDialogOpen}>
+-        <DialogContent>
+-          <DialogHeader>
+-            <DialogTitle>Confirm Redemption</DialogTitle>
+-            <DialogDescription>
+-              Are you sure you want to redeem this reward?
+-            </DialogDescription>
+-          </DialogHeader>
+           
+-          {selectedReward && (
+-            <div className="space-y-4 py-4">
+-              <div className="flex justify-between">
+-                <span className="font-medium">Reward:</span>
+-                <span>{selectedReward.reward_name}</span>
+-              </div>
+-              <div className="flex justify-between">
+-                <span className="font-medium">Cost:</span>
+-                <span>{selectedReward.points_cost} points</span>
+-              </div>
+-              <div className="flex justify-between">
+-                <span className="font-medium">Your Balance:</span>
+-                <span>{account?.points_balance || 0} points</span>
+-              </div>
+-              <div className="flex justify-between">
+-                <span className="font-medium">Remaining Balance:</span>
+-                <span>{account ? (account.points_balance - selectedReward.points_cost) : 0} points</span>
+-              </div>
++          <div className="border rounded-lg p-4 hover:shadow-md transition-shadow">
++            <div className="flex justify-between items-start mb-2">
++              <h3 className="text-lg font-semibold">10% Discount</h3>
++              <span className="bg-red-100 text-red-800 text-xs font-medium px-2 py-1 rounded">Inactive</span>
+             </div>
+-          )}
++            <p className="text-sm text-gray-600 mb-4">Get a 10% discount on your next purchase.</p>
++            <div className="flex items-center justify-between">
++              <span className="font-medium">1,500 points</span>
++              <button className="text-blue-600 hover:text-blue-800 text-sm">Edit</button>
++            </div>
++          </div>
+           
+-          <DialogFooter>
+-            <Button variant="outline" onClick={handleCancelRedemption} disabled={processingRedemption}>
+-              Cancel
+-            </Button>
+-            <Button onClick={handleConfirmRedemption} disabled={processingRedemption}>
+-              {processingRedemption && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+-              Confirm Redemption
+-            </Button>
+-          </DialogFooter>
+-        </DialogContent>
+-      </Dialog>
+-      
+-      {/* Success Dialog */}
+-      <Dialog open={successDialogOpen} onOpenChange={setSuccessDialogOpen}>
+-        <DialogContent>
+-          <DialogHeader>
+-            <DialogTitle>Redemption Successful</DialogTitle>
+-          </DialogHeader>
++          <div className="border rounded-lg p-4 hover:shadow-md transition-shadow">
++            <div className="flex justify-between items-start mb-2">
++              <h3 className="text-lg font-semibold">Member Exclusive</h3>
++              <span className="bg-green-100 text-green-800 text-xs font-medium px-2 py-1 rounded">Active</span>
++            </div>
++            <p className="text-sm text-gray-600 mb-4">Access to exclusive member-only products.</p>
++            <div className="flex items-center justify-between">
++              <span className="font-medium">5,000 points</span>
++              <button className="text-blue-600 hover:text-blue-800 text-sm">Edit</button>
++            </div>
++          </div>
+           
+-          <div className="space-y-4 py-4">
+-            <p>{successMessage}</p>
++          <div className="border rounded-lg p-4 hover:shadow-md transition-shadow">
++            <div className="flex justify-between items-start mb-2">
++              <h3 className="text-lg font-semibold">Birthday Gift</h3>
++              <span className="bg-green-100 text-green-800 text-xs font-medium px-2 py-1 rounded">Active</span>
++            </div>
++            <p className="text-sm text-gray-600 mb-4">Special birthday surprise gift.</p>
++            <div className="flex items-center justify-between">
++              <span className="font-medium">3,000 points</span>
++              <button className="text-blue-600 hover:text-blue-800 text-sm">Edit</button>
++            </div>
+           </div>
+           
+-          <DialogFooter>
+-            <Button onClick={() => setSuccessDialogOpen(false)}>
+-              Close
+-            </Button>
+-          </DialogFooter>
+-        </DialogContent>
+-      </Dialog>
++          <div className="border rounded-lg p-4 hover:shadow-md transition-shadow border-dashed flex items-center justify-center">
++            <button className="text-blue-600 hover:text-blue-800 flex items-center">
++              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
++                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
++              </svg>
++              Add New Reward
++            </button>
++          </div>
++        </div>
++        
++        <div className="mt-8">
++          <h2 className="text-xl font-semibold mb-4">Recent Redemptions</h2>
++          <div className="border rounded-lg overflow-hidden">
++            <table className="min-w-full divide-y divide-gray-200">
++              <thead className="bg-gray-50">
++                <tr>
++                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Member</th>
++                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Reward</th>
++                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Points</th>
++                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
++                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
++                </tr>
++              </thead>
++              <tbody className="bg-white divide-y divide-gray-200">
++                <tr>
++                  <td className="px-6 py-4 whitespace-nowrap text-sm">Mary Johnson</td>
++                  <td className="px-6 py-4 whitespace-nowrap text-sm">$25 Gift Card</td>
++                  <td className="px-6 py-4 whitespace-nowrap text-sm">2,500</td>
++                  <td className="px-6 py-4 whitespace-nowrap text-sm">Today</td>
++                  <td className="px-6 py-4 whitespace-nowrap">
++                    <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">Processing</span>
++                  </td>
++                </tr>
++                <tr>
++                  <td className="px-6 py-4 whitespace-nowrap text-sm">John Smith</td>
++                  <td className="px-6 py-4 whitespace-nowrap text-sm">Free Shipping</td>
++                  <td className="px-6 py-4 whitespace-nowrap text-sm">1,000</td>
++                  <td className="px-6 py-4 whitespace-nowrap text-sm">Yesterday</td>
++                  <td className="px-6 py-4 whitespace-nowrap">
++                    <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Completed</span>
++                  </td>
++                </tr>
++                <tr>
++                  <td className="px-6 py-4 whitespace-nowrap text-sm">Robert Davis</td>
++                  <td className="px-6 py-4 whitespace-nowrap text-sm">Member Exclusive</td>
++                  <td className="px-6 py-4 whitespace-nowrap text-sm">5,000</td>
++                  <td className="px-6 py-4 whitespace-nowrap text-sm">3 days ago</td>
++                  <td className="px-6 py-4 whitespace-nowrap">
++                    <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Completed</span>
++                  </td>
++                </tr>
++              </tbody>
++            </table>
++          </div>
++        </div>
++      </div>
+     </div>
+   );
+ };
+diff --git a/src/pages/Beta2Settings.tsx b/src/pages/Beta2Settings.tsx
+index 7f0f3a7..aa31243 100644
+--- a/src/pages/Beta2Settings.tsx
++++ b/src/pages/Beta2Settings.tsx
+@@ -1,4 +1,3 @@
+-
+ import React from 'react';
+ import { Button } from '@/components/ui/button';
+ import { Label } from '@/components/ui/label';
+@@ -24,158 +23,248 @@ const Beta2Settings = () => {
+   };
+   
+   return (
+-    <div className="space-y-6">
+-      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+-        <div>
+-          <h1 className="text-3xl font-bold tracking-tight">Program Settings</h1>
+-          <p className="text-muted-foreground">Configure your loyalty program settings.</p>
+-        </div>
+-        
+-        <div className="flex items-center gap-2">
+-          <Button variant="outline" onClick={() => navigate('/prototypes')}>
+-            Back to Selector
+-          </Button>
+-        </div>
+-      </div>
+-      
+-      <div className="grid gap-6 md:grid-cols-2">
+-        <CollapsibleSettingsSection 
+-          title="Program Details" 
+-          description="Basic configuration for your loyalty program"
+-          defaultOpen={true}
+-        >
+-          <div className="space-y-4">
+-            <div className="space-y-2">
+-              <Label htmlFor="program-name">Program Name</Label>
+-              <Input id="program-name" defaultValue="Premium Rewards Club" />
+-            </div>
+-            
+-            <div className="space-y-2">
+-              <Label htmlFor="point-name">Point Name</Label>
+-              <Input id="point-name" defaultValue="Stars" />
+-            </div>
+-            
+-            <div className="space-y-2">
+-              <Label htmlFor="conversion-rate">Points Conversion Rate</Label>
+-              <Select defaultValue="10">
+-                <SelectTrigger>
+-                  <SelectValue placeholder="Select rate" />
+-                </SelectTrigger>
+-                <SelectContent>
+-                  <SelectItem value="5">$1 = 5 points</SelectItem>
+-                  <SelectItem value="10">$1 = 10 points</SelectItem>
+-                  <SelectItem value="20">$1 = 20 points</SelectItem>
+-                </SelectContent>
+-              </Select>
+-            </div>
+-          </div>
+-        </CollapsibleSettingsSection>
++    <div className="p-6">
++      <h1 className="text-2xl font-bold mb-4">Loyalty Program Settings</h1>
++      <div className="bg-white shadow-md rounded-lg p-6">
++        <p className="text-gray-600 mb-6">
++          Configure your loyalty program settings and preferences.
++        </p>
+         
+-        <CollapsibleSettingsSection 
+-          title="Member Communications" 
+-          description="Configure member notifications and emails"
+-          defaultOpen={true}
+-        >
+-          <div className="space-y-4">
+-            <div className="flex items-center justify-between">
++        <div className="space-y-8">
++          {/* Program Details */}
++          <div>
++            <h2 className="text-xl font-semibold mb-4">Program Details</h2>
++            <div className="border rounded-lg p-6 space-y-4">
+               <div>
+-                <Label htmlFor="welcome-email">Welcome Email</Label>
+-                <p className="text-sm text-muted-foreground">
+-                  Send welcome email to new members
+-                </p>
++                <label className="block text-sm font-medium text-gray-700 mb-1">Program Name</label>
++                <input
++                  type="text"
++                  className="w-full border-gray-300 rounded-md shadow-sm px-4 py-2"
++                  defaultValue="Premier Rewards"
++                  aria-label="Program Name"
++                />
+               </div>
+-              <Switch id="welcome-email" defaultChecked />
+-            </div>
+-            
+-            <div className="flex items-center justify-between">
++              
+               <div>
+-                <Label htmlFor="points-update">Points Updates</Label>
+-                <p className="text-sm text-muted-foreground">
+-                  Notify members when points balance changes
+-                </p>
++                <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
++                <textarea
++                  className="w-full border-gray-300 rounded-md shadow-sm px-4 py-2"
++                  rows={3}
++                  defaultValue="Our loyalty program rewards members with points for purchases that can be redeemed for exclusive benefits."
++                  aria-label="Program Description"
++                />
+               </div>
+-              <Switch id="points-update" defaultChecked />
+-            </div>
+-            
+-            <div className="flex items-center justify-between">
+-              <div>
+-                <Label htmlFor="reward-expiry">Reward Expiry Notifications</Label>
+-                <p className="text-sm text-muted-foreground">
+-                  Alert members before rewards expire
+-                </p>
++              
++              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
++                <div>
++                  <label className="block text-sm font-medium text-gray-700 mb-1">Points Currency Name</label>
++                  <input
++                    type="text"
++                    className="w-full border-gray-300 rounded-md shadow-sm px-4 py-2"
++                    defaultValue="Reward Points"
++                    aria-label="Points Currency Name"
++                  />
++                </div>
++                
++                <div>
++                  <label className="block text-sm font-medium text-gray-700 mb-1">Earning Ratio ($ to points)</label>
++                  <input
++                    type="text"
++                    className="w-full border-gray-300 rounded-md shadow-sm px-4 py-2"
++                    defaultValue="1:1"
++                    aria-label="Earning Ratio"
++                  />
++                </div>
+               </div>
+-              <Switch id="reward-expiry" defaultChecked />
+             </div>
+           </div>
+-        </CollapsibleSettingsSection>
+-      </div>
+-      
+-      <CollapsibleSettingsSection 
+-        title="Tier Configuration" 
+-        description="Configure membership tiers and benefits"
+-        defaultOpen={true}
+-        footerContent={
+-          <>
+-            <Button variant="outline">Reset to Defaults</Button>
+-            <Button onClick={handleSave} disabled={saving}>
+-              {saving ? 'Saving...' : 'Save Changes'}
+-            </Button>
+-          </>
+-        }
+-      >
+-        <div className="space-y-4">
+-          <div className="grid gap-4 md:grid-cols-2">
+-            <div className="space-y-2">
+-              <Label htmlFor="tier-system">Tier System</Label>
+-              <Select defaultValue="points-based">
+-                <SelectTrigger>
+-                  <SelectValue placeholder="Select tier system" />
+-                </SelectTrigger>
+-                <SelectContent>
+-                  <SelectItem value="points-based">Points Based</SelectItem>
+-                  <SelectItem value="visit-based">Visit Based</SelectItem>
+-                  <SelectItem value="spend-based">Spend Based</SelectItem>
+-                </SelectContent>
+-              </Select>
+-            </div>
+-            
+-            <div className="space-y-2">
+-              <Label htmlFor="tier-reset">Tier Reset Period</Label>
+-              <Select defaultValue="annual">
+-                <SelectTrigger>
+-                  <SelectValue placeholder="Select reset period" />
+-                </SelectTrigger>
+-                <SelectContent>
+-                  <SelectItem value="never">Never</SelectItem>
+-                  <SelectItem value="monthly">Monthly</SelectItem>
+-                  <SelectItem value="quarterly">Quarterly</SelectItem>
+-                  <SelectItem value="annual">Annual</SelectItem>
+-                </SelectContent>
+-              </Select>
++          
++          {/* Tier Levels */}
++          <div>
++            <h2 className="text-xl font-semibold mb-4">Tier Levels</h2>
++            <div className="border rounded-lg overflow-hidden">
++              <table className="min-w-full divide-y divide-gray-200">
++                <thead className="bg-gray-50">
++                  <tr>
++                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tier Name</th>
++                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Required Points</th>
++                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Benefits</th>
++                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
++                  </tr>
++                </thead>
++                <tbody className="bg-white divide-y divide-gray-200">
++                  <tr>
++                    <td className="px-6 py-4 whitespace-nowrap">
++                      <input
++                        type="text"
++                        className="border-gray-300 rounded-md shadow-sm px-3 py-1"
++                        defaultValue="Bronze"
++                        aria-label="Bronze Tier Name"
++                      />
++                    </td>
++                    <td className="px-6 py-4 whitespace-nowrap">
++                      <input
++                        type="number"
++                        className="border-gray-300 rounded-md shadow-sm px-3 py-1 w-24"
++                        defaultValue="0"
++                        aria-label="Bronze Required Points"
++                      />
++                    </td>
++                    <td className="px-6 py-4">
++                      <input
++                        type="text"
++                        className="border-gray-300 rounded-md shadow-sm px-3 py-1 w-full"
++                        defaultValue="Basic rewards access"
++                        aria-label="Bronze Tier Benefits"
++                      />
++                    </td>
++                    <td className="px-6 py-4 whitespace-nowrap">
++                      <button className="text-red-600 hover:text-red-800 text-sm mr-2">Delete</button>
++                    </td>
++                  </tr>
++                  
++                  <tr>
++                    <td className="px-6 py-4 whitespace-nowrap">
++                      <input
++                        type="text"
++                        className="border-gray-300 rounded-md shadow-sm px-3 py-1"
++                        defaultValue="Silver"
++                        aria-label="Silver Tier Name"
++                      />
++                    </td>
++                    <td className="px-6 py-4 whitespace-nowrap">
++                      <input
++                        type="number"
++                        className="border-gray-300 rounded-md shadow-sm px-3 py-1 w-24"
++                        defaultValue="1000"
++                        aria-label="Silver Required Points"
++                      />
++                    </td>
++                    <td className="px-6 py-4">
++                      <input
++                        type="text"
++                        className="border-gray-300 rounded-md shadow-sm px-3 py-1 w-full"
++                        defaultValue="Free shipping, Birthday gift"
++                        aria-label="Silver Tier Benefits"
++                      />
++                    </td>
++                    <td className="px-6 py-4 whitespace-nowrap">
++                      <button className="text-red-600 hover:text-red-800 text-sm mr-2">Delete</button>
++                    </td>
++                  </tr>
++                  
++                  <tr>
++                    <td className="px-6 py-4 whitespace-nowrap">
++                      <input
++                        type="text"
++                        className="border-gray-300 rounded-md shadow-sm px-3 py-1"
++                        defaultValue="Gold"
++                        aria-label="Gold Tier Name"
++                      />
++                    </td>
++                    <td className="px-6 py-4 whitespace-nowrap">
++                      <input
++                        type="number"
++                        className="border-gray-300 rounded-md shadow-sm px-3 py-1 w-24"
++                        defaultValue="5000"
++                        aria-label="Gold Required Points"
++                      />
++                    </td>
++                    <td className="px-6 py-4">
++                      <input
++                        type="text"
++                        className="border-gray-300 rounded-md shadow-sm px-3 py-1 w-full"
++                        defaultValue="Silver benefits + Early access, Exclusive rewards"
++                        aria-label="Gold Tier Benefits"
++                      />
++                    </td>
++                    <td className="px-6 py-4 whitespace-nowrap">
++                      <button className="text-red-600 hover:text-red-800 text-sm mr-2">Delete</button>
++                    </td>
++                  </tr>
++                  
++                  <tr>
++                    <td colSpan={4} className="px-6 py-4">
++                      <button className="text-blue-600 hover:text-blue-800 flex items-center">
++                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
++                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
++                        </svg>
++                        Add Tier Level
++                      </button>
++                    </td>
++                  </tr>
++                </tbody>
++              </table>
+             </div>
+           </div>
+           
+-          <div className="flex items-center justify-between">
+-            <div>
+-              <Label htmlFor="birthday-bonus">Birthday Bonus</Label>
+-              <p className="text-sm text-muted-foreground">
+-                Offer bonus points on member birthdays
+-              </p>
++          {/* Program Rules */}
++          <div>
++            <h2 className="text-xl font-semibold mb-4">Program Rules</h2>
++            <div className="border rounded-lg p-6 space-y-4">
++              <div className="flex items-center justify-between py-2 border-b">
++                <div>
++                  <h3 className="font-medium">Point Expiration</h3>
++                  <p className="text-sm text-gray-500">Set how long points remain valid</p>
++                </div>
++                <div className="flex items-center space-x-2">
++                  <input
++                    type="number"
++                    className="border-gray-300 rounded-md shadow-sm px-3 py-1 w-16"
++                    defaultValue="12"
++                    aria-label="Point Expiration Value"
++                  />
++                  <select
++                    className="border-gray-300 rounded-md shadow-sm px-3 py-1"
++                    aria-label="Point Expiration Unit"
++                  >
++                    <option>Months</option>
++                    <option>Years</option>
++                  </select>
++                </div>
++              </div>
++              
++              <div className="flex items-center justify-between py-2 border-b">
++                <div>
++                  <h3 className="font-medium">Points Rounding</h3>
++                  <p className="text-sm text-gray-500">How to round partial points</p>
++                </div>
++                <select
++                  className="border-gray-300 rounded-md shadow-sm px-3 py-1"
++                  aria-label="Points Rounding Method"
++                >
++                  <option>Round up</option>
++                  <option>Round down</option>
++                  <option>Round to nearest</option>
++                </select>
++              </div>
++              
++              <div className="flex items-center justify-between py-2">
++                <div>
++                  <h3 className="font-medium">Point Cancelation</h3>
++                  <p className="text-sm text-gray-500">When returns occur</p>
++                </div>
++                <select
++                  className="border-gray-300 rounded-md shadow-sm px-3 py-1"
++                  aria-label="Point Cancelation Policy"
++                >
++                  <option>Deduct points</option>
++                  <option>Maintain points</option>
++                </select>
++              </div>
+             </div>
+-            <Switch id="birthday-bonus" defaultChecked />
+           </div>
+           
+-          <div className="flex items-center justify-between">
+-            <div>
+-              <Label htmlFor="referral-bonus">Referral Bonus</Label>
+-              <p className="text-sm text-muted-foreground">
+-                Reward members for successful referrals
+-              </p>
+-            </div>
+-            <Switch id="referral-bonus" defaultChecked />
++          <div className="flex justify-end mt-6">
++            <button className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600 mr-2">
++              Cancel
++            </button>
++            <button className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
++              Save Changes
++            </button>
+           </div>
+         </div>
+-      </CollapsibleSettingsSection>
++      </div>
+     </div>
+   );
+ };
+diff --git a/src/routes/AppRoutes.tsx b/src/routes/AppRoutes.tsx
+index febdb5d..15bcddc 100644
+--- a/src/routes/AppRoutes.tsx
++++ b/src/routes/AppRoutes.tsx
+@@ -1,4 +1,3 @@
+-
+ import React from 'react';
+ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+ import { PlatformLayout } from '@/components/layouts/PlatformLayout';
+@@ -40,6 +39,7 @@ import { FilesRoutes } from "./filesRoutes";
+ import { EventsRoutes } from "./eventsRoutes";
+ import { RiskRegisterRoutes } from "./riskRegisterRoutes";
+ import { RequestsRoutes } from "./requestsRoutes";
++import { BetaRoutes } from "./betaRoutes";
+ 
+ // Import layout configuration
+ import { navCategories } from '@/components/layout/sidebar/NavigationConfig';
+@@ -114,6 +114,7 @@ export const AppRoutes = () => {
+         {EventsRoutes()}
+         {RiskRegisterRoutes()}
+         {RequestsRoutes()}
++        {BetaRoutes()}
+         
+         {/* Legacy route redirects */}
+         <Route path="/prototypes" element={<Navigate to="/" replace />} />
+diff --git a/src/routes/betaRoutes.tsx b/src/routes/betaRoutes.tsx
+index c058c65..26f5da6 100644
+--- a/src/routes/betaRoutes.tsx
++++ b/src/routes/betaRoutes.tsx
+@@ -1,5 +1,7 @@
++import React from 'react';
+ import { Route } from "react-router-dom";
+ import ProtectedRoute from "@/components/ProtectedRoute";
++import BetaPermissionGuard from "@/components/beta/BetaPermissionGuard";
+ import { PlatformLayout } from "@/components/layouts/PlatformLayout";
+ import { NavCategory } from '@/components/layout/sidebar/types';
+ import { Home, Settings, Users, BarChart3, Award } from 'lucide-react';
+@@ -48,26 +50,32 @@ export const BetaRoutes = () => {
+       <Route path="/beta1">
+         <Route index element={
+           <ProtectedRoute>
+-            <PlatformLayout moduleTitle="Data Platform Beta" navCategories={beta1NavCategories}>
+-              <Beta1Dashboard />
+-            </PlatformLayout>
++            <BetaPermissionGuard betaModule="beta1">
++              <PlatformLayout moduleTitle="Data Platform Beta" navCategories={beta1NavCategories}>
++                <Beta1Dashboard />
++              </PlatformLayout>
++            </BetaPermissionGuard>
+           </ProtectedRoute>
+         } />
+         
+         <Route path="settings" element={
+           <ProtectedRoute>
+-            <PlatformLayout moduleTitle="Beta 1 Settings" navCategories={beta1NavCategories}>
+-              <Beta1Settings />
+-            </PlatformLayout>
++            <BetaPermissionGuard betaModule="beta1">
++              <PlatformLayout moduleTitle="Beta 1 Settings" navCategories={beta1NavCategories}>
++                <Beta1Settings />
++              </PlatformLayout>
++            </BetaPermissionGuard>
+           </ProtectedRoute>
+         } />
+ 
+         {/* Catch-all for invalid Beta1 routes */}
+         <Route path="*" element={
+           <ProtectedRoute>
+-            <PlatformLayout moduleTitle="Not Found" navCategories={beta1NavCategories}>
+-              <NotFound />
+-            </PlatformLayout>
++            <BetaPermissionGuard betaModule="beta1">
++              <PlatformLayout moduleTitle="Not Found" navCategories={beta1NavCategories}>
++                <NotFound />
++              </PlatformLayout>
++            </BetaPermissionGuard>
+           </ProtectedRoute>
+         } />
+       </Route>
+@@ -76,50 +84,62 @@ export const BetaRoutes = () => {
+       <Route path="/beta2">
+         <Route index element={
+           <ProtectedRoute>
+-            <PlatformLayout moduleTitle="Loyalty Platform Beta" navCategories={beta2NavCategories}>
+-              <Beta2Dashboard />
+-            </PlatformLayout>
++            <BetaPermissionGuard betaModule="beta2">
++              <PlatformLayout moduleTitle="Loyalty Platform Beta" navCategories={beta2NavCategories}>
++                <Beta2Dashboard />
++              </PlatformLayout>
++            </BetaPermissionGuard>
+           </ProtectedRoute>
+         } />
+         
+         <Route path="members" element={
+           <ProtectedRoute>
+-            <PlatformLayout moduleTitle="Beta 2 Members" navCategories={beta2NavCategories}>
+-              <Beta2Members />
+-            </PlatformLayout>
++            <BetaPermissionGuard betaModule="beta2">
++              <PlatformLayout moduleTitle="Beta 2 Members" navCategories={beta2NavCategories}>
++                <Beta2Members />
++              </PlatformLayout>
++            </BetaPermissionGuard>
+           </ProtectedRoute>
+         } />
+         
+         <Route path="rewards" element={
+           <ProtectedRoute>
+-            <PlatformLayout moduleTitle="Beta 2 Rewards" navCategories={beta2NavCategories}>
+-              <Beta2Rewards />
+-            </PlatformLayout>
++            <BetaPermissionGuard betaModule="beta2">
++              <PlatformLayout moduleTitle="Beta 2 Rewards" navCategories={beta2NavCategories}>
++                <Beta2Rewards />
++              </PlatformLayout>
++            </BetaPermissionGuard>
+           </ProtectedRoute>
+         } />
+         
+         <Route path="analytics" element={
+           <ProtectedRoute>
+-            <PlatformLayout moduleTitle="Beta 2 Analytics" navCategories={beta2NavCategories}>
+-              <Beta2Analytics />
+-            </PlatformLayout>
++            <BetaPermissionGuard betaModule="beta2">
++              <PlatformLayout moduleTitle="Beta 2 Analytics" navCategories={beta2NavCategories}>
++                <Beta2Analytics />
++              </PlatformLayout>
++            </BetaPermissionGuard>
+           </ProtectedRoute>
+         } />
+         
+         <Route path="settings" element={
+           <ProtectedRoute>
+-            <PlatformLayout moduleTitle="Beta 2 Settings" navCategories={beta2NavCategories}>
+-              <Beta2Settings />
+-            </PlatformLayout>
++            <BetaPermissionGuard betaModule="beta2">
++              <PlatformLayout moduleTitle="Beta 2 Settings" navCategories={beta2NavCategories}>
++                <Beta2Settings />
++              </PlatformLayout>
++            </BetaPermissionGuard>
+           </ProtectedRoute>
+         } />
+ 
+         {/* Catch-all for invalid Beta2 routes */}
+         <Route path="*" element={
+           <ProtectedRoute>
+-            <PlatformLayout moduleTitle="Not Found" navCategories={beta2NavCategories}>
+-              <NotFound />
+-            </PlatformLayout>
++            <BetaPermissionGuard betaModule="beta2">
++              <PlatformLayout moduleTitle="Not Found" navCategories={beta2NavCategories}>
++                <NotFound />
++              </PlatformLayout>
++            </BetaPermissionGuard>
+           </ProtectedRoute>
+         } />
+       </Route>
+@@ -127,4 +147,4 @@ export const BetaRoutes = () => {
+   );
+ };
+ 
+-export default BetaRoutes; 
+\ No newline at end of file
++export default BetaRoutes;
+diff --git a/src/routes/index.tsx b/src/routes/index.tsx
+index e903434..3dff77c 100644
+--- a/src/routes/index.tsx
++++ b/src/routes/index.tsx
+@@ -1,4 +1,3 @@
+-
+ import React from 'react';
+ import { Routes } from 'react-router-dom';
+ 
+@@ -26,6 +25,7 @@ import { FilesRoutes } from "./filesRoutes";
+ import { EventsRoutes } from "./eventsRoutes";
+ import { RiskRegisterRoutes } from "./riskRegisterRoutes";
+ import { RequestsRoutes } from "./requestsRoutes";
++import { BetaRoutes } from "./betaRoutes";
+ 
+ // Core app routes
+ import { AppRoutes } from './AppRoutes';
+@@ -56,5 +56,6 @@ export {
+   FilesRoutes,
+   EventsRoutes,
+   RiskRegisterRoutes,
+-  RequestsRoutes
++  RequestsRoutes,
++  BetaRoutes
+ };
+-- 
+2.49.0.windows.1
+
