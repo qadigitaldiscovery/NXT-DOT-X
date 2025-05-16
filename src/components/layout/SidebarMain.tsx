@@ -1,14 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
-import { ChevronLeft, MenuIcon } from 'lucide-react';
+import { ChevronLeft, MenuIcon, Home, Settings, HelpCircle } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { SidebarNavList } from './sidebar/SidebarNavList';
 import { CollapsedSidebar } from './sidebar/CollapsedSidebar';
 import { NavItem, NavCategory, SidebarProps } from './sidebar/types';
 import { useAuth } from '@/context/AuthContext';
 import { SidebarToggleButton } from './sidebar/SidebarToggleButton';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { toast } from 'sonner';
 
 // Helper function to normalize navigation items
 const normalizeNavItems = (items: NavItem[] = []): NavItem[] => {
@@ -46,6 +47,7 @@ export const SidebarMain: React.FC<SidebarProps> = ({
   const [expandedItems, setExpandedItems] = useState<string[]>([]);
   const { user } = useAuth();
   const location = useLocation();
+  const navigate = useNavigate();
 
   // Use provided open/onToggle or internal state
   const [internalOpen, setInternalOpen] = useState(() => {
@@ -102,6 +104,19 @@ export const SidebarMain: React.FC<SidebarProps> = ({
   const toggleExpanded = (label: string) => {
     setExpandedItems(prev => prev.includes(label) ? prev.filter(item => item !== label) : [...prev, label]);
   };
+
+  // Navigation handlers for quick access buttons
+  const handleDashboardClick = () => {
+    navigate('/');
+  };
+
+  const handleSettingsClick = () => {
+    navigate('/settings');
+  };
+
+  const handleHelpClick = () => {
+    toast.info('Help documentation will be available soon');
+  };
   
   return (
     <>
@@ -153,16 +168,34 @@ export const SidebarMain: React.FC<SidebarProps> = ({
           />
         )}
 
-        {/* Navigation buttons at bottom */}
+        {/* Quick access buttons at bottom */}
         <div className="flex justify-center space-x-2 bg-indigo-950/80 border-t border-indigo-900/50 py-3">
-          <Button variant="ghost" size="icon" className="w-10 h-10 rounded-lg bg-indigo-800/30 text-blue-200 hover:text-white hover:bg-indigo-700">
-            1
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            className="w-10 h-10 rounded-lg bg-indigo-800/30 text-blue-200 hover:text-white hover:bg-indigo-700"
+            onClick={handleDashboardClick}
+            title="Dashboard"
+          >
+            <Home className="h-5 w-5" />
           </Button>
-          <Button variant="ghost" size="icon" className="w-10 h-10 rounded-lg bg-indigo-800/30 text-blue-200 hover:text-white hover:bg-indigo-700">
-            2
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            className="w-10 h-10 rounded-lg bg-indigo-800/30 text-blue-200 hover:text-white hover:bg-indigo-700"
+            onClick={handleSettingsClick}
+            title="Settings"
+          >
+            <Settings className="h-5 w-5" />
           </Button>
-          <Button variant="ghost" size="icon" className="w-10 h-10 rounded-lg bg-indigo-800/30 text-blue-200 hover:text-white hover:bg-indigo-700">
-            3
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            className="w-10 h-10 rounded-lg bg-indigo-800/30 text-blue-200 hover:text-white hover:bg-indigo-700"
+            onClick={handleHelpClick}
+            title="Help"
+          >
+            <HelpCircle className="h-5 w-5" />
           </Button>
         </div>
       </aside>
