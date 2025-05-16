@@ -47,7 +47,7 @@ const Landing = () => {
   return <div className="h-screen w-full flex flex-col items-center justify-center relative overflow-hidden">
       {/* Full-screen background with uploaded image */}
       <div className="absolute inset-0 z-0" style={{
-      backgroundImage: "url('/lovable-uploads/875e855a-93e1-4360-89b4-b7e970545959.png')",
+      backgroundImage: "url('/lovable-uploads/b99f1072-def3-4485-8c3e-94a0ba4bc04a.png')",
       backgroundSize: 'cover',
       backgroundPosition: 'center',
       backgroundRepeat: 'no-repeat'
@@ -106,8 +106,11 @@ const Landing = () => {
 
         {/* Quantum Analytica Footer */}
         <div className="mt-12 text-center">
-          
-          
+          <p className="text-white/80 text-sm">IN PARTNERSHIP WITH</p>
+          <h2 className="text-3xl font-bold bg-gradient-to-r from-purple-300 via-pink-400 to-blue-300 bg-clip-text text-transparent">
+            QUANTUM ANALYTICA
+          </h2>
+          <p className="text-white/70 text-sm">AI Powered Insights, Human-Centric Impacts</p>
         </div>
       </div>
     </div>;
