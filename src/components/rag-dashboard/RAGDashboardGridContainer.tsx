@@ -6,13 +6,10 @@ import { useAlerts } from '@/hooks/useAlerts';
 import { useDashboardState } from './hooks/useDashboardState';
 import OverviewStats from './OverviewStats';
 import ModulesGrid from './dashboard/ModulesGrid';
-import ModuleDetailsDialog from './ModuleDetailsDialog';
-import BatchOperationsDialog from './BatchOperationsDialog';
+import { DashboardDialogs } from './dashboard/DashboardDialogs';
 import { useStatusLogs } from '@/hooks/useStatusLogs';
 import { useThresholdRules } from '@/hooks/useThresholdRules';
 import { useCustomerImpacts } from '@/hooks/useCustomerImpacts';
-import { Input } from '@/components/ui/input';
-import { Search } from 'lucide-react';
 import { DashboardFilters } from './dashboard/DashboardFilters';
 
 const RAGDashboardGridContainer: React.FC = () => {
@@ -105,15 +102,15 @@ const RAGDashboardGridContainer: React.FC = () => {
         onViewDetails={onViewDetails}
       />
 
-      {/* Module Details Dialog */}
-      <ModuleDetailsDialog 
-        isOpen={isDetailsOpen}
-        onClose={() => setIsDetailsOpen(false)}
-        module={selectedModule}
-        statusLogs={moduleStatusLogs}
-        alerts={moduleAlerts}
+      {/* Dialogs for details and batch operations */}
+      <DashboardDialogs 
+        isDetailsOpen={isDetailsOpen}
+        onDetailsClose={() => setIsDetailsOpen(false)}
+        selectedModule={selectedModule}
+        logs={moduleStatusLogs}
+        moduleAlerts={moduleAlerts}
         rules={moduleRules}
-        customerImpacts={moduleImpacts}
+        impacts={moduleImpacts}
         logsLoading={logsLoading}
         alertsLoading={alertsLoading}
         rulesLoading={rulesLoading}
@@ -121,12 +118,8 @@ const RAGDashboardGridContainer: React.FC = () => {
         onResolveAlert={resolveAlert}
         onAddRule={addRule}
         onDeleteRule={deleteRule}
-      />
-
-      {/* Batch Operations Dialog */}
-      <BatchOperationsDialog
-        isOpen={isBatchOperationsOpen}
-        onClose={() => setIsBatchOperationsOpen(false)}
+        isBatchOperationsOpen={isBatchOperationsOpen}
+        onBatchOperationsClose={() => setIsBatchOperationsOpen(false)}
         modules={modules || []}
       />
     </div>

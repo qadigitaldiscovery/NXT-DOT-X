@@ -1,72 +1,69 @@
 
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { type Module } from '@/hooks/useModules';
-import StatusGauge from './StatusGauge';
 import { Search } from 'lucide-react';
+import { Input } from '@/components/ui/input';
 
-type ModuleStatusFilterProps = {
+interface ModuleStatusFilterProps {
   selectedStatus: string | null;
   onStatusSelect: (status: string | null) => void;
   searchQuery: string;
   onSearchChange: (query: string) => void;
 }
 
-export default function ModuleStatusFilter({
+const ModuleStatusFilter: React.FC<ModuleStatusFilterProps> = ({
   selectedStatus,
   onStatusSelect,
   searchQuery,
   onSearchChange
-}: ModuleStatusFilterProps) {
+}) => {
   return (
-    <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between mb-6">
+    <div className="flex flex-col md:flex-row gap-4">
+      <div className="relative flex-grow">
+        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+        <Input
+          placeholder="Search modules..."
+          value={searchQuery}
+          onChange={(e) => onSearchChange(e.target.value)}
+          className="pl-9"
+        />
+      </div>
       <div className="flex gap-2">
         <Button
-          variant={selectedStatus === null ? "secondary" : "outline"}
+          variant={selectedStatus === null ? "default" : "outline"}
           size="sm"
           onClick={() => onStatusSelect(null)}
+          className="whitespace-nowrap"
         >
           All
         </Button>
         <Button
-          variant={selectedStatus === 'green' ? "secondary" : "outline"}
+          variant={selectedStatus === 'green' ? "default" : "outline"}
           size="sm"
           onClick={() => onStatusSelect('green')}
-          className="flex items-center gap-1.5"
+          className="bg-green-500 hover:bg-green-600 text-white"
         >
-          <StatusGauge status="green" size="sm" animate={false} />
           Operational
         </Button>
         <Button
-          variant={selectedStatus === 'orange' ? "secondary" : "outline"}
+          variant={selectedStatus === 'orange' ? "default" : "outline"}
           size="sm"
           onClick={() => onStatusSelect('orange')}
-          className="flex items-center gap-1.5"
+          className="bg-amber-500 hover:bg-amber-600 text-white"
         >
-          <StatusGauge status="orange" size="sm" animate={false} />
           Degraded
         </Button>
         <Button
-          variant={selectedStatus === 'red' ? "secondary" : "outline"}
+          variant={selectedStatus === 'red' ? "default" : "outline"}
           size="sm"
           onClick={() => onStatusSelect('red')}
-          className="flex items-center gap-1.5"
+          className="bg-red-500 hover:bg-red-600 text-white"
         >
-          <StatusGauge status="red" size="sm" animate={false} />
           Outage
         </Button>
       </div>
-      
-      <div className="relative w-full sm:w-auto">
-        <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground pointer-events-none" />
-        <Input
-          placeholder="Search modules..."
-          className="pl-8 w-full sm:w-[250px]"
-          value={searchQuery}
-          onChange={(e) => onSearchChange(e.target.value)}
-        />
-      </div>
     </div>
   );
-}
+};
+
+export default ModuleStatusFilter;
