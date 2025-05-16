@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { NavCategory, NavItem } from './types';
 import { SidebarItem } from './SidebarItem';
@@ -38,6 +37,20 @@ export function SidebarNavList({
   expandedItems,
   onToggleExpand
 }: SidebarNavListProps) {
+
+  // Check if an item or any of its children has the active path
+  const isItemActive = (item: NavItem): boolean => {
+    if (activeItemKey === item.path || activeItemKey === item.href) {
+      return true;
+    }
+
+    // Check children if they exist
+    if (item.children && item.children.length > 0) {
+      return item.children.some(child => isItemActive(child));
+    }
+
+    return false;
+  };
 
   // If items are provided but no categories, create a default category
   const allCategories = categories.length > 0 ? categories : 
@@ -86,7 +99,7 @@ export function SidebarNavList({
             {(!isCollapsed || !onCategoryToggle) && (isExpanded || !onCategoryToggle) && category.items && (
               <div className="pt-1 pl-1">
                 {category.items.map((item) => {
-                  const isActive = activeItemKey === item.path || activeItemKey === item.label;
+                  const isActive = isItemActive(item);
                   
                   return (
                     <SidebarItem
@@ -98,7 +111,7 @@ export function SidebarNavList({
                       activeBgColor={activeBgColor}
                       activeTextColor={activeTextColor}
                       hoverBgColor={hoverBgColor}
-                      onClick={() => onItemClick && onItemClick(item.path || item.label)}
+                      onClick={() => onItemClick && onItemClick(item.path || item.href || item.label)}
                     />
                   );
                 })}
