@@ -4,7 +4,7 @@ import ProtectedRoute from "@/components/ProtectedRoute";
 import BetaPermissionGuard from "@/components/beta/BetaPermissionGuard";
 import { PlatformLayout } from "@/components/layouts/PlatformLayout";
 import { NavCategory } from '@/components/layout/sidebar/types';
-import { Home, Settings, Users, BarChart3, Award } from 'lucide-react';
+import { Home, Settings, Users, BarChart3, Award, Database, Truck, FileUp, Calculator, FileText } from 'lucide-react';
 
 // Beta Pages
 import Beta1Dashboard from "@/pages/Beta1Dashboard";
@@ -23,6 +23,12 @@ export const beta1NavCategories: NavCategory[] = [
     label: "Data Platform Beta",
     items: [
       { label: 'Dashboard', icon: Home, path: '/beta1' },
+      { label: 'Supplier Costing', icon: Calculator, path: '/beta1/supplier-costing' },
+      { label: 'Cost Analysis', icon: BarChart3, path: '/beta1/cost-analysis' },
+      { label: 'Uploads', icon: FileUp, path: '/beta1/uploads' },
+      { label: 'Suppliers', icon: Truck, path: '/beta1/suppliers' },
+      { label: 'Documents', icon: FileText, path: '/beta1/documents' },
+      { label: 'Data Management', icon: Database, path: '/beta1/data-management' },
       { label: 'Settings', icon: Settings, path: '/beta1/settings' }
     ]
   }
@@ -63,6 +69,67 @@ export const BetaRoutes = () => {
             <BetaPermissionGuard betaModule="beta1">
               <PlatformLayout moduleTitle="Beta 1 Settings" navCategories={beta1NavCategories}>
                 <Beta1Settings />
+              </PlatformLayout>
+            </BetaPermissionGuard>
+          </ProtectedRoute>
+        } />
+
+        {/* Additional routes for Beta1 data management components */}
+        <Route path="supplier-costing" element={
+          <ProtectedRoute>
+            <BetaPermissionGuard betaModule="beta1">
+              <PlatformLayout moduleTitle="Supplier Costing" navCategories={beta1NavCategories}>
+                <Beta1Dashboard />
+              </PlatformLayout>
+            </BetaPermissionGuard>
+          </ProtectedRoute>
+        } />
+
+        <Route path="cost-analysis" element={
+          <ProtectedRoute>
+            <BetaPermissionGuard betaModule="beta1">
+              <PlatformLayout moduleTitle="Cost Analysis" navCategories={beta1NavCategories}>
+                <Beta1Dashboard />
+              </PlatformLayout>
+            </BetaPermissionGuard>
+          </ProtectedRoute>
+        } />
+
+        <Route path="uploads" element={
+          <ProtectedRoute>
+            <BetaPermissionGuard betaModule="beta1">
+              <PlatformLayout moduleTitle="File Uploads" navCategories={beta1NavCategories}>
+                <Beta1Dashboard />
+              </PlatformLayout>
+            </BetaPermissionGuard>
+          </ProtectedRoute>
+        } />
+
+        <Route path="suppliers" element={
+          <ProtectedRoute>
+            <BetaPermissionGuard betaModule="beta1">
+              <PlatformLayout moduleTitle="Suppliers" navCategories={beta1NavCategories}>
+                <Beta1Dashboard />
+              </PlatformLayout>
+            </BetaPermissionGuard>
+          </ProtectedRoute>
+        } />
+
+        <Route path="documents" element={
+          <ProtectedRoute>
+            <BetaPermissionGuard betaModule="beta1">
+              <PlatformLayout moduleTitle="Documents" navCategories={beta1NavCategories}>
+                <Beta1Dashboard />
+              </PlatformLayout>
+            </BetaPermissionGuard>
+          </ProtectedRoute>
+        } />
+
+        <Route path="data-management" element={
+          <ProtectedRoute>
+            <BetaPermissionGuard betaModule="beta1">
+              <PlatformLayout moduleTitle="Data Management" navCategories={beta1NavCategories}>
+                <Beta1Dashboard />
               </PlatformLayout>
             </BetaPermissionGuard>
           </ProtectedRoute>
