@@ -25,7 +25,7 @@ const ModuleStatusFilter: React.FC<ModuleStatusFilterProps> = ({
           placeholder="Search modules..."
           value={searchQuery}
           onChange={(e) => onSearchChange(e.target.value)}
-          className="pl-9"
+          className="pl-9 border-blue-lighter focus:border-blue"
         />
       </div>
       <div className="flex gap-2">
@@ -33,7 +33,7 @@ const ModuleStatusFilter: React.FC<ModuleStatusFilterProps> = ({
           variant={selectedStatus === null ? "default" : "outline"}
           size="sm"
           onClick={() => onStatusSelect(null)}
-          className="whitespace-nowrap"
+          className={`whitespace-nowrap ${selectedStatus === null ? 'bg-blue text-white' : 'text-blue'}`}
         >
           All
         </Button>
@@ -41,7 +41,7 @@ const ModuleStatusFilter: React.FC<ModuleStatusFilterProps> = ({
           variant={selectedStatus === 'green' ? "default" : "outline"}
           size="sm"
           onClick={() => onStatusSelect('green')}
-          className="bg-green-500 hover:bg-green-600 text-white"
+          className={`${selectedStatus === 'green' ? 'bg-emerald-500 text-white' : 'text-emerald-600 border-emerald-300'}`}
         >
           Operational
         </Button>
@@ -49,7 +49,7 @@ const ModuleStatusFilter: React.FC<ModuleStatusFilterProps> = ({
           variant={selectedStatus === 'orange' ? "default" : "outline"}
           size="sm"
           onClick={() => onStatusSelect('orange')}
-          className="bg-amber-500 hover:bg-amber-600 text-white"
+          className={`${selectedStatus === 'orange' ? 'bg-amber-500 text-white' : 'text-amber-600 border-amber-300'}`}
         >
           Degraded
         </Button>
@@ -57,7 +57,7 @@ const ModuleStatusFilter: React.FC<ModuleStatusFilterProps> = ({
           variant={selectedStatus === 'red' ? "default" : "outline"}
           size="sm"
           onClick={() => onStatusSelect('red')}
-          className="bg-red-500 hover:bg-red-600 text-white"
+          className={`${selectedStatus === 'red' ? 'bg-red-500 text-white' : 'text-red-600 border-red-300'}`}
         >
           Outage
         </Button>

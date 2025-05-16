@@ -24,7 +24,7 @@ export const PlatformLayout: React.FC<PlatformLayoutProps> = ({
   moduleTitle = '',
 }) => {
   return (
-    <div className="flex h-screen bg-gray-100 dark:bg-gray-900">
+    <div className="flex h-screen bg-blue-lightest dark:bg-gray-900">
       <Sidebar
         navItems={navItems}
         navCategories={navCategories}
@@ -34,7 +34,7 @@ export const PlatformLayout: React.FC<PlatformLayoutProps> = ({
       />
       <div className="flex flex-col flex-1 overflow-hidden">
         <Topbar moduleTitle={moduleTitle} />
-        <main className="flex-1 overflow-y-auto p-4">
+        <main className="flex-1 overflow-y-auto p-4 bg-gradient-to-br from-white to-blue-lightest">
           {children}
         </main>
       </div>

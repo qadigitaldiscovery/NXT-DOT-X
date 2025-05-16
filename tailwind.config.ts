@@ -64,12 +64,12 @@ export default {
 					ring: 'hsl(var(--sidebar-ring))'
 				},
 				dashboard: {
-					primary: '#c01c1c',
-					secondary: '#a51919',
-					accent: '#d63031',
-					muted: '#F1F5F9',
-					border: '#E2E8F0',
-					heading: '#1E293B'
+					primary: '#02effe',
+					secondary: '#005fea',
+					accent: '#4cacfe',
+					muted: '#F7FAFF',
+					border: '#aee1f9',
+					heading: '#005fea'
 				},
 				nxt: {
 					red: '#c01c1c',
@@ -78,6 +78,13 @@ export default {
 					gray: '#333333',
 					darkGray: '#1a1a1a',
 					lightGray: '#f5f5f5'
+				},
+				blue: {
+					lightest: '#e5effc',
+					lighter: '#adccef',
+					light: '#4cacfe',
+					DEFAULT: '#005fea',
+					dark: '#0e26dc'
 				}
 			},
 			borderRadius: {
@@ -105,11 +112,11 @@ export default {
 				'pulse-neon': {
 					'0%, 100%': { 
 						opacity: '1',
-						boxShadow: '0 0 10px rgba(220,38,38,0.7), 0 0 20px rgba(220,38,38,0.5), 0 0 30px rgba(220,38,38,0.3)' 
+						boxShadow: '0 0 10px rgba(1,95,234,0.7), 0 0 20px rgba(1,95,234,0.5), 0 0 30px rgba(1,95,234,0.3)' 
 					},
 					'50%': { 
 						opacity: '0.6',
-						boxShadow: '0 0 5px rgba(220,38,38,0.5), 0 0 10px rgba(220,38,38,0.3)' 
+						boxShadow: '0 0 5px rgba(1,95,234,0.5), 0 0 10px rgba(1,95,234,0.3)' 
 					}
 				}
 			},
@@ -126,4 +133,3 @@ export default {
 	},
 	plugins: [require("tailwindcss-animate")],
 } satisfies Config;
-
