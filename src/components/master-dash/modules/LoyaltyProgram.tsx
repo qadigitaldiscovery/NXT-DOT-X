@@ -1,12 +1,14 @@
-
 import React from 'react';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Award, BarChart3 } from "lucide-react";
+import { Award, BarChart3, Beaker } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from '@/context/AuthContext';
 
 export default function LoyaltyProgram() {
   const navigate = useNavigate();
+  const { hasPermission } = useAuth();
+  const hasBetaAccess = hasPermission('modules.loyalty');
   
   return (
     <Card className="col-span-1 bg-slate-800">
@@ -33,12 +35,40 @@ export default function LoyaltyProgram() {
             <div className="w-2 h-2 rounded-full bg-amber-500"></div>
             <span className="text-sm">System Status <Button variant="link" className="px-1 py-0 h-auto text-amber-400 text-xs" onClick={() => navigate('/dashboard/rag')}>View RAG Dashboard</Button></span>
           </div>
+          {hasBetaAccess && (
+            <div className="flex items-center gap-2">
+              <div className="w-2 h-2 rounded-full bg-purple-500"></div>
+              <span className="text-sm flex items-center">
+                <Beaker className="w-3 h-3 mr-1 text-purple-400" />
+                <Button 
+                  variant="link" 
+                  className="px-1 py-0 h-auto text-purple-400 text-xs" 
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    navigate('/beta2');
+                  }}
+                >
+                  Loyalty Platform Beta
+                </Button>
+              </span>
+            </div>
+          )}
         </div>
       </CardContent>
-      <CardFooter>
+      <CardFooter className="flex flex-col space-y-2">
         <Button onClick={() => navigate('/loyalty-rewards')} className="w-full">
           Open Loyalty Program
         </Button>
+        {hasBetaAccess && (
+          <Button 
+            onClick={() => navigate('/beta2')} 
+            variant="outline" 
+            className="w-full text-purple-400 border-purple-700 hover:bg-purple-900/30"
+          >
+            <Beaker className="w-4 h-4 mr-2" />
+            Open Beta Platform
+          </Button>
+        )}
       </CardFooter>
     </Card>
   );
