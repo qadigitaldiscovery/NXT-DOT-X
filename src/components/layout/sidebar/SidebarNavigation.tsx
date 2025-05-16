@@ -11,7 +11,10 @@ interface SidebarNavigationProps {
 
 export function SidebarNavigation({ categories, userRole }: SidebarNavigationProps) {
   const location = useLocation();
-  const [expandedCategories, setExpandedCategories] = useState<string[]>([]);
+  // Initialize with all categories expanded
+  const [expandedCategories, setExpandedCategories] = useState<string[]>(
+    categories.map(cat => cat.name || cat.label || '')
+  );
 
   // Toggle a category's expanded state
   const toggleCategory = (categoryName: string) => {
@@ -43,6 +46,9 @@ export function SidebarNavigation({ categories, userRole }: SidebarNavigationPro
     }))
     .filter(category => category.items.length > 0);
 
+  console.log('SidebarNavigation - Visible Categories:', visibleCategories);
+  console.log('SidebarNavigation - Current Location:', location.pathname);
+
   return (
     <div className="space-y-1">
       {visibleCategories.map((category) => {
@@ -52,61 +58,59 @@ export function SidebarNavigation({ categories, userRole }: SidebarNavigationPro
         return (
           <div key={categoryName} className="mb-4">
             {/* Category Header */}
-            <button
-              onClick={() => toggleCategory(categoryName)}
-              className="flex w-full items-center justify-between px-3 py-2 text-sm font-medium text-blue-200 hover:text-blue-100 rounded-md"
-            >
+            <div className="flex w-full items-center justify-between px-3 py-2 text-sm font-medium text-blue-200 hover:text-blue-100 rounded-md">
               <span>{category.label || category.name}</span>
-              <ChevronDown 
-                className={cn(
-                  "h-4 w-4 transition-transform duration-200",
-                  isExpanded ? "transform rotate-180" : ""
-                )} 
-              />
-            </button>
+            </div>
             
-            {/* Category Items */}
-            {isExpanded && (
-              <div className="mt-1 ml-2 pl-2 border-l border-indigo-800">
-                {category.items.map((item) => {
-                  const Icon = item.icon;
-                  const href = item.href || item.path || '#';
-                  const isActive = location.pathname === href || 
-                                  (href !== '/' && location.pathname.startsWith(href));
-                  
-                  if (href === '#') {
-                    return (
-                      <div
-                        key={item.label}
-                        className={cn(
-                          "flex items-center px-3 py-2 text-sm rounded-md my-1 cursor-pointer",
-                          "text-blue-200 hover:text-white hover:bg-indigo-900/50"
-                        )}
-                      >
-                        {Icon && <Icon className="mr-2 h-4 w-4" />}
-                        <span>{item.label}</span>
-                      </div>
-                    );
-                  }
-                  
+            {/* Category Items - Always visible */}
+            <div className="mt-1 ml-2 pl-2 border-l border-indigo-800">
+              {category.items.map((item) => {
+                const Icon = item.icon;
+                const href = item.href || item.path || '#';
+                // More specific active route match
+                const isActive = location.pathname === href || 
+                                (href !== '/' && href !== '#' && location.pathname.startsWith(href));
+                
+                if (href === '#') {
                   return (
-                    <NavLink
+                    <div
                       key={item.label}
-                      to={href}
-                      className={({ isActive: routeActive }) => cn(
-                        "flex items-center px-3 py-2 text-sm rounded-md my-1",
-                        (isActive || routeActive)
-                          ? "bg-gradient-to-r from-blue-800 to-indigo-700 text-white"
-                          : "text-blue-200 hover:text-white hover:bg-indigo-900/50"
+                      className={cn(
+                        "flex items-center px-3 py-2 text-sm rounded-md my-1 cursor-pointer",
+                        "text-blue-200 hover:text-white hover:bg-indigo-900/50"
                       )}
                     >
                       {Icon && <Icon className="mr-2 h-4 w-4" />}
                       <span>{item.label}</span>
-                    </NavLink>
+                    </div>
                   );
-                })}
-              </div>
-            )}
+                }
+                
+                // Check if this is active based on the current location
+                console.log(`Checking item ${item.label} (${href}): ${isActive ? 'ACTIVE' : 'inactive'}`);
+                
+                return (
+                  <NavLink
+                    key={item.label}
+                    to={href}
+                    className={({ isActive: routeActive }) => {
+                      // Log the active state for debugging
+                      const active = isActive || routeActive;
+                      console.log(`NavLink for ${item.label}: ${active ? 'ACTIVE' : 'inactive'}`);
+                      return cn(
+                        "flex items-center px-3 py-2 text-sm rounded-md my-1",
+                        active
+                          ? "bg-gradient-to-r from-blue-800 to-indigo-700 text-white font-medium"
+                          : "text-blue-200 hover:text-white hover:bg-indigo-900/50"
+                      );
+                    }}
+                  >
+                    {Icon && <Icon className="mr-2 h-4 w-4" />}
+                    <span>{item.label}</span>
+                  </NavLink>
+                );
+              })}
+            </div>
           </div>
         );
       })}

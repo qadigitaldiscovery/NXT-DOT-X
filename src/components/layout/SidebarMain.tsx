@@ -10,6 +10,7 @@ import { useAuth } from '@/context/AuthContext';
 import { SidebarToggleButton } from './sidebar/SidebarToggleButton';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
+import { navCategories as globalNavCategories } from './sidebar/NavigationConfig';
 
 // Helper function to normalize navigation items
 const normalizeNavItems = (items: NavItem[] = []): NavItem[] => {
@@ -41,7 +42,8 @@ export const SidebarMain: React.FC<SidebarProps> = ({
   removeBottomToggle = false,
   showToggleButton = true,
   initialState,
-  onStateChange
+  onStateChange,
+  useGlobalNavigation = true
 }) => {
   const isMobile = useIsMobile();
   const { user } = useAuth();
@@ -73,23 +75,31 @@ export const SidebarMain: React.FC<SidebarProps> = ({
     }
   };
 
-  // Combined navigation items
-  const allCategories = [...normalizeNavCategories(navCategories), ...normalizeNavCategories(items)];
-  const allNavItems = [...normalizeNavItems(navItems)];
-
-  // If there are plain navItems without categories
-  if (allNavItems.length > 0 && allCategories.length === 0) {
-    allCategories.push({
-      label: "Navigation",
-      name: "Navigation",
-      items: allNavItems
-    });
+  // Determine which navigation to use
+  let effectiveNavCategories: NavCategory[] = [];
+  
+  if (useGlobalNavigation) {
+    // Use global navigation categories
+    effectiveNavCategories = globalNavCategories;
+  } else if (navCategories && navCategories.length > 0) {
+    // Use provided navCategories
+    effectiveNavCategories = navCategories;
+  } else if (items && items.length > 0) {
+    // Use provided items (legacy support)
+    effectiveNavCategories = items;
+  } else if (navItems && navItems.length > 0) {
+    // Create a category from navItems
+    effectiveNavCategories = [{
+      name: 'Navigation',
+      label: 'Navigation',
+      items: navItems
+    }];
   }
 
   // Log navigation data for debugging
   console.log('SidebarMain - User:', user?.username, 'Role:', user?.role);
-  console.log('SidebarMain - Navigation Categories:', allCategories);
-  console.log('SidebarMain - Plain Nav Items:', allNavItems);
+  console.log('SidebarMain - Using Global Navigation:', useGlobalNavigation);
+  console.log('SidebarMain - Effective Navigation Categories:', effectiveNavCategories);
   console.log('SidebarMain - Current Location:', location.pathname);
 
   // Updated styling with more reasonable sizing
@@ -122,7 +132,7 @@ export const SidebarMain: React.FC<SidebarProps> = ({
         className={cn(
           "fixed md:sticky top-0 left-0 h-screen z-30 shadow-xl flex flex-col transition-all duration-300 ease-in-out",
           sidebarBgColor,
-          isOpen ? "w-60" : "w-0 md:w-16",
+          isOpen ? "w-72" : "w-0 md:w-16",
           isMobile && !isOpen && "-translate-x-full",
           isMobile && isOpen && "translate-x-0"
         )}
@@ -133,7 +143,7 @@ export const SidebarMain: React.FC<SidebarProps> = ({
           !isOpen && "hidden" // Hide when sidebar is collapsed
         )}>
           <SidebarNavigation 
-            categories={allCategories}
+            categories={effectiveNavCategories}
             userRole={user?.role}
           />
         </nav>
@@ -141,7 +151,7 @@ export const SidebarMain: React.FC<SidebarProps> = ({
         {/* Icon-Only Navigation (Visible when collapsed on desktop) */}
         {!isOpen && !isMobile && (
           <CollapsedSidebar 
-            navItems={allCategories.flatMap(cat => cat.items)}
+            navItems={effectiveNavCategories.flatMap(cat => cat.items)}
             textColor="text-blue-200"
             activeBgColor="bg-gradient-to-r from-blue-800 to-indigo-700"
             activeTextColor="text-white"

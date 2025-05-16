@@ -1,9 +1,11 @@
+import { ReactNode } from 'react';
+import { LucideIcon } from 'lucide-react';
 
 export interface NavItem {
   label: string;
+  icon?: LucideIcon;
   href?: string;
   path?: string;  // For backward compatibility
-  icon?: any;
   roles?: string[];
   activeMatchPattern?: string | RegExp;
   children?: NavItem[];
@@ -33,12 +35,13 @@ export interface SidebarProps {
   open?: boolean;
   onToggle?: () => void;
   homeItem?: NavItem;
-  customFooterContent?: React.ReactNode;
+  customFooterContent?: ReactNode;
   className?: string;
   removeBottomToggle?: boolean;
   showToggleButton?: boolean;
   initialState?: string;
   onStateChange?: (state: string) => void;
+  useGlobalNavigation?: boolean;
 }
 
 export interface SidebarItemProps {
