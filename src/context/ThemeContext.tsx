@@ -1,4 +1,5 @@
-import React, { createContext, useContext, useEffect, useState, useMemo, useCallback } from "react";
+
+import React, { createContext, useContext, useEffect, useState, useMemo, useCallback, useRef } from "react";
 import { useUserPreferences } from '@/hooks/useUserPreferences';
 import { useAuth } from '@/context/AuthContext';
 
@@ -14,6 +15,7 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { user } = useAuth();
   const [localTheme, setLocalTheme] = useState<Theme>(getInitialTheme());
+  const previousTheme = useRef<Theme>(localTheme);
   
   // Use database persistence with fallback to localStorage for unauthenticated users
   const { preferences, setPreferences, loading } = useUserPreferences({
@@ -36,7 +38,6 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
         return prefersDark ? "dark" : "light";
       } catch (err) {
-        // If media query fails for some reason, default to light
         return "light";
       }
     }
@@ -45,10 +46,10 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   
   // Memoize theme to prevent constant re-renders
   const theme = useMemo(() => {
-    // If loading or no user, use local theme to avoid flashing
+    // If no user or if loading, use local theme from state/localStorage
     if (!user) return localTheme;
     
-    // If we have user preferences, use them
+    // If we have user preferences and they are valid, use them
     if (preferences && (preferences === "light" || preferences === "dark")) {
       return preferences as Theme;
     }
@@ -57,12 +58,16 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     return localTheme;
   }, [user, preferences, localTheme]);
 
-  // Separate effect that only runs when theme changes
+  // Apply theme to document and localStorage
   useEffect(() => {
+    // Skip if theme hasn't actually changed
+    if (previousTheme.current === theme) return;
+    
+    // Update ref with current theme to track changes
+    previousTheme.current = theme;
+    
     // Apply theme to document immediately and effectively
     const html = document.documentElement;
-    
-    // Force removal and re-addition of theme classes to avoid conflicts
     html.classList.remove("light", "dark");
     html.classList.add(theme);
     
@@ -81,9 +86,13 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     localStorage.setItem("theme", newTheme);
     
     // Update in database only if authenticated with valid ID
-    if (user?.id && typeof user.id === 'string' && 
-        /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(user.id)) {
-      await setPreferences(newTheme);
+    if (user?.id && typeof user.id === 'string') {
+      try {
+        await setPreferences(newTheme);
+      } catch (err) {
+        console.error('Failed to save theme preference to database:', err);
+        // Non-fatal error, just log it
+      }
     }
   }, [theme, user, setPreferences]);
 

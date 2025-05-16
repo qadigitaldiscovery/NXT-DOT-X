@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useTheme } from "@/context/ThemeContext";
 
-export function ThemeToggle() {
+export const ThemeToggle: React.FC = React.memo(() => {
   const { theme, toggleTheme } = useTheme();
 
   return (
@@ -30,4 +30,6 @@ export function ThemeToggle() {
       </DropdownMenuContent>
     </DropdownMenu>
   );
-}
+});
+
+ThemeToggle.displayName = 'ThemeToggle';
