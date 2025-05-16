@@ -35,9 +35,11 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     return "light";
   }
   
-  // Extract the theme value from preferences or use local state as fallback
-  // Use a stable reference to theme to prevent unnecessary re-renders
-  const theme = user && preferences ? preferences as Theme : localTheme;
+  // Memoize theme to prevent constant re-renders
+  const theme = React.useMemo(() => {
+    if (user && preferences) return preferences as Theme;
+    return localTheme;
+  }, [user, preferences, localTheme]);
 
   useEffect(() => {
     // Apply theme to document immediately and effectively
@@ -54,15 +56,17 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const toggleTheme = async () => {
     const newTheme = theme === "light" ? "dark" : "light";
     
-    // Update in database if authenticated and user ID is valid
+    // Update local state immediately to avoid delay in UI update
+    setLocalTheme(newTheme);
+    
+    // Update in database only if authenticated and user ID is valid
     if (user?.id && typeof user.id === 'string' && 
         /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(user.id)) {
       await setPreferences(newTheme);
-    } else {
-      // Fall back to localStorage for unauthenticated users or invalid IDs
-      localStorage.setItem("theme", newTheme);
-      setLocalTheme(newTheme); // Update local state for immediate effect
     }
+    
+    // Always update localStorage as fallback
+    localStorage.setItem("theme", newTheme);
   };
 
   return (

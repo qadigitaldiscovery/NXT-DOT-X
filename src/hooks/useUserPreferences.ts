@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/context/AuthContext';
 
@@ -14,15 +14,21 @@ export function useUserPreferences({ module, key, defaultValue }: PreferencesOpt
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<Error | null>(null);
   const { user } = useAuth();
+  
+  // Use a ref to prevent excessive re-fetching
+  const fetchedRef = useRef(false);
 
   useEffect(() => {
-    const fetchPreferences = async () => {
+    // Skip if we've already fetched or there's no user
+    if (fetchedRef.current || !user?.id) {
       if (!user?.id) {
         setPreferences(defaultValue);
         setLoading(false);
-        return;
       }
+      return;
+    }
 
+    const fetchPreferences = async () => {
       try {
         // Make sure we're using a valid UUID format
         const userId = user.id;
@@ -57,6 +63,9 @@ export function useUserPreferences({ module, key, defaultValue }: PreferencesOpt
           });
           setPreferences(defaultValue);
         }
+        
+        // Mark as fetched to prevent repeated fetching
+        fetchedRef.current = true;
       } catch (err) {
         console.error('Error fetching preferences:', err);
         // Fall back to default preferences on error
@@ -68,9 +77,15 @@ export function useUserPreferences({ module, key, defaultValue }: PreferencesOpt
     };
 
     fetchPreferences();
-  }, [module, key, defaultValue, user]);
+    
+    // Reset fetched ref when user changes
+    return () => {
+      fetchedRef.current = false;
+    };
+  }, [module, key, defaultValue, user?.id]);
 
   const setPreferencesValue = async (newValue: any) => {
+    // Update local state immediately
     setPreferences(newValue);
     
     if (!user?.id) {
