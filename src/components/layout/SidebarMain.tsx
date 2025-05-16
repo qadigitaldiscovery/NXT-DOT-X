@@ -8,6 +8,7 @@ import { CollapsedSidebar } from './sidebar/CollapsedSidebar';
 import { NavItem, NavCategory, SidebarProps } from './sidebar/types';
 import { useAuth } from '@/context/AuthContext';
 import { SidebarToggleButton } from './sidebar/SidebarToggleButton';
+import { useLocation } from 'react-router-dom';
 
 // Helper function to normalize navigation items
 const normalizeNavItems = (items: NavItem[] = []): NavItem[] => {
@@ -44,6 +45,7 @@ export const SidebarMain: React.FC<SidebarProps> = ({
   const isMobile = useIsMobile();
   const [expandedItems, setExpandedItems] = useState<string[]>([]);
   const { user } = useAuth();
+  const location = useLocation();
 
   // Use provided open/onToggle or internal state
   const [internalOpen, setInternalOpen] = useState(() => {
@@ -87,6 +89,7 @@ export const SidebarMain: React.FC<SidebarProps> = ({
   console.log('SidebarMain - User:', user?.username, 'Role:', user?.role);
   console.log('SidebarMain - Navigation Categories:', allCategories);
   console.log('SidebarMain - Plain Nav Items:', allNavItems);
+  console.log('SidebarMain - Current Location:', location.pathname);
 
   // Updated styling with more reasonable sizing
   const sidebarBgColor = className || 'bg-gradient-to-b from-indigo-950 via-blue-950 to-slate-950';
@@ -134,6 +137,7 @@ export const SidebarMain: React.FC<SidebarProps> = ({
             activeBgColor={activeBgColor}
             activeTextColor={activeTextColor}
             hoverBgColor={hoverBgColor}
+            activeItemKey={location.pathname}
           />
         </nav>
 
