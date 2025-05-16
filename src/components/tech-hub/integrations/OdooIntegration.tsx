@@ -173,6 +173,10 @@ const OdooIntegration = () => {
       // Test connection via Edge Function
       const { data: session } = await supabase.auth.getSession();
       
+      if (!session?.session?.access_token) {
+        throw new Error("Authentication required");
+      }
+      
       // Prepare request data based on authentication method
       const requestData: Record<string, any> = {
         action: 'test_connection',
@@ -188,12 +192,18 @@ const OdooIntegration = () => {
         requestData.password = data.password;
       }
       
-      // Call the edge function to test the connection
-      const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/api-integrations/odoo`, {
+      // Call the edge function to test the connection - use the proper URL
+      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+      if (!supabaseUrl) {
+        throw new Error("Supabase URL not configured");
+      }
+      
+      // Call the edge function with the correct URL
+      const response = await fetch(`${supabaseUrl}/functions/v1/api-integrations/odoo`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${session?.session?.access_token}`
+          'Authorization': `Bearer ${session.session.access_token}`
         },
         body: JSON.stringify(requestData)
       });
@@ -446,8 +456,14 @@ const OdooIntegration = () => {
         return;
       }
       
-      // Call the edge function to start sync
-      const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/api-integrations/odoo`, {
+      // Get the Supabase URL from environment
+      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+      if (!supabaseUrl) {
+        throw new Error("Supabase URL not configured");
+      }
+      
+      // Call the edge function with the correct URL
+      const response = await fetch(`${supabaseUrl}/functions/v1/api-integrations/odoo`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
