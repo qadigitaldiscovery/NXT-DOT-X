@@ -10,6 +10,7 @@ export const topLevelNavItems: NavItem[] = [
 export const navCategories: NavCategory[] = [
   {
     label: "Data Management",
+    name: "Data Management",
     items: [
       { label: 'Dashboard', icon: Database, href: '/data-management', path: '/data-management' },
       { label: 'Supplier Directory', icon: Truck, href: '/data-management/suppliers', path: '/data-management/suppliers' },
@@ -29,6 +30,7 @@ export const navCategories: NavCategory[] = [
   },
   {
     label: "Loyalty Program",
+    name: "Loyalty Program",
     items: [
       { label: 'Dashboard', icon: Award, href: '/loyalty-rewards', path: '/loyalty-rewards' },
       { label: 'Members', icon: Users, href: '/loyalty-rewards/members', path: '/loyalty-rewards/members' },
@@ -39,6 +41,7 @@ export const navCategories: NavCategory[] = [
   },
   {
     label: "Tech Hub",
+    name: "Tech Hub",
     items: [
       { label: 'AI Personas', icon: BrainCircuit, href: '/tech-hub/personas', path: '/tech-hub/personas' },
       { label: 'API Management', icon: Server, href: '/tech-hub/api-management', path: '/tech-hub/api-management' },
@@ -47,6 +50,7 @@ export const navCategories: NavCategory[] = [
   },
   {
     label: "Admin",
+    name: "Admin",
     items: [
       { label: 'User Management', icon: Users, href: '/admin/users', path: '/admin/users' },
       { label: 'Customer Management', icon: Building, href: '/admin/customers', path: '/admin/customers' },

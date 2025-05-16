@@ -50,20 +50,35 @@ export const CollapsedSidebar = ({
       (path !== '/' && path !== '' && location.pathname.startsWith(path));
   };
 
-  // Determine if navItems is an array of NavItems or NavCategory
-  const isNavItemArray = navItems.length > 0 && 'href' in navItems[0];
+  // Extract all items from navItems, handling both NavItem[] and NavCategory[]
+  let allItems: NavItem[] = [];
   
-  // Collect all items that are not children
-  const allItems = isNavItemArray 
-    ? navItems as NavItem[]
-    : (navItems as NavCategory[]).flatMap(category => category.items);
-    
+  // Improved detection for item types
+  if (navItems.length > 0) {
+    // Check if items property exists to determine if it's a NavCategory
+    if ('items' in navItems[0]) {
+      // It's an array of NavCategory objects
+      const categories = navItems as NavCategory[];
+      categories.forEach(category => {
+        if (category.items && Array.isArray(category.items)) {
+          allItems = [...allItems, ...category.items];
+        }
+      });
+    } else {
+      // It's an array of NavItem objects
+      allItems = navItems as NavItem[];
+    }
+  }
+  
   // Filter items based on role and exclude parent items with children
   const filteredItems = allItems
     .filter(item => shouldShowItem(item) && !(item.children && item.children.length > 0));
     
   // If homeItem is provided, add it to the bottom
   const displayItems = homeItem ? [...filteredItems, homeItem] : filteredItems;
+
+  // Log for debugging
+  console.log('CollapsedSidebar - displayItems count:', displayItems.length);
 
   return (
     <div className="py-4 flex flex-col items-center space-y-2 overflow-y-auto">
