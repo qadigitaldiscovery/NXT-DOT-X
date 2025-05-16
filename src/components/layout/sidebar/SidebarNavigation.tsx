@@ -49,6 +49,30 @@ export function SidebarNavigation({ categories, userRole }: SidebarNavigationPro
   console.log('SidebarNavigation - Visible Categories:', visibleCategories);
   console.log('SidebarNavigation - Current Location:', location.pathname);
 
+  // Improved function to check if a route is active
+  const isRouteActive = (href: string): boolean => {
+    // Exact match
+    if (location.pathname === href) return true;
+    
+    // Special case for root path
+    if (href === '/' && location.pathname === '/') return true;
+    
+    // Prefix match for non-root paths with proper path boundary checking
+    if (href !== '/' && href !== '#') {
+      // Check if location pathname starts with href AND
+      // either ends with href or continues with a slash
+      // This prevents "/data" from matching "/data-management"
+      const isPrefix = location.pathname.startsWith(href);
+      const isBoundaryCorrect = 
+        location.pathname.length === href.length || 
+        location.pathname.charAt(href.length) === '/';
+      
+      return isPrefix && isBoundaryCorrect;
+    }
+    
+    return false;
+  };
+
   return (
     <div className="space-y-1">
       {visibleCategories.map((category) => {
@@ -67,9 +91,10 @@ export function SidebarNavigation({ categories, userRole }: SidebarNavigationPro
               {category.items.map((item) => {
                 const Icon = item.icon;
                 const href = item.href || item.path || '#';
-                // More specific active route match
-                const isActive = location.pathname === href || 
-                                (href !== '/' && href !== '#' && location.pathname.startsWith(href));
+                
+                // Use the improved active route detection
+                const isActive = isRouteActive(href);
+                console.log(`Checking item ${item.label} (${href}): ${isActive ? 'ACTIVE' : 'inactive'}`);
                 
                 if (href === '#') {
                   return (
@@ -86,15 +111,12 @@ export function SidebarNavigation({ categories, userRole }: SidebarNavigationPro
                   );
                 }
                 
-                // Check if this is active based on the current location
-                console.log(`Checking item ${item.label} (${href}): ${isActive ? 'ACTIVE' : 'inactive'}`);
-                
                 return (
                   <NavLink
                     key={item.label}
                     to={href}
                     className={({ isActive: routeActive }) => {
-                      // Log the active state for debugging
+                      // Use either our custom detection or React Router's
                       const active = isActive || routeActive;
                       console.log(`NavLink for ${item.label}: ${active ? 'ACTIVE' : 'inactive'}`);
                       return cn(

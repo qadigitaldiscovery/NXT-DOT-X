@@ -39,6 +39,7 @@ export const PlatformLayout: React.FC<PlatformLayoutProps> = memo(({
     console.log('Using global navigation:', useGlobalNavigation);
     console.log('Module title:', moduleTitle);
     console.log('Initial sidebar state:', initialSidebarState);
+    console.log('Current location:', location.pathname);
   }, [location.pathname, useGlobalNavigation, moduleTitle, initialSidebarState]);
 
   // Memoize the handler to prevent re-renders and adapt the function signature
@@ -67,6 +68,7 @@ export const PlatformLayout: React.FC<PlatformLayoutProps> = memo(({
         onToggle={handleSidebarToggle}
         initialState={initialSidebarState}
         onStateChange={onSidebarStateChange}
+        useGlobalNavigation={useGlobalNavigation}
       />
       <div className="flex flex-col flex-1 overflow-hidden">
         <Topbar moduleTitle={moduleTitle} />

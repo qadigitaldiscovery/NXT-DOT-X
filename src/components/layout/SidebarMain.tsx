@@ -78,15 +78,26 @@ export const SidebarMain: React.FC<SidebarProps> = ({
   // Determine which navigation to use
   let effectiveNavCategories: NavCategory[] = [];
   
-  if (useGlobalNavigation) {
+  // Check if we're in a data management route
+  const isDataManagement = location.pathname.startsWith('/data-management');
+  const dataManagementCategory = globalNavCategories.find(category => category.label === "Data Management");
+  
+  if (isDataManagement && dataManagementCategory) {
+    // For data management routes, always use data management category
+    effectiveNavCategories = [dataManagementCategory];
+    console.log('SidebarMain - Using Data Management Navigation');
+  } else if (useGlobalNavigation) {
     // Use global navigation categories
     effectiveNavCategories = globalNavCategories;
+    console.log('SidebarMain - Using Global Navigation');
   } else if (navCategories && navCategories.length > 0) {
     // Use provided navCategories
     effectiveNavCategories = navCategories;
+    console.log('SidebarMain - Using Provided Nav Categories');
   } else if (items && items.length > 0) {
     // Use provided items (legacy support)
     effectiveNavCategories = items;
+    console.log('SidebarMain - Using Legacy Items');
   } else if (navItems && navItems.length > 0) {
     // Create a category from navItems
     effectiveNavCategories = [{
@@ -94,11 +105,11 @@ export const SidebarMain: React.FC<SidebarProps> = ({
       label: 'Navigation',
       items: navItems
     }];
+    console.log('SidebarMain - Using Nav Items');
   }
 
   // Log navigation data for debugging
   console.log('SidebarMain - User:', user?.username, 'Role:', user?.role);
-  console.log('SidebarMain - Using Global Navigation:', useGlobalNavigation);
   console.log('SidebarMain - Effective Navigation Categories:', effectiveNavCategories);
   console.log('SidebarMain - Current Location:', location.pathname);
 
