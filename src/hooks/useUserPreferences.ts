@@ -16,9 +16,11 @@ export function useUserPreferences({ module, key, defaultValue }: PreferencesOpt
   const { user } = useAuth();
   
   // Use refs to prevent excessive re-rendering and track state
+  const isMounted = useRef(true);
   const fetchedRef = useRef(false);
   const lastFetchedUserId = useRef<string | null>(null);
   const fetchInProgressRef = useRef(false);
+  const fetchAttemptCount = useRef(0);
 
   // Validate user ID format (UUID)
   const isValidUserId = useCallback((userId: any): boolean => {
@@ -26,9 +28,22 @@ export function useUserPreferences({ module, key, defaultValue }: PreferencesOpt
       /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(userId);
   }, []);
 
+  // Effect cleanup
+  useEffect(() => {
+    return () => {
+      isMounted.current = false;
+    };
+  }, []);
+
   useEffect(() => {
     // Skip if fetch is already in progress to prevent race conditions
     if (fetchInProgressRef.current) return;
+    
+    // Limit fetch attempts to prevent refresh loops
+    if (fetchAttemptCount.current > 2 && !user?.id) {
+      setLoading(false);
+      return;
+    }
     
     // Skip if we've already fetched for this user
     if (fetchedRef.current && lastFetchedUserId.current === user?.id) {
@@ -36,10 +51,17 @@ export function useUserPreferences({ module, key, defaultValue }: PreferencesOpt
       return;
     }
     
-    // If no user, use default value
-    if (!user?.id) {
+    // If no user or invalid ID, use default value
+    if (!user?.id || !isValidUserId(user.id)) {
+      if (!user?.id) {
+        console.log('No user ID available, using default preferences');
+      } else {
+        console.warn('Invalid user ID format, using default preferences');
+      }
       setPreferences(defaultValue);
       setLoading(false);
+      fetchedRef.current = true; // Mark as fetched to prevent repeated attempts
+      fetchAttemptCount.current++;
       return;
     }
 
@@ -47,15 +69,6 @@ export function useUserPreferences({ module, key, defaultValue }: PreferencesOpt
       try {
         fetchInProgressRef.current = true;
         
-        // Validate user ID format
-        if (!isValidUserId(user.id)) {
-          console.warn('Invalid user ID format, using default preferences');
-          setPreferences(defaultValue);
-          setLoading(false);
-          fetchInProgressRef.current = false;
-          return;
-        }
-
         const { data, error } = await supabase
           .from('user_preferences')
           .select('value')
@@ -63,6 +76,8 @@ export function useUserPreferences({ module, key, defaultValue }: PreferencesOpt
           .eq('module', module)
           .eq('key', key)
           .maybeSingle();
+
+        if (!isMounted.current) return;
 
         if (error && error.code !== 'PGRST116') {
           throw error;
@@ -94,13 +109,17 @@ export function useUserPreferences({ module, key, defaultValue }: PreferencesOpt
         fetchedRef.current = true;
         lastFetchedUserId.current = user.id;
       } catch (err) {
+        if (!isMounted.current) return;
         console.error('Error fetching preferences:', err);
         setError(err as Error);
         // Fall back to default preferences on error
         setPreferences(defaultValue);
       } finally {
-        setLoading(false);
+        if (isMounted.current) {
+          setLoading(false);
+        }
         fetchInProgressRef.current = false;
+        fetchAttemptCount.current++;
       }
     };
 
@@ -120,14 +139,14 @@ export function useUserPreferences({ module, key, defaultValue }: PreferencesOpt
     setPreferences(newValue);
     
     if (!user?.id) {
-      console.warn('No user ID available, preferences will not be saved');
+      console.log('No user ID available, preferences will not be saved');
       return { success: false };
     }
 
     try {
       // Validate user ID format
       if (!isValidUserId(user.id)) {
-        console.warn('Invalid user ID format, preferences will not be saved');
+        console.log('Invalid user ID format, preferences will not be saved');
         return { success: false };
       }
 

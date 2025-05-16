@@ -1,5 +1,5 @@
 
-import React, { ReactNode, memo } from 'react';
+import React, { ReactNode, memo, useCallback } from 'react';
 import { NavCategory, NavItem } from '@/components/layout/sidebar/types';
 import { Sidebar } from '@/components/layout/sidebar';
 import Topbar from '@/components/layouts/Topbar';
@@ -12,6 +12,8 @@ export interface PlatformLayoutProps {
   removeBottomToggle?: boolean;
   showTopLeftToggle?: boolean;
   moduleTitle?: string;
+  onSidebarStateChange?: (state: string) => void;
+  initialSidebarState?: string;
 }
 
 // Use memo to prevent unnecessary re-renders
@@ -23,7 +25,16 @@ export const PlatformLayout: React.FC<PlatformLayoutProps> = memo(({
   removeBottomToggle = false,
   showTopLeftToggle = true,
   moduleTitle = '',
+  onSidebarStateChange,
+  initialSidebarState,
 }) => {
+  // Memoize the handler to prevent re-renders
+  const handleSidebarStateChange = useCallback((state: string) => {
+    if (onSidebarStateChange) {
+      onSidebarStateChange(state);
+    }
+  }, [onSidebarStateChange]);
+
   return (
     <div className="flex h-screen bg-gray-50 dark:bg-gray-900">
       <Sidebar
@@ -32,6 +43,8 @@ export const PlatformLayout: React.FC<PlatformLayoutProps> = memo(({
         customFooterContent={customFooterContent}
         removeBottomToggle={removeBottomToggle}
         showToggleButton={showTopLeftToggle}
+        initialState={initialSidebarState}
+        onStateChange={handleSidebarStateChange}
       />
       <div className="flex flex-col flex-1 overflow-hidden">
         <Topbar moduleTitle={moduleTitle} />

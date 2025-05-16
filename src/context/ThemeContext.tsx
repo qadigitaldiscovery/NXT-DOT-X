@@ -14,15 +14,9 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { user } = useAuth();
-  const [localTheme, setLocalTheme] = useState<Theme>(getInitialTheme());
+  const [localTheme, setLocalTheme] = useState<Theme>(() => getInitialTheme());
   const previousTheme = useRef<Theme>(localTheme);
-  
-  // Use database persistence with fallback to localStorage for unauthenticated users
-  const { preferences, setPreferences, loading } = useUserPreferences({
-    module: 'system',
-    key: 'theme',
-    defaultValue: localTheme
-  });
+  const isInitialMount = useRef(true);
   
   // Get theme from localStorage or system preference as initial value
   function getInitialTheme(): Theme {
@@ -44,6 +38,13 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     return "light";
   }
   
+  // Use database persistence with fallback to localStorage for unauthenticated users
+  const { preferences, setPreferences, loading } = useUserPreferences({
+    module: 'system',
+    key: 'theme',
+    defaultValue: localTheme
+  });
+  
   // Memoize theme to prevent constant re-renders
   const theme = useMemo(() => {
     // If no user or if loading, use local theme from state/localStorage
@@ -58,8 +59,14 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     return localTheme;
   }, [user, preferences, localTheme]);
 
-  // Apply theme to document and localStorage
+  // Apply theme to document and localStorage - only when theme actually changes
   useEffect(() => {
+    // Skip effect on initial mount since the class is already set in HTML
+    if (isInitialMount.current) {
+      isInitialMount.current = false;
+      return;
+    }
+    
     // Skip if theme hasn't actually changed
     if (previousTheme.current === theme) return;
     

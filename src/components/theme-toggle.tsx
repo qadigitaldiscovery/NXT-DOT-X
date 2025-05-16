@@ -14,6 +14,11 @@ import { useTheme } from "@/context/ThemeContext";
 export const ThemeToggle: React.FC = React.memo(() => {
   const { theme, toggleTheme } = useTheme();
 
+  // Use a callback for click handler to prevent re-renders
+  const handleThemeToggle = React.useCallback(() => {
+    toggleTheme();
+  }, [toggleTheme]);
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -24,7 +29,7 @@ export const ThemeToggle: React.FC = React.memo(() => {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="bg-white border-gray-200 shadow-lg">
-        <DropdownMenuItem onClick={() => toggleTheme()} className="hover:bg-gray-50 cursor-pointer">
+        <DropdownMenuItem onClick={handleThemeToggle} className="hover:bg-gray-50 cursor-pointer">
           {theme === "light" ? "Dark" : "Light"} mode
         </DropdownMenuItem>
       </DropdownMenuContent>
