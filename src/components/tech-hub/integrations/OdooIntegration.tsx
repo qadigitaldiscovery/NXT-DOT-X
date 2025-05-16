@@ -170,12 +170,8 @@ const OdooIntegration = () => {
   const testConnection = async (data: OdooFormData) => {
     setIsTesting(true);
     try {
-      // Test connection via Edge Function
+      // Get the session for auth
       const { data: session } = await supabase.auth.getSession();
-      
-      if (!session?.session?.access_token) {
-        throw new Error("Authentication required");
-      }
       
       // Prepare request data based on authentication method
       const requestData: Record<string, any> = {
@@ -192,21 +188,58 @@ const OdooIntegration = () => {
         requestData.password = data.password;
       }
       
-      // Call the edge function to test the connection - use the proper URL
-      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-      if (!supabaseUrl) {
-        throw new Error("Supabase URL not configured");
+      let response;
+      
+      // Use supabase edge function instead of direct fetch if API key is provided for direct API testing
+      if (data.auth_method === 'api_key' && data.api_key) {
+        // Try to use the edge function directly with API key
+        const { data: edgeData, error } = await supabase.functions.invoke('api-integrations', {
+          body: {
+            endpoint: 'odoo',
+            action: 'test_connection',
+            url: data.url,
+            db_name: data.db_name,
+            api_key: data.api_key,
+          },
+          headers: {
+            'X-API-Key': data.api_key
+          }
+        });
+        
+        if (error) {
+          console.error("Edge function error:", error);
+          throw new Error(error.message || "Connection test failed");
+        }
+        
+        if (edgeData.success) {
+          setConnectionStatus('success');
+          toast.success("Successfully connected to Odoo ERP!");
+          return true;
+        } else {
+          throw new Error(edgeData.message || "Connection test failed");
+        }
+      } else if (session?.session?.access_token) {
+        // Call the edge function with auth token if available
+        const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+        if (!supabaseUrl) {
+          throw new Error("Supabase URL not configured");
+        }
+        
+        response = await fetch(`${supabaseUrl}/functions/v1/api-integrations/odoo`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${session.session.access_token}`
+          },
+          body: JSON.stringify(requestData)
+        });
+      } else {
+        throw new Error("Authentication required");
       }
       
-      // Call the edge function with the correct URL
-      const response = await fetch(`${supabaseUrl}/functions/v1/api-integrations/odoo`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${session.session.access_token}`
-        },
-        body: JSON.stringify(requestData)
-      });
+      if (!response) {
+        throw new Error("No response from server");
+      }
       
       if (!response.ok) {
         const errorData = await response.json();

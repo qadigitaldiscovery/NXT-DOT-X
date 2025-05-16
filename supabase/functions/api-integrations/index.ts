@@ -5,7 +5,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 // Define CORS headers
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-api-key',
 };
 
 // Create Supabase client
@@ -221,7 +221,7 @@ serve(async (req) => {
     
     // If not authorized via auth header, check for valid API key
     // This is a simplified check - in a real app you'd verify against stored API keys
-    const configuredApiKey = Deno.env.get("ODOO_DIRECT_API_KEY");
+    const configuredApiKey = Deno.env.get("ODOO_API_KEY");
     if (!isAuthorized && apiKey && configuredApiKey && apiKey === configuredApiKey) {
       isAuthorized = true;
     }
