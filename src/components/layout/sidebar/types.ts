@@ -37,6 +37,8 @@ export interface SidebarProps {
   className?: string;
   removeBottomToggle?: boolean;
   showToggleButton?: boolean;
+  initialState?: string;
+  onStateChange?: (state: string) => void;
 }
 
 export interface SidebarItemProps {
@@ -58,4 +60,3 @@ export interface SidebarToggleButtonProps {
   open?: boolean;
   onToggle?: () => void;
 }
-

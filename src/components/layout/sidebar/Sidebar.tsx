@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { ChevronLeft, MenuIcon } from 'lucide-react';
@@ -38,18 +38,40 @@ export const Sidebar: React.FC<SidebarProps> = ({
   customFooterContent,
   className,
   removeBottomToggle = false,
-  showToggleButton = true
+  showToggleButton = true,
+  initialState,
+  onStateChange
 }) => {
   const isMobile = useIsMobile();
   const [expandedItems, setExpandedItems] = useState<string[]>([]);
   const { user } = useAuth();
 
   // Use provided open/onToggle or internal state
-  const [internalOpen, setInternalOpen] = useState(true);
+  const [internalOpen, setInternalOpen] = useState(() => {
+    // Initialize with initialState if provided
+    if (initialState) {
+      return initialState === 'expanded';
+    }
+    return true;
+  });
+  
   const isOpen = open !== undefined ? open : internalOpen;
-  const toggleSidebar = onToggle || (() => setInternalOpen(!internalOpen));
+  
+  const toggleSidebar = () => {
+    const newState = !isOpen;
+    if (onToggle) {
+      onToggle();
+    } else {
+      setInternalOpen(newState);
+    }
+    
+    // Call onStateChange with the new state if provided
+    if (onStateChange) {
+      onStateChange(newState ? 'expanded' : 'collapsed');
+    }
+  };
 
-  // Combine different ways to pass nav items (items, navItems, navCategories)
+  // Combined navigation items
   const allCategories = [...normalizeNavCategories(navCategories), ...normalizeNavCategories(items)];
   const allNavItems = [...normalizeNavItems(navItems)];
 

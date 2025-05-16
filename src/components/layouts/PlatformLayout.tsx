@@ -43,8 +43,8 @@ export const PlatformLayout: React.FC<PlatformLayoutProps> = memo(({
         customFooterContent={customFooterContent}
         removeBottomToggle={removeBottomToggle}
         showToggleButton={showTopLeftToggle}
-        initialState={initialSidebarState}
-        onStateChange={handleSidebarStateChange}
+        open={initialSidebarState === 'expanded'}
+        onToggle={handleSidebarStateChange}
       />
       <div className="flex flex-col flex-1 overflow-hidden">
         <Topbar moduleTitle={moduleTitle} />
