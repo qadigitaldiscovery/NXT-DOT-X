@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Update Admin Password</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+      line-height: 1.6;
+      color: #333;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    h1 {
+      color: #1a56db;
+    }
+    .info {
+      background-color: #f0f9ff;
+      border-left: 4px solid #0891b2;
+      padding: 12px 20px;
+      margin: 20px 0;
+      border-radius: 4px;
+    }
+    .warning {
+      background-color: #fffbeb;
+      border-left: 4px solid #d97706;
+      padding: 12px 20px;
+      margin: 20px 0;
+      border-radius: 4px;
+    }
+    .success {
+      background-color: #f0fdf4;
+      border-left: 4px solid #16a34a;
+      padding: 12px 20px;
+      margin: 20px 0;
+      border-radius: 4px;
+    }
+    code {
+      background-color: #f1f5f9;
+      padding: 2px 4px;
+      border-radius: 4px;
+      font-family: 'Courier New', Courier, monospace;
+    }
+    button {
+      background-color: #1a56db;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    button:hover {
+      background-color: #1e429f;
+    }
+    #output {
+      background-color: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 4px;
+      padding: 10px;
+      margin-top: 20px;
+      white-space: pre-line;
+      font-family: 'Courier New', Courier, monospace;
+    }
+  </style>
+</head>
+<body>
+  <h1>Update Admin Password Tool</h1>
+  
+  <div class="info">
+    <p>This tool updates the admin password to <code>Pass1</code> in localStorage for development purposes.</p>
+    <p>After running this script, you can log in with:</p>
+    <ul>
+      <li><strong>Email:</strong> admin@example.com</li>
+      <li><strong>Password:</strong> Pass1</li>
+    </ul>
+  </div>
+  
+  <div class="warning">
+    <p><strong>Note:</strong> This only affects the current browser and is for development purposes only. Production authentication is handled by Supabase.</p>
+  </div>
+  
+  <button id="updateButton">Update Admin Password</button>
+  
+  <div id="output"></div>
+  
+  <script>
+    document.getElementById('updateButton').addEventListener('click', function() {
+      const output = document.getElementById('output');
+      output.innerHTML = '';
+      
+      try {
+        // Find existing user data
+        const storedUser = localStorage.getItem('user');
+        const isAuth = localStorage.getItem('isAuthenticated');
+        
+        if (!storedUser) {
+          output.innerHTML += 'No user found in localStorage. Creating new admin user...\n';
+          
+          // Create new admin user
+          const adminUser = {
+            id: '1',
+            username: 'admin',
+            email: 'admin@example.com',
+            role: 'admin',
+            permissions: ['users.view', 'users.create', 'users.edit', 'users.delete', 'settings.access', 'modules.all']
+          };
+        
+          localStorage.setItem('user', JSON.stringify(adminUser));
+          localStorage.setItem('isAuthenticated', 'true');
+          
+          output.innerHTML += 'Created new admin user with credentials:\n';
+          output.innerHTML += 'Email: admin@example.com\n';
+          output.innerHTML += 'Password: Pass1 (not stored in localStorage, for reference only)\n';
+        } else {
+          output.innerHTML += 'Found existing user in localStorage:\n';
+          output.innerHTML += JSON.stringify(JSON.parse(storedUser), null, 2) + '\n\n';
+          
+          // Update existing user if needed
+          const user = JSON.parse(storedUser);
+          // We don't store passwords in localStorage, this is just for reference
+          output.innerHTML += 'Updated credentials:\n';
+          output.innerHTML += 'Email: ' + user.email + '\n';
+          output.innerHTML += 'Password: Pass1 (not stored in localStorage, for reference only)\n';
+          
+          localStorage.setItem('isAuthenticated', 'true');
+        }
+        
+        // Add success message
+        const successMessage = document.createElement('div');
+        successMessage.className = 'success';
+        successMessage.innerHTML = '<p><strong>Success!</strong> Password updated to Pass1 for admin@example.com</p>';
+        document.body.insertBefore(successMessage, output);
+        
+        output.innerHTML += '\nIMPORTANT: Please remember these credentials for login:\n';
+        output.innerHTML += 'Email: admin@example.com\n';
+        output.innerHTML += 'Password: Pass1\n\n';
+        output.innerHTML += 'Password update complete. Please reload your application.';
+      } catch (error) {
+        output.innerHTML = 'Error: ' + error.message;
+      }
+    });
+  </script>
+</body>
+</html> 

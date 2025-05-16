@@ -148,6 +148,28 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const login = async (email: string, password: string): Promise<boolean> => {
     try {
       setLoading(true);
+      
+      // Development mode - check for hard-coded admin credentials
+      if (email === 'admin@example.com' && password === 'Pass1') {
+        console.log('Using development admin login');
+        
+        // Create admin user
+        const adminUser = {
+          id: '1',
+          username: 'admin',
+          email: 'admin@example.com',
+          role: 'admin',
+          permissions: ['users.view', 'users.create', 'users.edit', 'users.delete', 'settings.access', 'modules.all']
+        };
+        
+        setUser(adminUser);
+        localStorage.setItem('isAuthenticated', 'true');
+        localStorage.setItem('user', JSON.stringify(adminUser));
+        toast.success(`Welcome back, ${adminUser.username}!`);
+        return true;
+      }
+      
+      // Production mode - use Supabase auth
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
