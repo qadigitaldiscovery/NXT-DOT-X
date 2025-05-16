@@ -1,14 +1,7 @@
-import { Sidebar } from './Sidebar';
-import { SidebarNavList } from './SidebarNavList';
-import { SidebarFooter } from './SidebarFooter';
-import { SidebarToggleButton } from './SidebarToggleButton';
-import { CollapsedSidebar } from './CollapsedSidebar';
+// Export all sidebar components
+export { Sidebar } from './Sidebar';
+export { SidebarNavList } from './SidebarNavList';
+export { SidebarFooter } from './SidebarFooter';
+export { SidebarToggleButton } from './SidebarToggleButton';
+export { CollapsedSidebar } from './CollapsedSidebar';
 export * from './types';
-
-export {
-  Sidebar,
-  SidebarNavList,
-  SidebarFooter,
-  SidebarToggleButton,
-  CollapsedSidebar
-};
