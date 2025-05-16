@@ -1,12 +1,13 @@
 
-import React from 'react';
+import React, { memo } from 'react';
 import { ThemeToggle } from '@/components/theme-toggle';
 
 interface TopbarProps {
   moduleTitle?: string;
 }
 
-const Topbar: React.FC<TopbarProps> = ({ moduleTitle = '' }) => {
+// Use memo to prevent unnecessary re-renders
+const Topbar: React.FC<TopbarProps> = memo(({ moduleTitle = '' }) => {
   return (
     <header className="bg-white dark:bg-gray-800 shadow-sm z-10 border-b border-gray-100 dark:border-gray-700">
       <div className="px-6 py-3 flex items-center justify-between">
@@ -21,6 +22,9 @@ const Topbar: React.FC<TopbarProps> = ({ moduleTitle = '' }) => {
       </div>
     </header>
   );
-};
+});
+
+// Add display name for debugging
+Topbar.displayName = 'Topbar';
 
 export default Topbar;

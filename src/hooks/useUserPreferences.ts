@@ -1,5 +1,5 @@
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/context/AuthContext';
 
@@ -15,12 +15,22 @@ export function useUserPreferences({ module, key, defaultValue }: PreferencesOpt
   const [error, setError] = useState<Error | null>(null);
   const { user } = useAuth();
   
-  // Use a ref to prevent excessive re-fetching
+  // Use refs to prevent excessive re-rendering
   const fetchedRef = useRef(false);
+  const lastFetchedUserId = useRef<string | null>(null);
+
+  // Validate user ID
+  const isValidUserId = useCallback((userId: any): boolean => {
+    return typeof userId === 'string' && 
+      /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(userId);
+  }, []);
 
   useEffect(() => {
-    // Skip if we've already fetched or there's no user
-    if (fetchedRef.current || !user?.id) {
+    // Skip if we've already fetched for this user or there's no user
+    if (
+      (fetchedRef.current && lastFetchedUserId.current === user?.id) || 
+      !user?.id
+    ) {
       if (!user?.id) {
         setPreferences(defaultValue);
         setLoading(false);
@@ -32,8 +42,8 @@ export function useUserPreferences({ module, key, defaultValue }: PreferencesOpt
       try {
         // Make sure we're using a valid UUID format
         const userId = user.id;
-        if (typeof userId !== 'string' || !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(userId)) {
-          console.warn('Invalid user ID format, using default preferences');
+        if (!isValidUserId(userId)) {
+          console.log('Using default preferences due to invalid user ID format');
           setPreferences(defaultValue);
           setLoading(false);
           return;
@@ -45,29 +55,40 @@ export function useUserPreferences({ module, key, defaultValue }: PreferencesOpt
           .eq('user_id', userId)
           .eq('module', module)
           .eq('key', key)
-          .single();
+          .maybeSingle(); // Use maybeSingle instead of single to prevent errors
 
-        if (error) {
+        if (error && error.code !== 'PGRST116') {
           throw error;
         }
 
         if (data) {
           setPreferences(data.value);
         } else {
-          // No stored preferences, save the default
-          await supabase.from('user_preferences').insert({
-            user_id: userId,
-            module,
-            key,
-            value: defaultValue,
-          });
+          // No stored preferences, use default but don't try to save it immediately
+          // This reduces unnecessary operations
           setPreferences(defaultValue);
+          
+          // Only save default if we have a valid user ID
+          if (isValidUserId(userId)) {
+            try {
+              await supabase.from('user_preferences').insert({
+                user_id: userId,
+                module,
+                key,
+                value: defaultValue,
+              });
+            } catch (insertErr) {
+              console.log('Error saving default preferences:', insertErr);
+              // Non-fatal error, just log it
+            }
+          }
         }
         
         // Mark as fetched to prevent repeated fetching
         fetchedRef.current = true;
+        lastFetchedUserId.current = userId;
       } catch (err) {
-        console.error('Error fetching preferences:', err);
+        console.log('Error fetching preferences:', err);
         // Fall back to default preferences on error
         setPreferences(defaultValue);
         setError(err as Error);
@@ -78,26 +99,29 @@ export function useUserPreferences({ module, key, defaultValue }: PreferencesOpt
 
     fetchPreferences();
     
-    // Reset fetched ref when user changes
+    // Reset fetched ref when module, key, or defaultValue changes
     return () => {
-      fetchedRef.current = false;
+      if (module !== key) { // Only reset if we're accessing a different preference
+        fetchedRef.current = false;
+        lastFetchedUserId.current = null;
+      }
     };
-  }, [module, key, defaultValue, user?.id]);
+  }, [module, key, defaultValue, user?.id, isValidUserId]);
 
-  const setPreferencesValue = async (newValue: any) => {
+  const setPreferencesValue = useCallback(async (newValue: any) => {
     // Update local state immediately
     setPreferences(newValue);
     
     if (!user?.id) {
-      console.warn('No user ID available, preferences will not be saved');
+      console.log('No user ID available, preferences will not be saved');
       return { success: false };
     }
 
     try {
       // Make sure we're using a valid UUID format
       const userId = user.id;
-      if (typeof userId !== 'string' || !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(userId)) {
-        console.warn('Invalid user ID format, preferences will not be saved');
+      if (!isValidUserId(userId)) {
+        console.log('Invalid user ID format, preferences will not be saved');
         return { success: false };
       }
 
@@ -107,7 +131,7 @@ export function useUserPreferences({ module, key, defaultValue }: PreferencesOpt
         .eq('user_id', userId)
         .eq('module', module)
         .eq('key', key)
-        .single();
+        .maybeSingle(); // Use maybeSingle instead of single
 
       if (error && error.code !== 'PGRST116') {
         throw error;
@@ -131,10 +155,10 @@ export function useUserPreferences({ module, key, defaultValue }: PreferencesOpt
       
       return { success: true };
     } catch (err) {
-      console.error('Error saving preferences:', err);
+      console.log('Error saving preferences:', err);
       return { success: false, error: err };
     }
-  };
+  }, [user?.id, module, key, isValidUserId]);
 
   return {
     preferences,

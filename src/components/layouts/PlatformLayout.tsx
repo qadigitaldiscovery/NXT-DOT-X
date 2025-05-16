@@ -1,5 +1,5 @@
 
-import React, { ReactNode } from 'react';
+import React, { ReactNode, memo } from 'react';
 import { NavCategory, NavItem } from '@/components/layout/sidebar/types';
 import { Sidebar } from '@/components/layout/sidebar';
 import Topbar from '@/components/layouts/Topbar';
@@ -14,7 +14,8 @@ export interface PlatformLayoutProps {
   moduleTitle?: string;
 }
 
-export const PlatformLayout: React.FC<PlatformLayoutProps> = ({
+// Use memo to prevent unnecessary re-renders
+export const PlatformLayout: React.FC<PlatformLayoutProps> = memo(({
   children,
   navItems = [],
   navCategories = [],
@@ -40,4 +41,7 @@ export const PlatformLayout: React.FC<PlatformLayoutProps> = ({
       </div>
     </div>
   );
-};
+});
+
+// Add a display name for debugging
+PlatformLayout.displayName = 'PlatformLayout';
