@@ -5,7 +5,7 @@ import { SharedNavbar } from './SharedNavbar';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { cn } from '@/lib/utils';
 import { Outlet } from 'react-router-dom';
-import { BarChart3, Bot, Shield, Users, Settings, Zap, Brain, Home } from 'lucide-react';
+import { BarChart3, Bot, Shield, Users, Settings, Zap, Brain, Home, Code, Database } from 'lucide-react';
 import { NavCategory, NavItem } from './sidebar/types';
 
 const dotXNavItems: NavCategory[] = [
@@ -14,12 +14,15 @@ const dotXNavItems: NavCategory[] = [
     label: "Navigation",
     items: [
       { label: 'Mission Control', icon: BarChart3, path: '/dot-x' },
+      { label: 'DOT-X-2', icon: Zap, path: '/dot-x/dot-x-2' },
       { label: 'AI Agents', icon: Bot, path: '/dot-x/ai-agents' },
       { label: 'Neural Shield', icon: Shield, path: '/dot-x/security' },
       { label: 'Team Members', icon: Users, path: '/dot-x/users' },
       { label: 'Command Settings', icon: Settings, path: '/dot-x/settings' },
       { label: 'Power Center', icon: Zap, path: '/dot-x/power' },
       { label: 'Intelligence Hub', icon: Brain, path: '/dot-x/intelligence' },
+      { label: 'Data Services', icon: Database, path: '/dot-x/data-services' },
+      { label: 'API Integration', icon: Code, path: '/dot-x/api' },
       { label: 'Home', icon: Home, path: '/' }, // Home item at the end of the array - will be moved to bottom in the UI
     ]
   }

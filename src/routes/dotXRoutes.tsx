@@ -2,12 +2,13 @@
 import { Route } from "react-router-dom";
 import { PlatformLayout } from "@/components/layouts/PlatformLayout";
 import DotXDashboard from "@/pages/dot-x/Dashboard";
+import DotXDashboard2 from "@/pages/dot-x/Dashboard2";
 import DotXApi from "@/pages/dot-x/Api";
 import DotXDataServices from "@/pages/dot-x/DataServices";
 import DotXPlugins from "@/pages/dot-x/Plugins";
 import DotXSettings from "@/pages/dot-x/Settings";
 import { NavCategory } from '@/components/layout/sidebar/types';
-import { LayoutDashboard, Code, Database, FileCode, Settings } from 'lucide-react';
+import { LayoutDashboard, Code, Database, FileCode, Settings, Zap } from 'lucide-react';
 
 const dotXNavCategories: NavCategory[] = [
   {
@@ -15,6 +16,7 @@ const dotXNavCategories: NavCategory[] = [
     label: "DOT-X PLATFORM",
     items: [
       { label: 'Dashboard', icon: LayoutDashboard, path: '/dot-x' },
+      { label: 'DOT-X-2', icon: Zap, path: '/dot-x/dot-x-2' },
       { label: 'API Integration', icon: Code, path: '/dot-x/api' },
       { label: 'Data Services', icon: Database, path: '/dot-x/data-services' },
       { label: 'Plugins', icon: FileCode, path: '/dot-x/plugins' },
@@ -32,6 +34,14 @@ export const DotXRoutes = () => {
           navCategories={dotXNavCategories}
         >
           <DotXDashboard />
+        </PlatformLayout>
+      } />
+      <Route path="dot-x-2" element={
+        <PlatformLayout
+          moduleTitle="DOT-X-2 Advanced Platform"
+          navCategories={dotXNavCategories}
+        >
+          <DotXDashboard2 />
         </PlatformLayout>
       } />
       <Route path="api" element={

@@ -33,14 +33,25 @@ export default function DotX() {
             <div className="w-2 h-2 rounded-full bg-green-500"></div>
             <span className="text-sm">Neural shield</span>
           </div>
+          <div className="flex items-center gap-2">
+            <div className="w-2 h-2 rounded-full bg-blue-500"></div>
+            <span className="text-sm">DOT-X-2 (New)</span>
+          </div>
         </div>
       </CardContent>
-      <CardFooter>
+      <CardFooter className="flex flex-col space-y-2">
         <Button 
           onClick={() => navigate('/dot-x')} 
           className="w-full"
         >
           Open DOT-X
+        </Button>
+        <Button 
+          onClick={() => navigate('/dot-x/dot-x-2')} 
+          variant="outline"
+          className="w-full border-blue-500/30 text-blue-500 hover:bg-blue-500/10"
+        >
+          Open DOT-X-2
         </Button>
       </CardFooter>
     </Card>
