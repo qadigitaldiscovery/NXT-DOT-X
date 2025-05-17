@@ -1,6 +1,6 @@
 
 import React, { createContext, useContext, useState, useCallback } from 'react';
-import { useToast } from '@/hooks/use-toast';
+import { toast } from "sonner";
 import { Module } from '@/hooks/useModules';
 
 interface DashboardContextType {
@@ -38,76 +38,71 @@ export const DashboardProvider: React.FC<DashboardProviderProps> = ({
   addRule,
   deleteRule
 }) => {
-  const { toast } = useToast();
   const [isRefreshing, setIsRefreshing] = useState(false);
   
   const handleRefresh = useCallback(async () => {
     setIsRefreshing(true);
     try {
       await refreshModules();
-      toast({
-        description: "The dashboard data has been refreshed.",
+      toast("Dashboard Refreshed", {
+        description: "The dashboard data has been refreshed."
       });
     } catch (error) {
-      toast({
-        description: "There was an error refreshing the dashboard data.",
-        variant: "destructive"
+      toast.error("Refresh Failed", {
+        description: "There was an error refreshing the dashboard data."
       });
     } finally {
       setIsRefreshing(false);
     }
-  }, [refreshModules, toast]);
+  }, [refreshModules]);
   
   const handleResolveAlert = useCallback(async (id: string) => {
     const result = await resolveAlert(id);
     
     if (result.success) {
-      toast({
-        description: "The alert has been marked as resolved.",
+      toast.success("Alert Resolved", {
+        description: "The alert has been marked as resolved."
       });
     } else {
-      toast({
-        description: "There was an error resolving the alert.",
-        variant: "destructive"
+      toast.error("Resolution Failed", {
+        description: "There was an error resolving the alert."
       });
     }
     
     return result;
-  }, [resolveAlert, toast]);
+  }, [resolveAlert]);
   
   const handleAddRule = useCallback(async (rule: any) => {
     try {
       const result = await addRule(rule);
       
-      toast({
-        description: "The threshold rule has been created successfully.",
+      toast.success("Rule Created", {
+        description: "The threshold rule has been created successfully."
       });
       return result;
     } catch (err) {
-      toast({
-        description: "There was an error creating the threshold rule.",
-        variant: "destructive"
+      toast.error("Creation Failed", {
+        description: "There was an error creating the threshold rule."
       });
       throw err;
     }
-  }, [addRule, toast]);
+  }, [addRule]);
   
   const handleDeleteRule = useCallback(async (id: string) => {
     const result = await deleteRule(id);
     
     if (result.success) {
-      toast({
-        description: "The threshold rule has been deleted.",
+      toast.success("Rule Deleted", {
+        description: "The threshold rule has been deleted."
       });
     } else {
-      toast({
-        description: "There was an error deleting the threshold rule.",
-        variant: "destructive"
+      toast.error("Deletion Failed", {
+        description: "There was an error deleting the threshold rule."
       });
     }
     
     return result;
-  }, [deleteRule, toast]);
+  }, [deleteRule]);
 
   return (
     <DashboardContext.Provider 
