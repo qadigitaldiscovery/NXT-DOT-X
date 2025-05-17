@@ -1,34 +1,31 @@
-
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { toast } from "@/hooks/use-toast";
+import { forceHardRefresh } from '@/utils/cacheUtils';
 
-// Complete replacement of the vendors page with a clean redirect
+// Complete replacement of the vendors page with a redirect to suppliers
 const VendorsPage: React.FC = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Log redirection
-    console.log('Redirecting from old Vendors page to unified Supplier Vendors');
+    // Attempt to clear cache and redirect
+    console.log('Forcing redirect from old page to Suppliers module');
     
-    // Show toast notification to inform user
-    toast({
-      title: "Redirecting...",
-      description: "You are being redirected to the unified Supplier Vendors module",
-      variant: "default",
-    });
-    
-    // Redirect to the unified page with replace to prevent back navigation issues
-    navigate('/data-management/supplier-vendors', { replace: true });
+    // Redirect to the unified page - use setTimeout to ensure it happens after render
+    setTimeout(() => {
+      navigate('/data-management/suppliers', { replace: true });
+    }, 100);
   }, [navigate]);
 
   return (
     <div className="container mx-auto p-8 text-center">
-      <h1 className="text-2xl font-bold mb-4">Redirecting to Supplier Vendors...</h1>
-      <p className="mb-6">You are being redirected to the unified Supplier Vendors module.</p>
-      <div className="flex items-center justify-center">
-        <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-primary"></div>
-      </div>
+      <h1 className="text-2xl font-bold mb-4">Redirecting to Suppliers...</h1>
+      <p className="mb-6">You are being redirected to the Suppliers module.</p>
+      <button 
+        onClick={() => forceHardRefresh()}
+        className="px-4 py-2 bg-red-600 text-white rounded"
+      >
+        Click here if not redirected automatically
+      </button>
     </div>
   );
 };

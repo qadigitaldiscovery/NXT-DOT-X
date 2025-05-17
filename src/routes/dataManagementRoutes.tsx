@@ -25,9 +25,9 @@ import DataInsights from "@/pages/data-management/insights/DataInsights";
 import DataConnections from "@/pages/data-management/connections/DataConnections";
 import ExportData from "@/pages/data-management/data/ExportData";
 import CustomersPage from "@/pages/data-management/customers/CustomersPage";
-import VendorSupplierComparison from "@/pages/data-management/vendor-supplier-comparison";
-import SupplierVendors from "@/pages/data-management/supplier-vendors";
-import NewPartnerPage from "@/pages/data-management/supplier-vendors-new";
+import SupplierComparison from "@/pages/data-management/vendor-supplier-comparison";
+import Suppliers from "@/pages/data-management/supplier-vendors";
+import NewSupplier from "@/pages/data-management/supplier-vendors-new";
 import DeploymentTest from "@/pages/data-management/DeploymentTest";
 
 // Filter the data management category from global navigation
@@ -39,7 +39,7 @@ export const dataNavCategories: NavCategory[] = dataManagementCategory ? [dataMa
     label: "DATA MANAGEMENT",
     items: [
       { label: 'Dashboard', icon: Database, path: '/data-management' },
-      { label: 'Supplier Vendors', icon: Building, path: '/data-management/supplier-vendors' },
+      { label: 'Suppliers', icon: Building, path: '/data-management/suppliers' },
       { label: 'Customer Directory', icon: Building, path: '/data-management/customers' },
       { label: 'Supplier Costing', icon: Calculator, path: '/data-management/supplier-costing' },
       { label: 'Cost Analysis', icon: BarChart3, path: '/data-management/cost-analysis' },
@@ -106,24 +106,32 @@ export const DataManagementRoutes = () => {
         <Route path="suppliers" element={
           <ProtectedRoute>
             <PlatformLayout moduleTitle="Suppliers" useGlobalNavigation={true}>
-              <SuppliersPage />
+              <Suppliers />
             </PlatformLayout>
           </ProtectedRoute>
         } />
         
-        {/* Supplier Vendors (Unified) */}
+        <Route path="suppliers/new" element={
+          <ProtectedRoute>
+            <PlatformLayout moduleTitle="Add New Supplier" useGlobalNavigation={true}>
+              <NewSupplier />
+            </PlatformLayout>
+          </ProtectedRoute>
+        } />
+        
+        {/* Legacy routes for backward compatibility */}
         <Route path="supplier-vendors" element={
           <ProtectedRoute>
-            <PlatformLayout moduleTitle="Supplier Vendors" useGlobalNavigation={true}>
-              <SupplierVendors />
+            <PlatformLayout moduleTitle="Suppliers" useGlobalNavigation={true}>
+              <Suppliers />
             </PlatformLayout>
           </ProtectedRoute>
         } />
         
         <Route path="supplier-vendors/new" element={
           <ProtectedRoute>
-            <PlatformLayout moduleTitle="Add New Partner" useGlobalNavigation={true}>
-              <NewPartnerPage />
+            <PlatformLayout moduleTitle="Add New Supplier" useGlobalNavigation={true}>
+              <NewSupplier />
             </PlatformLayout>
           </ProtectedRoute>
         } />
@@ -248,11 +256,11 @@ export const DataManagementRoutes = () => {
           </ProtectedRoute>
         } />
         
-        {/* Vendor & Supplier Comparison */}
+        {/* Supplier Comparison */}
         <Route path="vendor-supplier-comparison" element={
           <ProtectedRoute>
-            <PlatformLayout moduleTitle="Vendor & Supplier Comparison" useGlobalNavigation={true}>
-              <VendorSupplierComparison />
+            <PlatformLayout moduleTitle="Supplier Comparison" useGlobalNavigation={true}>
+              <SupplierComparison />
             </PlatformLayout>
           </ProtectedRoute>
         } />

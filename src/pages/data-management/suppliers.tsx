@@ -127,8 +127,8 @@ export default function SupplierVendors() {
           </p>
         </div>
         <div className="flex gap-2">
-          <Button onClick={() => navigate('/data-management/supplier-vendors/new')} variant="default">
-            Add New Partner
+          <Button onClick={() => navigate('/data-management/suppliers/new')} variant="default">
+            Add New Supplier
           </Button>
           <Button onClick={handleRefresh} variant="outline" disabled={isRefreshing}>
             <RefreshCw className={`mr-2 h-4 w-4 ${isRefreshing ? 'animate-spin' : ''}`} />
@@ -258,7 +258,7 @@ export default function SupplierVendors() {
                           key={`${partner.type}-${index}`} 
                           className="cursor-pointer hover:bg-gray-50" 
                           onClick={() => {
-                            const path = `/data-management/supplier-vendors?id=${partner.id || index}&type=${partner.type}`;
+                            const path = `/data-management/suppliers?id=${partner.id || index}`;
                             navigate(path);
                           }}
                         >

@@ -13,7 +13,7 @@ export const navCategories: NavCategory[] = [
     name: "Data Management",
     items: [
       { label: 'Dashboard', icon: Database, href: '/data-management', path: '/data-management' },
-      { label: 'Supplier Vendors', icon: Building, href: '/data-management/supplier-vendors', path: '/data-management/supplier-vendors' },
+      { label: 'Suppliers', icon: Building, href: '/data-management/suppliers', path: '/data-management/suppliers' },
       { label: 'Customer Directory', icon: Building, href: '/data-management/customers', path: '/data-management/customers' },
       { label: 'Supplier Costing', icon: Calculator, href: '/data-management/supplier-costing', path: '/data-management/supplier-costing' },
       { label: 'Cost Analysis', icon: BarChart3, href: '/data-management/cost-analysis', path: '/data-management/cost-analysis' },

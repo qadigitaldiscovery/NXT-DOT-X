@@ -9,7 +9,7 @@ export default function DeploymentTest() {
   return (
     <div className="container mx-auto py-12 text-center">
       <h1 className="text-3xl font-bold text-red-600 mb-6">DEPLOYMENT TEST - LATEST VERSION</h1>
-      <p className="text-lg mb-8">This page confirms you are seeing the latest deployed version (with vendor/supplier fix).</p>
+      <p className="text-lg mb-8">This page confirms you are seeing the latest deployed version (with suppliers module update).</p>
       
       <div className="bg-green-100 p-6 rounded-lg mb-8">
         <h2 className="text-2xl font-bold text-green-800 mb-4">Deployment Version: {CURRENT_VERSION}</h2>
@@ -18,10 +18,10 @@ export default function DeploymentTest() {
       
       <div className="flex flex-col md:flex-row justify-center gap-4 mb-8">
         <Button 
-          onClick={() => navigate('/data-management/supplier-vendors')}
+          onClick={() => navigate('/data-management/suppliers')}
           className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg text-lg"
         >
-          Go to Unified Supplier Vendors
+          Go to Suppliers
         </Button>
         
         <Button 

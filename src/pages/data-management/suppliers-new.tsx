@@ -59,14 +59,14 @@ export default function NewPartnerPage() {
       
       // Show success message
       toast({
-        title: "Partner created successfully",
-        description: `${values.name} has been added as a ${values.type}.`,
+        title: "Supplier created successfully",
+        description: `${values.name} has been added as a supplier.`,
         action: <ToastAction>View</ToastAction>,
       });
       
-      // Navigate back to partners list
+      // Navigate back to suppliers list
       setTimeout(() => {
-        navigate('/data-management/supplier-vendors');
+        navigate('/data-management/suppliers');
       }, 1500);
     } catch (error) {
       toast({
@@ -88,7 +88,7 @@ export default function NewPartnerPage() {
             Add a new supplier or vendor to your partners directory
           </p>
         </div>
-        <Button onClick={() => navigate('/data-management/supplier-vendors')} variant="outline">
+        <Button onClick={() => navigate('/data-management/suppliers')} variant="outline">
           Cancel
         </Button>
       </div>
@@ -382,7 +382,7 @@ export default function NewPartnerPage() {
             <div className="flex justify-end gap-4">
               <Button 
                 variant="outline" 
-                onClick={() => navigate('/data-management/supplier-vendors')}
+                onClick={() => navigate('/data-management/suppliers')}
               >
                 Cancel
               </Button>
