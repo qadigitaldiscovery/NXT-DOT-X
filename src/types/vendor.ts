@@ -1,12 +1,22 @@
-
 import { IconType } from 'react-icons';
 import { LucideIcon } from 'lucide-react';
 
 export interface Vendor {
   id: string;
   company_name: string;
+  name?: string;
+  email?: string;
+  phone?: string;
+  website?: string;
+  address?: string;
+  description?: string;
+  credit_rating?: 'A' | 'B' | 'C' | 'D' | 'F';
+  annual_spend?: string | number;
+  payment_terms?: string;
+  status?: 'active' | 'inactive';
   local_score?: number;
   created_at?: string;
+  updated_at?: string;
 }
 
 export interface VendorWithDetails extends Vendor {
