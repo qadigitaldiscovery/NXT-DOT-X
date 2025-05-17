@@ -1,4 +1,3 @@
-
 /// <reference types="jest" />
 
 import {
@@ -6,7 +5,7 @@ import {
   analyzeBrandSentiment,
   generateSEOKeywords,
   analyzeBrandTrust
-} from '../utils/mcpToolCaller';
+} from '../utils/mcpToolCaller.js';
 
 describe('mcpToolCaller Utilities', () => {
   test('callOpenAI returns mocked response', async () => {

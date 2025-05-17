@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import {
   Dialog,
@@ -33,7 +32,7 @@ type ModuleDetailsDialogProps = {
   rulesLoading: boolean;
   impactsLoading: boolean;
   onResolveAlert: (id: string) => void;
-  onAddRule: (rule: Omit<ThresholdRule, 'id' | 'created_at'>) => Promise<any>;
+  onAddRule: (rule: Omit<ThresholdRule, 'id' | 'created_at' | 'condition' | 'operator'> & { condition: string }) => Promise<any>;
   onDeleteRule: (id: string) => void;
 }
 

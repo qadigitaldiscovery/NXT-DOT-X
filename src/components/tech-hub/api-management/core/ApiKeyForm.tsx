@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -31,7 +30,7 @@ const ApiKeyForm: React.FC<ApiKeyFormProps> = ({
   docsLink,
   onVerify,
   preferredModelOptions,
-  initialModel,
+  initialModel = '',
   footerText,
   additionalConfig = {}
 }) => {
@@ -52,7 +51,7 @@ const ApiKeyForm: React.FC<ApiKeyFormProps> = ({
     updateAdvancedConfig
   } = useApiKey({
     providerName,
-    initialModel,
+    initialModel: initialModel || preferredModelOptions[0]?.value || '',
     preferredModelOptions,
     additionalConfig,
     onVerify
@@ -134,9 +133,14 @@ const ApiKeyForm: React.FC<ApiKeyFormProps> = ({
         <p className="text-sm text-gray-500">
           {footerText || `Your API key is stored securely and never exposed to the browser.
           Visit the ${docsLink ? 
-            <a href={docsLink.url} className="text-blue-500 hover:underline" target="_blank" rel="noopener noreferrer">{docsLink.text}</a> : 
+            docsLink.text : 
             `${providerName} website`} to create a new key if needed.`}
         </p>
+        {docsLink && (
+          <a href={docsLink.url} className="text-blue-500 hover:underline" target="_blank" rel="noopener noreferrer">
+            {docsLink.text}
+          </a>
+        )}
       </CardFooter>
     </Card>
   );

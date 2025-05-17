@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -74,7 +73,11 @@ export function VendorsList() {
                         <span>{riskDesc}</span>
                       </div>
                     </TableCell>
-                    <TableCell>{new Date(vendor.created_at).toLocaleDateString()}</TableCell>
+                    <TableCell>
+                      {vendor.created_at 
+                        ? new Date(vendor.created_at).toLocaleDateString() 
+                        : 'N/A'}
+                    </TableCell>
                     <TableCell>
                       <Button variant="ghost" onClick={() => navigate(`/vendors/${vendor.id}`)}>
                         View Details

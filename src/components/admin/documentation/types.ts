@@ -1,9 +1,8 @@
-
 export interface DocumentCategory {
   id: string;
   name: string;
-  created_at?: string;
-  updated_at?: string;
+  created_at?: string | null;
+  updated_at?: string | null;
   documents: DocumentItem[]; // Add documents array property
 }
 

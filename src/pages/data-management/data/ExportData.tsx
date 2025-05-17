@@ -1,13 +1,111 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { FileDown, FileText, Table, FileSpreadsheet, Settings, Calendar, Clock, Plus } from 'lucide-react';
+import { FileDown, FileText, Table, FileSpreadsheet, Settings, Calendar, Clock, Plus, AlertCircle, RefreshCw } from 'lucide-react';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
+import { toast } from 'sonner';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 
 const ExportData = () => {
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [exporting, setExporting] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState('standard');
+  
+  // Simulate loading data
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        setIsLoading(true);
+        setError(null);
+        // Simulate API call
+        await new Promise(resolve => setTimeout(resolve, 600));
+      } catch (err) {
+        console.error('Error loading export configurations:', err);
+        setError('Failed to load export configurations. Please try again later.');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    
+    loadData();
+  }, []);
+  
+  // Handle download action
+  const handleDownload = (exportType: string) => {
+    try {
+      setExporting(exportType);
+      
+      // Simulate export process
+      setTimeout(() => {
+        toast.success(`${exportType} exported successfully`);
+        setExporting(null);
+      }, 1500);
+    } catch (err) {
+      toast.error(`Failed to export ${exportType}. Please try again.`);
+      console.error(`Error exporting ${exportType}:`, err);
+      setExporting(null);
+    }
+  };
+  
+  // Handle custom export
+  const handleCustomExport = () => {
+    try {
+      setExporting('custom');
+      
+      // Simulate export process
+      setTimeout(() => {
+        toast.success('Custom export generated successfully');
+        setExporting(null);
+      }, 2000);
+    } catch (err) {
+      toast.error('Failed to generate custom export. Please try again.');
+      console.error('Error generating custom export:', err);
+      setExporting(null);
+    }
+  };
+  
+  // Handle schedule creation
+  const handleCreateSchedule = () => {
+    try {
+      toast.success('New schedule created successfully');
+    } catch (err) {
+      toast.error('Failed to create schedule. Please try again.');
+      console.error('Error creating schedule:', err);
+    }
+  };
+  
+  // Handle refresh
+  const handleRefresh = async () => {
+    try {
+      setIsLoading(true);
+      setError(null);
+      
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 800));
+      
+      toast.success('Export configurations refreshed');
+    } catch (err) {
+      setError('Failed to refresh export configurations. Please try again.');
+      toast.error('Failed to refresh data');
+      console.error('Error refreshing data:', err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  
+  // Loading state
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <div className="animate-spin h-8 w-8 border-4 border-blue-500 rounded-full border-t-transparent"></div>
+      </div>
+    );
+  }
+
   return (
     <div className="container mx-auto py-6">
       <div className="flex justify-between items-center mb-6">
@@ -15,9 +113,20 @@ const ExportData = () => {
           <h1 className="text-3xl font-bold">Export Data</h1>
           <p className="text-gray-600">Export and download data from the system</p>
         </div>
+        <Button variant="outline" onClick={handleRefresh}>
+          <RefreshCw className="mr-2 h-4 w-4" />
+          Refresh
+        </Button>
       </div>
       
-      <Tabs defaultValue="standard" className="w-full">
+      {error && (
+        <Alert variant="destructive" className="mb-6">
+          <AlertCircle className="h-4 w-4" />
+          <AlertDescription>{error}</AlertDescription>
+        </Alert>
+      )}
+      
+      <Tabs defaultValue="standard" className="w-full" value={activeTab} onValueChange={setActiveTab}>
         <TabsList className="grid w-full grid-cols-3 mb-6">
           <TabsTrigger value="standard">Standard Exports</TabsTrigger>
           <TabsTrigger value="custom">Custom Exports</TabsTrigger>
@@ -39,7 +148,7 @@ const ExportData = () => {
                   <div>
                     <Label htmlFor="supplier-format">Export Format</Label>
                     <Select defaultValue="excel">
-                      <SelectTrigger>
+                      <SelectTrigger id="supplier-format">
                         <SelectValue placeholder="Select format" />
                       </SelectTrigger>
                       <SelectContent>
@@ -49,7 +158,21 @@ const ExportData = () => {
                       </SelectContent>
                     </Select>
                   </div>
-                  <Button className="w-full"><FileDown className="mr-2 h-4 w-4" /> Download</Button>
+                  <Button 
+                    className="w-full" 
+                    onClick={() => handleDownload('Supplier Data')}
+                    disabled={exporting === 'Supplier Data'}
+                  >
+                    {exporting === 'Supplier Data' ? (
+                      <>
+                        <RefreshCw className="mr-2 h-4 w-4 animate-spin" /> Exporting...
+                      </>
+                    ) : (
+                      <>
+                        <FileDown className="mr-2 h-4 w-4" /> Download
+                      </>
+                    )}
+                  </Button>
                 </div>
               </CardContent>
             </Card>
@@ -67,7 +190,7 @@ const ExportData = () => {
                   <div>
                     <Label htmlFor="price-format">Export Format</Label>
                     <Select defaultValue="excel">
-                      <SelectTrigger>
+                      <SelectTrigger id="price-format">
                         <SelectValue placeholder="Select format" />
                       </SelectTrigger>
                       <SelectContent>
@@ -77,7 +200,21 @@ const ExportData = () => {
                       </SelectContent>
                     </Select>
                   </div>
-                  <Button className="w-full"><FileDown className="mr-2 h-4 w-4" /> Download</Button>
+                  <Button 
+                    className="w-full"
+                    onClick={() => handleDownload('Pricing Data')}
+                    disabled={exporting === 'Pricing Data'}
+                  >
+                    {exporting === 'Pricing Data' ? (
+                      <>
+                        <RefreshCw className="mr-2 h-4 w-4 animate-spin" /> Exporting...
+                      </>
+                    ) : (
+                      <>
+                        <FileDown className="mr-2 h-4 w-4" /> Download
+                      </>
+                    )}
+                  </Button>
                 </div>
               </CardContent>
             </Card>
@@ -95,7 +232,7 @@ const ExportData = () => {
                   <div>
                     <Label htmlFor="cost-format">Export Format</Label>
                     <Select defaultValue="excel">
-                      <SelectTrigger>
+                      <SelectTrigger id="cost-format">
                         <SelectValue placeholder="Select format" />
                       </SelectTrigger>
                       <SelectContent>
@@ -105,7 +242,21 @@ const ExportData = () => {
                       </SelectContent>
                     </Select>
                   </div>
-                  <Button className="w-full"><FileDown className="mr-2 h-4 w-4" /> Download</Button>
+                  <Button 
+                    className="w-full"
+                    onClick={() => handleDownload('Cost Analysis Report')}
+                    disabled={exporting === 'Cost Analysis Report'}
+                  >
+                    {exporting === 'Cost Analysis Report' ? (
+                      <>
+                        <RefreshCw className="mr-2 h-4 w-4 animate-spin" /> Exporting...
+                      </>
+                    ) : (
+                      <>
+                        <FileDown className="mr-2 h-4 w-4" /> Download
+                      </>
+                    )}
+                  </Button>
                 </div>
               </CardContent>
             </Card>
@@ -121,9 +272,9 @@ const ExportData = () => {
             <CardContent>
               <div className="space-y-6">
                 <div>
-                  <Label>Data Source</Label>
+                  <Label htmlFor="data-source">Data Source</Label>
                   <Select defaultValue="suppliers">
-                    <SelectTrigger>
+                    <SelectTrigger id="data-source">
                       <SelectValue placeholder="Select data source" />
                     </SelectTrigger>
                     <SelectContent>
@@ -179,9 +330,9 @@ const ExportData = () => {
                 
                 <div className="flex space-x-4">
                   <div className="flex-1">
-                    <Label>Export Format</Label>
+                    <Label htmlFor="export-format">Export Format</Label>
                     <Select defaultValue="excel">
-                      <SelectTrigger>
+                      <SelectTrigger id="export-format">
                         <SelectValue placeholder="Select format" />
                       </SelectTrigger>
                       <SelectContent>
@@ -193,9 +344,9 @@ const ExportData = () => {
                     </Select>
                   </div>
                   <div className="flex-1">
-                    <Label>Include Headers</Label>
+                    <Label htmlFor="include-headers">Include Headers</Label>
                     <Select defaultValue="yes">
-                      <SelectTrigger>
+                      <SelectTrigger id="include-headers">
                         <SelectValue placeholder="Include headers" />
                       </SelectTrigger>
                       <SelectContent>
@@ -206,7 +357,30 @@ const ExportData = () => {
                   </div>
                 </div>
                 
-                <Button className="w-full"><FileDown className="mr-2 h-4 w-4" /> Generate & Download</Button>
+                <div className="flex space-x-4">
+                  <Button 
+                    className="flex-1" 
+                    variant="outline"
+                    onClick={() => toast.info('Export configuration reset')}
+                  >
+                    Reset
+                  </Button>
+                  <Button 
+                    className="flex-1"
+                    onClick={handleCustomExport}
+                    disabled={exporting === 'custom'}
+                  >
+                    {exporting === 'custom' ? (
+                      <>
+                        <RefreshCw className="mr-2 h-4 w-4 animate-spin" /> Generating...
+                      </>
+                    ) : (
+                      <>
+                        <FileDown className="mr-2 h-4 w-4" /> Generate & Download
+                      </>
+                    )}
+                  </Button>
+                </div>
               </div>
             </CardContent>
           </Card>
@@ -214,9 +388,14 @@ const ExportData = () => {
         
         <TabsContent value="scheduled">
           <Card>
-            <CardHeader>
-              <CardTitle>Scheduled Exports</CardTitle>
-              <CardDescription>Configure automated exports on a schedule</CardDescription>
+            <CardHeader className="flex justify-between items-start">
+              <div>
+                <CardTitle>Scheduled Exports</CardTitle>
+                <CardDescription>Configure automated exports on a schedule</CardDescription>
+              </div>
+              <Button size="sm" onClick={handleCreateSchedule}>
+                <Plus className="h-4 w-4 mr-2" /> New Schedule
+              </Button>
             </CardHeader>
             <CardContent>
               <div className="space-y-6">
@@ -231,8 +410,20 @@ const ExportData = () => {
                     </div>
                   </div>
                   <div className="flex space-x-2">
-                    <Button variant="outline" size="sm"><Settings className="h-4 w-4" /></Button>
-                    <Button variant="destructive" size="sm">Disable</Button>
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      onClick={() => toast.info('Edit schedule options')}
+                    >
+                      <Settings className="h-4 w-4" />
+                    </Button>
+                    <Button 
+                      variant="destructive" 
+                      size="sm"
+                      onClick={() => toast.success('Schedule disabled')}
+                    >
+                      Disable
+                    </Button>
                   </div>
                 </div>
                 
@@ -247,14 +438,50 @@ const ExportData = () => {
                     </div>
                   </div>
                   <div className="flex space-x-2">
-                    <Button variant="outline" size="sm"><Settings className="h-4 w-4" /></Button>
-                    <Button variant="destructive" size="sm">Disable</Button>
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      onClick={() => toast.info('Edit schedule options')}
+                    >
+                      <Settings className="h-4 w-4" />
+                    </Button>
+                    <Button 
+                      variant="destructive" 
+                      size="sm"
+                      onClick={() => toast.success('Schedule disabled')}
+                    >
+                      Disable
+                    </Button>
                   </div>
                 </div>
                 
-                <Button>
-                  <Plus className="mr-2 h-4 w-4" /> Create New Scheduled Export
-                </Button>
+                <div className="flex items-center justify-between p-4 border rounded-md">
+                  <div className="flex items-center">
+                    <div className="bg-orange-100 p-2 rounded-md">
+                      <Calendar className="h-5 w-5 text-orange-700" />
+                    </div>
+                    <div className="ml-4">
+                      <h3 className="font-medium">Quarterly Cost Analysis</h3>
+                      <p className="text-sm text-gray-500">Last day of quarter at 11:00 PM</p>
+                    </div>
+                  </div>
+                  <div className="flex space-x-2">
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      onClick={() => toast.info('Edit schedule options')}
+                    >
+                      <Settings className="h-4 w-4" />
+                    </Button>
+                    <Button 
+                      variant="destructive" 
+                      size="sm"
+                      onClick={() => toast.success('Schedule disabled')}
+                    >
+                      Disable
+                    </Button>
+                  </div>
+                </div>
               </div>
             </CardContent>
           </Card>

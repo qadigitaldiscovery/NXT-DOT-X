@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
@@ -6,8 +5,8 @@ import { supabase } from '@/integrations/supabase/client';
 export interface ModuleAccess {
   id: string;
   module_slug: string;
-  submenu_slug?: string;
-  category?: string;
+  submenu_slug?: string | null;
+  category?: string | null;
   is_enabled: boolean;
 }
 

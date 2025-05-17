@@ -1,4 +1,3 @@
-
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
@@ -21,7 +20,7 @@ export function useCreateBulkSuppliers() {
       }
       
       // Parse rows and create suppliers
-      const suppliers = [];
+      const suppliers: Record<string, any>[] = [];
       for (let i = 1; i < lines.length; i++) {
         const line = lines[i].trim();
         if (!line) continue;
@@ -62,9 +61,10 @@ export function useCreateBulkSuppliers() {
         throw new Error('No valid suppliers found in CSV');
       }
       
+      // Type assertion to match the expected schema
       const { data, error } = await supabase
         .from('suppliers')
-        .insert(suppliers)
+        .insert(suppliers as any[])
         .select('id');
       
       if (error) {

@@ -1,4 +1,3 @@
-
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
@@ -58,7 +57,7 @@ export function useCreateSupplierUpload() {
             source: uploadData.source,
             // for_allocation column doesn't exist in the table
             // We won't include it in the insert
-          })
+          } as any)  // Use type assertion to handle the nullable field
           .select()
           .single();
         

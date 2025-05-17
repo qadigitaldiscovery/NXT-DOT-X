@@ -1,21 +1,16 @@
-
 import React from 'react';
 import { SharedSidebar } from './SharedSidebar';
 import { SharedNavbar } from './SharedNavbar';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { cn } from '@/lib/utils';
 import { BrainCircuit, Bot, Cloud, Cog, Home, Link, Database, ShoppingCart } from 'lucide-react';
+import { NavItem as SidebarNavItem, NavCategory as SidebarNavCategory } from './sidebar/types';
 
-interface NavItem {
-  label: string;
-  icon: React.ElementType;
+interface NavItem extends Omit<SidebarNavItem, 'path'> {
   path: string;
-  children?: NavItem[];
 }
 
-interface NavCategory {
-  label: string;
-  name?: string;
+interface NavCategory extends Omit<SidebarNavCategory, 'items'> {
   items: NavItem[];
 }
 

@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { ChevronDown } from 'lucide-react';
 import { SidebarItem } from './SidebarItem';
@@ -30,7 +29,7 @@ export const SidebarCategoryMenu: React.FC<SidebarCategoryMenuProps> = ({
   activeTextColor = "text-white",
   hoverBgColor = "hover:bg-indigo-900/50",
 }) => {
-  const [isOpen, setIsOpen] = React.useState(open);
+  const [isOpen, setIsOpen] = React.useState<boolean>(!!open);
   const location = useLocation();
   
   // Check if any item in this category is active
@@ -76,12 +75,12 @@ export const SidebarCategoryMenu: React.FC<SidebarCategoryMenuProps> = ({
       {isOpen && (
         <div className="mt-1 ml-1 space-y-0.5">
           {items.map((item, index) => {
-            // Check if current route matches this item
-            const isActive = location.pathname === (item.href || item.path) || 
+            // Ensure isActive is always a boolean with explicit type
+            const isActive: boolean = !!(location.pathname === (item.href || item.path) || 
                            (item.activeMatchPattern && 
                             (typeof item.activeMatchPattern === 'string' 
                              ? location.pathname.includes(item.activeMatchPattern) 
-                             : item.activeMatchPattern.test(location.pathname)));
+                             : item.activeMatchPattern.test(location.pathname))));
 
             return (
               <SidebarItem

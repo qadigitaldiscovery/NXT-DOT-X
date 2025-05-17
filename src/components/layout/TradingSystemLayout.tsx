@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
 import { 
@@ -27,6 +26,12 @@ const TradingSystemContent = () => {
   const { toggleSidebar } = useSidebar();
   const location = useLocation();
   
+  const handleNavigate = (path?: string) => {
+    if (path) {
+      navigate(path);
+    }
+  };
+  
   return (
     <div className="flex h-screen overflow-hidden bg-gray-50">
       <Sidebar>
@@ -50,13 +55,13 @@ const TradingSystemContent = () => {
               <SidebarGroupLabel>{category.name}</SidebarGroupLabel>
               <SidebarMenu>
                 {category.items.map((item) => (
-                  <SidebarMenuItem key={item.path}>
+                  <SidebarMenuItem key={item.path || item.href}>
                     <SidebarMenuButton 
-                      onClick={() => navigate(item.path)}
+                      onClick={() => handleNavigate(item.path || item.href)}
                       tooltip={item.label}
-                      isActive={location.pathname === item.path || location.pathname.startsWith(`${item.path}/`)}
+                      isActive={location.pathname === (item.path || item.href) || (item.path ? location.pathname.startsWith(`${item.path}/`) : false)}
                     >
-                      <item.icon className="h-4 w-4" />
+                      {item.icon && React.createElement(item.icon, { className: "h-4 w-4" })}
                       <span>{item.label}</span>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
@@ -69,7 +74,7 @@ const TradingSystemContent = () => {
         <SidebarFooter className="p-4 border-t">
           <SidebarMenuItem>
             <SidebarMenuButton 
-              onClick={() => navigate(masterDashItem.path)}
+              onClick={() => handleNavigate(masterDashItem.path || masterDashItem.href)}
               tooltip="Master Dashboard"
             >
               <Home className="h-4 w-4" />
