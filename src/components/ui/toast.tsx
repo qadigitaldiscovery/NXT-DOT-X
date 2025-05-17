@@ -21,14 +21,13 @@ export const ToastClose = () => <></>;
 export const ToastTitle = ({children}: {children: React.ReactNode}) => <>{children}</>;
 export const ToastDescription = ({children}: {children: React.ReactNode}) => <>{children}</>;
 
-// Add the missing ToastAction component
+// Simplified ToastAction component
 export const ToastAction = ({ 
-  altText, 
   className, 
   children, 
   ...props 
-}: React.ButtonHTMLAttributes<HTMLButtonElement> & { altText: string }) => (
-  <button className={className} aria-label={altText} {...props}>
+}: React.ButtonHTMLAttributes<HTMLButtonElement>) => (
+  <button className={className} {...props}>
     {children}
   </button>
 );

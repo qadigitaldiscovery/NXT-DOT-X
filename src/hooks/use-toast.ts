@@ -1,4 +1,3 @@
-
 import { ReactNode } from 'react';
 import { toast as sonnerToast, Toaster } from 'sonner';
 
@@ -6,6 +5,7 @@ export type ToastProps = {
   title?: ReactNode;
   description?: ReactNode;
   variant?: 'default' | 'destructive';
+  action?: ReactNode;
 };
 
 // Define a type for the toast object that will be returned
@@ -21,10 +21,10 @@ export type Toast = {
 interface ExtendedToastFunction {
   (props: ToastProps): string | number;
   success: (
-    message: string | ToastProps
+    message: string | Omit<ToastProps, 'variant'>
   ) => string | number;
   error: (
-    message: string | ToastProps
+    message: string | Omit<ToastProps, 'variant'>
   ) => string | number;
 }
 
@@ -33,8 +33,18 @@ export const useToast = () => {
   return {
     toast: ((props: ToastProps) => {
       // For object params, adapt to sonner's expected format
-      return sonnerToast(props.title as string, {
-        description: props.description as string,
+      if (props.variant === 'destructive') {
+        return sonnerToast.error(props.title || 'Error', {
+          description: props.description,
+          action: props.action ? { label: 'Undo', onClick: () => console.log('Action!') } : undefined,
+        });
+      }
+      return sonnerToast(props.title, {
+        description: props.description,
+        action: props.action ? {
+          label: props.action,
+          onClick: () => { /* The ToastAction component should handle its own onClick */ }
+        } : undefined,
       });
     }) as ExtendedToastFunction,
     // Add a dummy toasts array for compatibility with the Toaster component
@@ -42,51 +52,39 @@ export const useToast = () => {
   };
 };
 
+const currentToastInstance = useToast().toast;
+
 // Add helper methods to adapt between APIs
-useToast().toast.success = (message: string | ToastProps) => {
+currentToastInstance.success = (message: string | Omit<ToastProps, 'variant'>) => {
   if (typeof message === 'string') {
     return sonnerToast.success(message);
   } else {
-    return sonnerToast.success(message.title as string, {
-      description: message.description as string,
+    return sonnerToast.success(message.title, {
+      description: message.description,
+      action: message.action ? {
+        label: message.action,
+        onClick: () => { /* The ToastAction component should handle its own onClick */ }
+      } : undefined,
     });
   }
 };
 
-useToast().toast.error = (message: string | ToastProps) => {
+currentToastInstance.error = (message: string | Omit<ToastProps, 'variant'>) => {
   if (typeof message === 'string') {
     return sonnerToast.error(message);
   } else {
-    return sonnerToast.error(message.title as string, {
-      description: message.description as string,
+    return sonnerToast.error(message.title || 'Error', {
+      description: message.description,
+      action: message.action ? {
+        label: message.action,
+        onClick: () => { /* The ToastAction component should handle its own onClick */ }
+      } : undefined,
     });
   }
 };
 
 // Export the toast function directly for ease of use
-export const toast = ((props: ToastProps) => {
-  return sonnerToast(props.title as string, {
-    description: props.description as string,
-  });
-}) as ExtendedToastFunction;
+export const toast = currentToastInstance;
 
-// Add helper methods for direct export
-toast.success = (message: string | ToastProps) => {
-  if (typeof message === 'string') {
-    return sonnerToast.success(message);
-  } else {
-    return sonnerToast.success(message.title as string, {
-      description: message.description as string,
-    });
-  }
-};
-
-toast.error = (message: string | ToastProps) => {
-  if (typeof message === 'string') {
-    return sonnerToast.error(message);
-  } else {
-    return sonnerToast.error(message.title as string, {
-      description: message.description as string,
-    });
-  }
-};
+// Toaster component remains the same, re-exported from sonner
+export { Toaster };

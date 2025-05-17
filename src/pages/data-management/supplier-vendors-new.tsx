@@ -61,7 +61,7 @@ export default function NewPartnerPage() {
       toast({
         title: "Partner created successfully",
         description: `${values.name} has been added as a ${values.type}.`,
-        action: <ToastAction altText="View">View</ToastAction>,
+        action: <ToastAction>View</ToastAction>,
       });
       
       // Navigate back to partners list
