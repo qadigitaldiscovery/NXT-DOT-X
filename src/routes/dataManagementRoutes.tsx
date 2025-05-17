@@ -28,6 +28,7 @@ import CustomersPage from "@/pages/data-management/customers/CustomersPage";
 import VendorSupplierComparison from "@/pages/data-management/vendor-supplier-comparison";
 import SupplierVendors from "@/pages/data-management/supplier-vendors";
 import NewPartnerPage from "@/pages/data-management/supplier-vendors-new";
+import DeploymentTest from "@/pages/data-management/DeploymentTest";
 
 // Filter the data management category from global navigation
 const dataManagementCategory = globalNavCategories.find(category => category.label === "Data Management");
@@ -79,6 +80,15 @@ export const DataManagementRoutes = () => {
           <ProtectedRoute>
             <PlatformLayout moduleTitle="Data Management Dashboard" useGlobalNavigation={true}>
               <DashboardHome />
+            </PlatformLayout>
+          </ProtectedRoute>
+        } />
+        
+        {/* Deployment Test Page */}
+        <Route path="deployment-test" element={
+          <ProtectedRoute>
+            <PlatformLayout moduleTitle="Deployment Test" useGlobalNavigation={true}>
+              <DeploymentTest />
             </PlatformLayout>
           </ProtectedRoute>
         } />

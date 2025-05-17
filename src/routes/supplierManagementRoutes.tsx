@@ -1,16 +1,13 @@
+import { Route, Navigate } from "react-router-dom";
 
-import { Route } from "react-router-dom";
-import SupplierSettings from "@/pages/supplier-management/SupplierSettings";
-import { SupplierManagementLayout } from "@/components/layout/SupplierManagementLayout";
-import SupplierDirectoryPage from "@/pages/supplier-management/SupplierDirectoryPage";
-import SupplierDashboard from "@/pages/supplier-management/SupplierDashboard";
-
+// All supplier management routes now redirect to the unified Supplier Vendors page
 export const SupplierManagementRoutes = () => {
   return (
-    <Route path="/supplier-management" element={<SupplierManagementLayout />}>
-      <Route index element={<SupplierDashboard />} />
-      <Route path="directory" element={<SupplierDirectoryPage />} />
-      <Route path="settings" element={<SupplierSettings />} />
+    <Route path="/supplier-management">
+      <Route index element={<Navigate to="/data-management/supplier-vendors" replace />} />
+      <Route path="directory" element={<Navigate to="/data-management/supplier-vendors" replace />} />
+      <Route path="settings" element={<Navigate to="/data-management/supplier-vendors" replace />} />
+      <Route path="*" element={<Navigate to="/data-management/supplier-vendors" replace />} />
     </Route>
   );
 };

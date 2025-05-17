@@ -34,7 +34,39 @@ export default function SupplierVendors() {
   const [filterType, setFilterType] = useState('all');
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [partners, setPartners] = useState<Partner[]>([]);
-
+  const [activeTab, setActiveTab] = useState('unified');
+  
+  // Get URL parameters for redirects from old pages
+  const location = window.location;
+  const params = new URLSearchParams(location.search);
+  const idParam = params.get('id');
+  const typeParam = params.get('type');
+  
+  // Set appropriate tab based on URL parameters
+  useEffect(() => {
+    if (typeParam === 'vendor') {
+      setActiveTab('vendors');
+      if (idParam) {
+        // Find the specific vendor in the list
+        const vendor = vendors.find(v => v.id === idParam);
+        if (vendor) {
+          // Could highlight this vendor or show details
+          console.log('Redirected to vendor:', vendor);
+        }
+      }
+    } else if (typeParam === 'supplier') {
+      setActiveTab('suppliers');
+      if (idParam) {
+        // Find the specific supplier in the list
+        const supplier = suppliers.find(s => s.id === idParam);
+        if (supplier) {
+          // Could highlight this supplier or show details
+          console.log('Redirected to supplier:', supplier);
+        }
+      }
+    }
+  }, [typeParam, idParam, vendors, suppliers]);
+  
   // Process vendors and suppliers into unified partners
   useEffect(() => {
     const vendorPartners = vendors.map(vendor => vendorToPartner(vendor));
@@ -188,7 +220,7 @@ export default function SupplierVendors() {
             </div>
           </CardHeader>
           <CardContent>
-            <Tabs defaultValue="unified">
+            <Tabs defaultValue={activeTab} onValueChange={(value) => setActiveTab(value)}>
               <TabsList className="grid w-full grid-cols-3">
                 <TabsTrigger value="unified">Unified View</TabsTrigger>
                 <TabsTrigger value="vendors">Vendors</TabsTrigger>
@@ -225,11 +257,10 @@ export default function SupplierVendors() {
                         <TableRow 
                           key={`${partner.type}-${index}`} 
                           className="cursor-pointer hover:bg-gray-50" 
-                          onClick={() => navigate(
-                            partner.type === 'vendor' 
-                              ? `/vendors/${partner.id || index}` 
-                              : `/data-management/suppliers/${partner.id}`
-                          )}
+                          onClick={() => {
+                            const path = `/data-management/supplier-vendors?id=${partner.id || index}&type=${partner.type}`;
+                            navigate(path);
+                          }}
                         >
                           <TableCell className="font-medium">{partner.name}</TableCell>
                           <TableCell>
