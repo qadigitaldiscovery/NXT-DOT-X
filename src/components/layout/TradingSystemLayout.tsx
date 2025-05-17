@@ -20,8 +20,13 @@ import { navCategories, masterDashItem } from './sidebar/NavigationConfig';
 import { useNavigate } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 
+interface TradingSystemLayoutProps {
+  moduleTitle?: string;
+  children?: React.ReactNode;
+}
+
 // Separate the inner content that uses the sidebar hook
-const TradingSystemContent = () => {
+const TradingSystemContent: React.FC<TradingSystemLayoutProps> = ({ moduleTitle, children }) => {
   const navigate = useNavigate();
   const { toggleSidebar } = useSidebar();
   const location = useLocation();
@@ -91,10 +96,10 @@ const TradingSystemContent = () => {
       )}>
         <SharedNavbar 
           onMenuClick={toggleSidebar} 
-          moduleTitle="Data Management"
+          moduleTitle={moduleTitle || "Data Management"}
         />
         <main className="flex-1 overflow-y-auto p-4 md:p-6 bg-gray-50">
-          <Outlet />
+          {children || <Outlet />}
         </main>
       </div>
     </div>
@@ -102,10 +107,10 @@ const TradingSystemContent = () => {
 };
 
 // Main layout component that provides the SidebarProvider context
-export const TradingSystemLayout: React.FC = () => {
+export const TradingSystemLayout: React.FC<TradingSystemLayoutProps> = (props) => {
   return (
     <SidebarProvider defaultOpen={true}>
-      <TradingSystemContent />
+      <TradingSystemContent {...props} />
     </SidebarProvider>
   );
 };

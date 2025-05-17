@@ -4,6 +4,7 @@ import { PlatformLayout } from "@/components/layouts/PlatformLayout";
 import { Users, Settings, BarChart3, FileUp, Home, Database, Truck, Building, Calculator, LineChart, ArrowDownUp, FileDown, FileArchive, BrainCircuit, Server } from 'lucide-react';
 import { NavCategory } from '@/components/layout/sidebar/types';
 import { navCategories as globalNavCategories } from '@/components/layout/sidebar/NavigationConfig';
+import { TradingSystemLayout } from '@/components/layout/TradingSystemLayout';
 
 // Data Management Pages
 import DashboardHome from "@/pages/data-management/DashboardHome";
@@ -25,6 +26,8 @@ import DataConnections from "@/pages/data-management/connections/DataConnections
 import ExportData from "@/pages/data-management/data/ExportData";
 import CustomersPage from "@/pages/data-management/customers/CustomersPage";
 import VendorSupplierComparison from "@/pages/data-management/vendor-supplier-comparison";
+import SupplierVendors from "@/pages/data-management/supplier-vendors";
+import NewPartnerPage from "@/pages/data-management/supplier-vendors-new";
 
 // Filter the data management category from global navigation
 const dataManagementCategory = globalNavCategories.find(category => category.label === "Data Management");
@@ -35,7 +38,7 @@ export const dataNavCategories: NavCategory[] = dataManagementCategory ? [dataMa
     label: "DATA MANAGEMENT",
     items: [
       { label: 'Dashboard', icon: Database, path: '/data-management' },
-      { label: 'Supplier Directory', icon: Truck, path: '/data-management/suppliers' },
+      { label: 'Supplier Vendors', icon: Building, path: '/data-management/supplier-vendors' },
       { label: 'Customer Directory', icon: Building, path: '/data-management/customers' },
       { label: 'Supplier Costing', icon: Calculator, path: '/data-management/supplier-costing' },
       { label: 'Cost Analysis', icon: BarChart3, path: '/data-management/cost-analysis' },
@@ -95,6 +98,23 @@ export const DataManagementRoutes = () => {
             <PlatformLayout moduleTitle="Suppliers" useGlobalNavigation={true}>
               <SuppliersPage />
             </PlatformLayout>
+          </ProtectedRoute>
+        } />
+        
+        {/* Supplier Vendors (Unified) */}
+        <Route path="supplier-vendors" element={
+          <ProtectedRoute>
+            <TradingSystemLayout moduleTitle="Supplier Vendors">
+              <SupplierVendors />
+            </TradingSystemLayout>
+          </ProtectedRoute>
+        } />
+        
+        <Route path="supplier-vendors/new" element={
+          <ProtectedRoute>
+            <TradingSystemLayout moduleTitle="Add New Partner">
+              <NewPartnerPage />
+            </TradingSystemLayout>
           </ProtectedRoute>
         } />
         
