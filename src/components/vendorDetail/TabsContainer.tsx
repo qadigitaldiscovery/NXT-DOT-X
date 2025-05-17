@@ -32,13 +32,16 @@ export function TabsContainer({ children, vendorId }: TabsContainerProps) {
                 );
               }
               
+              // Ensure tab.icon exists before rendering it as a component
+              const IconComponent = tab.icon;
+              
               return (
                 <TabsTrigger
                   key={tab.key}
                   value={tab.key}
                   className="py-2 px-4 data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none data-[state=active]:shadow-none"
                 >
-                  <tab.icon className="h-4 w-4 mr-2" />
+                  {IconComponent && <IconComponent className="h-4 w-4 mr-2" />}
                   {tab.label}
                 </TabsTrigger>
               );

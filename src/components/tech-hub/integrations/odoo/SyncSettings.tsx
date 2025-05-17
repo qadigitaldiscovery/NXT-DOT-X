@@ -42,7 +42,7 @@ const SyncSettings: React.FC<SyncSettingsProps> = ({
             sync_frequency: frequency || existingSetting.sync_frequency,
             updated_at: new Date().toISOString()
           })
-          .eq('id', existingSetting.id);
+          .eq('id', existingSetting.id || ''); // Provide fallback string
         
         if (error) {
           console.error("Failed to update sync setting:", error);
@@ -147,24 +147,36 @@ const SyncSettings: React.FC<SyncSettingsProps> = ({
         throw new Error("Synchronization failed - no response from server");
       }
       
-      if (result.success) {
-        toast.success("Synchronization started successfully!");
-        // Update last_synced_at for the settings
-        for (const setting of enabledSettings) {
-          if (setting.id) {
-            await supabase
-              .from('integration_sync_settings')
-              .update({ last_synced_at: new Date().toISOString() })
-              .eq('id', setting.id);
+      // Type guard to check if result has success property
+      if (typeof result === 'object' && result !== null && 'success' in result) {
+        if (result.success) {
+          toast.success("Synchronization started successfully!");
+          // Update last_synced_at for the settings
+          for (const setting of enabledSettings) {
+            if (setting.id) {
+              await supabase
+                .from('integration_sync_settings')
+                .update({ last_synced_at: new Date().toISOString() })
+                .eq('id', setting.id);
+            }
           }
-        }
-        
-        // Refresh sync settings to show updated last_synced_at
-        if (odooConfig.id) {
-          await fetchSyncSettings(odooConfig.id);
+          
+          // Refresh sync settings to show updated last_synced_at
+          if (odooConfig.id) {
+            await fetchSyncSettings(odooConfig.id);
+          }
+        } else {
+          throw new Error(
+            typeof result === 'object' && 
+            result !== null && 
+            'message' in result && 
+            typeof result.message === 'string' 
+              ? result.message 
+              : "Synchronization failed"
+          );
         }
       } else {
-        throw new Error(result.message || "Synchronization failed");
+        throw new Error("Invalid response format from server");
       }
     } catch (error) {
       console.error("Synchronization failed:", error);

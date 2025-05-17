@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -52,14 +53,15 @@ export function VendorsList() {
             ) : (
               vendors?.map((vendor) => {
                 // Get rating for each vendor based on local score
-                const [ratingCode, riskDesc] = vendor.local_score 
-                  ? getCreditRating(vendor.local_score) 
+                const score = vendor.localScore ?? vendor.local_score;
+                const [ratingCode, riskDesc] = score 
+                  ? getCreditRating(score) 
                   : ['N/A', 'Not Assessed'];
                 
                 return (
                   <TableRow key={vendor.id}>
-                    <TableCell className="font-medium">{vendor.company_name}</TableCell>
-                    <TableCell>{vendor.local_score ?? 'N/A'}</TableCell>
+                    <TableCell className="font-medium">{vendor.company_name || vendor.name}</TableCell>
+                    <TableCell>{score ?? 'N/A'}</TableCell>
                     <TableCell>
                       <div className="flex items-center space-x-2">
                         <span className={`w-5 h-5 rounded-full flex items-center justify-center text-xs text-white
@@ -75,7 +77,7 @@ export function VendorsList() {
                     </TableCell>
                     <TableCell>
                       {vendor.created_at 
-                        ? new Date(vendor.created_at || '').toLocaleDateString() 
+                        ? new Date(vendor.created_at).toLocaleDateString() 
                         : 'N/A'}
                     </TableCell>
                     <TableCell>
