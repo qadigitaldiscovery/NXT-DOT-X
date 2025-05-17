@@ -1,4 +1,3 @@
-
 // Re-exporting from sonner
 import { toast, Toaster as SonnerToaster } from 'sonner';
 import React from 'react';
@@ -21,3 +20,15 @@ export const ToastViewport = () => <></>;
 export const ToastClose = () => <></>;
 export const ToastTitle = ({children}: {children: React.ReactNode}) => <>{children}</>;
 export const ToastDescription = ({children}: {children: React.ReactNode}) => <>{children}</>;
+
+// Add the missing ToastAction component
+export const ToastAction = ({ 
+  altText, 
+  className, 
+  children, 
+  ...props 
+}: React.ButtonHTMLAttributes<HTMLButtonElement> & { altText: string }) => (
+  <button className={className} aria-label={altText} {...props}>
+    {children}
+  </button>
+);
