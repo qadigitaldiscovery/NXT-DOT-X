@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { MenuIcon, UserCircle, Settings as SettingsIcon, Home, BellIcon } from 'lucide-react';
@@ -9,6 +8,7 @@ import { useAuth } from '@/context/AuthContext';
 import { cn } from '@/lib/utils';
 import { ThemeToggle } from '@/components/ui/theme-toggle';
 import { Badge } from '@/components/ui/badge';
+import { forceHardRefresh } from '@/utils/cacheUtils';
 
 interface SharedNavbarProps {
   onMenuClick: () => void;
@@ -95,7 +95,13 @@ export const SharedNavbar = ({
           </Button>
 
           {/* Home Button */}
-          <Button variant="ghost" size="icon" onClick={() => navigate('/')} className={cn(iconColor, hoverBgColor, "rounded-lg")} title="Home">
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            onClick={() => forceHardRefresh()}
+            className={cn(iconColor, hoverBgColor, "rounded-lg")} 
+            title="Home (Force Refresh)"
+          >
             <Home className="h-5 w-5" />
           </Button>
 
