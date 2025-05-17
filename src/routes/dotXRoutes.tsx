@@ -1,6 +1,7 @@
 
 import { Route } from "react-router-dom";
 import { PlatformLayout } from "@/components/layouts/PlatformLayout";
+import ProtectedRoute from "@/components/ProtectedRoute";
 import DotXDashboard from "@/pages/dot-x/Dashboard";
 import DotXDashboard2 from "@/pages/dot-x/Dashboard2";
 import DotXApi from "@/pages/dot-x/Api";
@@ -10,7 +11,7 @@ import DotXSettings from "@/pages/dot-x/Settings";
 import { NavCategory } from '@/components/layout/sidebar/types';
 import { LayoutDashboard, Code, Database, FileCode, Settings, Zap } from 'lucide-react';
 
-const dotXNavCategories: NavCategory[] = [
+export const dotXNavCategories: NavCategory[] = [
   {
     name: "DOT-X",
     label: "DOT-X PLATFORM",
@@ -29,52 +30,69 @@ export const DotXRoutes = () => {
   return (
     <Route path="/dot-x">
       <Route index element={
-        <PlatformLayout
-          moduleTitle="DOT-X Platform"
-          navCategories={dotXNavCategories}
-        >
-          <DotXDashboard />
-        </PlatformLayout>
+        <ProtectedRoute>
+          <PlatformLayout
+            moduleTitle="DOT-X Platform"
+            navCategories={dotXNavCategories}
+          >
+            <DotXDashboard />
+          </PlatformLayout>
+        </ProtectedRoute>
       } />
+      
       <Route path="dot-x-2" element={
-        <PlatformLayout
-          moduleTitle="DOT-X-2 Advanced Platform"
-          navCategories={dotXNavCategories}
-        >
-          <DotXDashboard2 />
-        </PlatformLayout>
+        <ProtectedRoute>
+          <PlatformLayout
+            moduleTitle="DOT-X-2 Advanced Platform"
+            navCategories={dotXNavCategories}
+          >
+            <DotXDashboard2 />
+          </PlatformLayout>
+        </ProtectedRoute>
       } />
+      
       <Route path="api" element={
-        <PlatformLayout
-          moduleTitle="DOT-X API Integration"
-          navCategories={dotXNavCategories}
-        >
-          <DotXApi />
-        </PlatformLayout>
+        <ProtectedRoute>
+          <PlatformLayout
+            moduleTitle="DOT-X API Integration"
+            navCategories={dotXNavCategories}
+          >
+            <DotXApi />
+          </PlatformLayout>
+        </ProtectedRoute>
       } />
+      
       <Route path="data-services" element={
-        <PlatformLayout
-          moduleTitle="DOT-X Data Services"
-          navCategories={dotXNavCategories}
-        >
-          <DotXDataServices />
-        </PlatformLayout>
+        <ProtectedRoute>
+          <PlatformLayout
+            moduleTitle="DOT-X Data Services"
+            navCategories={dotXNavCategories}
+          >
+            <DotXDataServices />
+          </PlatformLayout>
+        </ProtectedRoute>
       } />
+      
       <Route path="plugins" element={
-        <PlatformLayout
-          moduleTitle="DOT-X Plugins"
-          navCategories={dotXNavCategories}
-        >
-          <DotXPlugins />
-        </PlatformLayout>
+        <ProtectedRoute>
+          <PlatformLayout
+            moduleTitle="DOT-X Plugins"
+            navCategories={dotXNavCategories}
+          >
+            <DotXPlugins />
+          </PlatformLayout>
+        </ProtectedRoute>
       } />
+      
       <Route path="settings" element={
-        <PlatformLayout
-          moduleTitle="DOT-X Settings"
-          navCategories={dotXNavCategories}
-        >
-          <DotXSettings />
-        </PlatformLayout>
+        <ProtectedRoute>
+          <PlatformLayout
+            moduleTitle="DOT-X Settings"
+            navCategories={dotXNavCategories}
+          >
+            <DotXSettings />
+          </PlatformLayout>
+        </ProtectedRoute>
       } />
     </Route>
   );
