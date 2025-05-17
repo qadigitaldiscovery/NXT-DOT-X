@@ -1,12 +1,13 @@
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { SharedSidebar } from './SharedSidebar';
 import { SharedNavbar } from './SharedNavbar';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { cn } from '@/lib/utils';
-import { Outlet } from 'react-router-dom';
+import { Outlet, useNavigate } from 'react-router-dom';
 import { BarChart3, Bot, Shield, Users, Settings, Zap, Brain, Home, Code, Database } from 'lucide-react';
 import { NavCategory, NavItem } from './sidebar/types';
+import { useAuth } from '@/context/AuthContext';
 
 const dotXNavItems: NavCategory[] = [
   {
@@ -29,10 +30,25 @@ const dotXNavItems: NavCategory[] = [
 ];
 
 export const DotXLayout = () => {
-  const [sidebarOpen, setSidebarOpen] = React.useState(true);
+  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
+  const { isAuthenticated, loading: authLoading } = useAuth();
   const isMobile = useIsMobile();
+  const navigate = useNavigate();
 
-  React.useEffect(() => {
+  // Handle authentication state
+  useEffect(() => {
+    if (!authLoading) {
+      if (!isAuthenticated) {
+        navigate('/landing');
+      } else {
+        setIsLoading(false); // Only show content after auth check completes
+      }
+    }
+  }, [isAuthenticated, authLoading, navigate]);
+
+  // Handle sidebar state based on device
+  useEffect(() => {
     if (isMobile) {
       setSidebarOpen(false);
     } else {
@@ -43,6 +59,18 @@ export const DotXLayout = () => {
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
   };
+
+  // Show loading state while authentication is being checked
+  if (authLoading || isLoading) {
+    return (
+      <div className="flex h-screen items-center justify-center bg-gradient-to-br from-slate-950 via-indigo-950/30 to-slate-950 text-white">
+        <div className="text-center">
+          <div className="h-12 w-12 rounded-full border-t-2 border-b-2 border-indigo-500 animate-spin mb-4 mx-auto"></div>
+          <p className="text-indigo-300">Loading secure environment...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex h-screen overflow-hidden bg-gradient-to-br from-slate-950 via-indigo-950/30 to-slate-950 text-white">
