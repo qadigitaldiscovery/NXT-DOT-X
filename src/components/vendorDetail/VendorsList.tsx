@@ -75,7 +75,7 @@ export function VendorsList() {
                     </TableCell>
                     <TableCell>
                       {vendor.created_at 
-                        ? new Date(vendor.created_at).toLocaleDateString() 
+                        ? new Date(vendor.created_at || '').toLocaleDateString() 
                         : 'N/A'}
                     </TableCell>
                     <TableCell>

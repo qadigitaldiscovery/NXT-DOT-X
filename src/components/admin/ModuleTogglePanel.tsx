@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
@@ -31,7 +30,11 @@ const ModuleTogglePanel: React.FC<ModuleTogglePanelProps> = ({ userId }) => {
         .eq('user_id', uid);
         
       if (error) throw error;
-      setAccessList(data || []);
+      setAccessList(data?.map(item => ({
+        ...item,
+        submenu_slug: item.submenu_slug || undefined,
+        category: item.category || undefined
+      })) || []);
     } catch (err) {
       console.error('Error fetching module access:', err);
       toast({
@@ -130,15 +133,19 @@ const ModuleTogglePanel: React.FC<ModuleTogglePanelProps> = ({ userId }) => {
         .insert([{ 
           user_id: selectedUser,
           module_slug: moduleSlug,
-          submenu_slug: submenuSlug || null,
-          category: category || null,
+          submenu_slug: submenuSlug || undefined,
+          category: category || undefined,
           is_enabled: true
         }])
         .select();
         
       if (error) throw error;
       
-      setAccessList(prev => [...prev, data[0]]);
+      setAccessList(prev => [...prev, {
+        ...data[0],
+        submenu_slug: data[0].submenu_slug || undefined,
+        category: data[0].category || undefined
+      }]);
       
       toast({
         title: "Success",

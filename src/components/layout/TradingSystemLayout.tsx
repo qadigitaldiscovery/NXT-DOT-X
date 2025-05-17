@@ -60,13 +60,18 @@ const TradingSystemContent: React.FC<TradingSystemLayoutProps> = ({ moduleTitle,
               <SidebarGroupLabel>{category.name}</SidebarGroupLabel>
               <SidebarMenu>
                 {category.items.map((item) => (
-                  <SidebarMenuItem key={item.path || item.href}>
+                  <SidebarMenuItem key={item.path || item.href || item.label}>
                     <SidebarMenuButton 
-                      onClick={() => handleNavigate(item.path || item.href)}
+                      onClick={() => item.path ? handleNavigate(item.path) : item.href ? handleNavigate(item.href) : undefined}
                       tooltip={item.label}
-                      isActive={location.pathname === (item.path || item.href) || (item.path ? location.pathname.startsWith(`${item.path}/`) : false)}
+                      isActive={Boolean(
+                        (item.path && location.pathname === item.path) || 
+                        (item.href && location.pathname === item.href) || 
+                        (item.path && location.pathname.startsWith(`${item.path}/`)) ||
+                        (item.href && location.pathname.startsWith(`${item.href}/`))
+                      )}
                     >
-                      {item.icon && React.createElement(item.icon, { className: "h-4 w-4" })}
+                      {item.icon && <item.icon className="h-4 w-4" />}
                       <span>{item.label}</span>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
@@ -79,7 +84,7 @@ const TradingSystemContent: React.FC<TradingSystemLayoutProps> = ({ moduleTitle,
         <SidebarFooter className="p-4 border-t">
           <SidebarMenuItem>
             <SidebarMenuButton 
-              onClick={() => handleNavigate(masterDashItem.path || masterDashItem.href)}
+              onClick={() => masterDashItem.path ? handleNavigate(masterDashItem.path) : masterDashItem.href ? handleNavigate(masterDashItem.href) : undefined}
               tooltip="Master Dashboard"
             >
               <Home className="h-4 w-4" />
