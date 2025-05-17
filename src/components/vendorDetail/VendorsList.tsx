@@ -28,7 +28,7 @@ export function VendorsList() {
     <div>
       <div className="flex justify-between mb-4">
         <h2 className="text-2xl font-bold">Healthcare Suppliers</h2>
-        <Button onClick={() => navigate('/vendors/new')}>Add New Supplier</Button>
+        <Button onClick={() => navigate('/data-management/supplier-vendors/new')}>Add New Partner</Button>
       </div>
       
       <div className="rounded-md border">
@@ -79,7 +79,7 @@ export function VendorsList() {
                         : 'N/A'}
                     </TableCell>
                     <TableCell>
-                      <Button variant="ghost" onClick={() => navigate(`/vendors/${vendor.id}`)}>
+                      <Button variant="ghost" onClick={() => navigate(`/data-management/supplier-vendors?id=${vendor.id}&type=vendor`)}>
                         View Details
                       </Button>
                     </TableCell>
