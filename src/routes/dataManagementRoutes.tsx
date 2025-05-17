@@ -114,17 +114,17 @@ export const DataManagementRoutes = () => {
         {/* Supplier Vendors (Unified) */}
         <Route path="supplier-vendors" element={
           <ProtectedRoute>
-            <TradingSystemLayout moduleTitle="Supplier Vendors">
+            <PlatformLayout moduleTitle="Supplier Vendors" useGlobalNavigation={true}>
               <SupplierVendors />
-            </TradingSystemLayout>
+            </PlatformLayout>
           </ProtectedRoute>
         } />
         
         <Route path="supplier-vendors/new" element={
           <ProtectedRoute>
-            <TradingSystemLayout moduleTitle="Add New Partner">
+            <PlatformLayout moduleTitle="Add New Partner" useGlobalNavigation={true}>
               <NewPartnerPage />
-            </TradingSystemLayout>
+            </PlatformLayout>
           </ProtectedRoute>
         } />
         
