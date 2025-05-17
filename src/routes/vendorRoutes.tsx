@@ -1,12 +1,10 @@
-
 import { Route } from "react-router-dom";
-import { PlatformLayout } from '@/components/layouts/PlatformLayout';
 import VendorsPage from "@/pages/auto/VendorsPage";
 import { Building2, FileText, ListFilter, Users, Plus } from 'lucide-react';
 import { NavCategory } from '@/components/layout/sidebar/types';
 import VendorDetail from '@/pages/vendors/VendorDetail';
 import NewVendorPage from '@/pages/vendors/NewVendorPage';
-import { VendorLayout } from '@/components/layout/VendorLayout';
+import { TradingSystemLayout } from '@/components/layout/TradingSystemLayout';
 
 export const VendorNavCategories: NavCategory[] = [
   {
@@ -24,34 +22,13 @@ export const VendorNavCategories: NavCategory[] = [
 
 export const VendorRoutes = () => {
   return (
-    <Route path="/vendors" element={<VendorLayout />}>
+    <Route path="/vendors" element={<TradingSystemLayout />}>
       <Route index element={<VendorsPage />} />
       <Route path=":id" element={<VendorDetail />} />
       <Route path="new" element={<NewVendorPage />} />
-      <Route path="directory" element={
-        <PlatformLayout
-          moduleTitle="Vendor Directory"
-          navCategories={VendorNavCategories}
-        >
-          <VendorsPage />
-        </PlatformLayout>
-      } />
-      <Route path="reports" element={
-        <PlatformLayout
-          moduleTitle="Vendor Reports"
-          navCategories={VendorNavCategories}
-        >
-          <VendorsPage />
-        </PlatformLayout>
-      } />
-      <Route path="contacts" element={
-        <PlatformLayout
-          moduleTitle="Vendor Contacts"
-          navCategories={VendorNavCategories}
-        >
-          <VendorsPage />
-        </PlatformLayout>
-      } />
+      <Route path="directory" element={<VendorsPage />} />
+      <Route path="reports" element={<VendorsPage />} />
+      <Route path="contacts" element={<VendorsPage />} />
     </Route>
   );
 };

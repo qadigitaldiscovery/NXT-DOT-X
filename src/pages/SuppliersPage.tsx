@@ -29,6 +29,8 @@ const supplierSchema = z.object({
   contact_name: z.string().nullable().optional(),
   email: z.string().email("Invalid email address").nullable().optional(),
   phone: z.string().nullable().optional(),
+  website: z.string().nullable().optional(),
+  payment_terms: z.string().nullable().optional(),
   status: z.string().default("active")
 });
 
@@ -59,13 +61,21 @@ export default function SuppliersPage() {
   // Handle form submission
   const onSubmitForm = (data: SupplierFormData) => {
     try {
-      // In a real implementation, this would call the createSupplier mutation
-      toast.success('Supplier added successfully');
-      console.log('Creating supplier:', data);
-      setShowForm(false);
+      // Ensure all required fields are present
+      const supplierData: Omit<Supplier, 'id'> = {
+        name: data.name,
+        code: data.code,
+        contact_name: data.contact_name || null,
+        email: data.email || null,
+        phone: data.phone || null,
+        website: data.website || null,
+        payment_terms: data.payment_terms || null,
+        status: data.status
+      };
       
-      // Mock implementation - would use the actual mutation in production
-      // createSupplier(data);
+      // Call the createSupplier mutation to save to database
+      createSupplier(supplierData);
+      setShowForm(false);
     } catch (err) {
       toast.error('Error saving supplier. Please try again.');
       console.error('Error creating supplier:', err);
@@ -201,6 +211,22 @@ export default function SuppliersPage() {
                 <Input id="phone" {...register('phone')} />
                 {errors.phone && (
                   <p className="text-sm text-red-500">{errors.phone.message}</p>
+                )}
+              </div>
+              
+              <div className="grid gap-2">
+                <Label htmlFor="website">Website</Label>
+                <Input id="website" {...register('website')} />
+                {errors.website && (
+                  <p className="text-sm text-red-500">{errors.website.message}</p>
+                )}
+              </div>
+              
+              <div className="grid gap-2">
+                <Label htmlFor="payment_terms">Payment Terms</Label>
+                <Input id="payment_terms" {...register('payment_terms')} placeholder="e.g., Net 30" />
+                {errors.payment_terms && (
+                  <p className="text-sm text-red-500">{errors.payment_terms.message}</p>
                 )}
               </div>
               

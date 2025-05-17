@@ -24,6 +24,7 @@ import DataInsights from "@/pages/data-management/insights/DataInsights";
 import DataConnections from "@/pages/data-management/connections/DataConnections";
 import ExportData from "@/pages/data-management/data/ExportData";
 import CustomersPage from "@/pages/data-management/customers/CustomersPage";
+import VendorSupplierComparison from "@/pages/data-management/vendor-supplier-comparison";
 
 // Filter the data management category from global navigation
 const dataManagementCategory = globalNavCategories.find(category => category.label === "Data Management");
@@ -213,6 +214,15 @@ export const DataManagementRoutes = () => {
           <ProtectedRoute>
             <PlatformLayout moduleTitle="Data Connections" useGlobalNavigation={true}>
               <DataConnections />
+            </PlatformLayout>
+          </ProtectedRoute>
+        } />
+        
+        {/* Vendor & Supplier Comparison */}
+        <Route path="vendor-supplier-comparison" element={
+          <ProtectedRoute>
+            <PlatformLayout moduleTitle="Vendor & Supplier Comparison" useGlobalNavigation={true}>
+              <VendorSupplierComparison />
             </PlatformLayout>
           </ProtectedRoute>
         } />
