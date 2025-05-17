@@ -1,95 +1,34 @@
 
 import React from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { PieChart, Pie, Cell, ResponsiveContainer, Sector } from 'recharts';
 
 interface GaugeRatingProps {
-  ratingCode: string;
+  value: number;
 }
 
-export function GaugeRating({ ratingCode }: GaugeRatingProps) {
-  // Map rating code to a score for visualization
-  const getRatingScore = (code: string): number => {
-    switch(code) {
-      case 'A': return 90;
-      case 'B': return 75;
-      case 'C': return 60;
-      case 'D': return 45;
-      case 'E': return 25;
-      default: return 0;
-    }
-  };
+export const GaugeRating: React.FC<GaugeRatingProps> = ({ value }) => {
+  // Calculate the angle for the gauge needle based on the value (0-100)
+  const angle = (value / 100) * 180;
   
-  const getRatingColor = (code: string): string => {
-    switch(code) {
-      case 'A': return '#22c55e'; // green
-      case 'B': return '#84cc16'; // lime
-      case 'C': return '#facc15'; // yellow
-      case 'D': return '#f97316'; // orange
-      case 'E': return '#ef4444'; // red
-      default: return '#a1a1aa'; // gray
-    }
-  };
-
-  const score = getRatingScore(ratingCode);
-  const color = getRatingColor(ratingCode);
-  
-  // Creating the half gauge
-  const data = [
-    { name: 'Rating', value: score },
-    { name: 'Empty', value: 100 - score }
-  ];
-
-  const renderActiveShape = (props: any) => {
-    const { cx, cy, innerRadius, outerRadius, startAngle, endAngle, fill } = props;
-  
-    return (
-      <g>
-        <text x={cx} y={cy - 20} dy={8} textAnchor="middle" fill={color} fontSize="48px" fontWeight="bold">
-          {ratingCode}
-        </text>
-        <Sector
-          cx={cx}
-          cy={cy}
-          innerRadius={innerRadius}
-          outerRadius={outerRadius}
-          startAngle={startAngle}
-          endAngle={endAngle}
-          fill={fill}
-        />
-      </g>
-    );
-  };
-
   return (
-    <Card>
-      <CardHeader className="pb-2">
-        <CardTitle className="text-lg">Rating Gauge</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <div className="h-64">
-          <ResponsiveContainer width="100%" height="100%">
-            <PieChart>
-              <Pie
-                activeIndex={0}
-                activeShape={renderActiveShape}
-                data={data}
-                cx="50%"
-                cy="80%"
-                startAngle={180}
-                endAngle={0}
-                innerRadius={60}
-                outerRadius={80}
-                dataKey="value"
-                blendStroke
-              >
-                <Cell key={`cell-0`} fill={color} />
-                <Cell key={`cell-1`} fill="#f1f5f9" />
-              </Pie>
-            </PieChart>
-          </ResponsiveContainer>
-        </div>
-      </CardContent>
-    </Card>
+    <div className="relative w-48 h-24">
+      {/* Gauge Background */}
+      <div className="absolute w-full h-full border-t-0 border-l-[12px] border-r-[12px] border-b-[12px] border-blue-100 rounded-b-full"></div>
+      
+      {/* Green section of gauge */}
+      <div 
+        className="absolute left-0 bottom-0 w-full h-full overflow-hidden"
+        style={{
+          clipPath: `path('M 0 48 A 48 48 0 0 1 96 48 L 48 48 Z')`
+        }}
+      >
+        <div className="absolute w-full h-full border-t-0 border-l-[12px] border-r-[12px] border-b-[12px] border-green-500 rounded-b-full"></div>
+      </div>
+
+      {/* Gauge value marker */}
+      <div className="absolute top-0 left-[48px] origin-bottom transform" style={{ transform: `rotate(${angle - 90}deg)` }}>
+        <div className="w-[3px] h-[40px] bg-black"></div>
+        <div className="w-[9px] h-[9px] bg-black rounded-full relative -top-1 -left-[3px]"></div>
+      </div>
+    </div>
   );
-}
+};

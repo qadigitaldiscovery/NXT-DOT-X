@@ -1,44 +1,64 @@
 
 import React from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { formatCurrency } from '@/utils/vendorCalculations';
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
-interface CreditSummaryCardProps {
+interface CreditSummaryProps {
   rating: string;
   description: string;
-  limit: number;
-  localScore: number;
+  limit: string;
+  score: number;
 }
 
-export function CreditSummaryCard({ rating, description, limit, localScore }: CreditSummaryCardProps) {
+export const CreditSummaryCard: React.FC<CreditSummaryProps> = ({
+  rating,
+  description,
+  limit,
+  score
+}) => {
+  // Determine color based on rating
+  const getRatingColor = (rating: string) => {
+    switch(rating.toUpperCase()) {
+      case 'A':
+      case 'B':
+        return 'text-green-500';
+      case 'C':
+        return 'text-yellow-500';
+      case 'D':
+      case 'E':
+      case 'F':
+        return 'text-red-500';
+      default:
+        return 'text-gray-500';
+    }
+  };
+  
+  const ratingColor = getRatingColor(rating);
+  
   return (
-    <Card className="shadow-md">
+    <Card>
       <CardHeader className="pb-2">
-        <CardTitle className="text-lg">Credit & Risk Summary</CardTitle>
+        <CardTitle className="text-lg">Credit Summary</CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <div className="space-y-1">
-            <p className="text-sm text-muted-foreground">Rating</p>
-            <p className="text-2xl font-semibold">{rating}</p>
+        <div className="grid grid-cols-2 gap-4">
+          <div className="border-r pr-4">
+            <div className="text-sm text-muted-foreground mb-1">Rating</div>
+            <div className={`text-3xl font-bold ${ratingColor}`}>{rating}</div>
           </div>
-          
-          <div className="space-y-1">
-            <p className="text-sm text-muted-foreground">Risk Level</p>
-            <p className="text-2xl font-semibold">{description}</p>
+          <div>
+            <div className="text-sm text-muted-foreground mb-1">Description</div>
+            <div className={`text-base font-medium ${ratingColor}`}>{description}</div>
           </div>
-          
-          <div className="space-y-1">
-            <p className="text-sm text-muted-foreground">Credit Limit</p>
-            <p className="text-2xl font-semibold">{formatCurrency(limit)}</p>
+          <div className="border-r pr-4">
+            <div className="text-sm text-muted-foreground mb-1">Credit Limit</div>
+            <div className="text-lg font-medium">{limit}</div>
           </div>
-          
-          <div className="space-y-1">
-            <p className="text-sm text-muted-foreground">Local Score</p>
-            <p className="text-2xl font-semibold">{localScore}/100</p>
+          <div>
+            <div className="text-sm text-muted-foreground mb-1">Local Score</div>
+            <div className="text-lg font-medium">{score}</div>
           </div>
         </div>
       </CardContent>
     </Card>
   );
-}
+};
