@@ -108,6 +108,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   useEffect(() => {
     const { data: authListener } = supabase.auth.onAuthStateChange(
       async (event, session) => {
+        // Skip profile fetch for development admin user
+        if (user?.id === '1' && user?.email === 'admin@example.com') {
+          return;
+        }
+
         if (event === 'SIGNED_IN' && session?.user) {
           // Get user profile data when signed in
           const { data: userData, error: userError } = await supabase
@@ -148,6 +153,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   // Legacy support - make sure user is properly set in localStorage when it changes
   useEffect(() => {
     if (isInitialized && user) {
+      // Skip localStorage update if this is a development admin user
+      if (user.id === '1' && user.email === 'admin@example.com') {
+        return;
+      }
       localStorage.setItem('isAuthenticated', 'true');
       localStorage.setItem('user', JSON.stringify(user));
     }

@@ -1,33 +1,33 @@
 import React from 'react';
 import { Route, Routes } from "react-router-dom";
-import { PlatformLayout } from '@/components/layouts/PlatformLayout';
+import { PlatformLayout } from "@/components/layouts/PlatformLayout";
 import { Users, Settings, BarChart3, FileUp, Home, Database, Building, Calculator, LineChart, ArrowDownUp, FileDown, FileArchive, BrainCircuit, Server } from 'lucide-react';
-import type { NavCategory } from '@/components/layout/sidebar/types';
-import { navCategories as globalNavCategories } from '@/components/layout/sidebar/NavigationConfig';
+import type { NavCategory } from "@/components/layout/sidebar/types";
+import { navCategories as globalNavCategories } from "@/components/layout/sidebar/NavigationConfig";
 
 // Data Management Pages
-import DashboardHome from '@/pages/data-management/DashboardHome';
-import CostDashboard from '@/pages/data-management/cost-management/CostDashboard';
-import CostAnalysis from '@/pages/data-management/cost-management/CostAnalysis';
-import SupplierCosting from '@/pages/data-management/cost-management/SupplierCosting';
-import CompetitorPricing from '@/pages/data-management/pricing/CompetitorPricing';
-import PriceManagement from '@/pages/data-management/pricing/PriceManagement';
-import UploadsPage from '@/pages/UploadsPage';
-import NewUploadPage from '@/pages/NewUploadPage';
-import DocumentsPage from '@/pages/data-management/documents/DocumentsPage';
-import SuppliersPage from '@/pages/SuppliersPage';
-import DataManagementSettings from '@/pages/DataManagementSettings';
-import NotFound from '@/pages/NotFound';
+import DashboardHome from "@/pages/data-management/DashboardHome";
+import CostDashboard from "@/pages/data-management/cost-management/CostDashboard";
+import CostAnalysis from "@/pages/data-management/cost-management/CostAnalysis";
+import SupplierCosting from "@/pages/data-management/cost-management/SupplierCosting";
+import CompetitorPricing from "@/pages/data-management/pricing/CompetitorPricing";
+import PriceManagement from "@/pages/data-management/pricing/PriceManagement";
+import UploadsPage from "@/pages/UploadsPage";
+import NewUploadPage from "@/pages/NewUploadPage";
+import DocumentsPage from "@/pages/data-management/documents/DocumentsPage";
+import SuppliersPage from "@/pages/SuppliersPage";
+import DataManagementSettings from "@/pages/DataManagementSettings";
+import NotFound from "@/pages/NotFound";
 
 // Import Beta pages that need to be integrated
-import DataInsights from '@/pages/data-management/insights/DataInsights';
-import DataConnections from '@/pages/data-management/connections/DataConnections';
-import ExportData from '@/pages/data-management/data/ExportData';
-import CustomersPage from '@/pages/data-management/customers/CustomersPage';
-import SupplierComparison from '@/pages/data-management/vendor-supplier-comparison';
-import Suppliers from '@/pages/data-management/supplier-vendors';
-import NewSupplier from '@/pages/data-management/supplier-vendors-new';
-import DeploymentTest from '@/pages/data-management/DeploymentTest';
+import DataInsights from "@/pages/data-management/insights/DataInsights";
+import DataConnections from "@/pages/data-management/connections/DataConnections";
+import ExportData from "@/pages/data-management/data/ExportData";
+import CustomersPage from "@/pages/data-management/customers/CustomersPage";
+import SupplierComparison from "@/pages/data-management/vendor-supplier-comparison";
+import Suppliers from "@/pages/data-management/supplier-vendors";
+import NewSupplier from "@/pages/data-management/supplier-vendors-new";
+import DeploymentTest from "@/pages/data-management/DeploymentTest";
 
 // Filter the data management category from global navigation
 const dataManagementCategory = globalNavCategories.find(category => category.label === "Data Management");
