@@ -166,11 +166,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       setLoading(true);
       
-      // Development mode - check for hard-coded admin credentials
+      // Development mode - check for hard-coded admin credentials first
       console.log(`Login attempt with: ${email}`);
       
-      // Check for development credentials
-      if (email === 'admin@example.com' && password === 'Pass1') {
+      // Check for development credentials before attempting Supabase auth
+      if (process.env.NODE_ENV === 'development' && email === 'admin@example.com' && password === 'Pass1') {
         console.log('Development mode: Using local admin authentication');
         
         // Create admin user with correct type for role
@@ -178,22 +178,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           id: '1',
           username: 'admin',
           email: 'admin@example.com',
-          role: 'admin', // This matches the User interface type
+          role: 'admin',
           permissions: ['users.view', 'users.create', 'users.edit', 'users.delete', 'settings.access', 'modules.all']
         };
         
         setUser(adminUser);
-        localStorage.setItem('isAuthenticated', 'true');
-        localStorage.setItem('user', JSON.stringify(adminUser));
-        toast.success(`Welcome back, ${adminUser.username}!`);
-        
+        // Skip localStorage for development admin to prevent infinite loop
         console.log('Development login successful');
+        toast.success(`Welcome back, ${adminUser.username}!`);
         setLoading(false);
         return true;
       }
       
-      // Production mode - use Supabase auth
-      console.log('Attempting Supabase authentication...');
+      // If not development admin, proceed with Supabase auth
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
