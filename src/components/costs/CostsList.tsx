@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Card,
@@ -36,7 +36,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { format } from 'date-fns';
 import { PlusCircle, MoreHorizontal, Edit, History, Trash2, Search, Calendar, Filter } from "lucide-react";
-import { CostFilterOptions, SupplierCost, useDeleteSupplierCost, useSupplierCosts } from '@/hooks/use-supplier-costs';
+import { CostFilterOptions, useDeleteSupplierCost, useSupplierCosts } from '@/hooks/use-supplier-costs';
 import { Supplier } from '@/hooks/use-suppliers';
 
 type CostsListProps = {

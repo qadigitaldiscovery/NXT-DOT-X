@@ -1,6 +1,4 @@
 
-import React from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   PieChart,
   Pie,
@@ -9,6 +7,7 @@ import {
   Legend,
   ResponsiveContainer
 } from 'recharts';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
 type SupplierData = {
   name: string;
@@ -43,13 +42,13 @@ export const SupplierComparisonChart = ({ data, title, description, colors, clas
               outerRadius={80}
               fill="#8884d8"
               dataKey="value"
-              label={({name, percent}) => `${name} ${(percent * 100).toFixed(0)}%`}
+              label={({name, percent}: {name: string; percent: number}) => `${name} ${(percent * 100).toFixed(0)}%`}
             >
-              {data.map((entry, index) => (
+              {data.map((_entry, index) => (
                 <Cell key={`cell-${index}`} fill={colors[index % colors.length]} />
               ))}
             </Pie>
-            <Tooltip formatter={(value) => `${value}%`} />
+            <Tooltip formatter={(value: number) => `${value}%`} />
             <Legend />
           </PieChart>
         </ResponsiveContainer>

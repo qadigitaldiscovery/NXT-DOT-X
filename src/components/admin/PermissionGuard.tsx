@@ -3,7 +3,6 @@ import React from 'react';
 import { Navigate } from 'react-router-dom';
 import { useModuleAccess } from '@/hooks/useModuleAccess';
 import { useAuth } from '@/context/AuthContext';
-import { AlertTriangle } from 'lucide-react';
 
 interface PermissionGuardProps {
   requiredRole?: string;

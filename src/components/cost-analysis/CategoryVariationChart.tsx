@@ -1,6 +1,4 @@
 
-import React from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   BarChart,
   Bar,
@@ -11,6 +9,7 @@ import {
   Tooltip,
   ResponsiveContainer
 } from 'recharts';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
 type CategoryData = {
   category: string;
@@ -42,7 +41,7 @@ export const CategoryVariationChart = ({ data, title, description, className }: 
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="category" />
             <YAxis label={{ value: 'Variance %', angle: -90, position: 'insideLeft' }} />
-            <Tooltip formatter={(value) => `${value}%`} />
+            <Tooltip formatter={(value: number) => `${value}%`} />
             <Bar dataKey="variance" fill="#8884d8">
               {data.map((entry, index) => (
                 <Cell 
