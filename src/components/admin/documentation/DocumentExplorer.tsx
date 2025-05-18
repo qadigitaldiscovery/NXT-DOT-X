@@ -1,5 +1,6 @@
 
-import React, { useState } from 'react';
+// Removed unnecessary React import
+import { useState } from 'react';
 import { Folder, File, ChevronRight, ChevronDown, MoreHorizontal, Edit, Trash2, Copy } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { ScrollArea } from '@/components/ui/scroll-area';

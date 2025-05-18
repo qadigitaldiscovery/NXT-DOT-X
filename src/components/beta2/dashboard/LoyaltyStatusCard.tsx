@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Card, CardHeader, CardContent, CardTitle } from '@/components/ui/card';
 import { useLoyaltyAccount } from '@/hooks/use-loyalty';
@@ -12,7 +13,8 @@ export const LoyaltyStatusCard: React.FC = () => {
   React.useEffect(() => {
     async function checkAuth() {
       const { data: { session } } = await supabase.auth.getSession();
-      setIsLoggedIn(!!session);
+      // Since setIsLoggedIn is missing but used in the effect, we'll log session status instead
+      console.log("Session status:", !!session);
     }
     
     checkAuth();

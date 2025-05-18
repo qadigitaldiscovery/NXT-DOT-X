@@ -1,5 +1,6 @@
 
-import React, { useState } from 'react';
+// Removed unnecessary React import
+import { useState } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Table, FileDown, FileUp, RefreshCw } from "lucide-react";
