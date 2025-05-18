@@ -17,7 +17,6 @@ interface MainSidebarProps {
   navCategories?: NavCategory[];
   items?: any[];
   homeItem?: any;
-  customFooterContent?: React.ReactNode;
   className?: string;
   removeBottomToggle?: boolean;
   showToggleButton?: boolean;
@@ -33,7 +32,6 @@ export const MainSidebar: React.FC<MainSidebarProps> = ({
   navCategories = [],
   items = [],
   homeItem,
-  customFooterContent,
   className,
   removeBottomToggle = false,
   showToggleButton = true,

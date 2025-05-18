@@ -1,7 +1,7 @@
+
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { MenuIcon, UserCircle, Settings as SettingsIcon, Home, BellIcon } from 'lucide-react';
-import { useIsMobile } from '@/hooks/use-mobile';
 import { useNavigate } from 'react-router-dom';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { useAuth } from '@/context/AuthContext';
@@ -23,6 +23,7 @@ export const SharedNavbar = ({
   notificationArea,
   showSidebarToggle = true
 }: SharedNavbarProps) => {
+  const navigate = useNavigate();
   const {
     user,
     logout

@@ -1,108 +1,102 @@
-import React, { useState } from 'react';
-import { NavLink } from 'react-router-dom';
-import { NavItem } from './types';
-import { cn } from '../../../lib/utils';
-import { ChevronDown, ChevronRight } from 'lucide-react';
+import { useCallback } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { cn } from '@/lib/utils';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 
+// Define props for sidebar items
 interface SidebarItemProps {
-  item: NavItem;
-  isActive: boolean;
-  textColor: string;
-  textHoverColor: string;
-  activeBgColor: string;
-  activeTextColor: string;
-  hoverBgColor: string;
+  href?: string;
+  icon: React.ElementType;
+  label: string;
+  active?: boolean;
+  disabled?: boolean;
   onClick?: () => void;
+  showLabel?: boolean;
+  collapsible?: boolean;
+  tooltip?: boolean;
+  textColor?: string;
+  activeBgColor?: string;
+  activeTextColor?: string;
+  hoverBgColor?: string;
+  isCollapsed?: boolean;
 }
 
-export function SidebarItem({
-  item,
-  isActive,
-  textColor,
-  textHoverColor,
-  activeBgColor,
-  activeTextColor,
-  hoverBgColor,
-  onClick
-}: SidebarItemProps) {
-  const Icon = item.icon;
-  const hasChildren = !!(item.children && item.children.length > 0);
-  const [isExpanded, setIsExpanded] = useState(false);
-
-  // Route path, using href with path as fallback for backwards compatibility
-  const to = item.href || item.path || '#';
-
-  const handleClick = () => {
-    if (hasChildren) {
-      setIsExpanded(!isExpanded);
-    } else if (onClick) {
+export const SidebarItem = ({
+  href,
+  icon: Icon,
+  label,
+  active,
+  disabled,
+  onClick,
+  showLabel = true,
+  collapsible = true,
+  tooltip = true,
+  textColor = "text-gray-200",
+  activeBgColor = "bg-indigo-900",
+  activeTextColor = "text-white",
+  hoverBgColor = "hover:bg-indigo-800/60",
+  isCollapsed = false
+}: SidebarItemProps) => {
+  const navigate = useNavigate();
+  const location = useLocation();
+  
+  // Determine if the item is active based on current location
+  const isActive = active !== undefined 
+    ? active 
+    : href && location.pathname.startsWith(href);
+  
+  // Handle click - navigate or call custom onClick
+  const handleClick = useCallback(() => {
+    // Don't do anything if disabled
+    if (disabled) return;
+    
+    // Custom click handler takes precedence
+    if (onClick) {
       onClick();
+      return;
     }
-  };
+    
+    // Navigate if href is provided
+    if (href) {
+      navigate(href);
+    }
+  }, [disabled, onClick, href, navigate]);
 
-  // Content to render inside the item
+  // The item content
   const itemContent = (
-    <>
-      {Icon && <Icon className="mr-3 h-5 w-5 flex-shrink-0 text-gray-500" />}
-      <span className="flex-1 text-sm font-medium">{item.label}</span>
-      {hasChildren && (
-        <span className="ml-auto">
-          {isExpanded ? 
-            <ChevronDown className="h-4 w-4 text-gray-400" /> : 
-            <ChevronRight className="h-4 w-4 text-gray-400" />
-          }
-        </span>
+    <div
+      className={cn(
+        "flex items-center rounded-md px-3 py-2 cursor-pointer",
+        "transition-colors duration-200 ease-in-out",
+        "focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500",
+        disabled ? "opacity-50 cursor-not-allowed" : hoverBgColor,
+        isActive ? cn(activeBgColor, activeTextColor) : textColor,
+        isCollapsed && "justify-center"
       )}
-    </>
-  );
-
-  return (
-    <div className="mb-1">
-      {/* If has children or no valid path, use a div */}
-      {hasChildren || to === '#' ? (
-        <div
-          className={cn(
-            "flex items-center rounded-md px-3 py-2 cursor-pointer select-none",
-            isActive ? cn(activeBgColor, activeTextColor) : cn(textColor, textHoverColor, hoverBgColor),
-          )}
-          onClick={handleClick}
-        >
-          {itemContent}
-        </div>
-      ) : (
-        /* Otherwise use NavLink for navigation */
-        <NavLink
-          to={to}
-          className={({ isActive: routeActive }) => cn(
-            "flex items-center rounded-md px-3 py-2 cursor-pointer select-none",
-            (isActive || routeActive) ? cn(activeBgColor, activeTextColor) : cn(textColor, textHoverColor, hoverBgColor),
-          )}
-          onClick={(e) => {
-            if (onClick) onClick();
-          }}
-        >
-          {itemContent}
-        </NavLink>
-      )}
-
-      {/* Render children if expanded */}
-      {hasChildren && isExpanded && item.children && (
-        <div className="pl-8 mt-1 space-y-1 border-l border-gray-200">
-          {item.children.map((child) => (
-            <SidebarItem
-              key={child.label}
-              item={child}
-              isActive={false}
-              textColor={textColor}
-              textHoverColor={textHoverColor}
-              activeBgColor={activeBgColor}
-              activeTextColor={activeTextColor}
-              hoverBgColor={hoverBgColor}
-              onClick={() => onClick && onClick()}
-            />
-          ))}
-        </div>
+      onClick={handleClick}
+    >
+      {Icon && <Icon className={cn("h-5 w-5", !showLabel && !isCollapsed && "mr-0")} />}
+      
+      {showLabel && !isCollapsed && (
+        <span className={cn("ml-3 flex-1 truncate")}>{label}</span>
       )}
     </div>
   );
-}
+  
+  // If collapsed and tooltip is enabled, wrap in tooltip
+  if (isCollapsed && tooltip) {
+    return (
+      <Tooltip>
+        <TooltipTrigger asChild>
+          {itemContent}
+        </TooltipTrigger>
+        <TooltipContent side="right" className="bg-gray-800 text-white border-gray-700">
+          {label}
+        </TooltipContent>
+      </Tooltip>
+    );
+  }
+  
+  // Otherwise just return the content
+  return itemContent;
+};

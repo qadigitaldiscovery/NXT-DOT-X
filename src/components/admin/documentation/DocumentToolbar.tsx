@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { AddDocumentDialog } from './AddDocumentDialog';
 import { AddCategoryDialog } from './AddCategoryDialog';
 import { DocumentUpload } from './DocumentUpload';
-import { DocumentCategory, DocumentType } from './types'; // Remove DocumentItem import
+import { DocumentCategory, DocumentType } from './types';
 import {
   Popover,
   PopoverContent,
