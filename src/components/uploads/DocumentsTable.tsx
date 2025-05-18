@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import {
   Card,
@@ -6,7 +5,7 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
+} from "../../components/ui/card";
 import {
   Table,
   TableBody,
@@ -14,9 +13,9 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+} from "../../components/ui/table";
+import { Badge } from "../../components/ui/badge";
+import { Button } from "../../components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -24,15 +23,15 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+} from "../../components/ui/dropdown-menu";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { Input } from "@/components/ui/input";
+} from "../../components/ui/select";
+import { Input } from "../../components/ui/input";
 import { format } from 'date-fns';
 import { File, DownloadCloud, Edit, Trash2, MoreHorizontal, Search, FileText, Calendar, CheckCircle2, AlertTriangle } from "lucide-react";
 import { toast } from "sonner";

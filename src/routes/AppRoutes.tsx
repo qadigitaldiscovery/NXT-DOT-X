@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { PlatformLayout } from '@/components/layouts/PlatformLayout';
@@ -88,30 +87,30 @@ export const AppRoutes = () => {
       {/* Shared Document Route */}
       <Route path="/shared-document/:shareId" element={<SharedDocumentPage />} />
       
-      {/* Module Routes - Including them directly as JSX elements */}
-      <AdminRoutes />
-      <DataManagementRoutes />
-      <LoyaltyRoutes />
-      <TradingSystemRoutes />
-      <TechHubRoutes />
-      <DotXRoutes />
-      <SupplierManagementRoutes />
-      <CustomerManagementRoutes />
-      <BrandMarketingRoutes />
-      <SocialMediaRoutes />
-      <ProjectManagementRoutes />
-      <RAGDashboardRoutes />
-      <VendorRoutes />
-      <ContractsRoutes />
-      <CategoriesRoutes />
-      <EntitiesRoutes />
-      <ScorecardsRoutes />
-      <WorkflowsRoutes />
-      <AIExtractRoutes />
-      <FilesRoutes />
-      <EventsRoutes />
-      <RiskRegisterRoutes />
-      <RequestsRoutes />
+      {/* Module Routes - Render them directly to include their Route elements */}
+      {AdminRoutes()}
+      {DataManagementRoutes()}
+      {LoyaltyRoutes()}
+      {TradingSystemRoutes()}
+      {TechHubRoutes()}
+      {DotXRoutes()}
+      {SupplierManagementRoutes()}
+      {CustomerManagementRoutes()}
+      {BrandMarketingRoutes()}
+      {SocialMediaRoutes()}
+      {ProjectManagementRoutes()}
+      {RAGDashboardRoutes()}
+      {VendorRoutes()}
+      {ContractsRoutes()}
+      {CategoriesRoutes()}
+      {EntitiesRoutes()}
+      {ScorecardsRoutes()}
+      {WorkflowsRoutes()}
+      {AIExtractRoutes()}
+      {FilesRoutes()}
+      {EventsRoutes()}
+      {RiskRegisterRoutes()}
+      {RequestsRoutes()}
       
       {/* Legacy route redirects */}
       <Route path="/beta1/*" element={<Navigate to="/data-management" replace />} />
