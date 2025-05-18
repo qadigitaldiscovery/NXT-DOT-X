@@ -8,32 +8,7 @@ export type Toast = ToastType;
 
 export const useToast = () => {
   return {
-    toast: {
-      // Helper methods that match the expected patterns
-      default: (props: {
-        title?: React.ReactNode;
-        description?: React.ReactNode;
-        variant?: "default" | "destructive";
-        action?: React.ReactNode;
-      }) => sonnerToast(props.title as string, { description: props.description }),
-      
-      error: (props: {
-        title?: React.ReactNode;
-        description?: React.ReactNode;
-        variant?: "default" | "destructive";
-        action?: React.ReactNode;
-      }) => sonnerToast.error(props.title as string, { description: props.description }),
-      
-      success: (props: {
-        title?: React.ReactNode;
-        description?: React.ReactNode;
-        variant?: "default" | "destructive";
-        action?: React.ReactNode;
-      }) => sonnerToast.success(props.title as string, { description: props.description }),
-      
-      // Allow direct access to other sonnerToast methods
-      ...sonnerToast
-    }
+    toast: sonnerToast
   };
 };
 

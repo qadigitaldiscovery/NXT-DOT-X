@@ -1,10 +1,9 @@
 
-import { useToast } from '@/hooks/use-toast';
+import { toast } from '@/hooks/use-toast';
 import { useState } from 'react';
 
 export const useOpenAI = () => {
   const [isLoading, setIsLoading] = useState(false);
-  const { toast } = useToast();
 
   const sendMessage = async (
     message: string,
@@ -49,10 +48,7 @@ export const useOpenAI = () => {
       
       return response;
     } catch (error) {
-      toast.error({
-        title: "AI Error",
-        description: error instanceof Error ? error.message : "Unknown error occurred"
-      });
+      toast.error(`AI Error: ${error instanceof Error ? error.message : "Unknown error occurred"}`);
       throw error;
     } finally {
       setIsLoading(false);

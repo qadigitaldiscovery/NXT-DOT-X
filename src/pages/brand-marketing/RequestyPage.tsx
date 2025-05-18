@@ -1,8 +1,9 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { useToast } from '@/hooks/use-toast';
+import { toast } from '@/hooks/use-toast';
 import { Loader2, MessageSquare, BrainCircuit } from 'lucide-react';
 import { useOpenAI } from '@/hooks/api-clients/openai/use-openai-client';
 
@@ -11,7 +12,6 @@ const RequestyPage = () => {
   const [response, setResponse] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
   const { sendMessage } = useOpenAI();
-  const { toast } = useToast();
 
   const brandMarketingSystemPrompt = `
     You are BrandGPT, an expert brand marketing assistant specialized in:
@@ -27,10 +27,7 @@ const RequestyPage = () => {
 
   const handleQuerySubmit = async () => {
     if (!query.trim()) {
-      toast.error({
-        title: "Empty query",
-        description: "Please enter a question about brand marketing."
-      });
+      toast.error("Empty query: Please enter a question about brand marketing.");
       return;
     }
 
@@ -46,10 +43,7 @@ const RequestyPage = () => {
       setResponse(result);
     } catch (error) {
       console.error('Error querying AI:', error);
-      toast.error({
-        title: "Error",
-        description: "Failed to get a response. Please try again."
-      });
+      toast.error("Error: Failed to get a response. Please try again.");
     } finally {
       setIsProcessing(false);
     }

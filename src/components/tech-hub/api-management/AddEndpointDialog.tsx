@@ -11,7 +11,16 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 
-import { ApiEndpoint, EndpointFormValues } from "./types";
+import { ApiEndpoint } from "./types";
+
+// Define the EndpointFormValues type to match the schema
+export type EndpointFormValues = {
+  name: string;
+  url: string;
+  apiKey?: string;
+  method: "GET" | "POST" | "PUT" | "DELETE";
+  status: "active" | "inactive";
+};
 
 // Create a schema for adding new endpoints
 const endpointSchema = z.object({
