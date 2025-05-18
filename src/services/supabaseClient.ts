@@ -1,4 +1,6 @@
+
 // supabaseClient.ts
 import { createClient } from '@supabase/supabase-js';
 
-export const supabase = createClient(import.meta.env.VITE_SUPABASE_URL!, import.meta.env.VITE_SUPABASE_ANON_KEY!);
+// Use import.meta.env instead of process.env for Vite applications
+export const supabase = createClient(import.meta.env.VITE_SUPABASE_URL || '', import.meta.env.VITE_SUPABASE_ANON_KEY || '');
