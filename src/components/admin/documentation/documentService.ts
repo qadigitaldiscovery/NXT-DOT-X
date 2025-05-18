@@ -1,4 +1,3 @@
-
 import { DocumentCategory, DocumentItem, DocumentType } from './types';
 import { documentCategories as initialDocumentCategories } from './mockData';
 import { supabase } from "@/integrations/supabase/client";
@@ -271,16 +270,14 @@ class DocumentService {
       const shareId = this.generateShareId();
       
       // Update the document with the share ID and make it public
-      const { data, error } = await supabase
+      const { error } = await supabase
         .from('documents')
         .update({
           share_id: shareId,
           is_public: true,
           updated_at: new Date().toISOString()
         })
-        .eq('id', documentId)
-        .select()
-        .single();
+        .eq('id', documentId);
       
       if (error) {
         console.error('Error creating shareable link:', error);

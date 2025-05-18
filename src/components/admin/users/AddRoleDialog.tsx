@@ -139,12 +139,12 @@ const AddRoleDialog: React.FC<AddRoleDialogProps> = ({ open, onOpenChange, onAdd
                               <FormControl>
                                 <Checkbox
                                   checked={field.value?.includes(permission.id)}
-                                  onCheckedChange={(checked) => {
+                                  onCheckedChange={(checked: boolean) => {
                                     const currentPermissions = field.value || [];
                                     const newPermissions = checked
                                       ? [...currentPermissions, permission.id]
                                       : currentPermissions.filter(
-                                          (p) => p !== permission.id
+                                          (p: string) => p !== permission.id
                                         );
                                     field.onChange(newPermissions);
                                   }}

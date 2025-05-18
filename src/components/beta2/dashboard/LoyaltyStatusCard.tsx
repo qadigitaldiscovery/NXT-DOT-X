@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Card, CardHeader, CardContent, CardTitle } from '@/components/ui/card';
 import { useLoyaltyAccount } from '@/hooks/use-loyalty';
@@ -9,7 +8,6 @@ import { UnauthenticatedState } from './states/UnauthenticatedState';
 
 export const LoyaltyStatusCard: React.FC = () => {
   const { account, loading } = useLoyaltyAccount();
-  const [isLoggedIn, setIsLoggedIn] = React.useState<boolean>(false);
   
   React.useEffect(() => {
     async function checkAuth() {

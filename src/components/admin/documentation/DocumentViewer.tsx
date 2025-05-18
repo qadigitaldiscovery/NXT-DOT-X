@@ -1,7 +1,7 @@
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import ReactMarkdown from 'react-markdown';
-import { Copy, Eye, Link, Share, Share2, X } from 'lucide-react';
+import { Copy, Share2, X } from 'lucide-react';
 import { DocumentItem } from './types';
 import { documentService } from './documentService';
 import { Button } from '@/components/ui/button';
