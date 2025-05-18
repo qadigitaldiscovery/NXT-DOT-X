@@ -32,7 +32,7 @@ const filterSchema = z.object({
   categories: z.array(z.string()).optional(),
   minCost: z.string().optional(),
   maxCost: z.string().optional(),
-  includeInactive: z.boolean().default(false),
+  includeInactive: z.boolean(),
   dateFrom: z.string().optional(),
   dateTo: z.string().optional()
 });

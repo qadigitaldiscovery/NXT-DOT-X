@@ -1,4 +1,3 @@
-
 import { useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 
@@ -113,7 +112,9 @@ export const useCostAnalysis = (options: CostAnalysisOptions = { timeRange: '6m'
   const { 
     data,
     isLoading,
-    error
+    error,
+    isError,
+    refetch
   } = useQuery({
     queryKey: ['cost-analysis', options],
     queryFn: () => getMockData(options),
@@ -122,6 +123,8 @@ export const useCostAnalysis = (options: CostAnalysisOptions = { timeRange: '6m'
   return {
     data: data || getMockData(options),
     isLoading,
-    error
+    error,
+    isError,
+    refetch
   };
 };

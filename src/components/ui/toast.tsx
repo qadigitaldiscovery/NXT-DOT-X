@@ -1,7 +1,6 @@
-
 "use client";
 
-import { toast, Toaster as SonnerToaster } from "sonner";
+import { toast as sonnerToast, Toaster as SonnerToaster } from "sonner";
 import React from "react";
 
 // Define a proper Toast type to match expected interface
@@ -14,8 +13,31 @@ export type Toast = {
   [key: string]: unknown;
 };
 
-// Export the toast function and Toaster component
-export { toast, SonnerToaster as Toaster };
+// Create a wrapper for sonner toast that's callable and compatible with existing code
+const toastFunction = (props: {
+  title?: React.ReactNode;
+  description?: React.ReactNode;
+  variant?: "default" | "destructive";
+  action?: React.ReactNode;
+}) => {
+  if (props.variant === "destructive") {
+    return sonnerToast.error(props.title as string, {
+      description: props.description as string,
+    });
+  }
+  return sonnerToast(props.title as string, {
+    description: props.description as string,
+  });
+};
+
+// Add all sonner methods to our function
+export const toast = Object.assign(toastFunction, {
+  ...sonnerToast,
+  custom: toastFunction
+});
+
+// Export the Toaster component
+export { SonnerToaster as Toaster };
 
 // Export the primitive toast UI components for shadcn compatibility
 export const ToastProvider = ({ children }: { children: React.ReactNode }) => <>{children}</>;
