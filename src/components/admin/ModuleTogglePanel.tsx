@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
@@ -96,7 +97,7 @@ const ModuleTogglePanel: React.FC<ModuleTogglePanelProps> = ({ userId }) => {
         item.id === id ? { ...item, is_enabled: !currentValue } : item
       ));
 
-      toast.default({
+      toast({
         title: "Access Updated",
         description: `Module access has been ${!currentValue ? 'enabled' : 'disabled'}`
       });
@@ -144,7 +145,7 @@ const ModuleTogglePanel: React.FC<ModuleTogglePanelProps> = ({ userId }) => {
         category: data[0].category || undefined
       }]);
       
-      toast.default({
+      toast({
         title: "Success",
         description: "Module access added successfully"
       });

@@ -1,5 +1,6 @@
+
 import React, { createContext, useState, useContext, useEffect } from 'react';
-import { toast } from 'sonner';
+import { toast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import type { Database } from '@/integrations/supabase/types';
 
@@ -246,7 +247,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setUser(null);
       localStorage.removeItem('isAuthenticated');
       localStorage.removeItem('user');
-      toast.info('You have been logged out');
+      toast('You have been logged out');
     } catch (error) {
       console.error('Logout error:', error);
       toast.error('Error logging out');

@@ -47,4 +47,13 @@ export interface SubScore {
   name: string;
   value: number;
   color: string;
+  paymentTimeliness?: number;
+  financialHealth?: number;
+  operationalStability?: number;
+}
+
+export interface VendorWithDetails extends Vendor {
+  credit_ratings?: any[];
+  vendor_reports?: VendorReport[];
+  vendor_performance?: any[];
 }
