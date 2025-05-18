@@ -1,10 +1,4 @@
 
-import React from 'react';
-import { AppRoutes } from './AppRoutes';
-
-const RoutesIndex = () => {
-  // Simply return the AppRoutes component - this ensures we only have one layer of routing
-  return <AppRoutes />;
-};
-
-export default RoutesIndex;
+// This file is now simplified to just re-export AppRoutes
+// to avoid duplicate route definitions
+export { AppRoutes } from './AppRoutes';

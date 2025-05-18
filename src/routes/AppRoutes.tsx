@@ -88,7 +88,7 @@ export const AppRoutes = () => {
       {/* Shared Document Route */}
       <Route path="/shared-document/:shareId" element={<SharedDocumentPage />} />
       
-      {/* Include Module Routes directly - Each module should export Route elements */}
+      {/* Include Module Routes - Each module should return an array of Route elements */}
       {AdminRoutes()}
       {DataManagementRoutes()}
       {LoyaltyRoutes()}
