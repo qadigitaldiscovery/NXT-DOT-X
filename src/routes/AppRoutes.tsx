@@ -88,30 +88,30 @@ export const AppRoutes = () => {
       {/* Shared Document Route */}
       <Route path="/shared-document/:shareId" element={<SharedDocumentPage />} />
       
-      {/* Module Routes - Properly including them as JSX elements */}
-      {AdminRoutes()}
-      {DataManagementRoutes()}
-      {LoyaltyRoutes()}
-      {TradingSystemRoutes()}
-      {TechHubRoutes()}
-      {DotXRoutes()}
-      {SupplierManagementRoutes()}
-      {CustomerManagementRoutes()}
-      {BrandMarketingRoutes()}
-      {SocialMediaRoutes()}
-      {ProjectManagementRoutes()}
-      {RAGDashboardRoutes()}
-      {VendorRoutes()}
-      {ContractsRoutes()}
-      {CategoriesRoutes()}
-      {EntitiesRoutes()}
-      {ScorecardsRoutes()}
-      {WorkflowsRoutes()}
-      {AIExtractRoutes()}
-      {FilesRoutes()}
-      {EventsRoutes()}
-      {RiskRegisterRoutes()}
-      {RequestsRoutes()}
+      {/* Module Routes - Including them directly as JSX elements */}
+      <AdminRoutes />
+      <DataManagementRoutes />
+      <LoyaltyRoutes />
+      <TradingSystemRoutes />
+      <TechHubRoutes />
+      <DotXRoutes />
+      <SupplierManagementRoutes />
+      <CustomerManagementRoutes />
+      <BrandMarketingRoutes />
+      <SocialMediaRoutes />
+      <ProjectManagementRoutes />
+      <RAGDashboardRoutes />
+      <VendorRoutes />
+      <ContractsRoutes />
+      <CategoriesRoutes />
+      <EntitiesRoutes />
+      <ScorecardsRoutes />
+      <WorkflowsRoutes />
+      <AIExtractRoutes />
+      <FilesRoutes />
+      <EventsRoutes />
+      <RiskRegisterRoutes />
+      <RequestsRoutes />
       
       {/* Legacy route redirects */}
       <Route path="/beta1/*" element={<Navigate to="/data-management" replace />} />
