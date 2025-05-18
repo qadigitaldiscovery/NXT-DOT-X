@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { PlatformLayout } from '@/components/layouts/PlatformLayout';
@@ -89,29 +90,29 @@ export const AppRoutes = () => {
       <Route path="/shared-document/:shareId" element={<SharedDocumentPage />} />
       
       {/* Module Routes */}
-      <Route path="/admin/*" element={<AdminRoutes />} />
-      <Route path="/data-management/*" element={<DataManagementRoutes />} />
-      <Route path="/loyalty/*" element={<LoyaltyRoutes />} />
-      <Route path="/trading/*" element={<TradingSystemRoutes />} />
-      <Route path="/tech-hub/*" element={<TechHubRoutes />} />
-      <Route path="/dot-x/*" element={<DotXRoutes />} />
-      <Route path="/supplier-management/*" element={<SupplierManagementRoutes />} />
-      <Route path="/customer-management/*" element={<CustomerManagementRoutes />} />
-      <Route path="/brand-marketing/*" element={<BrandMarketingRoutes />} />
-      <Route path="/social-media/*" element={<SocialMediaRoutes />} />
-      <Route path="/project-management/*" element={<ProjectManagementRoutes />} />
-      <Route path="/rag-dashboard/*" element={<RAGDashboardRoutes />} />
-      <Route path="/vendor/*" element={<VendorRoutes />} />
-      <Route path="/contracts/*" element={<ContractsRoutes />} />
-      <Route path="/categories/*" element={<CategoriesRoutes />} />
-      <Route path="/entities/*" element={<EntitiesRoutes />} />
-      <Route path="/scorecards/*" element={<ScorecardsRoutes />} />
-      <Route path="/workflows/*" element={<WorkflowsRoutes />} />
-      <Route path="/ai-extract/*" element={<AIExtractRoutes />} />
-      <Route path="/files/*" element={<FilesRoutes />} />
-      <Route path="/events/*" element={<EventsRoutes />} />
-      <Route path="/risk-register/*" element={<RiskRegisterRoutes />} />
-      <Route path="/requests/*" element={<RequestsRoutes />} />
+      {AdminRoutes()}
+      {DataManagementRoutes()}
+      {LoyaltyRoutes()}
+      {TradingSystemRoutes()}
+      {TechHubRoutes()}
+      {DotXRoutes()}
+      {SupplierManagementRoutes()}
+      {CustomerManagementRoutes()}
+      {BrandMarketingRoutes()}
+      {SocialMediaRoutes()}
+      {ProjectManagementRoutes()}
+      {RAGDashboardRoutes()}
+      {VendorRoutes()}
+      {ContractsRoutes()}
+      {CategoriesRoutes()}
+      {EntitiesRoutes()}
+      {ScorecardsRoutes()}
+      {WorkflowsRoutes()}
+      {AIExtractRoutes()}
+      {FilesRoutes()}
+      {EventsRoutes()}
+      {RiskRegisterRoutes()}
+      {RequestsRoutes()}
       
       {/* Legacy route redirects */}
       <Route path="/beta1/*" element={<Navigate to="/data-management" replace />} />
