@@ -11,7 +11,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
-import { toast } from "sonner";
+import { toast } from "../../../components/ui/toast";
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { 
   Dialog,
@@ -64,9 +64,15 @@ export default function CostAnalysis() {
   const handleTimeRangeChange = (value: CostAnalysisOptions['timeRange']) => {
     try {
       setTimeRange(value);
-      toast.success(`Updated time range to ${getTimeRangeLabel(value)}`);
+      toast.default({
+        title: "Success",
+        description: `Updated time range to ${getTimeRangeLabel(value)}`
+      });
     } catch (err) {
-      toast.error('Failed to update time range');
+      toast.error({
+        title: "Error",
+        description: 'Failed to update time range'
+      });
       console.error('Error updating time range:', err);
     }
   };
@@ -74,10 +80,16 @@ export default function CostAnalysis() {
   // Handle export action
   const handleExport = () => {
     try {
-      toast.success('Exporting cost analysis data...');
+      toast.default({
+        title: "Success",
+        description: 'Exporting cost analysis data...'
+      });
       // In a real app, trigger actual export functionality
     } catch (err) {
-      toast.error('Failed to export data');
+      toast.error({
+        title: "Error",
+        description: 'Failed to export data'
+      });
       console.error('Error exporting data:', err);
     }
   };
@@ -87,7 +99,10 @@ export default function CostAnalysis() {
     try {
       setShowFilterDialog(true);
     } catch (err) {
-      toast.error('Failed to open filter dialog');
+      toast.error({
+        title: "Error",
+        description: 'Failed to open filter dialog'
+      });
       console.error('Error opening filter:', err);
     }
   };
@@ -96,12 +111,18 @@ export default function CostAnalysis() {
   const onSubmitFilter = (data: FilterFormData) => {
     try {
       console.log('Applied filters:', data);
-      toast.success('Filters applied successfully');
+      toast.default({
+        title: "Success",
+        description: 'Filters applied successfully'
+      });
       setShowFilterDialog(false);
       
       // In a real app, we'd apply these filters to the query
     } catch (err) {
-      toast.error('Failed to apply filters');
+      toast.error({
+        title: "Error",
+        description: 'Failed to apply filters'
+      });
       console.error('Error applying filters:', err);
     }
   };
@@ -112,10 +133,16 @@ export default function CostAnalysis() {
       setIsRefreshing(true);
       setError(null);
       await refetch();
-      toast.success('Data refreshed successfully');
+      toast.default({
+        title: "Success",
+        description: 'Data refreshed successfully'
+      });
     } catch (err) {
       setError('Failed to refresh data. Please try again.');
-      toast.error('Failed to refresh data');
+      toast.error({
+        title: "Error",
+        description: 'Failed to refresh data'
+      });
       console.error('Error refreshing data:', err);
     } finally {
       setIsRefreshing(false);

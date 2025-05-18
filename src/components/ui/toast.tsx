@@ -13,28 +13,30 @@ export type Toast = {
   [key: string]: unknown;
 };
 
-// Create a wrapper for sonner toast that's callable and compatible with existing code
-const toastFunction = (props: {
-  title?: React.ReactNode;
-  description?: React.ReactNode;
-  variant?: "default" | "destructive";
-  action?: React.ReactNode;
-}) => {
-  if (props.variant === "destructive") {
+// Create a toast function that matches the expected interface
+export const toast = {
+  ...sonnerToast,
+  default: (props: {
+    title?: React.ReactNode;
+    description?: React.ReactNode;
+    variant?: "default" | "destructive";
+    action?: React.ReactNode;
+  }) => {
+    return sonnerToast(props.title as string, {
+      description: props.description as string,
+    });
+  },
+  error: (props: {
+    title?: React.ReactNode;
+    description?: React.ReactNode;
+    variant?: "default" | "destructive";
+    action?: React.ReactNode;
+  }) => {
     return sonnerToast.error(props.title as string, {
       description: props.description as string,
     });
   }
-  return sonnerToast(props.title as string, {
-    description: props.description as string,
-  });
 };
-
-// Add all sonner methods to our function
-export const toast = Object.assign(toastFunction, {
-  ...sonnerToast,
-  custom: toastFunction
-});
 
 // Export the Toaster component
 export { SonnerToaster as Toaster };

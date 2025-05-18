@@ -37,10 +37,9 @@ const ModuleTogglePanel: React.FC<ModuleTogglePanelProps> = ({ userId }) => {
       })) || []);
     } catch (err) {
       console.error('Error fetching module access:', err);
-      toast({
+      toast.error({
         title: "Error",
-        description: "Failed to load module access settings",
-        variant: "destructive"
+        description: "Failed to load module access settings"
       });
     } finally {
       setLoading(false);
@@ -97,16 +96,15 @@ const ModuleTogglePanel: React.FC<ModuleTogglePanelProps> = ({ userId }) => {
         item.id === id ? { ...item, is_enabled: !currentValue } : item
       ));
 
-      toast({
+      toast.default({
         title: "Access Updated",
-        description: `Module access has been ${!currentValue ? 'enabled' : 'disabled'}`,
+        description: `Module access has been ${!currentValue ? 'enabled' : 'disabled'}`
       });
     } catch (err) {
       console.error('Error toggling access:', err);
-      toast({
+      toast.error({
         title: "Error",
-        description: "Failed to update module access",
-        variant: "destructive"
+        description: "Failed to update module access"
       });
     }
   };
@@ -119,10 +117,9 @@ const ModuleTogglePanel: React.FC<ModuleTogglePanelProps> = ({ userId }) => {
     const category = formData.get('category') as string;
 
     if (!moduleSlug) {
-      toast({
+      toast.error({
         title: "Validation Error",
-        description: "Module slug is required",
-        variant: "destructive"
+        description: "Module slug is required"
       });
       return;
     }
@@ -147,9 +144,9 @@ const ModuleTogglePanel: React.FC<ModuleTogglePanelProps> = ({ userId }) => {
         category: data[0].category || undefined
       }]);
       
-      toast({
+      toast.default({
         title: "Success",
-        description: "Module access added successfully",
+        description: "Module access added successfully"
       });
       
       // Reset the form
@@ -157,10 +154,9 @@ const ModuleTogglePanel: React.FC<ModuleTogglePanelProps> = ({ userId }) => {
       
     } catch (err) {
       console.error('Error adding module access:', err);
-      toast({
+      toast.error({
         title: "Error",
-        description: "Failed to add module access",
-        variant: "destructive"
+        description: "Failed to add module access"
       });
     }
   };

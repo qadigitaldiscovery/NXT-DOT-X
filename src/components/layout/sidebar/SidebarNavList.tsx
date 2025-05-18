@@ -1,7 +1,7 @@
 import React from 'react';
 import { NavCategory, NavItem } from './types';
 import { SidebarItem } from './SidebarItem';
-import { cn } from '@/lib/utils';
+import { cn } from '../../../lib/utils';
 
 interface SidebarNavListProps {
   categories?: NavCategory[];
@@ -27,7 +27,7 @@ export function SidebarNavList({
   activeItemKey,
   onItemClick,
   isCollapsed,
-  textColor = "text-gray-600",
+  textColor = "text-gray-700",
   textHoverColor = "hover:text-gray-900",
   activeBgColor = "bg-gray-100",
   activeTextColor = "text-gray-900",
@@ -80,30 +80,23 @@ export function SidebarNavList({
     items: filterItemsByRole(category.items, userRole)
   })).filter(category => category.items.length > 0); // Remove empty categories
   
-  // Improved debugging logs
-  console.log('SidebarNavList - User role:', userRole);
-  console.log('SidebarNavList - All categories before filtering:', allCategories);
-  console.log('SidebarNavList - Categories after role filtering:', processedCategories);
-  console.log('SidebarNavList - Expanded categories:', expandedCategories);
-  
   if (processedCategories.length === 0) {
     return null;
   }
   
   return (
-    <div className={cn("space-y-4", isCollapsed && "items-center")}>
+    <div className={cn("space-y-6", isCollapsed && "items-center")}>
       {processedCategories.map((category) => {
         const isExpanded = expandedCategories.includes(category.name || '') || 
                           (expandedItems && category.label && expandedItems.includes(category.label));
         
         return (
-          <div key={category.name || category.label} className="space-y-1">
+          <div key={category.name || category.label} className="space-y-2">
             {!isCollapsed && (
               <h3 
                 className={cn(
-                  "flex items-center justify-between text-sm font-medium px-3 py-1.5 rounded-md cursor-pointer",
-                  textColor, 
-                  textHoverColor
+                  "flex items-center justify-between text-sm font-semibold px-3 py-2 text-gray-900 uppercase tracking-wider",
+                  "border-b border-gray-200"
                 )}
                 onClick={() => {
                   if (onCategoryToggle && category.name) {
@@ -114,16 +107,11 @@ export function SidebarNavList({
                 }}
               >
                 {category.label || category.name}
-                {category.items && category.items.length > 0 && (
-                  <span className={cn("transform transition-transform", isExpanded ? "rotate-180" : "")}>
-                    ▼
-                  </span>
-                )}
               </h3>
             )}
             
             {(!isCollapsed || !onCategoryToggle) && (isExpanded || !onCategoryToggle) && category.items && (
-              <div className="pt-1 pl-1">
+              <div className="pl-3 space-y-1">
                 {category.items.map((item) => {
                   const isActive = isItemActive(item);
                   

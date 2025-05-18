@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { NavItem } from './types';
-import { cn } from '@/lib/utils';
+import { cn } from '../../../lib/utils';
 import { ChevronDown, ChevronRight } from 'lucide-react';
 
 interface SidebarItemProps {
@@ -44,13 +44,13 @@ export function SidebarItem({
   // Content to render inside the item
   const itemContent = (
     <>
-      {Icon && <Icon className="mr-2 h-4 w-4" />}
-      <span>{item.label}</span>
+      {Icon && <Icon className="mr-3 h-5 w-5 flex-shrink-0 text-gray-500" />}
+      <span className="flex-1 text-sm font-medium">{item.label}</span>
       {hasChildren && (
         <span className="ml-auto">
           {isExpanded ? 
-            <ChevronDown className="h-4 w-4" /> : 
-            <ChevronRight className="h-4 w-4" />
+            <ChevronDown className="h-4 w-4 text-gray-400" /> : 
+            <ChevronRight className="h-4 w-4 text-gray-400" />
           }
         </span>
       )}
@@ -63,7 +63,7 @@ export function SidebarItem({
       {hasChildren || to === '#' ? (
         <div
           className={cn(
-            "flex items-center rounded-md px-3 py-2 text-sm cursor-pointer",
+            "flex items-center rounded-md px-3 py-2 cursor-pointer select-none",
             isActive ? cn(activeBgColor, activeTextColor) : cn(textColor, textHoverColor, hoverBgColor),
           )}
           onClick={handleClick}
@@ -75,7 +75,7 @@ export function SidebarItem({
         <NavLink
           to={to}
           className={({ isActive: routeActive }) => cn(
-            "flex items-center rounded-md px-3 py-2 text-sm cursor-pointer",
+            "flex items-center rounded-md px-3 py-2 cursor-pointer select-none",
             (isActive || routeActive) ? cn(activeBgColor, activeTextColor) : cn(textColor, textHoverColor, hoverBgColor),
           )}
           onClick={(e) => {
@@ -88,7 +88,7 @@ export function SidebarItem({
 
       {/* Render children if expanded */}
       {hasChildren && isExpanded && item.children && (
-        <div className="pl-6 mt-1 space-y-1">
+        <div className="pl-8 mt-1 space-y-1 border-l border-gray-200">
           {item.children.map((child) => (
             <SidebarItem
               key={child.label}

@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { UseQueryResult, useQuery } from '@tanstack/react-query';
 
 // Types for cost analysis data
 export type CostTrendData = {
@@ -108,14 +108,20 @@ const getMockData = (options: CostAnalysisOptions): CostAnalysisData => {
 /**
  * Hook to fetch and manage cost analysis data
  */
-export const useCostAnalysis = (options: CostAnalysisOptions = { timeRange: '6m' }) => {
+export const useCostAnalysis = (options: CostAnalysisOptions = { timeRange: '6m' }): {
+  data: CostAnalysisData;
+  isLoading: boolean;
+  error: unknown;
+  isError: boolean;
+  refetch: () => Promise<UseQueryResult<CostAnalysisData>>;
+} => {
   const { 
     data,
     isLoading,
     error,
     isError,
     refetch
-  } = useQuery({
+  } = useQuery<CostAnalysisData>({
     queryKey: ['cost-analysis', options],
     queryFn: () => getMockData(options),
   });
