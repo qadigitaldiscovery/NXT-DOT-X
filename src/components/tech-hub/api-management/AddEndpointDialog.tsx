@@ -1,27 +1,32 @@
 
 import React from 'react';
-import { z } from "zod";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { toast } from "@/hooks/use-toast";
-
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-
-// Define the EndpointFormValues type to match the schema
-export type EndpointFormValues = z.infer<typeof endpointSchema>;
-
-// Create a schema for adding new endpoints
-const endpointSchema = z.object({
-  name: z.string().min(1, "Name is required"),
-  url: z.string().url("Please enter a valid URL"),
-  apiKey: z.string().optional(),
-  method: z.enum(["GET", "POST", "PUT", "DELETE"]),
-  status: z.enum(["active", "inactive"])
-});
+import { 
+  Dialog, 
+  DialogContent, 
+  DialogDescription, 
+  DialogHeader, 
+  DialogTitle,
+} from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
+import { Label } from '@/components/ui/label';
+import { Input } from '@/components/ui/input';
+import { 
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage
+} from '@/components/ui/form';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { useForm } from 'react-hook-form';
+import { EndpointFormValues } from './types';
 
 interface AddEndpointDialogProps {
   open: boolean;
@@ -35,13 +40,12 @@ const AddEndpointDialog: React.FC<AddEndpointDialogProps> = ({
   onSubmit 
 }) => {
   const form = useForm<EndpointFormValues>({
-    resolver: zodResolver(endpointSchema),
     defaultValues: {
-      name: "",
-      url: "",
-      apiKey: "",
-      method: "GET",
-      status: "active"
+      name: '',
+      url: '',
+      apiKey: '',
+      method: 'GET',
+      status: 'active'
     }
   });
 
@@ -52,24 +56,24 @@ const AddEndpointDialog: React.FC<AddEndpointDialogProps> = ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-[525px]">
         <DialogHeader>
           <DialogTitle>Add API Endpoint</DialogTitle>
           <DialogDescription>
-            Add a new API endpoint to your Tech Hub. Fill in the details below.
+            Add a new API endpoint to your configuration.
           </DialogDescription>
         </DialogHeader>
         
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4 pt-4">
+          <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
             <FormField
               control={form.control}
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Name</FormLabel>
+                  <FormLabel>Name *</FormLabel>
                   <FormControl>
-                    <Input placeholder="Analytics API" {...field} />
+                    <Input placeholder="My API Endpoint" {...field} required />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -81,9 +85,9 @@ const AddEndpointDialog: React.FC<AddEndpointDialogProps> = ({
               name="url"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>URL</FormLabel>
+                  <FormLabel>URL *</FormLabel>
                   <FormControl>
-                    <Input placeholder="https://api.example.com/v1/data" {...field} />
+                    <Input placeholder="https://api.example.com/v1" {...field} required />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -95,9 +99,9 @@ const AddEndpointDialog: React.FC<AddEndpointDialogProps> = ({
               name="apiKey"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>API Key</FormLabel>
+                  <FormLabel>API Key *</FormLabel>
                   <FormControl>
-                    <Input placeholder="sk_live_..." type="password" {...field} />
+                    <Input placeholder="sk_..." {...field} required />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -111,10 +115,7 @@ const AddEndpointDialog: React.FC<AddEndpointDialogProps> = ({
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Method</FormLabel>
-                    <Select 
-                      onValueChange={field.onChange} 
-                      defaultValue={field.value}
-                    >
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
                       <FormControl>
                         <SelectTrigger>
                           <SelectValue placeholder="Select method" />
@@ -138,10 +139,7 @@ const AddEndpointDialog: React.FC<AddEndpointDialogProps> = ({
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Status</FormLabel>
-                    <Select 
-                      onValueChange={field.onChange} 
-                      defaultValue={field.value}
-                    >
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
                       <FormControl>
                         <SelectTrigger>
                           <SelectValue placeholder="Select status" />
@@ -158,16 +156,12 @@ const AddEndpointDialog: React.FC<AddEndpointDialogProps> = ({
               />
             </div>
             
-            <DialogFooter className="pt-4">
-              <Button 
-                type="button" 
-                variant="outline" 
-                onClick={() => onOpenChange(false)}
-              >
+            <div className="flex justify-end space-x-2 mt-6">
+              <Button variant="outline" type="button" onClick={() => onOpenChange(false)}>
                 Cancel
               </Button>
               <Button type="submit">Add Endpoint</Button>
-            </DialogFooter>
+            </div>
           </form>
         </Form>
       </DialogContent>

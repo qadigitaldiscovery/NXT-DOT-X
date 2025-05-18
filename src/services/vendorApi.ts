@@ -65,9 +65,9 @@ export async function createVendor(
 ) {
   // Calculate local score from sub-scores
   const localScore = calculateLocalScore(
-    subScores.paymentTimeliness,
-    subScores.financialHealth,
-    subScores.operationalStability
+    subScores.paymentTimeliness || 0,
+    subScores.financialHealth || 0,
+    subScores.operationalStability || 0
   );
   
   // Generate vendor ID if not provided

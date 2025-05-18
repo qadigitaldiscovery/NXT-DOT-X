@@ -1,18 +1,20 @@
 
+import { LucideIcon } from 'lucide-react';
+
 export interface ApiEndpoint {
   id: string;
   name: string;
   url: string;
-  apiKey?: string;
+  apiKey: string;
   method: 'GET' | 'POST' | 'PUT' | 'DELETE';
-  status: 'active' | 'inactive' | 'error';
+  status: 'active' | 'inactive';
   lastUsed: string;
 }
 
-export type EndpointFormValues = {
+export interface EndpointFormValues {
   name: string;
   url: string;
-  apiKey?: string;
-  method: "GET" | "POST" | "PUT" | "DELETE";
-  status: "active" | "inactive";
-};
+  apiKey: string;
+  method: 'GET' | 'POST' | 'PUT' | 'DELETE';
+  status: 'active' | 'inactive';
+}

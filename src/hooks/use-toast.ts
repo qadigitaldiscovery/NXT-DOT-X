@@ -1,4 +1,3 @@
-
 import { toast as sonnerToast } from "sonner";
 import { Toast } from "@/components/ui/toast";
 import { ReactNode } from "react";
@@ -22,6 +21,7 @@ export const toast = Object.assign(
     }
   },
   {
+    // Standard variants
     error: (content: string | ToastProps) => {
       if (typeof content === "string") {
         return sonnerToast.error(content);
@@ -58,6 +58,7 @@ export const toast = Object.assign(
         });
       }
     },
+    // Other functions from sonner
     promise: sonnerToast.promise,
     dismiss: sonnerToast.dismiss,
     custom: sonnerToast.custom,
