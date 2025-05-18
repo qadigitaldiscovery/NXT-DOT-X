@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -28,7 +27,7 @@ import {
 } from '@/components/ui/select';
 import { UserPlus } from 'lucide-react';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
+import { useForm, ControllerRenderProps } from 'react-hook-form';
 import * as z from 'zod';
 import { Role } from '@/context/UserManagementContext';
 
@@ -109,7 +108,7 @@ const AddUserDialog: React.FC<AddUserDialogProps> = ({ open, onOpenChange, onAdd
             <FormField
               control={userForm.control}
               name="username"
-              render={({ field }) => (
+              render={({ field }: { field: ControllerRenderProps<z.infer<typeof userFormSchema>, "username"> }) => (
                 <FormItem>
                   <FormLabel>Username</FormLabel>
                   <FormControl>
@@ -122,7 +121,7 @@ const AddUserDialog: React.FC<AddUserDialogProps> = ({ open, onOpenChange, onAdd
             <FormField
               control={userForm.control}
               name="email"
-              render={({ field }) => (
+              render={({ field }: { field: ControllerRenderProps<z.infer<typeof userFormSchema>, "email"> }) => (
                 <FormItem>
                   <FormLabel>Email</FormLabel>
                   <FormControl>
@@ -135,7 +134,7 @@ const AddUserDialog: React.FC<AddUserDialogProps> = ({ open, onOpenChange, onAdd
             <FormField
               control={userForm.control}
               name="password"
-              render={({ field }) => (
+              render={({ field }: { field: ControllerRenderProps<z.infer<typeof userFormSchema>, "password"> }) => (
                 <FormItem>
                   <FormLabel>Password</FormLabel>
                   <FormControl>
@@ -148,7 +147,7 @@ const AddUserDialog: React.FC<AddUserDialogProps> = ({ open, onOpenChange, onAdd
             <FormField
               control={userForm.control}
               name="role"
-              render={({ field }) => (
+              render={({ field }: { field: ControllerRenderProps<z.infer<typeof userFormSchema>, "role"> }) => (
                 <FormItem>
                   <FormLabel>Role</FormLabel>
                   <Select onValueChange={field.onChange} defaultValue={field.value}>

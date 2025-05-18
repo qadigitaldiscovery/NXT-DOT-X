@@ -1,8 +1,7 @@
-
 import React from 'react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { Button } from '@/components/ui/button';
-import { Menu, Home, BarChart3, Settings, Gift, Users, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Menu, Home, BarChart3, Settings, Gift, Users, ChevronLeft } from 'lucide-react';
 import { NavLink } from 'react-router-dom';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 

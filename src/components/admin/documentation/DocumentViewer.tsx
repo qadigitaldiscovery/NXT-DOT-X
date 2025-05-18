@@ -1,7 +1,5 @@
-
-import React, { useState } from 'react';
-import ReactMarkdown from 'react-markdown';
-import { Copy, Eye, Link, Share, Share2, X } from 'lucide-react';
+import { useState } from 'react';
+import { Copy, X, Share2 } from 'lucide-react';
 import { DocumentItem } from './types';
 import { documentService } from './documentService';
 import { Button } from '@/components/ui/button';
@@ -12,6 +10,10 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip';
 import { toast } from 'sonner';
+
+// Note: Ensure 'react-markdown' is installed with `npm install react-markdown`
+// and the types are installed with `npm install -D @types/react-markdown` if using TypeScript
+import ReactMarkdown from 'react-markdown';
 
 interface DocumentViewerProps {
   document: DocumentItem;
@@ -120,7 +122,7 @@ export const DocumentViewer = ({ document }: DocumentViewerProps) => {
         );
     }
   };
-
+  
   return (
     <div className="h-full flex flex-col">
       <div className="border-b border-gray-200 dark:border-gray-700 p-4 flex justify-between items-center">
@@ -138,6 +140,7 @@ export const DocumentViewer = ({ document }: DocumentViewerProps) => {
                 type="text"
                 value={shareUrl}
                 readOnly
+                placeholder="Shareable link"
                 className="bg-transparent text-sm w-56 border-none focus:ring-0"
               />
               <TooltipProvider>

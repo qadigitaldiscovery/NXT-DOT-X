@@ -1,5 +1,3 @@
-
-import React from 'react';
 import KpiCard from './KpiCard';
 
 const DashboardV2 = () => {

@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -22,7 +21,7 @@ import {
 import { Checkbox } from '@/components/ui/checkbox';
 import { PlusCircle } from 'lucide-react';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
+import { useForm, UseControllerProps } from 'react-hook-form';
 import * as z from 'zod';
 import { Permission } from '@/context/UserManagementContext';
 
@@ -93,7 +92,7 @@ const AddRoleDialog: React.FC<AddRoleDialogProps> = ({ open, onOpenChange, onAdd
             <FormField
               control={roleForm.control}
               name="name"
-              render={({ field }) => (
+              render={({ field }: { field: UseControllerProps['field'] }) => (
                 <FormItem>
                   <FormLabel>Role Name</FormLabel>
                   <FormControl>
@@ -106,7 +105,7 @@ const AddRoleDialog: React.FC<AddRoleDialogProps> = ({ open, onOpenChange, onAdd
             <FormField
               control={roleForm.control}
               name="description"
-              render={({ field }) => (
+              render={({ field }: { field: UseControllerProps['field'] }) => (
                 <FormItem>
                   <FormLabel>Description</FormLabel>
                   <FormControl>
@@ -119,7 +118,7 @@ const AddRoleDialog: React.FC<AddRoleDialogProps> = ({ open, onOpenChange, onAdd
             <FormField
               control={roleForm.control}
               name="permissions"
-              render={() => (
+              render={({ field }: { field: UseControllerProps['field'] }) => (
                 <FormItem>
                   <div className="mb-4">
                     <FormLabel className="text-base">Permissions</FormLabel>
@@ -130,7 +129,7 @@ const AddRoleDialog: React.FC<AddRoleDialogProps> = ({ open, onOpenChange, onAdd
                         key={permission.id}
                         control={roleForm.control}
                         name="permissions"
-                        render={({ field }) => {
+                        render={({ field }: { field: UseControllerProps['field'] }) => {
                           return (
                             <FormItem
                               key={permission.id}
@@ -139,12 +138,12 @@ const AddRoleDialog: React.FC<AddRoleDialogProps> = ({ open, onOpenChange, onAdd
                               <FormControl>
                                 <Checkbox
                                   checked={field.value?.includes(permission.id)}
-                                  onCheckedChange={(checked) => {
+                                  onCheckedChange={(checked: boolean | 'indeterminate') => {
                                     const currentPermissions = field.value || [];
                                     const newPermissions = checked
                                       ? [...currentPermissions, permission.id]
                                       : currentPermissions.filter(
-                                          (p) => p !== permission.id
+                                          (p: string) => p !== permission.id
                                         );
                                     field.onChange(newPermissions);
                                   }}

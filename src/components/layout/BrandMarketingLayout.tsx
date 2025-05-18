@@ -1,5 +1,5 @@
 import React from "react";
-import { Outlet, useNavigate, useLocation } from "react-router-dom";
+import { Outlet, useNavigate } from "react-router-dom";
 import { 
   Home, 
   Award, 
@@ -15,11 +15,9 @@ import {
 import SharedDashboardLayout from "./SharedDashboardLayout";
 import { NavCategory } from "./sidebar/types";
 import { Button } from "../ui/button";
-import { cn } from "@/lib/utils";
 
 const BrandMarketingLayout = ({ children }: { children?: React.ReactNode }) => {
   const navigate = useNavigate();
-  const location = useLocation();
 
   // Define navigation categories for the Brand Marketing module
   const navCategories: NavCategory[] = [

@@ -1,12 +1,11 @@
-
 import React from "react";
 import { Outlet, useNavigate } from "react-router-dom";
 import { 
   LayoutDashboard, 
   Box, 
   ListTodo, 
-  ChartBar, 
-  BarChart4, 
+  BarChart3, 
+  BarChart2, 
   Settings, 
   Users,
   Home,
@@ -36,9 +35,9 @@ const ProjectManagementLayout = ({ children }: { children?: React.ReactNode }) =
       items: [
         { label: "Overview", path: "#", icon: ListTodo },
         { label: "Kanban Board", path: "#", icon: ListTodo, roles: ["admin", "manager"] },
-        { label: "Gantt Chart", path: "#", icon: ChartBar },
+        { label: "Gantt Chart", path: "#", icon: BarChart3 },
         { label: "Team Members", path: "#", icon: Users },
-        { label: "Reports & Analytics", path: "#", icon: BarChart4, roles: ["admin"] },
+        { label: "Reports & Analytics", path: "#", icon: BarChart2, roles: ["admin"] },
         { label: "Project Settings", path: "#", icon: Settings, roles: ["admin", "manager"] }
       ]
     }

@@ -1,7 +1,6 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { MenuIcon, UserCircle, Settings as SettingsIcon, Home, BellIcon } from 'lucide-react';
-import { useIsMobile } from '@/hooks/use-mobile';
 import { useNavigate } from 'react-router-dom';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { useAuth } from '@/context/AuthContext';
@@ -23,7 +22,6 @@ export const SharedNavbar = ({
   notificationArea,
   showSidebarToggle = true
 }: SharedNavbarProps) => {
-  const isMobile = useIsMobile();
   const navigate = useNavigate();
   const {
     user,
@@ -37,7 +35,6 @@ export const SharedNavbar = ({
 
   // Clean styling for header with full width
   const navbarBgColor = 'bg-gray-400 dark:bg-gray-700';
-  const textColor = 'text-slate-100 dark:text-gray-200';
   const iconColor = 'text-slate-200 dark:text-gray-300';
   const hoverBgColor = 'hover:bg-gray-500 dark:hover:bg-gray-600';
   

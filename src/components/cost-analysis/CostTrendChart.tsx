@@ -1,5 +1,3 @@
-
-import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   LineChart,
@@ -40,11 +38,11 @@ export const CostTrendChart = ({ data, title, description, className }: CostTren
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="month" />
             <YAxis 
-              tickFormatter={(value) => `R${(value/1000).toFixed(0)}k`}
+              tickFormatter={(value: number) => `R${(value/1000).toFixed(0)}k`}
             />
             <Tooltip 
-              formatter={(value) => [`R${value.toLocaleString()}`, 'Amount']}
-              labelFormatter={(label) => `Month: ${label}`}
+              formatter={(value: number) => [`R${value.toLocaleString()}`, 'Amount']}
+              labelFormatter={(label: string) => `Month: ${label}`}
             />
             <Legend />
             <Line 

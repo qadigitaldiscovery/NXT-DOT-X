@@ -1,5 +1,4 @@
-
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Folder, File, ChevronRight, ChevronDown, MoreHorizontal, Edit, Trash2, Copy } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -97,7 +96,10 @@ export const DocumentExplorer = ({
                       
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                          <button className="h-6 w-6 rounded-full hover:bg-white/20 dark:hover:bg-black/20 flex items-center justify-center opacity-0 group-hover:opacity-100 focus:opacity-100 transition-opacity">
+                          <button 
+                            className="h-6 w-6 rounded-full hover:bg-white/20 dark:hover:bg-black/20 flex items-center justify-center opacity-0 group-hover:opacity-100 focus:opacity-100 transition-opacity"
+                            aria-label="Document actions"
+                          >
                             <MoreHorizontal className="h-3.5 w-3.5" />
                           </button>
                         </DropdownMenuTrigger>

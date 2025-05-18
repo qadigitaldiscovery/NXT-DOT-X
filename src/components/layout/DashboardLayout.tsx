@@ -1,11 +1,10 @@
-
 import React from 'react';
 import { cn } from '@/lib/utils';
 import { SharedSidebar } from './SharedSidebar';
 import { SharedNavbar } from './SharedNavbar';
 import { useIsMobile } from '@/hooks/use-mobile';
-import { Home, FileUp, BarChart3, LineChart, ArrowDownUp, FileDown, Settings, FileCode } from 'lucide-react';
-import { NavCategory, NavItem } from './sidebar/types';
+import { Home, FileUp, BarChart3, LineChart, ArrowDownUp, FileDown, FileCode } from 'lucide-react';
+import { NavCategory } from './sidebar/types';
 
 interface DashboardLayoutProps {
   children: React.ReactNode;

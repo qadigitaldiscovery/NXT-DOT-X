@@ -1,10 +1,8 @@
-
-import React from 'react';
 import { Button } from '@/components/ui/button';
 import { AddDocumentDialog } from './AddDocumentDialog';
 import { AddCategoryDialog } from './AddCategoryDialog';
 import { DocumentUpload } from './DocumentUpload';
-import { DocumentCategory, DocumentItem, DocumentType } from './types';
+import { DocumentCategory, DocumentType } from './types';
 import {
   Popover,
   PopoverContent,
