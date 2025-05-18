@@ -1,7 +1,7 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import { PlatformLayout } from '@/components/layouts/PlatformLayout';
-import { NavCategory, NavItem } from '@/components/layout/sidebar/types';
+import { NavCategory } from '@/components/layout/sidebar/types';
 
 // Pages
 import Index from '@/pages/Index';
@@ -15,126 +15,122 @@ import SharedDocumentPage from '@/pages/SharedDocumentPage';
 import Dashboard from '@/pages/Dashboard';
 import DashboardV2 from '@/pages/DashboardV2';
 
-// Import module route configurations
-import { AdminRoutes } from "./adminRoutes";
-import { DataManagementRoutes } from "./dataManagementRoutes";
-import { LoyaltyRoutes } from "./loyaltyRoutes";
-import { TradingSystemRoutes } from "./tradingSystemRoutes";
-import { TechHubRoutes } from "./techHubRoutes";
-import { DotXRoutes } from "./dotXRoutes";
-import { SupplierManagementRoutes } from "./supplierManagementRoutes";
-import { CustomerManagementRoutes } from "./customerManagementRoutes";
-import { BrandMarketingRoutes } from "./brandMarketingRoutes";
-import { SocialMediaRoutes } from "./socialMediaRoutes";
-import { ProjectManagementRoutes } from "./projectManagementRoutes";
-import { RAGDashboardRoutes } from "./ragDashboardRoutes";
-import { VendorRoutes } from "./vendorRoutes";
-import { ContractsRoutes } from "./contractsRoutes";
-import { CategoriesRoutes } from "./categoriesRoutes";
-import { EntitiesRoutes } from "./entitiesRoutes";
-import { ScorecardsRoutes } from "./scorecardsRoutes";
-import { WorkflowsRoutes } from "./workflowsRoutes";
-import { AIExtractRoutes } from "./aiExtractRoutes";
-import { FilesRoutes } from "./filesRoutes";
-import { EventsRoutes } from "./eventsRoutes";
-import { RiskRegisterRoutes } from "./riskRegisterRoutes";
-import { RequestsRoutes } from "./requestsRoutes";
+// Module Routes
+import { DataManagementRoutes } from './dataManagementRoutes';
+import { AdminRoutes } from './adminRoutes';
+import { LoyaltyRoutes } from './loyaltyRoutes';
+import { TradingSystemRoutes } from './tradingSystemRoutes';
+import { TechHubRoutes } from './techHubRoutes';
+import { DotXRoutes } from './dotXRoutes';
+import { SupplierManagementRoutes } from './supplierManagementRoutes';
+import { CustomerManagementRoutes } from './customerManagementRoutes';
+import { BrandMarketingRoutes } from './brandMarketingRoutes';
+import { SocialMediaRoutes } from './socialMediaRoutes';
+import { ProjectManagementRoutes } from './projectManagementRoutes';
+import { RAGDashboardRoutes } from './ragDashboardRoutes';
+import { VendorRoutes } from './vendorRoutes';
+import { ContractsRoutes } from './contractsRoutes';
+import { CategoriesRoutes } from './categoriesRoutes';
+import { EntitiesRoutes } from './entitiesRoutes';
+import { ScorecardsRoutes } from './scorecardsRoutes';
+import { WorkflowsRoutes } from './workflowsRoutes';
+import { AIExtractRoutes } from './aiExtractRoutes';
+import { FilesRoutes } from './filesRoutes';
+import { EventsRoutes } from './eventsRoutes';
+import { RiskRegisterRoutes } from './riskRegisterRoutes';
+import { RequestsRoutes } from './requestsRoutes';
 
 // Import layout configuration
 import { navCategories } from '@/components/layout/sidebar/NavigationConfig';
 import { Home, Settings as SettingsIcon } from 'lucide-react';
 
-export const AppRoutes = () => {
-  // Define main navigation categories for standard page layout
-  const mainNavCategories: NavCategory[] = [
-    {
-      name: "Main",
-      label: "Main",
-      items: [
-        { label: "Dashboard", path: "/master", icon: Home },
-        { label: "Settings", path: "/settings", icon: SettingsIcon }
-      ]
-    }
-  ];
+// Define main navigation categories for standard page layout
+const mainNavCategories: NavCategory[] = [
+  {
+    name: "Main",
+    label: "Main",
+    items: [
+      { label: "Dashboard", path: "/master", icon: Home },
+      { label: "Settings", path: "/settings", icon: SettingsIcon }
+    ]
+  }
+];
 
+export const AppRoutes = () => {
   return (
-    <Router>
-      <Routes>
-        {/* Root/Index Route */}
-        <Route index element={<RootHandler />} />
-        <Route path="/" element={<Navigate to="/master" replace />} />
-        
-        {/* Settings page with PlatformLayout */}
-        <Route 
-          path="/settings" 
-          element={
-            <PlatformLayout 
-              moduleTitle="Settings"
-              navCategories={mainNavCategories}
-            >
-              <Settings />
-            </PlatformLayout>
-          } 
-        />
-        
-        {/* Authentication Pages */}
-        <Route path="/landing" element={<Landing />} />
-        <Route path="/unauthorized" element={<Unauthorized />} />
-        
-        {/* Dashboard Pages */}
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/dashboard-v2" element={<DashboardV2 />} />
-        <Route path="/master" element={<MasterDash />} />
-        
-        {/* Shared Document Route */}
-        <Route path="/shared-document/:shareId" element={<SharedDocumentPage />} />
-        
-        {/* Module-specific Routes - imported from separate route files */}
-        {AdminRoutes()}
-        {DataManagementRoutes()}
-        {LoyaltyRoutes()}
-        {TradingSystemRoutes()}
-        {TechHubRoutes()}
-        {DotXRoutes()}
-        {SupplierManagementRoutes()}
-        {CustomerManagementRoutes()}
-        {BrandMarketingRoutes()}
-        {SocialMediaRoutes()}
-        {ProjectManagementRoutes()}
-        {RAGDashboardRoutes()}
-        {VendorRoutes()}
-        {ContractsRoutes()}
-        {CategoriesRoutes()}
-        {EntitiesRoutes()}
-        {ScorecardsRoutes()}
-        {WorkflowsRoutes()}
-        {AIExtractRoutes()}
-        {FilesRoutes()}
-        {EventsRoutes()}
-        {RiskRegisterRoutes()}
-        {RequestsRoutes()}
-        
-        {/* Add legacy beta redirects */}
-        <Route path="/beta1/*" element={<Navigate to="/data-management" replace />} />
-        <Route path="/beta2/*" element={<Navigate to="/loyalty-rewards" replace />} />
-        
-        {/* Legacy route redirects */}
-        <Route path="/prototypes" element={<Navigate to="/" replace />} />
-        <Route path="/supplier-settings" element={<Navigate to="/data-management/suppliers" replace />} />
-        <Route path="/supplier-costing" element={<Navigate to="/data-management/supplier-costing" replace />} />
-        <Route path="/cost-analysis" element={<Navigate to="/data-management/cost-analysis" replace />} />
-        
-        {/* 404 Page */}
-        <Route path="*" element={
-          <PlatformLayout
-            moduleTitle="Not Found"
+    <Routes>
+      {/* Root/Index Routes */}
+      <Route index element={<RootHandler />} />
+      <Route path="/" element={<Navigate to="/master" replace />} />
+      
+      {/* Settings page with PlatformLayout */}
+      <Route 
+        path="/settings" 
+        element={
+          <PlatformLayout 
+            moduleTitle="Settings"
             navCategories={mainNavCategories}
           >
-            <NotFound />
+            <Settings />
           </PlatformLayout>
-        } />
-      </Routes>
-    </Router>
+        } 
+      />
+      
+      {/* Authentication Pages */}
+      <Route path="/landing" element={<Landing />} />
+      <Route path="/unauthorized" element={<Unauthorized />} />
+      
+      {/* Dashboard Pages */}
+      <Route path="/dashboard" element={<Dashboard />} />
+      <Route path="/dashboard-v2" element={<DashboardV2 />} />
+      <Route path="/master" element={<MasterDash />} />
+      
+      {/* Shared Document Route */}
+      <Route path="/shared-document/:shareId" element={<SharedDocumentPage />} />
+      
+      {/* Module Routes */}
+      <Route path="/admin/*" element={<AdminRoutes />} />
+      <Route path="/data-management/*" element={<DataManagementRoutes />} />
+      <Route path="/loyalty/*" element={<LoyaltyRoutes />} />
+      <Route path="/trading/*" element={<TradingSystemRoutes />} />
+      <Route path="/tech-hub/*" element={<TechHubRoutes />} />
+      <Route path="/dot-x/*" element={<DotXRoutes />} />
+      <Route path="/supplier-management/*" element={<SupplierManagementRoutes />} />
+      <Route path="/customer-management/*" element={<CustomerManagementRoutes />} />
+      <Route path="/brand-marketing/*" element={<BrandMarketingRoutes />} />
+      <Route path="/social-media/*" element={<SocialMediaRoutes />} />
+      <Route path="/project-management/*" element={<ProjectManagementRoutes />} />
+      <Route path="/rag-dashboard/*" element={<RAGDashboardRoutes />} />
+      <Route path="/vendor/*" element={<VendorRoutes />} />
+      <Route path="/contracts/*" element={<ContractsRoutes />} />
+      <Route path="/categories/*" element={<CategoriesRoutes />} />
+      <Route path="/entities/*" element={<EntitiesRoutes />} />
+      <Route path="/scorecards/*" element={<ScorecardsRoutes />} />
+      <Route path="/workflows/*" element={<WorkflowsRoutes />} />
+      <Route path="/ai-extract/*" element={<AIExtractRoutes />} />
+      <Route path="/files/*" element={<FilesRoutes />} />
+      <Route path="/events/*" element={<EventsRoutes />} />
+      <Route path="/risk-register/*" element={<RiskRegisterRoutes />} />
+      <Route path="/requests/*" element={<RequestsRoutes />} />
+      
+      {/* Legacy route redirects */}
+      <Route path="/beta1/*" element={<Navigate to="/data-management" replace />} />
+      <Route path="/beta2/*" element={<Navigate to="/loyalty-rewards" replace />} />
+      <Route path="/prototypes" element={<Navigate to="/" replace />} />
+      <Route path="/supplier-settings" element={<Navigate to="/data-management/suppliers" replace />} />
+      <Route path="/supplier-costing" element={<Navigate to="/data-management/supplier-costing" replace />} />
+      <Route path="/cost-analysis" element={<Navigate to="/data-management/cost-analysis" replace />} />
+      
+      {/* 404 Page */}
+      <Route path="*" element={
+        <PlatformLayout
+          moduleTitle="Not Found"
+          navCategories={mainNavCategories}
+        >
+          <NotFound />
+        </PlatformLayout>
+      } />
+    </Routes>
   );
 };
 

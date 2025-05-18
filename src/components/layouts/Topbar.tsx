@@ -3,7 +3,7 @@ import { ThemeToggle } from '@/components/theme-toggle';
 import { UserMenu } from '@/components/user-menu';
 import { NavLink } from 'react-router-dom';
 import { cn } from '@/lib/utils';
-import { navCategories } from '../layout/sidebar/NavigationConfig';
+import { navCategories } from '@/components/layout/sidebar/NavigationConfig';
 import { Search, Bell, HelpCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 

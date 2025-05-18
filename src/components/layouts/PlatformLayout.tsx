@@ -82,3 +82,5 @@ export const PlatformLayout: React.FC<PlatformLayoutProps> = memo(({
 
 // Add a display name for debugging
 PlatformLayout.displayName = 'PlatformLayout';
+
+export default PlatformLayout;
