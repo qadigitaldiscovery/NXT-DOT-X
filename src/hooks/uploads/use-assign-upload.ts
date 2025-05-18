@@ -1,11 +1,10 @@
 
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { useToast } from '@/hooks/use-toast';
+import { toast } from '@/hooks/use-toast';
 
 export const useAssignUploadToSupplier = () => {
   const queryClient = useQueryClient();
-  const { toast } = useToast();
 
   return useMutation({
     mutationFn: async ({
@@ -35,15 +34,10 @@ export const useAssignUploadToSupplier = () => {
     },
     onSuccess: (result, variables) => {
       queryClient.invalidateQueries({ queryKey: ['supplier-uploads'] });
-      toast({
-        description: `File ${result.fileName} has been successfully assigned to a supplier.`
-      });
+      toast.default(`File ${result.fileName} has been successfully assigned to a supplier.`);
     },
     onError: (error) => {
-      toast({
-        description: `Error: ${error instanceof Error ? error.message : 'Unknown error occurred'}`,
-        variant: 'destructive'
-      });
+      toast.error(`Error: ${error instanceof Error ? error.message : 'Unknown error occurred'}`);
     }
   });
 };

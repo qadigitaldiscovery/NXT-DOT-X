@@ -1,3 +1,4 @@
+
 "use client";
 
 import { toast as sonnerToast, Toaster as SonnerToaster } from "sonner";
@@ -16,25 +17,32 @@ export type Toast = {
 // Create a toast function that matches the expected interface
 export const toast = {
   ...sonnerToast,
-  default: (props: {
-    title?: React.ReactNode;
-    description?: React.ReactNode;
-    variant?: "default" | "destructive";
-    action?: React.ReactNode;
-  }) => {
-    return sonnerToast(props.title as string, {
-      description: props.description as string,
-    });
+  default: (content: string | { title?: React.ReactNode; description?: React.ReactNode; variant?: "default" | "destructive"; action?: React.ReactNode; }) => {
+    if (typeof content === 'string') {
+      return sonnerToast(content);
+    } else {
+      return sonnerToast(content.title as string, {
+        description: content.description as string,
+      });
+    }
   },
-  error: (props: {
-    title?: React.ReactNode;
-    description?: React.ReactNode;
-    variant?: "default" | "destructive";
-    action?: React.ReactNode;
-  }) => {
-    return sonnerToast.error(props.title as string, {
-      description: props.description as string,
-    });
+  error: (content: string | { title?: React.ReactNode; description?: React.ReactNode; variant?: "default" | "destructive"; action?: React.ReactNode; }) => {
+    if (typeof content === 'string') {
+      return sonnerToast.error(content);
+    } else {
+      return sonnerToast.error(content.title as string, {
+        description: content.description as string,
+      });
+    }
+  },
+  success: (content: string | { title?: React.ReactNode; description?: React.ReactNode; variant?: "default" | "destructive"; action?: React.ReactNode; }) => {
+    if (typeof content === 'string') {
+      return sonnerToast.success(content);
+    } else {
+      return sonnerToast.success(content.title as string, {
+        description: content.description as string,
+      });
+    }
   }
 };
 
