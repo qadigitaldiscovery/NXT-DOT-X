@@ -5,7 +5,6 @@ import { PlatformLayout } from '@/components/layouts/PlatformLayout';
 import { NavCategory } from '@/components/layout/sidebar/types';
 
 // Pages
-import Index from '@/pages/Index';
 import NotFound from '@/pages/NotFound';
 import Settings from '@/pages/Settings';
 import Landing from '@/pages/Landing';
