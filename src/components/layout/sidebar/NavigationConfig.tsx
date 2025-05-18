@@ -1,4 +1,4 @@
-import { Home, FileUp, BarChart3, LineChart, ArrowDownUp, FileDown, Settings, Database, FileArchive, BookOpen, BrainCircuit, Cloud, Server, Users, Truck, UserCog, Shield, Globe, Building, AlertTriangle, Calculator, FileText, Award } from 'lucide-react';
+import { Home, FileUp, BarChart3, LineChart, ArrowDownUp, FileDown, Settings, Database, FileArchive, BookOpen, BrainCircuit, Cloud, Server, Users, Truck, UserCog, Shield, Globe, Building, AlertTriangle, Calculator, FileText, Award, FolderOpen, Store, UserSquare2, DollarSign, PieChart, FileBarChart, BookOpenCheck, Cog } from 'lucide-react';
 import { NavItem, NavCategory } from './types';
 
 // Top level nav items (not in categories)
@@ -19,13 +19,13 @@ export const navCategories: NavCategory[] = [
     items: [
       { 
         label: 'SUPPLIER DIRECTORY', 
-        icon: Building, 
+        icon: Store, 
         href: '/data-management/suppliers', 
         path: '/data-management/suppliers' 
       },
       { 
         label: 'CUSTOMER DIRECTORY', 
-        icon: Users, 
+        icon: UserSquare2, 
         href: '/data-management/customers', 
         path: '/data-management/customers' 
       }
@@ -37,13 +37,13 @@ export const navCategories: NavCategory[] = [
     items: [
       { 
         label: 'Suppliers Costing', 
-        icon: Calculator, 
+        icon: DollarSign, 
         href: '/data-management/supplier-costing', 
         path: '/data-management/supplier-costing' 
       },
       { 
         label: 'Cost Analysis', 
-        icon: BarChart3, 
+        icon: PieChart, 
         href: '/data-management/cost-analysis', 
         path: '/data-management/cost-analysis' 
       }
@@ -55,7 +55,7 @@ export const navCategories: NavCategory[] = [
     items: [
       { 
         label: 'Competitor Pricing', 
-        icon: LineChart, 
+        icon: FileBarChart, 
         href: '/data-management/pricing/competitor-pricing', 
         path: '/data-management/pricing/competitor-pricing' 
       },
@@ -85,7 +85,7 @@ export const navCategories: NavCategory[] = [
       },
       { 
         label: 'Document Repository', 
-        icon: FileArchive, 
+        icon: FolderOpen, 
         href: '/data-management/documents', 
         path: '/data-management/documents' 
       }
@@ -97,7 +97,7 @@ export const navCategories: NavCategory[] = [
     items: [
       { 
         label: 'Key Business Rules & Operations', 
-        icon: BookOpen, 
+        icon: BookOpenCheck, 
         href: '/data-management/business-rules', 
         path: '/data-management/business-rules' 
       },
@@ -115,13 +115,13 @@ export const navCategories: NavCategory[] = [
     items: [
       { 
         label: 'Data Connections', 
-        icon: Server, 
+        icon: Database, 
         href: '/data-management/connections', 
         path: '/data-management/connections' 
       },
       { 
         label: 'Data Management Settings', 
-        icon: Settings, 
+        icon: Cog, 
         href: '/data-management/settings', 
         path: '/data-management/settings' 
       },
