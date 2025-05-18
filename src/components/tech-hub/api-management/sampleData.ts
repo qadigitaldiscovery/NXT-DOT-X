@@ -25,7 +25,7 @@ export const sampleEndpoints: ApiEndpoint[] = [
     name: 'Legacy Inventory System',
     url: 'https://legacy.example.com/inventory',
     method: 'GET',
-    status: 'error',
+    status: 'inactive',
     lastUsed: '2025-05-01T10:45:30'
   },
   {

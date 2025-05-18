@@ -231,28 +231,44 @@ export default function CostAnalysis() {
           title="Average Cost Change"
           icon={<BarChart3 className="h-4 w-4 text-muted-foreground" />}
           value={data?.averageCostChange.value || 0}
-          change={data?.averageCostChange.change || 0}
+          change={data?.averageCostChange.change || {
+            value: 0,
+            isPositive: true,
+            text: 'no change'
+          }}
         />
         
         <CostMetricCard
           title="Cost Savings Identified"
           icon={<DollarSign className="h-4 w-4 text-muted-foreground" />}
           value={data?.costSavings.value || 0}
-          change={data?.costSavings.change || 0}
+          change={data?.costSavings.change || {
+            value: 0,
+            isPositive: true,
+            text: 'no change'
+          }}
         />
         
         <CostMetricCard
           title="Suppliers with Price Increases"
           icon={<BarChart3 className="h-4 w-4 text-muted-foreground" />}
           value={data?.suppliersWithIncreases.value || 0}
-          change={data?.suppliersWithIncreases.change || 0}
+          change={data?.suppliersWithIncreases.change || {
+            value: 0,
+            isPositive: true,
+            text: 'no change'
+          }}
         />
         
         <CostMetricCard
           title="Products with Price Alerts"
           icon={<BarChart3 className="h-4 w-4 text-muted-foreground" />}
           value={data?.productsWithAlerts.value || 0}
-          change={data?.productsWithAlerts.change || 0}
+          change={data?.productsWithAlerts.change || {
+            value: 0,
+            isPositive: true,
+            text: 'no change'
+          }}
         />
       </div>
       
