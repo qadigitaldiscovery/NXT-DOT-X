@@ -1,435 +1,408 @@
-
 import React, { useState } from 'react';
-import { Settings as SettingsIcon, User, Bell, Lock, Database, Globe } from 'lucide-react';
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "@/components/ui/tabs";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
-import { Separator } from '@/components/ui/separator';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
+import { 
+  User, Lock, Bell, Palette, Globe, Shield, 
+  Save, RefreshCw, Trash2, Download
+} from 'lucide-react';
 
-const Settings = () => {
-  const { toast } = useToast();
-  const [profileData, setProfileData] = useState({
-    name: "Admin User",
-    email: "admin@nxtleveltech.com",
-    company: "NXT LEVEL TECH",
-    role: "Administrator"
-  });
-  
-  const [notifications, setNotifications] = useState({
+// Mock user preferences
+const mockUserPreferences = {
+  notifications: {
     email: true,
     push: false,
-    weekly: true,
-    marketing: false
-  });
+    sms: false
+  },
+  appearance: {
+    theme: 'system',
+    compactMode: false,
+    animationsEnabled: true
+  },
+  privacy: {
+    shareData: false,
+    allowTracking: false
+  }
+};
 
-  const [appearance, setAppearance] = useState({
-    compactView: false,
-    showTotals: true,
-    enableAnimations: true,
-    highContrastMode: false
-  });
+const Settings = () => {
+  const [activeTab, setActiveTab] = useState('account');
+  const [userPrefs, setUserPrefs] = useState(mockUserPreferences);
+  const [password, setPassword] = useState({ current: '', new: '', confirm: '' });
+  const { toast } = useToast();
 
-  const [dataSync, setDataSync] = useState({
-    autoSync: true,
-    syncInterval: "60",
-    syncOnStartup: true
-  });
-
-  const handleProfileUpdate = (e: React.FormEvent) => {
+  const handleSaveAccount = (e: React.FormEvent) => {
     e.preventDefault();
-    toast({
-      title: "Profile updated",
-      description: "Your profile information has been updated successfully."
+    // Simulate successful save
+    toast.success({
+      title: "Account Updated",
+      description: "Your account details have been successfully updated."
     });
   };
 
-  const handleNotificationChange = (key: keyof typeof notifications) => {
-    setNotifications(prev => ({
-      ...prev,
-      [key]: !prev[key]
-    }));
-  };
-
-  const handleAppearanceChange = (key: keyof typeof appearance) => {
-    setAppearance(prev => ({
-      ...prev,
-      [key]: !prev[key]
-    }));
-  };
-
-  const handleDataSyncUpdate = (e: React.FormEvent) => {
+  const handleChangePassword = (e: React.FormEvent) => {
     e.preventDefault();
-    toast({
-      title: "Data sync settings updated",
-      description: "Your data synchronization preferences have been saved."
+    
+    if (password.new !== password.confirm) {
+      toast.error({
+        title: "Password Error",
+        description: "New passwords do not match. Please try again."
+      });
+      return;
+    }
+    
+    if (password.new.length < 8) {
+      toast.error({
+        title: "Password Error",
+        description: "Password must be at least 8 characters long."
+      });
+      return;
+    }
+    
+    // Simulate successful password change
+    toast.success({
+      title: "Password Updated",
+      description: "Your password has been successfully changed."
+    });
+    
+    // Reset the form
+    setPassword({ current: '', new: '', confirm: '' });
+  };
+
+  const toggleNotificationSetting = (key: keyof typeof userPrefs.notifications) => {
+    setUserPrefs(prev => ({
+      ...prev,
+      notifications: {
+        ...prev.notifications,
+        [key]: !prev.notifications[key]
+      }
+    }));
+  };
+
+  const toggleAppearanceSetting = (key: keyof typeof userPrefs.appearance) => {
+    setUserPrefs(prev => ({
+      ...prev,
+      appearance: {
+        ...prev.appearance,
+        [key]: !prev.appearance[key]
+      }
+    }));
+  };
+
+  const togglePrivacySetting = (key: keyof typeof userPrefs.privacy) => {
+    setUserPrefs(prev => ({
+      ...prev,
+      privacy: {
+        ...prev.privacy,
+        [key]: !prev.privacy[key]
+      }
+    }));
+  };
+
+  const handleExportData = () => {
+    // Simulate export
+    toast.success({
+      title: "Data Export Requested",
+      description: "Your data export is being processed. You will be notified when it's ready."
+    });
+  };
+
+  const handleDeleteAccount = () => {
+    // This would typically show a confirmation dialog
+    toast.error({
+      title: "Delete Account",
+      description: "Please contact support to delete your account."
     });
   };
 
   return (
-    <div className="container mx-auto py-6">
-      <div className="flex items-center mb-6">
-        <SettingsIcon className="h-6 w-6 mr-2 text-primary" />
-        <h1 className="text-2xl font-bold">Settings</h1>
-      </div>
+    <div className="space-y-6">
+      <h1 className="text-2xl font-bold tracking-tight">Settings</h1>
       
-      <div className="mb-6">
-        <p className="text-muted-foreground">
-          Configure your DOT-X Data Management Platform settings and preferences.
-        </p>
-      </div>
-      
-      <Tabs defaultValue="profile" className="w-full">
-        <TabsList className="grid grid-cols-5 mb-8">
-          <TabsTrigger value="profile" className="flex items-center gap-2">
-            <User className="h-4 w-4" />
-            <span className="hidden sm:inline">Profile</span>
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
+        <TabsList className="grid w-full grid-cols-4">
+          <TabsTrigger value="account" className="data-[state=active]:bg-muted data-[state=active]:text-foreground">
+            <User className="mr-2 h-4 w-4" />
+            Account
           </TabsTrigger>
-          <TabsTrigger value="notifications" className="flex items-center gap-2">
-            <Bell className="h-4 w-4" />
-            <span className="hidden sm:inline">Notifications</span>
+          <TabsTrigger value="security" className="data-[state=active]:bg-muted data-[state=active]:text-foreground">
+            <Lock className="mr-2 h-4 w-4" />
+            Security
           </TabsTrigger>
-          <TabsTrigger value="appearance" className="flex items-center gap-2">
-            <Globe className="h-4 w-4" />
-            <span className="hidden sm:inline">Appearance</span>
+          <TabsTrigger value="notifications" className="data-[state=active]:bg-muted data-[state=active]:text-foreground">
+            <Bell className="mr-2 h-4 w-4" />
+            Notifications
           </TabsTrigger>
-          <TabsTrigger value="data" className="flex items-center gap-2">
-            <Database className="h-4 w-4" />
-            <span className="hidden sm:inline">Data Sync</span>
-          </TabsTrigger>
-          <TabsTrigger value="security" className="flex items-center gap-2">
-            <Lock className="h-4 w-4" />
-            <span className="hidden sm:inline">Security</span>
+          <TabsTrigger value="preferences" className="data-[state=active]:bg-muted data-[state=active]:text-foreground">
+            <Palette className="mr-2 h-4 w-4" />
+            Preferences
           </TabsTrigger>
         </TabsList>
         
-        <TabsContent value="profile">
+        <TabsContent value="account" className="space-y-6">
           <Card>
             <CardHeader>
-              <CardTitle>Profile Information</CardTitle>
+              <CardTitle>Account Information</CardTitle>
               <CardDescription>
-                Update your account profile details and information.
+                Manage your personal account settings
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <form onSubmit={handleProfileUpdate}>
-                <div className="grid gap-6">
-                  <div className="grid gap-3">
-                    <Label htmlFor="name">Name</Label>
-                    <Input 
-                      id="name" 
-                      value={profileData.name} 
-                      onChange={e => setProfileData({...profileData, name: e.target.value})} 
-                    />
+              <form onSubmit={handleSaveAccount} className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="firstName">First Name</Label>
+                    <Input type="text" id="firstName" defaultValue="John" />
                   </div>
-                  <div className="grid gap-3">
-                    <Label htmlFor="email">Email</Label>
-                    <Input 
-                      id="email" 
-                      type="email" 
-                      value={profileData.email} 
-                      onChange={e => setProfileData({...profileData, email: e.target.value})} 
-                    />
-                  </div>
-                  <div className="grid gap-3">
-                    <Label htmlFor="company">Company</Label>
-                    <Input 
-                      id="company" 
-                      value={profileData.company} 
-                      onChange={e => setProfileData({...profileData, company: e.target.value})} 
-                    />
-                  </div>
-                  <div className="grid gap-3">
-                    <Label htmlFor="role">Role</Label>
-                    <Input 
-                      id="role" 
-                      value={profileData.role} 
-                      onChange={e => setProfileData({...profileData, role: e.target.value})}
-                      disabled 
-                    />
+                  <div>
+                    <Label htmlFor="lastName">Last Name</Label>
+                    <Input type="text" id="lastName" defaultValue="Doe" />
                   </div>
                 </div>
+                <div>
+                  <Label htmlFor="email">Email Address</Label>
+                  <Input type="email" id="email" defaultValue="john.doe@example.com" readOnly />
+                </div>
+                <div>
+                  <Label htmlFor="username">Username</Label>
+                  <Input type="text" id="username" defaultValue="johndoe" />
+                </div>
+                <Button type="submit">
+                  <Save className="mr-2 h-4 w-4" />
+                  Save Changes
+                </Button>
               </form>
             </CardContent>
-            <CardFooter className="flex justify-between">
-              <Button variant="outline">Cancel</Button>
-              <Button onClick={handleProfileUpdate}>Save Changes</Button>
-            </CardFooter>
           </Card>
         </TabsContent>
         
-        <TabsContent value="notifications">
+        <TabsContent value="security" className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle>Change Password</CardTitle>
+              <CardDescription>
+                Update your account password for enhanced security
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <form onSubmit={handleChangePassword} className="space-y-4">
+                <div>
+                  <Label htmlFor="currentPassword">Current Password</Label>
+                  <Input 
+                    type="password" 
+                    id="currentPassword" 
+                    value={password.current}
+                    onChange={(e) => setPassword(prev => ({ ...prev, current: e.target.value }))}
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="newPassword">New Password</Label>
+                  <Input 
+                    type="password" 
+                    id="newPassword" 
+                    value={password.new}
+                    onChange={(e) => setPassword(prev => ({ ...prev, new: e.target.value }))}
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="confirmPassword">Confirm New Password</Label>
+                  <Input 
+                    type="password" 
+                    id="confirmPassword" 
+                    value={password.confirm}
+                    onChange={(e) => setPassword(prev => ({ ...prev, confirm: e.target.value }))}
+                  />
+                </div>
+                <Button type="submit">
+                  <Save className="mr-2 h-4 w-4" />
+                  Change Password
+                </Button>
+              </form>
+            </CardContent>
+          </Card>
+          
+          <Card>
+            <CardHeader>
+              <CardTitle>Two-Factor Authentication</CardTitle>
+              <CardDescription>
+                Add an extra layer of security to your account
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <p>
+                Two-factor authentication is currently disabled.
+              </p>
+              <Button variant="outline">
+                <Shield className="mr-2 h-4 w-4" />
+                Enable Two-Factor Authentication
+              </Button>
+            </CardContent>
+          </Card>
+        </TabsContent>
+        
+        <TabsContent value="notifications" className="space-y-6">
           <Card>
             <CardHeader>
               <CardTitle>Notification Preferences</CardTitle>
               <CardDescription>
-                Manage how you receive notifications and alerts.
+                Choose how you receive updates and alerts
               </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-6">
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <div className="space-y-0.5">
-                    <Label>Email Notifications</Label>
-                    <p className="text-sm text-muted-foreground">
-                      Receive notifications via email
-                    </p>
-                  </div>
-                  <Switch 
-                    checked={notifications.email}
-                    onCheckedChange={() => handleNotificationChange('email')} 
-                  />
-                </div>
-                <Separator />
-                <div className="flex items-center justify-between">
-                  <div className="space-y-0.5">
-                    <Label>Push Notifications</Label>
-                    <p className="text-sm text-muted-foreground">
-                      Receive push notifications on your device
-                    </p>
-                  </div>
-                  <Switch 
-                    checked={notifications.push}
-                    onCheckedChange={() => handleNotificationChange('push')} 
-                  />
-                </div>
-                <Separator />
-                <div className="flex items-center justify-between">
-                  <div className="space-y-0.5">
-                    <Label>Weekly Reports</Label>
-                    <p className="text-sm text-muted-foreground">
-                      Receive weekly summary reports
-                    </p>
-                  </div>
-                  <Switch 
-                    checked={notifications.weekly}
-                    onCheckedChange={() => handleNotificationChange('weekly')} 
-                  />
-                </div>
-                <Separator />
-                <div className="flex items-center justify-between">
-                  <div className="space-y-0.5">
-                    <Label>Marketing Updates</Label>
-                    <p className="text-sm text-muted-foreground">
-                      Receive marketing and product updates
-                    </p>
-                  </div>
-                  <Switch 
-                    checked={notifications.marketing}
-                    onCheckedChange={() => handleNotificationChange('marketing')} 
-                  />
-                </div>
+            <CardContent className="space-y-4">
+              <div className="flex items-center justify-between">
+                <Label htmlFor="emailNotifications">Email Notifications</Label>
+                <Switch 
+                  id="emailNotifications" 
+                  checked={userPrefs.notifications.email}
+                  onCheckedChange={() => toggleNotificationSetting('email')}
+                />
+              </div>
+              <div className="flex items-center justify-between">
+                <Label htmlFor="pushNotifications">Push Notifications</Label>
+                <Switch 
+                  id="pushNotifications" 
+                  checked={userPrefs.notifications.push}
+                  onCheckedChange={() => toggleNotificationSetting('push')}
+                />
+              </div>
+              <div className="flex items-center justify-between">
+                <Label htmlFor="smsNotifications">SMS Notifications</Label>
+                <Switch 
+                  id="smsNotifications" 
+                  checked={userPrefs.notifications.sms}
+                  onCheckedChange={() => toggleNotificationSetting('sms')}
+                />
               </div>
             </CardContent>
-            <CardFooter>
-              <Button 
-                onClick={() => toast({
-                  title: "Notification settings updated",
-                  description: "Your notification preferences have been saved."
-                })}
-              >
-                Save Preferences
-              </Button>
-            </CardFooter>
           </Card>
         </TabsContent>
         
-        <TabsContent value="appearance">
+        <TabsContent value="preferences" className="space-y-6">
           <Card>
             <CardHeader>
-              <CardTitle>Appearance Settings</CardTitle>
+              <CardTitle>Appearance</CardTitle>
               <CardDescription>
-                Customize how the DOT-X platform looks and feels.
+                Customize the look and feel of your application
               </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-6">
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <div className="space-y-0.5">
-                    <Label>Compact View</Label>
-                    <p className="text-sm text-muted-foreground">
-                      Display more data with a compact layout
-                    </p>
-                  </div>
-                  <Switch 
-                    checked={appearance.compactView}
-                    onCheckedChange={() => handleAppearanceChange('compactView')} 
-                  />
-                </div>
-                <Separator />
-                <div className="flex items-center justify-between">
-                  <div className="space-y-0.5">
-                    <Label>Show Totals</Label>
-                    <p className="text-sm text-muted-foreground">
-                      Display summary totals at the bottom of tables
-                    </p>
-                  </div>
-                  <Switch 
-                    checked={appearance.showTotals}
-                    onCheckedChange={() => handleAppearanceChange('showTotals')} 
-                  />
-                </div>
-                <Separator />
-                <div className="flex items-center justify-between">
-                  <div className="space-y-0.5">
-                    <Label>Enable Animations</Label>
-                    <p className="text-sm text-muted-foreground">
-                      Show animations for transitions and data loading
-                    </p>
-                  </div>
-                  <Switch 
-                    checked={appearance.enableAnimations}
-                    onCheckedChange={() => handleAppearanceChange('enableAnimations')} 
-                  />
-                </div>
-                <Separator />
-                <div className="flex items-center justify-between">
-                  <div className="space-y-0.5">
-                    <Label>High Contrast Mode</Label>
-                    <p className="text-sm text-muted-foreground">
-                      Increase contrast for better visibility
-                    </p>
-                  </div>
-                  <Switch 
-                    checked={appearance.highContrastMode}
-                    onCheckedChange={() => handleAppearanceChange('highContrastMode')} 
-                  />
-                </div>
+            <CardContent className="space-y-4">
+              <div className="flex items-center justify-between">
+                <Label htmlFor="theme">Theme</Label>
+                <Select defaultValue="system">
+                  <SelectTrigger className="w-[180px]">
+                    <SelectValue placeholder="Select a theme" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="system">System</SelectItem>
+                    <SelectItem value="light">Light</SelectItem>
+                    <SelectItem value="dark">Dark</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="flex items-center justify-between">
+                <Label htmlFor="compactMode">Compact Mode</Label>
+                <Switch 
+                  id="compactMode" 
+                  checked={userPrefs.appearance.compactMode}
+                  onCheckedChange={() => toggleAppearanceSetting('compactMode')}
+                />
+              </div>
+              <div className="flex items-center justify-between">
+                <Label htmlFor="animationsEnabled">Animations Enabled</Label>
+                <Switch 
+                  id="animationsEnabled"
+                  checked={userPrefs.appearance.animationsEnabled}
+                  onCheckedChange={() => toggleAppearanceSetting('animationsEnabled')}
+                />
               </div>
             </CardContent>
-            <CardFooter>
-              <Button onClick={() => toast({
-                title: "Appearance settings updated",
-                description: "Your display preferences have been saved."
-              })}>
-                Save Preferences
-              </Button>
-            </CardFooter>
           </Card>
-        </TabsContent>
-        
-        <TabsContent value="data">
+          
           <Card>
             <CardHeader>
-              <CardTitle>Data Synchronization</CardTitle>
+              <CardTitle>Regional Settings</CardTitle>
               <CardDescription>
-                Configure how and when data synchronizes with external systems.
+                Set your preferred language and time zone
               </CardDescription>
             </CardHeader>
-            <CardContent>
-              <form onSubmit={handleDataSyncUpdate}>
-                <div className="space-y-6">
-                  <div className="flex items-center justify-between">
-                    <div className="space-y-0.5">
-                      <Label>Automatic Synchronization</Label>
-                      <p className="text-sm text-muted-foreground">
-                        Automatically sync data with ERP systems
-                      </p>
-                    </div>
-                    <Switch 
-                      checked={dataSync.autoSync}
-                      onCheckedChange={() => setDataSync({...dataSync, autoSync: !dataSync.autoSync})} 
-                    />
-                  </div>
-                  <Separator />
-                  <div className="grid gap-3">
-                    <Label htmlFor="syncInterval">Sync Interval (minutes)</Label>
-                    <Input 
-                      id="syncInterval" 
-                      type="number"
-                      value={dataSync.syncInterval} 
-                      onChange={e => setDataSync({...dataSync, syncInterval: e.target.value})}
-                      disabled={!dataSync.autoSync} 
-                    />
-                  </div>
-                  <Separator />
-                  <div className="flex items-center justify-between">
-                    <div className="space-y-0.5">
-                      <Label>Sync on Startup</Label>
-                      <p className="text-sm text-muted-foreground">
-                        Perform data sync when application starts
-                      </p>
-                    </div>
-                    <Switch 
-                      checked={dataSync.syncOnStartup}
-                      onCheckedChange={() => setDataSync({...dataSync, syncOnStartup: !dataSync.syncOnStartup})} 
-                    />
-                  </div>
-                </div>
-              </form>
+            <CardContent className="space-y-4">
+              <div className="flex items-center justify-between">
+                <Label htmlFor="language">Language</Label>
+                <Select defaultValue="en">
+                  <SelectTrigger className="w-[180px]">
+                    <SelectValue placeholder="Select a language" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="en">English</SelectItem>
+                    <SelectItem value="es">Spanish</SelectItem>
+                    <SelectItem value="fr">French</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="flex items-center justify-between">
+                <Label htmlFor="timeZone">Time Zone</Label>
+                <Select defaultValue="UTC">
+                  <SelectTrigger className="w-[180px]">
+                    <SelectValue placeholder="Select a time zone" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="UTC">UTC</SelectItem>
+                    <SelectItem value="EST">EST</SelectItem>
+                    <SelectItem value="PST">PST</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
             </CardContent>
-            <CardFooter className="flex justify-between">
-              <Button variant="outline">Reset to Defaults</Button>
-              <Button onClick={handleDataSyncUpdate}>Save Changes</Button>
-            </CardFooter>
           </Card>
-        </TabsContent>
-        
-        <TabsContent value="security">
+          
           <Card>
             <CardHeader>
-              <CardTitle>Security Settings</CardTitle>
+              <CardTitle>Privacy Settings</CardTitle>
               <CardDescription>
-                Manage your account security and password.
+                Control your data sharing and privacy options
               </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-6">
-              <div className="grid gap-3">
-                <Label htmlFor="current-password">Current Password</Label>
-                <Input id="current-password" type="password" />
+            <CardContent className="space-y-4">
+              <div className="flex items-center justify-between">
+                <Label htmlFor="shareData">Share Usage Data</Label>
+                <Switch 
+                  id="shareData" 
+                  checked={userPrefs.privacy.shareData}
+                  onCheckedChange={() => togglePrivacySetting('shareData')}
+                />
               </div>
-              <div className="grid gap-3">
-                <Label htmlFor="new-password">New Password</Label>
-                <Input id="new-password" type="password" />
-              </div>
-              <div className="grid gap-3">
-                <Label htmlFor="confirm-password">Confirm New Password</Label>
-                <Input id="confirm-password" type="password" />
-              </div>
-              
-              <Separator className="my-4" />
-              
-              <div className="space-y-4">
-                <h3 className="text-lg font-medium">Two-factor Authentication</h3>
-                <p className="text-sm text-muted-foreground">
-                  Add an extra layer of security to your account by enabling two-factor authentication.
-                </p>
-                <Button variant="outline">Enable 2FA</Button>
-              </div>
-              
-              <Separator className="my-4" />
-              
-              <div className="space-y-4">
-                <h3 className="text-lg font-medium">Sessions</h3>
-                <p className="text-sm text-muted-foreground">
-                  Manage your active sessions and sign out from other devices.
-                </p>
-                <Button variant="outline">Manage Sessions</Button>
+              <div className="flex items-center justify-between">
+                <Label htmlFor="allowTracking">Allow Tracking</Label>
+                <Switch 
+                  id="allowTracking"
+                  checked={userPrefs.privacy.allowTracking}
+                  onCheckedChange={() => togglePrivacySetting('allowTracking')}
+                />
               </div>
             </CardContent>
-            <CardFooter>
-              <Button onClick={() => toast({
-                title: "Security settings updated",
-                description: "Your password has been changed successfully."
-              })}>
-                Update Password
+          </Card>
+          
+          <Card>
+            <CardHeader>
+              <CardTitle>Data Management</CardTitle>
+              <CardDescription>
+                Export or delete your personal data
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <Button onClick={handleExportData}>
+                <Download className="mr-2 h-4 w-4" />
+                Export Data
               </Button>
-            </CardFooter>
+              <Button variant="destructive" onClick={handleDeleteAccount}>
+                <Trash2 className="mr-2 h-4 w-4" />
+                Delete Account
+              </Button>
+            </CardContent>
           </Card>
         </TabsContent>
       </Tabs>

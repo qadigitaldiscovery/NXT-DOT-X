@@ -1,9 +1,8 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { useToast } from '@/components/ui/use-toast';
+import { useToast } from '@/hooks/use-toast';
 import { Loader2, MessageSquare, BrainCircuit } from 'lucide-react';
 import { useOpenAI } from '@/hooks/api-clients/openai/use-openai-client';
 
@@ -28,10 +27,9 @@ const RequestyPage = () => {
 
   const handleQuerySubmit = async () => {
     if (!query.trim()) {
-      toast({
+      toast.error({
         title: "Empty query",
-        description: "Please enter a question about brand marketing.",
-        variant: "destructive"
+        description: "Please enter a question about brand marketing."
       });
       return;
     }
@@ -48,10 +46,9 @@ const RequestyPage = () => {
       setResponse(result);
     } catch (error) {
       console.error('Error querying AI:', error);
-      toast({
+      toast.error({
         title: "Error",
-        description: "Failed to get a response. Please try again.",
-        variant: "destructive"
+        description: "Failed to get a response. Please try again."
       });
     } finally {
       setIsProcessing(false);

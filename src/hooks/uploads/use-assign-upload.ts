@@ -35,12 +35,12 @@ export const useAssignUploadToSupplier = () => {
     },
     onSuccess: (result, variables) => {
       queryClient.invalidateQueries({ queryKey: ['supplier-uploads'] });
-      toast({
+      toast.default({
         description: `File ${result.fileName} has been successfully assigned to a supplier.`
       });
     },
     onError: (error) => {
-      toast({
+      toast.error({
         description: `Error: ${error instanceof Error ? error.message : 'Unknown error occurred'}`,
         variant: 'destructive'
       });
