@@ -55,6 +55,33 @@ const mainNavCategories: NavCategory[] = [
   }
 ];
 
+// Array of route components to render their routes
+const moduleRoutes = [
+  AdminRoutes,
+  DataManagementRoutes,
+  LoyaltyRoutes,
+  TradingSystemRoutes,
+  TechHubRoutes,
+  DotXRoutes,
+  SupplierManagementRoutes,
+  CustomerManagementRoutes,
+  BrandMarketingRoutes,
+  SocialMediaRoutes,
+  ProjectManagementRoutes,
+  RAGDashboardRoutes,
+  VendorRoutes,
+  ContractsRoutes,
+  CategoriesRoutes,
+  EntitiesRoutes,
+  ScorecardsRoutes,
+  WorkflowsRoutes,
+  AIExtractRoutes,
+  FilesRoutes,
+  EventsRoutes,
+  RiskRegisterRoutes,
+  RequestsRoutes
+];
+
 export const AppRoutes = () => {
   return (
     <Routes>
@@ -87,30 +114,12 @@ export const AppRoutes = () => {
       {/* Shared Document Route */}
       <Route path="/shared-document/:shareId" element={<SharedDocumentPage />} />
       
-      {/* Module Routes - Render them directly to include their Route elements */}
-      {AdminRoutes()}
-      {DataManagementRoutes()}
-      {LoyaltyRoutes()}
-      {TradingSystemRoutes()}
-      {TechHubRoutes()}
-      {DotXRoutes()}
-      {SupplierManagementRoutes()}
-      {CustomerManagementRoutes()}
-      {BrandMarketingRoutes()}
-      {SocialMediaRoutes()}
-      {ProjectManagementRoutes()}
-      {RAGDashboardRoutes()}
-      {VendorRoutes()}
-      {ContractsRoutes()}
-      {CategoriesRoutes()}
-      {EntitiesRoutes()}
-      {ScorecardsRoutes()}
-      {WorkflowsRoutes()}
-      {AIExtractRoutes()}
-      {FilesRoutes()}
-      {EventsRoutes()}
-      {RiskRegisterRoutes()}
-      {RequestsRoutes()}
+      {/* Module Routes - Render each set of routes within a Fragment */}
+      {moduleRoutes.map((RouteComponent, index) => (
+        <React.Fragment key={index}>
+          {RouteComponent()}
+        </React.Fragment>
+      ))}
       
       {/* Legacy route redirects */}
       <Route path="/beta1/*" element={<Navigate to="/data-management" replace />} />
