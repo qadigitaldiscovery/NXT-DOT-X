@@ -1,6 +1,4 @@
 
-import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 import "./styles/globals.css";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
