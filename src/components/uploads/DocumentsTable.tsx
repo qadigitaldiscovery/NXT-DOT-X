@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import {
   Card,
@@ -129,9 +130,11 @@ const documentTypes: Record<string, string> = {
 
 interface DocumentsTableProps {
   supplier?: { id: string; name: string };
+  onShare?: (document: any) => void;
+  onDelete?: (document: any) => void;
 }
 
-export function DocumentsTable({ supplier }: DocumentsTableProps) {
+export function DocumentsTable({ supplier, onShare, onDelete }: DocumentsTableProps) {
   const [documents, setDocuments] = useState(
     supplier
       ? sampleDocuments.filter(doc => doc.supplier === supplier.name)
@@ -145,12 +148,26 @@ export function DocumentsTable({ supplier }: DocumentsTableProps) {
     if (window.confirm('Are you sure you want to delete this document?')) {
       setDocuments(documents.filter(doc => doc.id !== id));
       toast.success('Document deleted successfully');
+      
+      // Call the onDelete prop if provided
+      if (onDelete) {
+        const documentToDelete = documents.find(doc => doc.id === id);
+        if (documentToDelete) {
+          onDelete(documentToDelete);
+        }
+      }
     }
   };
   
   const handleDownload = (id: string, name: string) => {
     toast.success(`Downloading "${name}"...`);
     // In a real application, this would trigger a download
+  };
+
+  const handleShare = (document: any) => {
+    if (onShare) {
+      onShare(document);
+    }
   };
   
   const filteredDocuments = documents.filter(doc => {
@@ -329,6 +346,12 @@ export function DocumentsTable({ supplier }: DocumentsTableProps) {
                             <DownloadCloud className="h-4 w-4 mr-2" />
                             Download
                           </DropdownMenuItem>
+                          {onShare && (
+                            <DropdownMenuItem onClick={() => handleShare(doc)}>
+                              <FileText className="h-4 w-4 mr-2" />
+                              Share
+                            </DropdownMenuItem>
+                          )}
                           <DropdownMenuItem>
                             <Edit className="h-4 w-4 mr-2" />
                             Edit Details

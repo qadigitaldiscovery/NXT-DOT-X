@@ -1,4 +1,5 @@
 
+import React from "react";
 import { Route, Navigate } from "react-router-dom";
 import PermissionGuard from "@/components/admin/PermissionGuard";
 import UserManagement from "@/pages/UserManagement";
@@ -8,6 +9,7 @@ import AdminModuleAccess from "@/pages/admin/AdminModuleAccess";
 import Unauthorized from "@/pages/Unauthorized";
 
 export const AdminRoutes = () => {
+  // Return a fragment containing the routes
   return (
     <>
       <Route path="/unauthorized" element={<Unauthorized />} />

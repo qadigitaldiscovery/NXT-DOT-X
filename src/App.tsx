@@ -10,6 +10,7 @@ import { AuthProvider } from "@/context/AuthContext";
 import { ThemeProvider } from "@/context/ThemeContext";
 import { AppRoutes } from "@/routes/AppRoutes";
 
+// Create a client
 const queryClient = new QueryClient();
 
 const App = () => {
