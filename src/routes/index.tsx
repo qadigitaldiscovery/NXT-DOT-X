@@ -1,14 +1,9 @@
 
 import React from 'react';
-import { BrowserRouter } from 'react-router-dom';
 import { AppRoutes } from './AppRoutes';
 
 const RoutesIndex = () => {
-  return (
-    <BrowserRouter>
-      <AppRoutes />
-    </BrowserRouter>
-  );
+  return <AppRoutes />;
 };
 
 export default RoutesIndex;

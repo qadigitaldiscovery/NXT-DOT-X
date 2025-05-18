@@ -88,7 +88,7 @@ export const AppRoutes = () => {
       {/* Shared Document Route */}
       <Route path="/shared-document/:shareId" element={<SharedDocumentPage />} />
       
-      {/* Module Routes */}
+      {/* Module Routes - Properly including them as JSX elements */}
       {AdminRoutes()}
       {DataManagementRoutes()}
       {LoyaltyRoutes()}
@@ -133,5 +133,3 @@ export const AppRoutes = () => {
     </Routes>
   );
 };
-
-export default AppRoutes;
