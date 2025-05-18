@@ -1,8 +1,10 @@
-
 import React from 'react';
 import { cn } from '@/lib/utils';
 import { NavLink } from 'react-router-dom';
-import { NavItem, NavCategory } from './types';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../../../components/ui/tooltip';
+import { NavCategory, NavItem } from './types';
+import { useLocation } from 'react-router-dom';
+import { useAuth } from '../../../context/AuthContext';
 
 interface CompactSidebarProps {
   categories?: NavCategory[];

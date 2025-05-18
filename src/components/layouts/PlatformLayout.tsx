@@ -5,6 +5,10 @@ import Topbar from './Topbar';
 import { cn } from '@/lib/utils';
 import { useIsMobile } from '@/hooks/use-mobile';
 
+interface TopbarProps {
+  onMenuClick?: () => void;
+}
+
 interface PlatformLayoutProps {
   children: ReactNode;
   hideNavigation?: boolean;

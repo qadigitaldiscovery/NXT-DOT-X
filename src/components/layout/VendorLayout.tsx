@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React from 'react';
 import { Outlet } from 'react-router-dom';
 import { sidebarMenu } from '@/config/sidebarMenu';
 import { ChevronRight, Menu, X } from 'lucide-react';

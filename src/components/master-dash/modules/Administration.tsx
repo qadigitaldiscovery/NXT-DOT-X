@@ -1,7 +1,6 @@
 
-import React from 'react';
-import ModuleCard from '../ModuleCard';
 import { useNavigate } from 'react-router-dom';
+import { ModuleCard } from '../ModuleCard';
 import { Shield, Users } from 'lucide-react';
 
 const Administration = () => {

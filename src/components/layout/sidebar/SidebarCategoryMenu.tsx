@@ -85,13 +85,16 @@ export const SidebarCategoryMenu: React.FC<SidebarCategoryMenuProps> = ({
             return (
               <SidebarItem
                 key={index}
-                item={item}
+                href={item.href || item.path}
+                icon={item.icon}
+                label={item.label}
                 isActive={isActive}
                 textColor={textColor}
                 textHoverColor={textHoverColor}
                 activeBgColor={activeBgColor}
                 activeTextColor={activeTextColor}
                 hoverBgColor={hoverBgColor}
+                onClick={item.onClick}
               />
             );
           })}

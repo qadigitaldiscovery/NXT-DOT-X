@@ -1,12 +1,11 @@
 
-import ModuleCard from '../ModuleCard';
+import { ModuleCard } from '../ModuleCard';
 import { useNavigate } from 'react-router-dom';
 import { Database, BarChart3 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 
 const DataManagement = () => {
   const navigate = useNavigate();
-  const { user } = useAuth();
 
   const dataModules = [
     {

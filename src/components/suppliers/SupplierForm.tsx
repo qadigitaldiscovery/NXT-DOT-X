@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -31,8 +30,8 @@ type SupplierFormProps = {
 
 export function SupplierForm({ initialData, isEditing = false, onDelete }: SupplierFormProps) {
   const navigate = useNavigate();
-  const { mutate: createSupplier, isPending: isCreating } = useCreateSupplier();
-  const { mutate: updateSupplier, isPending: isUpdating } = useUpdateSupplier();
+  const { mutate: createSupplier, isLoading: isCreating } = useCreateSupplier();
+  const { mutate: updateSupplier, isLoading: isUpdating } = useUpdateSupplier();
   
   const [formData, setFormData] = React.useState<Partial<Supplier>>({
     name: initialData?.name || '',
@@ -207,8 +206,7 @@ export function SupplierForm({ initialData, isEditing = false, onDelete }: Suppl
               type="submit"
               disabled={isCreating || isUpdating}
             >
-              <Save className="h-4 w-4 mr-2" />
-              {isEditing ? 'Update' : 'Save'}
+              {isCreating || isUpdating ? 'Saving...' : 'Save Supplier'}
             </Button>
           </div>
         </CardFooter>
