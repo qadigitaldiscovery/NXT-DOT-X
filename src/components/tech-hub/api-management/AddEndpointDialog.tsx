@@ -3,7 +3,7 @@ import React from 'react';
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { toast } from "sonner";
+import { toast } from "@/hooks/use-toast";
 
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -11,16 +11,8 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 
-import { ApiEndpoint } from "./types";
-
 // Define the EndpointFormValues type to match the schema
-export type EndpointFormValues = {
-  name: string;
-  url: string;
-  apiKey?: string;
-  method: "GET" | "POST" | "PUT" | "DELETE";
-  status: "active" | "inactive";
-};
+export type EndpointFormValues = z.infer<typeof endpointSchema>;
 
 // Create a schema for adding new endpoints
 const endpointSchema = z.object({
