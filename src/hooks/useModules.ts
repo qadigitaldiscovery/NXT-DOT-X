@@ -1,14 +1,14 @@
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 
 export interface Module {
   id: string;
   name: string;
   status: string;
-  description?: string;
-  created_at?: string;
-  updated_at?: string;
+  description: string | null | undefined; // Allow null values from the database
+  created_at: string | null;
+  updated_at: string | null;
 }
 
 export const useModules = () => {
@@ -16,56 +16,44 @@ export const useModules = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 
-  const fetchModules = useCallback(async () => {
+  const fetchModules = async () => {
     try {
       setLoading(true);
       const { data, error } = await supabase
         .from('modules')
         .select('*')
         .order('name');
-        
+
       if (error) throw error;
       
-      setModules(data || []);
+      // We need to cast the data to Module[] to ensure TypeScript compatibility
+      // As null and undefined are both allowed in the Module interface
+      setModules(data as Module[]);
+      
     } catch (err) {
-      console.error('Error fetching modules:', err);
-      setError(err instanceof Error ? err : new Error('Unknown error fetching modules'));
+      setError(err instanceof Error ? err : new Error('Unknown error occurred'));
     } finally {
       setLoading(false);
     }
-  }, []);
+  };
 
   useEffect(() => {
     fetchModules();
-  }, [fetchModules]);
+  }, []);
 
-  const updateModuleStatus = async (id: string, status: string) => {
+  const refreshModules = async () => {
     try {
-      const { error } = await supabase
-        .from('modules')
-        .update({ status })
-        .eq('id', id);
-        
-      if (error) throw error;
-      
-      // Update local state
-      setModules(prevModules =>
-        prevModules.map(module =>
-          module.id === id ? { ...module, status } : module
-        )
-      );
-      
+      await fetchModules();
       return { success: true };
     } catch (err) {
-      console.error('Error updating module status:', err);
-      return { success: false, error: err instanceof Error ? err : new Error('Unknown error updating module status') };
+      return { success: false, error: err };
     }
   };
 
-  const refreshModules = useCallback(async () => {
-    await fetchModules();
-    return { success: true };
-  }, [fetchModules]);
-
-  return { modules, loading, error, isLoading: loading, updateModuleStatus, refreshModules };
+  return {
+    modules,
+    loading,
+    error,
+    refreshModules
+  };
 };

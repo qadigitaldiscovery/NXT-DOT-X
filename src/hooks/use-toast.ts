@@ -6,9 +6,12 @@ import type { Toast as ToastType } from "@/components/ui/toast";
 
 export type Toast = ToastType;
 
-// Simple wrapper around sonner toast for compatibility with existing code
+// Create a wrapper for sonner toast that's compatible with existing code
 export const toast = {
-  // Basic toast function
+  // Forward all sonner toast methods
+  ...sonnerToast,
+  
+  // Add custom method that maps to the older toast API
   custom: (props: {
     title?: React.ReactNode;
     description?: React.ReactNode;
@@ -23,11 +26,7 @@ export const toast = {
     return sonnerToast(props.title as string, {
       description: props.description as string,
     });
-  },
-  
-  // Create a simplified version that's compatible with the old API
-  // but forwards to the sonner toast
-  ...sonnerToast
+  }
 };
 
 export const useToast = () => {
