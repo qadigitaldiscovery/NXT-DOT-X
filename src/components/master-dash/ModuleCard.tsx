@@ -5,17 +5,13 @@ import { Button } from '@/components/ui/button';
 interface ModuleCardProps {
   title: string;
   description: string;
-  status: 'connected' | 'disconnected';
   icon: string;
-  color: string;
 }
 
 export const ModuleCard: React.FC<ModuleCardProps> = ({
   title,
   description,
-  status,
-  icon,
-  color
+  icon
 }) => {
   // Function to get the appropriate icon component
   const getIcon = () => {

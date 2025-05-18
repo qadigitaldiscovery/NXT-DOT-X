@@ -1,7 +1,7 @@
 import React from 'react';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Database, Users, Truck, Calculator, FileText, Server, BrainCircuit } from "lucide-react";
+import { Database, Truck, Calculator, FileText, Server, BrainCircuit } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from '@/context/AuthContext';
 

@@ -19,7 +19,13 @@ import {
 import { SidebarProvider } from '@/components/ui/sidebar';
 
 // Sidebar Item Component
-const SidebarItem = ({ icon, label, active = false, onClick }) => {
+interface SidebarIconProps {
+  icon: React.ElementType;
+  label: string;
+  onClick: () => void;
+}
+
+const SidebarItem = ({ icon, label, active = false, onClick }: SidebarIconProps) => {
   return (
     <div 
       className={`flex items-center p-2 rounded-md ${active ? 'bg-blue-500/10' : 'hover:bg-slate-800'} cursor-pointer`}

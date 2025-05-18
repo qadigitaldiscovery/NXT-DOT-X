@@ -1,5 +1,5 @@
 
-import React from 'react';
+// Remove React import
 import { Card, CardContent } from '@/components/ui/card';
 import { ArrowUpIcon, ArrowDownIcon } from 'lucide-react';
 

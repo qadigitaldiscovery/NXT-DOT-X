@@ -23,8 +23,6 @@ export const SharedNavbar = ({
   notificationArea,
   showSidebarToggle = true
 }: SharedNavbarProps) => {
-  const isMobile = useIsMobile();
-  const navigate = useNavigate();
   const {
     user,
     logout
@@ -37,7 +35,6 @@ export const SharedNavbar = ({
 
   // Clean styling for header with full width
   const navbarBgColor = 'bg-gray-400 dark:bg-gray-700';
-  const textColor = 'text-slate-100 dark:text-gray-200';
   const iconColor = 'text-slate-200 dark:text-gray-300';
   const hoverBgColor = 'hover:bg-gray-500 dark:hover:bg-gray-600';
   

@@ -1,7 +1,5 @@
 import React, { useState } from 'react';
 import { cn } from '../../../lib/utils';
-import { Button } from '../../../components/ui/button';
-import { ChevronLeft, MenuIcon } from 'lucide-react';
 import { useIsMobile } from '../../../hooks/use-mobile';
 import { SidebarNavList } from './SidebarNavList';
 import { CollapsedSidebar } from './CollapsedSidebar';

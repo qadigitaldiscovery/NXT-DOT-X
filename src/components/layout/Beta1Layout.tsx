@@ -2,7 +2,6 @@ import React from 'react';
 import { Navbar } from './Navbar';
 import { Sidebar } from './sidebar/Sidebar';
 import { useIsMobile } from '@/hooks/use-mobile';
-import { useNavigate } from 'react-router-dom';
 
 interface Beta1LayoutProps {
   children: React.ReactNode;

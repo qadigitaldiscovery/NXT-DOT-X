@@ -1,11 +1,10 @@
-
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { SharedSidebar } from './SharedSidebar';
 import { SharedNavbar } from './SharedNavbar';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { cn } from '@/lib/utils';
 import { Outlet, useNavigate } from 'react-router-dom';
-import { BarChart3, Bot, Shield, Users, Settings, Zap, Brain, Home, Code, Database } from 'lucide-react';
+import { BarChart3, Shield, Users, Settings, Zap, Home, Code, Database } from 'lucide-react';
 import { NavCategory } from './sidebar/types';
 import { useAuth } from '@/context/AuthContext';
 import { toast } from '@/hooks/use-toast';

@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Bot, ShieldCheck, Shield } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
@@ -9,7 +8,6 @@ interface AiItem {
   id: string;
   name: string;
   icon: React.ReactElement;
-  path: string;
   description: string;
 }
 
@@ -20,26 +18,23 @@ const AiArmy: React.FC = () => {
       id: "ai-assistant", 
       name: "AI Assistant", 
       icon: <Bot className="h-5 w-5" />, 
-      path: "/ai-army/assistant",
       description: "Your personal AI assistant for everyday tasks"
     },
     { 
       id: "ai-shield", 
       name: "AI Shield", 
       icon: <ShieldCheck className="h-5 w-5" />, 
-      path: "/ai-army/shield",
       description: "Protect your systems with AI-powered security"
     },
     { 
       id: "ai-commander", 
       name: "AI Commander", 
       icon: <Shield className="h-5 w-5" />, 
-      path: "/ai-army/commander",
       description: "Command and coordinate your AI resources"
     },
   ];
 
-  const handleAiArmyClick = (aiId: string, path: string) => {
+  const handleAiArmyClick = (aiId: string) => {
     toast.info(`AI Army ${aiId} is being deployed`);
     // We would navigate here if the paths were implemented
     // navigate(path);
@@ -56,7 +51,7 @@ const AiArmy: React.FC = () => {
             <HoverCardTrigger asChild>
               <Card 
                 className="overflow-hidden transition-all duration-200 hover:shadow-md cursor-pointer backdrop-blur-sm bg-black/50 border-white/20"
-                onClick={() => handleAiArmyClick(ai.id, ai.path)}
+                onClick={() => handleAiArmyClick(ai.id)}
               >
                 <CardContent className="p-4 flex flex-col items-center justify-center text-center">
                   <div className="p-3 rounded-full bg-blue-500/30 mb-3">

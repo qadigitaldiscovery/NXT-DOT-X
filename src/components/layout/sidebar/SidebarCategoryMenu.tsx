@@ -33,17 +33,17 @@ export const SidebarCategoryMenu: React.FC<SidebarCategoryMenuProps> = ({
   const location = useLocation();
   
   // Check if any item in this category is active
-  const hasActiveItem = React.useMemo(() => {
-    return items.some(item => {
-      const currentPath = location.pathname;
-      const itemPath = item.href || item.path;
-      return currentPath === itemPath || 
-             (item.activeMatchPattern && 
-              (typeof item.activeMatchPattern === 'string' 
-                ? currentPath.includes(item.activeMatchPattern) 
-                : item.activeMatchPattern.test(currentPath)));
-    });
-  }, [items, location.pathname]);
+  // const hasActiveItem = React.useMemo(() => {
+  //   return items.some(item => {
+  //     const currentPath = location.pathname;
+  //     const itemPath = item.href || item.path;
+  //     return currentPath === itemPath || 
+  //            (item.activeMatchPattern && 
+  //             (typeof item.activeMatchPattern === 'string' 
+  //               ? currentPath.includes(item.activeMatchPattern) 
+  //               : item.activeMatchPattern.test(currentPath)));
+  //   });
+  // }, [items, location.pathname]);
 
   if (collapsed) {
     return null; // Don't render category titles in collapsed mode

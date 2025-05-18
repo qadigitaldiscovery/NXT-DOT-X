@@ -1,4 +1,3 @@
-import React from 'react';
 import { NavCategory, NavItem } from './types';
 import { SidebarItem } from './SidebarItem';
 import { cn } from '../../../lib/utils';

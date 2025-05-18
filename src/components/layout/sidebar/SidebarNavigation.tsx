@@ -1,13 +1,7 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { NavCategory, NavItem } from './types';
-import { ChevronDown } from 'lucide-react';
-
-interface SidebarNavigationProps {
-  categories: NavCategory[];
-  userRole?: string;
-}
 
 export function SidebarNavigation({ categories, userRole }: SidebarNavigationProps) {
   const location = useLocation();
@@ -77,7 +71,6 @@ export function SidebarNavigation({ categories, userRole }: SidebarNavigationPro
     <div className="space-y-1">
       {visibleCategories.map((category) => {
         const categoryName = category.name || category.label || '';
-        const isExpanded = expandedCategories.includes(categoryName);
         
         return (
           <div key={categoryName} className="mb-4">
@@ -139,3 +132,8 @@ export function SidebarNavigation({ categories, userRole }: SidebarNavigationPro
     </div>
   );
 } 
+
+interface SidebarNavigationProps {
+  categories: NavCategory[];
+  userRole?: string;
+}

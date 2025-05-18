@@ -32,9 +32,8 @@ export function SidebarItem({
   // Route path, using href with path as fallback for backwards compatibility
   const to = item.href || item.path || '#';
 
-  const handleClick = (e: React.MouseEvent) => {
+  const handleClick = () => {
     if (hasChildren) {
-      e.preventDefault(); // Prevent navigation for parent items with children
       setIsExpanded(!isExpanded);
     } else if (onClick) {
       onClick();
