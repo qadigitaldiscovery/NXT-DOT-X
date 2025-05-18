@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { cn } from '../../../lib/utils';
 import { useIsMobile } from '../../../hooks/use-mobile';
@@ -6,6 +7,7 @@ import { CollapsedSidebar } from './CollapsedSidebar';
 import { NavItem, NavCategory, SidebarProps } from './types';
 import { useAuth } from '../../../context/AuthContext';
 import { SidebarToggleButton } from './SidebarToggleButton';
+import { ChevronLeft, Menu as MenuIcon } from 'lucide-react';
 
 // Helper function to normalize navigation items
 const normalizeNavItems = (items: NavItem[] = []): NavItem[] => {
@@ -33,7 +35,6 @@ const Sidebar: React.FC<SidebarProps> = ({
   items = [],
   homeItem,
   customFooterContent,
-  className,
   removeBottomToggle = false,
   showToggleButton = true,
   initialState,

@@ -1,7 +1,5 @@
 
-// Updated import statements, removing unused ones
 import React from 'react';
-import { useLocation } from 'react-router-dom';
 import { MainSidebar } from './sidebar/MainSidebar';
 import { NavCategory } from './sidebar/types';
 
@@ -32,8 +30,6 @@ export const SharedSidebar: React.FC<SharedSidebarProps> = ({
   initialState,
   onStateChange,
 }) => {
-  const location = useLocation();
-
   return (
     <MainSidebar
       open={open}

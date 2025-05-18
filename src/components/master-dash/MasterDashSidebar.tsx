@@ -16,16 +16,16 @@ import {
   ClipboardList,
   CalendarClock
 } from 'lucide-react';
-import { SidebarProvider } from '@/components/ui/sidebar';
 
 // Sidebar Item Component
 interface SidebarIconProps {
-  icon: React.ElementType;
+  icon: React.ReactNode;
   label: string;
   onClick: () => void;
+  active?: boolean;
 }
 
-const SidebarItem = ({ icon, label, active = false, onClick }: SidebarIconProps) => {
+const SidebarItem: React.FC<SidebarIconProps> = ({ icon, label, active = false, onClick }) => {
   return (
     <div 
       className={`flex items-center p-2 rounded-md ${active ? 'bg-blue-500/10' : 'hover:bg-slate-800'} cursor-pointer`}

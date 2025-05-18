@@ -46,7 +46,7 @@ export const Beta2Layout = ({ children }: Beta2LayoutProps) => {
         ]} 
       />
       <div className="flex flex-col flex-1 overflow-hidden">
-        <Navbar onMenuClick={toggleSidebar} title="Beta 2" />
+        <Navbar onMenuClick={toggleSidebar} />
         <main className="flex-1 overflow-y-auto p-4">
           {children}
         </main>

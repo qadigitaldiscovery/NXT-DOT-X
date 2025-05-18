@@ -2,12 +2,13 @@ import { useCallback } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import { NavItem } from './types';
 
 // Define props for sidebar items
 interface SidebarItemProps {
   href?: string;
-  icon: React.ElementType;
-  label: string;
+  icon?: React.ElementType;
+  label?: string;
   active?: boolean;
   disabled?: boolean;
   onClick?: () => void;
@@ -19,31 +20,43 @@ interface SidebarItemProps {
   activeTextColor?: string;
   hoverBgColor?: string;
   isCollapsed?: boolean;
+  item?: NavItem; // Add item prop to support both direct props and item object
+  isActive?: boolean;
+  textHoverColor?: string;
 }
 
 export const SidebarItem = ({
   href,
-  icon: Icon,
+  icon: IconProp,
   label,
   active,
   disabled,
   onClick,
   showLabel = true,
-  collapsible = true,
   tooltip = true,
   textColor = "text-gray-200",
   activeBgColor = "bg-indigo-900",
   activeTextColor = "text-white",
   hoverBgColor = "hover:bg-indigo-800/60",
-  isCollapsed = false
+  isCollapsed = false,
+  item, // New item prop
+  isActive, // New isActive prop
+  textHoverColor // New textHoverColor prop
 }: SidebarItemProps) => {
   const navigate = useNavigate();
   const location = useLocation();
+
+  // Use item properties if provided
+  const itemHref = item?.href || item?.path || href;
+  const itemLabel = item?.label || label;
+  const Icon = item?.icon || IconProp;
   
   // Determine if the item is active based on current location
-  const isActive = active !== undefined 
-    ? active 
-    : href && location.pathname.startsWith(href);
+  const activeState = isActive !== undefined 
+    ? isActive 
+    : active !== undefined 
+      ? active 
+      : itemHref && location.pathname.startsWith(itemHref);
   
   // Handle click - navigate or call custom onClick
   const handleClick = useCallback(() => {
@@ -57,10 +70,10 @@ export const SidebarItem = ({
     }
     
     // Navigate if href is provided
-    if (href) {
-      navigate(href);
+    if (itemHref) {
+      navigate(itemHref);
     }
-  }, [disabled, onClick, href, navigate]);
+  }, [disabled, onClick, itemHref, navigate]);
 
   // The item content
   const itemContent = (
@@ -70,7 +83,7 @@ export const SidebarItem = ({
         "transition-colors duration-200 ease-in-out",
         "focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500",
         disabled ? "opacity-50 cursor-not-allowed" : hoverBgColor,
-        isActive ? cn(activeBgColor, activeTextColor) : textColor,
+        activeState ? cn(activeBgColor, activeTextColor) : textColor,
         isCollapsed && "justify-center"
       )}
       onClick={handleClick}
@@ -78,7 +91,7 @@ export const SidebarItem = ({
       {Icon && <Icon className={cn("h-5 w-5", !showLabel && !isCollapsed && "mr-0")} />}
       
       {showLabel && !isCollapsed && (
-        <span className={cn("ml-3 flex-1 truncate")}>{label}</span>
+        <span className={cn("ml-3 flex-1 truncate")}>{itemLabel}</span>
       )}
     </div>
   );
@@ -91,7 +104,7 @@ export const SidebarItem = ({
           {itemContent}
         </TooltipTrigger>
         <TooltipContent side="right" className="bg-gray-800 text-white border-gray-700">
-          {label}
+          {itemLabel}
         </TooltipContent>
       </Tooltip>
     );

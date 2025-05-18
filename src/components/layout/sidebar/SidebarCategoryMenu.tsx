@@ -1,14 +1,15 @@
+
 import React from 'react';
 import { ChevronDown } from 'lucide-react';
 import { SidebarItem } from './SidebarItem';
-import { NavItem } from './types';
+import { NavItem, NavCategory } from './types';
 import { useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
 interface SidebarCategoryMenuProps {
-  title: string;
-  items: NavItem[];
+  title?: string;
+  items?: NavItem[];
   open?: boolean;
   collapsed?: boolean;
   textColor?: string;
@@ -16,6 +17,9 @@ interface SidebarCategoryMenuProps {
   activeBgColor?: string;
   activeTextColor?: string;
   hoverBgColor?: string;
+  category?: NavCategory; // Add category prop
+  currentPath?: string;
+  userRole?: string;
 }
 
 export const SidebarCategoryMenu: React.FC<SidebarCategoryMenuProps> = ({
@@ -28,22 +32,18 @@ export const SidebarCategoryMenu: React.FC<SidebarCategoryMenuProps> = ({
   activeBgColor = "bg-indigo-500",
   activeTextColor = "text-white",
   hoverBgColor = "hover:bg-indigo-900/50",
+  category, // New category prop
+  currentPath
 }) => {
   const [isOpen, setIsOpen] = React.useState<boolean>(!!open);
   const location = useLocation();
   
-  // Check if any item in this category is active
-  // const hasActiveItem = React.useMemo(() => {
-  //   return items.some(item => {
-  //     const currentPath = location.pathname;
-  //     const itemPath = item.href || item.path;
-  //     return currentPath === itemPath || 
-  //            (item.activeMatchPattern && 
-  //             (typeof item.activeMatchPattern === 'string' 
-  //               ? currentPath.includes(item.activeMatchPattern) 
-  //               : item.activeMatchPattern.test(currentPath)));
-  //   });
-  // }, [items, location.pathname]);
+  // Use category props if provided
+  const menuTitle = category?.label || title;
+  const menuItems = category?.items || items || [];
+  
+  // Use provided currentPath or get from location
+  const path = currentPath || location.pathname;
 
   if (collapsed) {
     return null; // Don't render category titles in collapsed mode
@@ -62,7 +62,7 @@ export const SidebarCategoryMenu: React.FC<SidebarCategoryMenuProps> = ({
           )}
           onClick={() => setIsOpen(!isOpen)}
         >
-          {title}
+          {menuTitle}
           <ChevronDown
             className={cn(
               "h-3 w-3 transition-transform",
@@ -74,13 +74,13 @@ export const SidebarCategoryMenu: React.FC<SidebarCategoryMenuProps> = ({
       
       {isOpen && (
         <div className="mt-1 ml-1 space-y-0.5">
-          {items.map((item, index) => {
+          {menuItems.map((item, index) => {
             // Ensure isActive is always a boolean with explicit type
-            const isActive: boolean = !!(location.pathname === (item.href || item.path) || 
+            const isActive: boolean = !!(path === (item.href || item.path) || 
                            (item.activeMatchPattern && 
                             (typeof item.activeMatchPattern === 'string' 
-                             ? location.pathname.includes(item.activeMatchPattern) 
-                             : item.activeMatchPattern.test(location.pathname))));
+                             ? path.includes(item.activeMatchPattern) 
+                             : item.activeMatchPattern.test(path))));
 
             return (
               <SidebarItem

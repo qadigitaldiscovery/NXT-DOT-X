@@ -2,7 +2,18 @@ import { useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { NavCategory } from './types';
 import { SidebarCategoryMenu } from './SidebarCategoryMenu';
-import { checkPermission } from '@/hooks/usePermissions';
+
+// Simple permission check function since the imported one isn't available
+const checkPermission = (userRole?: string | null, requiredRoles?: string[]): boolean => {
+  // If no roles required, allow access
+  if (!requiredRoles || requiredRoles.length === 0) return true;
+  
+  // If roles required but no user role, deny access
+  if (!userRole) return false;
+  
+  // Check if user's role is in the required roles
+  return requiredRoles.includes(userRole);
+};
 
 interface SidebarNavigationProps {
   categories: NavCategory[];
@@ -11,7 +22,7 @@ interface SidebarNavigationProps {
 
 export const SidebarNavigation = ({ categories, userRole }: SidebarNavigationProps) => {
   const location = useLocation();
-  const [expandedCategories, setExpandedCategories] = useState<Record<string, boolean>>({});
+  const [expandedCategories] = useState<Record<string, boolean>>({});
   
   // Filter navigation items based on user role if roles are specified
   const filteredCategories = categories.map(category => ({
@@ -25,18 +36,11 @@ export const SidebarNavigation = ({ categories, userRole }: SidebarNavigationPro
     })
   })).filter(category => category.items.length > 0);
 
-  const toggleCategory = (categoryName: string) => {
-    setExpandedCategories(prev => ({
-      ...prev,
-      [categoryName]: !prev[categoryName]
-    }));
-  };
-
   return (
     <div className="space-y-1">
       {filteredCategories.map((category) => (
         <SidebarCategoryMenu 
-          key={category.name} 
+          key={category.name || category.label} 
           category={category}
           currentPath={location.pathname}
           userRole={userRole}

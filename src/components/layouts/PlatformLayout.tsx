@@ -1,6 +1,7 @@
-import React, { ReactNode, useState } from 'react';
+
+import { ReactNode, useState } from 'react';
 import { MainSidebar } from '@/components/layout/sidebar/MainSidebar';
-import { Topbar } from './Topbar';
+import Topbar from './Topbar';
 import { cn } from '@/lib/utils';
 import { useIsMobile } from '@/hooks/use-mobile';
 
