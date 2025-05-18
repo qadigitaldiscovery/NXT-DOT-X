@@ -1,29 +1,25 @@
 
 import { useNavigate } from 'react-router-dom';
 import { ModuleCard } from '../ModuleCard';
-import { BrainCircuit, Bot, Sparkles } from 'lucide-react';
+import { Bot, BrainCircuit } from 'lucide-react';
 
 const AiArmy = () => {
   const navigate = useNavigate();
 
   const aiModules = [
     {
-      title: 'AI Personas',
-      description: 'Specialized AI personas for specific business tasks',
-      icon: <Bot className="h-8 w-8 text-purple-500" />,
-      onClick: () => navigate('/tech-hub/personas')
-    },
-    {
-      title: 'AI Assistants',
-      description: 'Interactive AI assistants for various business processes',
+      title: 'AI Studio',
+      description: 'Create and manage AI models and flows',
       icon: <BrainCircuit className="h-8 w-8 text-purple-500" />,
-      onClick: () => navigate('/tech-hub/assistants')
+      path: '/ai-army/studio',
+      onClick: () => navigate('/ai-army/studio')
     },
     {
-      title: 'AI Models',
-      description: 'Configure and manage custom AI models',
-      icon: <Sparkles className="h-8 w-8 text-purple-500" />,
-      onClick: () => navigate('/tech-hub/models')
+      title: 'Bot Management',
+      description: 'Configure and deploy AI bots to various platforms',
+      icon: <Bot className="h-8 w-8 text-purple-500" />,
+      path: '/ai-army/bots',
+      onClick: () => navigate('/ai-army/bots')
     }
   ];
 

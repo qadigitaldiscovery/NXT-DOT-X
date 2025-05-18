@@ -1,13 +1,9 @@
 
 import { ReactNode, useState } from 'react';
 import { MainSidebar } from '@/components/layout/sidebar/MainSidebar';
-import Topbar from './Topbar';
+import Topbar from '@/components/layout/Topbar';
 import { cn } from '@/lib/utils';
 import { useIsMobile } from '@/hooks/use-mobile';
-
-interface TopbarProps {
-  onMenuClick?: () => void;
-}
 
 interface PlatformLayoutProps {
   children: ReactNode;
@@ -16,6 +12,8 @@ interface PlatformLayoutProps {
   className?: string;
   showSidebar?: boolean;
   sidebarState?: 'expanded' | 'collapsed';
+  moduleTitle?: string;
+  navCategories?: any[];
 }
 
 export function PlatformLayout({ 
@@ -24,7 +22,9 @@ export function PlatformLayout({
   fullWidth = false,
   className,
   showSidebar = true,
-  sidebarState = 'expanded'
+  sidebarState = 'expanded',
+  moduleTitle,
+  navCategories
 }: PlatformLayoutProps) {
   const isMobile = useIsMobile();
   const [sidebarOpen, setSidebarOpen] = useState(
@@ -57,6 +57,7 @@ export function PlatformLayout({
           onToggle={handleSidebarToggle}
           initialState={sidebarState}
           onStateChange={handleSidebarStateChange}
+          navCategories={navCategories}
         />
       )}
       

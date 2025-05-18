@@ -1,115 +1,61 @@
-import { useCallback } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
-import { cn } from '@/lib/utils';
-import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
-import { NavItem } from './types';
+import React from 'react';
+import { cn } from "@/lib/utils";
+import { NavLink } from 'react-router-dom';
 
-// Define props for sidebar items
 interface SidebarItemProps {
-  href?: string;
-  icon?: React.ElementType;
-  label?: string;
-  active?: boolean;
-  disabled?: boolean;
+  label: string;
+  path?: string;
+  icon?: React.ReactNode;
+  isActive?: boolean;
   onClick?: () => void;
-  showLabel?: boolean;
-  collapsible?: boolean;
-  tooltip?: boolean;
   textColor?: string;
   activeBgColor?: string;
   activeTextColor?: string;
   hoverBgColor?: string;
-  isCollapsed?: boolean;
-  item?: NavItem; // Add item prop to support both direct props and item object
-  isActive?: boolean;
-  textHoverColor?: string;
 }
 
-export const SidebarItem = ({
-  href,
-  icon: IconProp,
+export const SidebarItem: React.FC<SidebarItemProps> = ({
   label,
-  active,
-  disabled,
+  path,
+  icon,
+  isActive = false,
   onClick,
-  showLabel = true,
-  tooltip = true,
-  textColor = "text-gray-200",
-  activeBgColor = "bg-indigo-900",
+  textColor = "text-gray-400",
+  activeBgColor = "bg-blue-900/50",
   activeTextColor = "text-white",
-  hoverBgColor = "hover:bg-indigo-800/60",
-  isCollapsed = false,
-  item, // New item prop
-  isActive, // New isActive prop
-  textHoverColor // New textHoverColor prop
-}: SidebarItemProps) => {
-  const navigate = useNavigate();
-  const location = useLocation();
-
-  // Use item properties if provided
-  const itemHref = item?.href || item?.path || href;
-  const itemLabel = item?.label || label;
-  const Icon = item?.icon || IconProp;
-  
-  // Determine if the item is active based on current location
-  const activeState = isActive !== undefined 
-    ? isActive 
-    : active !== undefined 
-      ? active 
-      : itemHref && location.pathname.startsWith(itemHref);
-  
-  // Handle click - navigate or call custom onClick
-  const handleClick = useCallback(() => {
-    // Don't do anything if disabled
-    if (disabled) return;
-    
-    // Custom click handler takes precedence
-    if (onClick) {
-      onClick();
-      return;
-    }
-    
-    // Navigate if href is provided
-    if (itemHref) {
-      navigate(itemHref);
-    }
-  }, [disabled, onClick, itemHref, navigate]);
-
-  // The item content
-  const itemContent = (
-    <div
-      className={cn(
-        "flex items-center rounded-md px-3 py-2 cursor-pointer",
-        "transition-colors duration-200 ease-in-out",
-        "focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500",
-        disabled ? "opacity-50 cursor-not-allowed" : hoverBgColor,
-        activeState ? cn(activeBgColor, activeTextColor) : textColor,
-        isCollapsed && "justify-center"
-      )}
-      onClick={handleClick}
-    >
-      {Icon && <Icon className={cn("h-5 w-5", !showLabel && !isCollapsed && "mr-0")} />}
-      
-      {showLabel && !isCollapsed && (
-        <span className={cn("ml-3 flex-1 truncate")}>{itemLabel}</span>
-      )}
-    </div>
+  hoverBgColor = "hover:bg-gray-800/50"
+}) => {
+  return (
+    path ? (
+      <NavLink
+        to={path}
+        className={({ isActive: navLinkIsActive }) =>
+          cn(
+            "flex items-center w-full p-2 text-sm font-medium rounded-md transition-colors",
+            textColor,
+            hoverBgColor,
+            isActive || navLinkIsActive ? activeBgColor : null,
+            isActive || navLinkIsActive ? activeTextColor : null
+          )
+        }
+      >
+        {icon && <span className="mr-2">{icon}</span>}
+        {label}
+      </NavLink>
+    ) : (
+      <button
+        onClick={onClick}
+        className={cn(
+          "flex items-center w-full p-2 text-sm font-medium rounded-md transition-colors",
+          textColor,
+          hoverBgColor,
+          isActive ? activeBgColor : null,
+          isActive ? activeTextColor : null
+        )}
+      >
+        {icon && <span className="mr-2">{icon}</span>}
+        {label}
+      </button>
+    )
   );
-  
-  // If collapsed and tooltip is enabled, wrap in tooltip
-  if (isCollapsed && tooltip) {
-    return (
-      <Tooltip>
-        <TooltipTrigger asChild>
-          {itemContent}
-        </TooltipTrigger>
-        <TooltipContent side="right" className="bg-gray-800 text-white border-gray-700">
-          {itemLabel}
-        </TooltipContent>
-      </Tooltip>
-    );
-  }
-  
-  // Otherwise just return the content
-  return itemContent;
 };

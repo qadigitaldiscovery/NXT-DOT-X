@@ -13,3 +13,5 @@ export const Topbar = ({ onMenuClick }: TopbarProps) => {
     </header>
   );
 };
+
+export default Topbar;

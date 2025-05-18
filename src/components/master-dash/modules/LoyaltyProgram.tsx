@@ -2,7 +2,6 @@
 import { useNavigate } from 'react-router-dom';
 import { ModuleCard } from '../ModuleCard';
 import { Gem, Award } from 'lucide-react';
-import { useAuth } from '@/context/AuthContext';
 
 const LoyaltyProgram = () => {
   const navigate = useNavigate();

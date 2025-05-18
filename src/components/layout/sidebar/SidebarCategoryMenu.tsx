@@ -1,104 +1,75 @@
-
-import React from 'react';
-import { ChevronDown } from 'lucide-react';
+import React, { useState } from 'react';
 import { SidebarItem } from './SidebarItem';
-import { NavItem, NavCategory } from './types';
-import { useLocation } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
-import { cn } from '@/lib/utils';
+import { NavItem } from './types';
 
 interface SidebarCategoryMenuProps {
   title?: string;
-  items?: NavItem[];
-  open?: boolean;
-  collapsed?: boolean;
-  textColor?: string;
-  textHoverColor?: string;
-  activeBgColor?: string;
-  activeTextColor?: string;
-  hoverBgColor?: string;
-  category?: NavCategory; // Add category prop
-  currentPath?: string;
-  userRole?: string;
+  items: NavItem[];
+  currentPath: string;
+  userRole: string;
 }
 
-export const SidebarCategoryMenu: React.FC<SidebarCategoryMenuProps> = ({
+export const SidebarCategoryMenu = ({
   title,
   items,
-  open = true,
-  collapsed = false,
-  textColor = "text-white",
-  textHoverColor = "hover:text-white",
-  activeBgColor = "bg-indigo-500",
-  activeTextColor = "text-white",
-  hoverBgColor = "hover:bg-indigo-900/50",
-  category, // New category prop
-  currentPath
-}) => {
-  const [isOpen, setIsOpen] = React.useState<boolean>(!!open);
-  const location = useLocation();
-  
-  // Use category props if provided
-  const menuTitle = category?.label || title;
-  const menuItems = category?.items || items || [];
-  
-  // Use provided currentPath or get from location
-  const path = currentPath || location.pathname;
+  currentPath,
+  userRole
+}: SidebarCategoryMenuProps) => {
+  const [isExpanded, setIsExpanded] = useState(true);
 
-  if (collapsed) {
-    return null; // Don't render category titles in collapsed mode
-  }
+  const toggleExpand = () => {
+    setIsExpanded(!isExpanded);
+  };
 
   return (
     <div className="mb-2">
-      {!collapsed && (
-        <Button
-          variant="ghost"
-          className={cn(
-            "flex justify-between items-center w-full px-2 py-1 font-medium",
-            textColor,
-            textHoverColor,
-            "text-xs opacity-60 hover:opacity-80 transition-colors"
-          )}
-          onClick={() => setIsOpen(!isOpen)}
+      <div
+        className="flex items-center justify-between p-2 rounded cursor-pointer hover:bg-gray-800/50"
+        onClick={toggleExpand}
+      >
+        <span className="text-sm font-semibold text-gray-300">{title}</span>
+        <svg
+          className={`w-4 h-4 text-gray-500 transition-transform ${
+            isExpanded ? 'rotate-90' : ''
+          }`}
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+          xmlns="http://www.w3.org/2000/svg"
         >
-          {menuTitle}
-          <ChevronDown
-            className={cn(
-              "h-3 w-3 transition-transform",
-              isOpen && "rotate-180"
-            )}
-          />
-        </Button>
-      )}
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="2"
+            d="M9 5l7 7-7 7"
+          ></path>
+        </svg>
+      </div>
       
-      {isOpen && (
-        <div className="mt-1 ml-1 space-y-0.5">
-          {menuItems.map((item, index) => {
-            // Ensure isActive is always a boolean with explicit type
-            const isActive: boolean = !!(path === (item.href || item.path) || 
-                           (item.activeMatchPattern && 
-                            (typeof item.activeMatchPattern === 'string' 
-                             ? path.includes(item.activeMatchPattern) 
-                             : item.activeMatchPattern.test(path))));
-
+      {isExpanded && (
+        <ul className="mt-1 space-y-1">
+          {items.map((item, index) => {
+            const isActive = item.path === currentPath;
+            
             return (
-              <SidebarItem
-                key={index}
-                href={item.href || item.path}
-                icon={item.icon}
-                label={item.label}
-                isActive={isActive}
-                textColor={textColor}
-                textHoverColor={textHoverColor}
-                activeBgColor={activeBgColor}
-                activeTextColor={activeTextColor}
-                hoverBgColor={hoverBgColor}
-                onClick={item.onClick}
-              />
+              <li key={index} className="px-1">
+                <SidebarItem
+                  key={index}
+                  label={item.label}
+                  path={item.path}
+                  icon={item.icon}
+                  isActive={isActive}
+                  onClick={() => item.onClick?.()}
+                  textColor="text-gray-400"
+                  textHoverColor="hover:text-white"
+                  activeBgColor="bg-blue-900/50"
+                  activeTextColor="text-white"
+                  hoverBgColor="hover:bg-gray-800/50"
+                />
+              </li>
             );
           })}
-        </div>
+        </ul>
       )}
     </div>
   );

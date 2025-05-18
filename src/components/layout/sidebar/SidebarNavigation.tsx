@@ -1,6 +1,5 @@
 
 import { SidebarCategoryMenu } from './SidebarCategoryMenu';
-import { SidebarItem } from './SidebarItem';
 import { NavCategory, NavItem } from './types';
 import { useLocation } from 'react-router-dom';
 

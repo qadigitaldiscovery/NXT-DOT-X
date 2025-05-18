@@ -7,6 +7,7 @@ import ProjectManagement from './modules/ProjectManagement';
 import SupplierManagement from './modules/SupplierManagement';
 
 const DashboardModules = () => {
+  // Keep navigate for potential future use
   const navigate = useNavigate();
 
   return (
@@ -22,4 +23,3 @@ const DashboardModules = () => {
 };
 
 export default DashboardModules;
-

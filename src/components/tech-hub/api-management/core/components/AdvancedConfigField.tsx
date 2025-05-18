@@ -1,88 +1,85 @@
-import React from 'react';
-import { Switch } from "@/components/ui/switch";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { cn } from '@/lib/utils';
+
+import { useState, ChangeEvent } from 'react';
+import { Input } from '@/components/ui/input';
+import { Switch } from '@/components/ui/switch';
+import { Card } from '@/components/ui/card';
 
 interface AdvancedConfigFieldProps {
+  configKey: string;
   label: string;
-  type: 'toggle' | 'text' | 'textarea' | 'select' | 'multiselect';
-  value?: boolean | string | string[];
-  onChange?: (value: boolean | string | string[]) => void;
+  type?: 'text' | 'number' | 'boolean' | 'select';
+  value: any;
+  onChange: (key: string, value: any) => void;
   options?: string[];
-  className?: string;
+  description?: string;
 }
 
-export const AdvancedConfigField: React.FC<AdvancedConfigFieldProps> = ({
+export const AdvancedConfigField = ({
+  configKey,
   label,
-  type,
+  type = 'text',
   value,
   onChange,
   options,
-  className
-}) => {
-  const handleToggleChange = (checked: boolean) => {
-    onChange && onChange(checked);
+  description
+}: AdvancedConfigFieldProps) => {
+  const handleValueChange = (newValue: any) => {
+    onChange(configKey, newValue);
   };
 
-  const handleValueChange = (values: string[]) => {
-    onChange && onChange(values);
+  // Boolean toggle handler
+  const handleBooleanChange = (checked: boolean) => {
+    handleValueChange(checked);
+  };
+
+  // Text/number input handler
+  const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const val = type === 'number' ? parseFloat(e.target.value) : e.target.value;
+    handleValueChange(val);
+  };
+
+  // Select handler
+  const handleSelectChange = (e: ChangeEvent<HTMLSelectElement>) => {
+    handleValueChange(e.target.value);
   };
 
   return (
-    <div className={cn("grid gap-2", className)}>
-      <Label htmlFor={label}>{label}</Label>
-      {type === 'toggle' && (
-        <Switch 
-          id={label} 
-          checked={typeof value === 'boolean' ? value : false} 
-          onCheckedChange={handleToggleChange} 
-        />
-      )}
-      {type === 'text' && (
-        <Input 
-          type="text" 
-          id={label} 
-          value={typeof value === 'string' ? value : ''} 
-          onChange={(e) => onChange && onChange(e.target.value)} 
-        />
-      )}
-      {type === 'textarea' && (
-        <Input
-          as="textarea"
-          id={label}
-          value={typeof value === 'string' ? value : ''}
-          onChange={(e) => onChange && onChange(e.target.value)}
-        />
-      )}
-      {type === 'select' && options && (
-        <select 
-          id={label} 
-          value={typeof value === 'string' ? value : ''} 
-          onChange={(e) => onChange && onChange(e.target.value)}
-          className="rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-        >
-          {options.map(option => (
-            <option key={option} value={option}>{option}</option>
-          ))}
-        </select>
-      )}
-      {type === 'multiselect' && options && (
-        <select
-          id={label}
-          multiple
-          value={Array.isArray(value) ? value : []}
-          onChange={(e) => {
-            const selectedOptions = Array.from(e.target.selectedOptions, (option) => option.value);
-            handleValueChange(selectedOptions);
-          }}
-          className="rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-        >
-          {options.map(option => (
-            <option key={option} value={option}>{option}</option>
-          ))}
-        </select>
-      )}
-    </div>
+    <Card className="p-3 mb-3">
+      <div className="flex flex-col space-y-2">
+        <div className="flex justify-between items-center">
+          <label className="text-sm font-medium">{label}</label>
+          
+          {type === 'boolean' ? (
+            <Switch 
+              checked={value} 
+              onCheckedChange={handleBooleanChange} 
+            />
+          ) : type === 'select' && options ? (
+            <select
+              id={configKey}
+              value={value}
+              onChange={handleSelectChange}
+              className="border rounded p-1 text-sm"
+            >
+              {options.map(opt => (
+                <option key={opt} value={opt}>{opt}</option>
+              ))}
+            </select>
+          ) : (
+            <Input
+              id={configKey}
+              value={value}
+              onChange={handleInputChange}
+              type={type}
+              className="w-40 text-sm"
+            />
+          )}
+        </div>
+        
+        {description && (
+          <p className="text-xs text-gray-500">{description}</p>
+        )}
+      </div>
+    </Card>
   );
 };
