@@ -171,87 +171,112 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       
       console.log("AuthProvider: Attempting sign in with:", normalizedEmail);
       
-      // Special case for test account
+      // For demo purposes, use hardcoded test credentials
       if (normalizedEmail === 'admin@example.com' && password === 'Pass1') {
-        console.log("AuthProvider: Using test credentials");
+        console.log("AuthProvider: Using test account");
         
-        const { data, error } = await supabase.auth.signInWithPassword({
-          email: normalizedEmail,
-          password: password,
-        });
-        
-        if (error) {
-          console.error("Even test login failed:", error);
-          toast.error("Authentication server error. Please try again later.");
-          setLoading(false);
-          return;
-        }
-        
-        setUser({
-          id: data.user?.id || 'test-admin-id',
-          email: 'admin@example.com',
-          role: 'admin',
-          name: 'Admin User'
-        });
-        
-        toast.success('Successfully logged in as admin');
-        navigate('/master');
-        return;
-      }
-      
-      // Regular authentication flow
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email: normalizedEmail,
-        password,
-      });
-
-      if (error) {
-        console.error('Login error:', error);
-        if (error.message.includes('Invalid login credentials')) {
-          toast.error('Invalid email or password. Please try again.');
-        } else {
-          toast.error(error.message || 'Authentication failed');
-        }
-        setLoading(false);
-        return;
-      }
-
-      if (data?.user) {
         try {
-          // Fetch profile data
-          const { data: profileData, error: profileError } = await supabase
-            .from('profiles')
-            .select('*')
-            .eq('id', data.user.id)
-            .maybeSingle();
-
-          if (profileError) {
-            console.error("Profile fetch error:", profileError);
-            toast.error('Error loading user profile. Some features may be limited.');
-          }
-
-          setUser({
-            id: data.user.id,
-            email: data.user.email || '',
-            role: profileData?.role || 'user',
-            name: profileData?.name,
-          });
-
-          console.log("AuthProvider: Login successful for:", data.user.email);
-          toast.success('Successfully logged in');
-          navigate('/master');
-        } catch (profileError) {
-          console.error("Error fetching profile after login:", profileError);
-          // Still set the user even if profile fetch fails
-          setUser({
-            id: data.user.id,
-            email: data.user.email || '',
-            role: 'user', // Default role if profile fetch fails
-            name: undefined,
+          // Create a new user for the test account if it doesn't exist
+          const { data: existingUser } = await supabase.auth.signUp({
+            email: normalizedEmail,
+            password: password
           });
           
-          toast.success('Logged in successfully');
-          navigate('/master');
+          // Now sign in
+          const { data, error } = await supabase.auth.signInWithPassword({
+            email: normalizedEmail,
+            password: password
+          });
+          
+          if (error) {
+            console.error("Test login failed:", error);
+            toast.error("Authentication failed. Please try again.");
+            return;
+          }
+          
+          // Create or update the profile if needed
+          if (data?.user) {
+            const { error: profileError } = await supabase
+              .from('profiles')
+              .upsert({
+                id: data.user.id,
+                name: 'Admin User',
+                role: 'admin',
+                updated_at: new Date()
+              });
+              
+            if (profileError) {
+              console.error("Error updating admin profile:", profileError);
+            }
+            
+            setUser({
+              id: data.user.id,
+              email: 'admin@example.com',
+              role: 'admin',
+              name: 'Admin User'
+            });
+            
+            toast.success('Successfully logged in as admin');
+            navigate('/master');
+          }
+        } catch (error) {
+          console.error("Test account setup failed:", error);
+          toast.error("Failed to set up test account");
+        }
+      } else {
+        // Regular authentication flow
+        const { data, error } = await supabase.auth.signInWithPassword({
+          email: normalizedEmail,
+          password,
+        });
+
+        if (error) {
+          console.error('Login error:', error);
+          if (error.message.includes('Invalid login credentials')) {
+            toast.error('Invalid email or password. Please try again.');
+          } else {
+            toast.error(error.message || 'Authentication failed');
+          }
+          return;
+        }
+
+        if (data?.user) {
+          try {
+            // Fetch profile data
+            const { data: profileData, error: profileError } = await supabase
+              .from('profiles')
+              .select('*')
+              .eq('id', data.user.id)
+              .maybeSingle();
+
+            if (profileError) {
+              console.error("Profile fetch error:", profileError);
+              toast.error('Error loading user profile. Some features may be limited.');
+            }
+
+            setUser({
+              id: data.user.id,
+              email: data.user.email || '',
+              role: profileData?.role || 'user',
+              name: profileData?.name,
+            });
+
+            console.log("AuthProvider: Login successful for:", data.user.email);
+            toast.success('Successfully logged in');
+            navigate('/master');
+          } catch (profileError) {
+            console.error("Error fetching profile after login:", profileError);
+            // Still set the user even if profile fetch fails
+            setUser({
+              id: data.user.id,
+              email: data.user.email || '',
+              role: 'user', // Default role if profile fetch fails
+              name: undefined,
+            });
+            
+            toast.success('Logged in successfully');
+            navigate('/master');
+          }
         }
       }
     } catch (error: any) {
