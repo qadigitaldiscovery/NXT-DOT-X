@@ -1,3 +1,4 @@
+
 import { Outlet } from 'react-router-dom';
 import { SharedNavbar } from './SharedNavbar';
 import { Sidebar } from '@/components/ui/sidebar';
@@ -26,3 +27,6 @@ export function ProjectManagementLayout() {
     </div>
   );
 }
+
+// Make sure we have both named and default exports
+export default ProjectManagementLayout;

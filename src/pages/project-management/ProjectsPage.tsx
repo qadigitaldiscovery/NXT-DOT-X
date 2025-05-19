@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
-import ProjectManagementLayout from '@/components/layout/ProjectManagementLayout';
+import { ProjectManagementLayout } from '@/components/layout/ProjectManagementLayout';
 import ProjectCard from '@/components/project-management/ProjectCard';
 import ProjectForm from '@/components/project-management/ProjectForm';
 import { useProjects } from '@/hooks/use-projects';
@@ -79,7 +79,7 @@ const ProjectsPage = () => {
                 </div>
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All Statuses</SelectItem>
+                <SelectItem value="">All Statuses</SelectItem>
                 <SelectItem value="active">Active</SelectItem>
                 <SelectItem value="planned">Planned</SelectItem>
                 <SelectItem value="on-hold">On Hold</SelectItem>
