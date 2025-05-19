@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { cn } from '@/lib/utils';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -13,10 +12,10 @@ import { SidebarToggleButton } from '@/components/layout/sidebar/SidebarToggleBu
 interface MainSidebarProps {
   open?: boolean;
   onToggle?: () => void;
-  navItems?: any[];
+  navItems?: unknown[];
   navCategories?: NavCategory[];
-  items?: any[];
-  homeItem?: any;
+  items?: unknown[];
+  homeItem?: unknown;
   className?: string;
   removeBottomToggle?: boolean;
   showToggleButton?: boolean;

@@ -2,10 +2,12 @@ import React from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import { NavCategory, NavItem } from './types';
 import { cn } from '@/lib/utils';
+
 interface SidebarNavigationProps {
   categories: NavCategory[];
   userRole?: string;
 }
+
 export const SidebarNavigation: React.FC<SidebarNavigationProps> = ({
   categories,
   userRole

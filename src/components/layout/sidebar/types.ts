@@ -15,7 +15,7 @@ export interface NavCategory {
   label: string;
   name?: string;  // For backward compatibility
   items: NavItem[];
-  icon?: any;
+  icon?: React.ComponentType | undefined;
   roles?: string[];
   expanded?: boolean;
 }

@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { MainSidebar } from './sidebar/MainSidebar';
 import { NavCategory } from './sidebar/types';
@@ -6,10 +5,10 @@ import { NavCategory } from './sidebar/types';
 interface SharedSidebarProps {
   open?: boolean;
   onToggle?: () => void;
-  navItems?: any[];
+  navItems?: unknown[];
   navCategories?: NavCategory[];
-  items?: any[];
-  homeItem?: any;
+  items?: unknown[];
+  homeItem?: unknown;
   className?: string;
   removeBottomToggle?: boolean;
   showToggleButton?: boolean;
