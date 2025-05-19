@@ -22,3 +22,15 @@ export interface ApiEndpoint {
   status: string;
   lastUsed: string;
 }
+
+// Add ApiKeyFormProps interface to fix the errors in OpenAIKeyForm and RequestyKeyForm
+export interface ApiKeyFormProps {
+  providerName: string;
+  apiKeyPlaceholder: string;
+  docsLink: { text: string; url: string };
+  onVerify: (apiKey: string) => Promise<boolean>;
+  preferredModelOptions: { value: string; label: string }[];
+  initialModel: string;
+  footerText: string;
+  additionalConfig?: Record<string, any>;
+}

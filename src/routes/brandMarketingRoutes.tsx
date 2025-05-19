@@ -10,7 +10,7 @@ import BrandTrust from "@/pages/brand-marketing/BrandTrust";
 import MarketPerception from "@/pages/brand-marketing/MarketPerception";
 import BrandSettings from "@/pages/brand-marketing/BrandSettings";
 import SEOKeywords from "@/pages/brand-marketing/SEOKeywords";
-import RequestyPage from "@/pages/RequestyPage";
+import RequestyPage from "@/pages/brand-marketing/RequestyPage";
 
 export const BrandMarketingRoutes = () => {
   return (

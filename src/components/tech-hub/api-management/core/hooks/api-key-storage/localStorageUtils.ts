@@ -31,3 +31,8 @@ export const loadFromLocalStorage = (key: string, defaultModel: string, defaultC
 export const clearFromLocalStorage = (key: string) => {
   localStorage.removeItem(key);
 };
+
+// Add aliases for the functions to support the API used in useApiKey.ts
+export const storeApiKey = saveToLocalStorage;
+export const retrieveApiKey = loadFromLocalStorage;
+export const removeApiKey = clearFromLocalStorage;
