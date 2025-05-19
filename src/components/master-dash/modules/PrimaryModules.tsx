@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { ModuleCard } from "../ModuleCard";
 import { Card } from "@/components/ui/card";
@@ -13,105 +14,91 @@ interface PrimaryModulesProps {
 }
 
 export default function PrimaryModules({ activeTab = "all", searchQuery = "" }: PrimaryModulesProps) {
-  // Define all modules with their metadata including color gradients
+  // Define all modules with their metadata
   const allModules = [
     { 
       category: "data", 
       path: "/data-management", 
       name: "Data Management",
-      icon: <Database className="h-8 w-8 stroke-[1.75] drop-shadow-[0_2px_3px_rgba(0,0,0,0.2)]" />,
-      color: "bg-gradient-to-br from-blue-50 to-blue-100",
+      icon: <Database className="h-8 w-8" />,
     },
     { 
       category: "marketing", 
       path: "/loyalty-rewards", 
       name: "Loyalty Program",
-      icon: <Award className="h-8 w-8 stroke-[1.75] drop-shadow-[0_2px_3px_rgba(0,0,0,0.2)]" />,
-      color: "bg-gradient-to-br from-amber-50 to-amber-100",
+      icon: <Award className="h-8 w-8" />,
     },
     { 
       category: "operations", 
       path: "/trading-system", 
       name: "Trading System",
-      icon: <LineChart className="h-8 w-8 stroke-[1.75] drop-shadow-[0_2px_3px_rgba(0,0,0,0.2)]" />,
-      color: "bg-gradient-to-br from-green-50 to-green-100",
+      icon: <LineChart className="h-8 w-8" />,
     },
     { 
       category: "marketing", 
       path: "/social-media", 
       name: "Social Media",
-      icon: <Share2 className="h-8 w-8 stroke-[1.75] drop-shadow-[0_2px_3px_rgba(0,0,0,0.2)]" />,
-      color: "bg-gradient-to-br from-pink-50 to-pink-100",
+      icon: <Share2 className="h-8 w-8" />,
     },
     { 
       category: "tech", 
       path: "/tech-hub", 
       name: "Tech Hub",
-      icon: <Code className="h-8 w-8 stroke-[1.75] drop-shadow-[0_2px_3px_rgba(0,0,0,0.2)]" />,
-      color: "bg-gradient-to-br from-indigo-50 to-indigo-100",
+      icon: <Code className="h-8 w-8" />,
     },
     { 
       category: "tech", 
       path: "/dot-x", 
       name: "DOT-X Platform",
-      icon: <Layers className="h-8 w-8 stroke-[1.75] drop-shadow-[0_2px_3px_rgba(0,0,0,0.2)]" />,
-      color: "bg-gradient-to-br from-purple-50 to-purple-100",
+      icon: <Layers className="h-8 w-8" />,
     },
     { 
       category: "marketing", 
       path: "/brand-marketing", 
       name: "Brand Marketing",
-      icon: <Briefcase className="h-8 w-8 stroke-[1.75] drop-shadow-[0_2px_3px_rgba(0,0,0,0.2)]" />,
-      color: "bg-gradient-to-br from-orange-50 to-orange-100",
+      icon: <Briefcase className="h-8 w-8" />,
     },
     { 
       category: "operations", 
       path: "/projects", 
       name: "Project Management",
-      icon: <Users className="h-8 w-8 stroke-[1.75] drop-shadow-[0_2px_3px_rgba(0,0,0,0.2)]" />,
-      color: "bg-gradient-to-br from-sky-50 to-sky-100",
+      icon: <Users className="h-8 w-8" />,
     },
     { 
       category: "analytics", 
       path: "/dashboard/rag", 
       name: "System Monitor",
-      icon: <Activity className="h-8 w-8 stroke-[1.75] drop-shadow-[0_2px_3px_rgba(0,0,0,0.2)]" />,
-      color: "bg-gradient-to-br from-red-50 to-red-100",
+      icon: <Activity className="h-8 w-8" />,
     },
     {
       category: "operations",
       path: "/customer-management",
       name: "Customer Management",
-      icon: <Building className="h-8 w-8 stroke-[1.75] drop-shadow-[0_2px_3px_rgba(0,0,0,0.2)]" />,
-      color: "bg-gradient-to-br from-teal-50 to-teal-100",
+      icon: <Building className="h-8 w-8" />,
     },
     {
       category: "analytics",
       path: "/data-management/cost-analysis",
       name: "Analytics",
-      icon: <BarChart3 className="h-8 w-8 stroke-[1.75] drop-shadow-[0_2px_3px_rgba(0,0,0,0.2)]" />,
-      color: "bg-gradient-to-br from-cyan-50 to-cyan-100",
+      icon: <BarChart3 className="h-8 w-8" />,
     },
     {
       category: "admin",
       path: "/admin/security",
       name: "Security",
-      icon: <Shield className="h-8 w-8 stroke-[1.75] drop-shadow-[0_2px_3px_rgba(0,0,0,0.2)]" />,
-      color: "bg-gradient-to-br from-rose-50 to-rose-100",
+      icon: <Shield className="h-8 w-8" />,
     },
     {
       category: "admin",
       path: "/admin/system-settings",
       name: "System Settings",
-      icon: <Settings className="h-8 w-8 stroke-[1.75] drop-shadow-[0_2px_3px_rgba(0,0,0,0.2)]" />,
-      color: "bg-gradient-to-br from-gray-50 to-gray-100",
+      icon: <Settings className="h-8 w-8" />,
     },
     {
       category: "tech",
       path: "/tech-hub/integrations",
       name: "Integrations",
-      icon: <Zap className="h-8 w-8 stroke-[1.75] drop-shadow-[0_2px_3px_rgba(0,0,0,0.2)]" />,
-      color: "bg-gradient-to-br from-violet-50 to-violet-100",
+      icon: <Zap className="h-8 w-8" />,
     }
   ];
   
@@ -157,8 +144,8 @@ export default function PrimaryModules({ activeTab = "all", searchQuery = "" }: 
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
       >
-        <Card className="p-8 text-center bg-gradient-to-br from-white/80 to-white/60 backdrop-blur-md border-white/30 rounded-[20px] shadow-lg">
-          <p className="text-blue-500/80 dark:text-blue-400/80 font-medium">No modules found matching your search criteria.</p>
+        <Card className="p-8 text-center bg-white/80 dark:bg-gray-800/80 backdrop-blur-md border-gray-200 dark:border-gray-700 rounded-xl shadow-lg">
+          <p className="text-gray-600 dark:text-gray-300 font-medium">No modules found matching your search criteria.</p>
         </Card>
       </motion.div>
     );
@@ -185,9 +172,7 @@ export default function PrimaryModules({ activeTab = "all", searchQuery = "" }: 
             title={module.name}
             icon={module.icon}
             path={module.path}
-            color={module.color}
             className="h-36 w-full"
-            useImageBackground={true}
           />
         </motion.div>
       ))}

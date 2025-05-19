@@ -32,44 +32,58 @@ const ModuleCard: React.FC<ModuleCardProps> = ({ module, alertCount, onViewDetai
   };
   
   return (
-    <Card className="shadow-md hover:shadow-lg transition-shadow rounded-xl overflow-hidden">
-      <CardHeader className="pb-2">
-        <div className="flex justify-between items-start">
-          <CardTitle>{module.name}</CardTitle>
-          <Badge className={getStatusColor(module.status)}>
-            {getStatusText(module.status)}
-          </Badge>
-        </div>
-        {module.description && (
-          <CardDescription className="mt-1">
-            {module.description}
-          </CardDescription>
-        )}
-      </CardHeader>
+    <Card className="relative shadow-md hover:shadow-lg transition-shadow rounded-xl overflow-hidden">
+      {/* Background image */}
+      <div 
+        className="absolute inset-0 z-0"
+        style={{ 
+          backgroundImage: "url('/lovable-uploads/6ba5c2e8-f93f-4ecc-801b-ded87459ddc8.png')",
+          backgroundSize: "cover",
+        }}
+      />
       
-      <CardContent className="pb-0">
-        <div className="flex items-center justify-between">
-          <StatusGauge status={module.status} size="md" />
-          
-          {alertCount > 0 && (
-            <div className="flex items-center text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-900/20 px-3 py-1 rounded-full">
-              <AlertTriangle className="mr-1 h-4 w-4" />
-              <span className="text-sm font-medium">{alertCount} alert{alertCount !== 1 ? 's' : ''}</span>
-            </div>
+      {/* Overlay for readability */}
+      <div className="absolute inset-0 bg-white/70 dark:bg-gray-900/70" />
+      
+      <div className="relative z-10">
+        <CardHeader className="pb-2">
+          <div className="flex justify-between items-start">
+            <CardTitle>{module.name}</CardTitle>
+            <Badge className={getStatusColor(module.status)}>
+              {getStatusText(module.status)}
+            </Badge>
+          </div>
+          {module.description && (
+            <CardDescription className="mt-1">
+              {module.description}
+            </CardDescription>
           )}
-        </div>
-      </CardContent>
-      
-      <CardFooter className="pt-4">
-        <Button 
-          variant="outline" 
-          onClick={() => onViewDetails(module)}
-          className="w-full flex items-center justify-between"
-        >
-          View Details
-          <ChevronRight className="h-4 w-4" />
-        </Button>
-      </CardFooter>
+        </CardHeader>
+        
+        <CardContent className="pb-0">
+          <div className="flex items-center justify-between">
+            <StatusGauge status={module.status} size="md" />
+            
+            {alertCount > 0 && (
+              <div className="flex items-center text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-900/20 px-3 py-1 rounded-full">
+                <AlertTriangle className="mr-1 h-4 w-4" />
+                <span className="text-sm font-medium">{alertCount} alert{alertCount !== 1 ? 's' : ''}</span>
+              </div>
+            )}
+          </div>
+        </CardContent>
+        
+        <CardFooter className="pt-4">
+          <Button 
+            variant="outline" 
+            onClick={() => onViewDetails(module)}
+            className="w-full flex items-center justify-between bg-white/50 dark:bg-gray-800/50 hover:bg-white/80 dark:hover:bg-gray-800/80"
+          >
+            View Details
+            <ChevronRight className="h-4 w-4" />
+          </Button>
+        </CardFooter>
+      </div>
     </Card>
   );
 };

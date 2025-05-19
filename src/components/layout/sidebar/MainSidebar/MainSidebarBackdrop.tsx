@@ -1,15 +1,22 @@
 
-import React from 'react';
+import { cn } from "@/lib/utils";
 
-interface MainSidebarBackdropProps {
-  onToggle: () => void;
+export interface MainSidebarBackdropProps {
+  isOpen?: boolean;
+  onClose?: () => void;
 }
 
-export const MainSidebarBackdrop: React.FC<MainSidebarBackdropProps> = ({ onToggle }) => {
+export function MainSidebarBackdrop({ isOpen, onClose }: MainSidebarBackdropProps) {
+  if (!isOpen) return null;
+
   return (
-    <div 
-      className="fixed inset-0 bg-black bg-opacity-70 z-20 backdrop-blur-sm" 
-      onClick={onToggle} 
+    <div
+      className={cn(
+        "fixed inset-0 z-40 bg-black/60 transition-opacity",
+        isOpen ? "opacity-100" : "opacity-0 pointer-events-none"
+      )}
+      onClick={onClose}
+      aria-hidden="true"
     />
   );
-};
+}
