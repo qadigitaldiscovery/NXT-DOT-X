@@ -1,7 +1,7 @@
 
 import { Card } from "@/components/ui/card";
 
-const QuantumCoreCard = () => {
+export const QuantumCoreCard = () => {
   return (
     <Card className="border-cyan-200 bg-cyan-50/50 p-6">
       <h3 className="font-medium text-lg mb-2">Quantum Core</h3>
@@ -9,5 +9,3 @@ const QuantumCoreCard = () => {
     </Card>
   );
 };
-
-export default QuantumCoreCard;
