@@ -33,10 +33,10 @@ const ModuleCard: React.FC<ModuleCardProps> = ({ module, alertCount, onViewDetai
   
   const getBackgroundGradient = (status: string) => {
     switch (status) {
-      case 'green': return 'from-redmetal-800 to-green-950';
-      case 'orange': return 'from-redmetal-800 to-orange-950';
-      case 'red': return 'from-redmetal-800 to-red-950';
-      default: return 'from-redmetal-800 to-black';
+      case 'green': return 'from-redmetal-600 to-black';
+      case 'orange': return 'from-redmetal-600 to-black';
+      case 'red': return 'from-redmetal-600 to-black';
+      default: return 'from-redmetal-600 to-black';
     }
   };
   

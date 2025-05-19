@@ -33,15 +33,15 @@ export const ModuleCard: React.FC<ModuleCardProps> = ({
   const getVariantClasses = () => {
     switch (variant) {
       case 'red':
-        return "bg-gradient-to-br from-redmetal-800 to-black text-white border-red-900";
+        return "bg-gradient-to-br from-redmetal-600 to-black text-white border-red-900";
       case 'dark':
-        return "bg-gradient-to-br from-gray-900 to-black text-white border-gray-800";
+        return "bg-gradient-to-br from-redmetal-600 to-black text-white border-gray-800";
       case 'light':
-        return "bg-gradient-to-br from-gray-50 to-white text-gray-900 border-gray-200";
+        return "bg-gradient-to-br from-redmetal-600 to-black text-white border-gray-200";
       case 'accent':
-        return "bg-gradient-to-br from-blue-900 to-blue-950 text-white border-blue-700";
+        return "bg-gradient-to-br from-redmetal-600 to-black text-white border-blue-700";
       default:
-        return "bg-gradient-to-br from-redmetal-800 to-black text-white border-gray-800";
+        return "bg-gradient-to-br from-redmetal-600 to-black text-white border-gray-800";
     }
   };
 
