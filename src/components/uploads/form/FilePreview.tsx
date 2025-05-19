@@ -1,11 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { FileTypeIcon } from "../FileTypeIcon";
 import { FileSize } from "../FileSize";
-
-// @ts-ignore
-const XLSX = require('xlsx');
 
 type FilePreviewProps = {
   file: File | null;
@@ -113,6 +110,7 @@ export function FilePreview({ file, onDetectedSupplier }: FilePreviewProps) {
       const reader = new FileReader();
       reader.onload = async (e) => {
         try {
+          const XLSX = await import('xlsx');
           const data = new Uint8Array(e.target?.result as ArrayBuffer);
           const workbook = XLSX.read(data, { type: 'array' });
           
