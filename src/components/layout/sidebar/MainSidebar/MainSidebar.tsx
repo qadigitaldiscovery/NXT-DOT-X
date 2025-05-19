@@ -67,7 +67,7 @@ export const MainSidebar: React.FC<MainSidebarProps> = ({
     }
   };
 
-  // Updated styling with more reasonable sizing
+  // Dark blue sidebar styling
   const sidebarBgColor = className || 'bg-gradient-to-b from-indigo-950 via-blue-950 to-slate-950';
   
   return (

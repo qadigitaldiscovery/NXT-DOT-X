@@ -1,6 +1,5 @@
 
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 import DataManagement from "./DataManagement";
 import LoyaltyProgram from "./LoyaltyProgram";
 import TradingSystem from "./TradingSystem";
@@ -16,8 +15,6 @@ interface PrimaryModulesProps {
 }
 
 export default function PrimaryModules({ activeTab = "all", searchQuery = "" }: PrimaryModulesProps) {
-  const navigate = useNavigate();
-  
   const allModules = [
     { component: <DataManagement key="data" />, category: "data", path: "/data-management" },
     { component: <LoyaltyProgram key="loyalty" />, category: "marketing", path: "/loyalty-rewards" },

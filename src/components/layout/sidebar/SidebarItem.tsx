@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 
 interface SidebarItemProps {
@@ -21,11 +21,11 @@ export const SidebarItem: React.FC<SidebarItemProps> = ({
   path,
   icon,
   isActive = false,
-  textColor = "text-gray-600",
-  textHoverColor = "hover:text-gray-900",
-  activeBgColor = "bg-gray-200",
-  activeTextColor = "text-gray-900",
-  hoverBgColor = "hover:bg-gray-100",
+  textColor = "text-blue-100",
+  textHoverColor = "hover:text-white",
+  activeBgColor = "bg-blue-800/50",
+  activeTextColor = "text-white",
+  hoverBgColor = "hover:bg-blue-900/50",
   onClick
 }) => {
   const itemClasses = cn(
@@ -37,10 +37,10 @@ export const SidebarItem: React.FC<SidebarItemProps> = ({
 
   if (path) {
     return (
-      <Link to={path} className={itemClasses} onClick={onClick}>
+      <NavLink to={path} className={itemClasses} onClick={onClick}>
         {icon && <span className="mr-2">{icon}</span>}
         <span className="text-sm">{label}</span>
-      </Link>
+      </NavLink>
     );
   }
 

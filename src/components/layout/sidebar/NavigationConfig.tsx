@@ -1,32 +1,55 @@
 
-import { Home, Settings, Database, Store, UserSquare2, DollarSign, PieChart, ArrowDownUp } from 'lucide-react';
+import { 
+  LayoutDashboard, 
+  Building, 
+  Users, 
+  Calculator,
+  BarChart3,
+  ArrowDownUp,
+  LineChart,
+  FileUp,
+  FileArchive,
+  BrainCircuit,
+  FileDown,
+  Settings,
+  Database,
+  BookOpen,
+  FileCog,
+  ServerCog
+} from 'lucide-react';
 import { NavItem, NavCategory } from './types';
 
 // Top level nav items (not in categories)
 export const topLevelNavItems: NavItem[] = [
   { 
     label: 'DATA MANAGEMENT DASHBOARD', 
-    icon: Home, 
+    icon: LayoutDashboard, 
     href: '/data-management', 
     path: '/data-management' 
   }
 ];
 
-// Organize remaining nav items into categories
+// Organize navigation items into categories
 export const navCategories: NavCategory[] = [
   {
-    label: "DIRECTORIES",
-    name: "Directories",
+    label: "SUPPLIER DIRECTORY",
+    name: "Supplier Directory",
     items: [
       { 
         label: 'SUPPLIER DIRECTORY', 
-        icon: Store, 
+        icon: Building, 
         href: '/data-management/suppliers', 
         path: '/data-management/suppliers' 
-      },
+      }
+    ]
+  },
+  {
+    label: "CUSTOMER DIRECTORY",
+    name: "Customer Directory",
+    items: [
       { 
         label: 'CUSTOMER DIRECTORY', 
-        icon: UserSquare2, 
+        icon: Users, 
         href: '/data-management/customers', 
         path: '/data-management/customers' 
       }
@@ -38,13 +61,13 @@ export const navCategories: NavCategory[] = [
     items: [
       { 
         label: 'Suppliers Costing', 
-        icon: DollarSign, 
+        icon: Calculator, 
         href: '/data-management/supplier-costing', 
         path: '/data-management/supplier-costing' 
       },
       { 
         label: 'Cost Analysis', 
-        icon: PieChart, 
+        icon: BarChart3, 
         href: '/data-management/cost-analysis', 
         path: '/data-management/cost-analysis' 
       }
@@ -55,10 +78,58 @@ export const navCategories: NavCategory[] = [
     name: "Pricing",
     items: [
       { 
+        label: 'Competitor Pricing', 
+        icon: LineChart, 
+        href: '/data-management/pricing/competitor-pricing', 
+        path: '/data-management/pricing/competitor-pricing' 
+      },
+      { 
         label: 'Price Management', 
         icon: ArrowDownUp, 
         href: '/data-management/pricing/price-management', 
         path: '/data-management/pricing/price-management' 
+      }
+    ]
+  },
+  {
+    label: "DATA ANALYTICS",
+    name: "Data Analytics",
+    items: [
+      { 
+        label: 'Data Insights', 
+        icon: BrainCircuit, 
+        href: '/data-management/insights', 
+        path: '/data-management/insights' 
+      },
+      { 
+        label: 'Export Data', 
+        icon: FileDown, 
+        href: '/data-management/export-data', 
+        path: '/data-management/export-data' 
+      },
+      { 
+        label: 'Document Repository', 
+        icon: FileArchive, 
+        href: '/data-management/documents', 
+        path: '/data-management/documents' 
+      }
+    ]
+  },
+  {
+    label: "BUSINESS RULES AND KEY NOTES",
+    name: "Business Rules",
+    items: [
+      { 
+        label: 'Key Business Rules & Operations', 
+        icon: BookOpen, 
+        href: '/data-management/business-rules', 
+        path: '/data-management/business-rules' 
+      },
+      { 
+        label: 'Strategy & Decisions', 
+        icon: FileCog, 
+        href: '/data-management/strategy', 
+        path: '/data-management/strategy' 
       }
     ]
   },
@@ -77,6 +148,12 @@ export const navCategories: NavCategory[] = [
         icon: Settings, 
         href: '/data-management/settings', 
         path: '/data-management/settings' 
+      },
+      { 
+        label: 'System Admin Console', 
+        icon: ServerCog, 
+        href: '/data-management/admin-console', 
+        path: '/data-management/admin-console' 
       }
     ]
   }
@@ -93,7 +170,7 @@ export const settingsItem: NavItem = {
 // Home item for master dashboard
 export const masterDashItem: NavItem = { 
   label: 'Master Dashboard', 
-  icon: Home, 
+  icon: LayoutDashboard, 
   href: '/', 
   path: '/' 
 };

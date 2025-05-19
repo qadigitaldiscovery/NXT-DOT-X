@@ -2,9 +2,9 @@
 import React from 'react';
 import { Route } from "react-router-dom";
 import { PlatformLayout } from "@/components/layouts/PlatformLayout";
-import { Users, Settings, BarChart3, FileUp, Database, Building, Calculator, LineChart, ArrowDownUp, FileDown, FileArchive, BrainCircuit, Server } from 'lucide-react';
+import { Users, Settings, BarChart3, FileUp, Database, Building, Calculator, LineChart, ArrowDownUp, FileDown, FileArchive, BrainCircuit, BookOpen, FileCog, ServerCog } from 'lucide-react';
 import type { NavCategory } from "@/components/layout/sidebar/types";
-import { navCategories as globalNavCategories } from "@/components/layout/sidebar/NavigationConfig";
+import { navCategories } from "@/components/layout/sidebar/NavigationConfig";
 
 // Data Management Pages
 import DashboardHome from "@/pages/data-management/DashboardHome";
@@ -29,32 +29,9 @@ import SupplierComparison from "@/pages/data-management/vendor-supplier-comparis
 import Suppliers from "@/pages/data-management/supplier-vendors";
 import NewSupplier from "@/pages/data-management/supplier-vendors-new";
 import DeploymentTest from "@/pages/data-management/DeploymentTest";
-
-// Filter the data management category from global navigation
-const dataManagementCategory = globalNavCategories.find(category => category.label === "Data Management");
-
-export const dataNavCategories: NavCategory[] = dataManagementCategory ? [dataManagementCategory] : [
-  {
-    name: "DATA MANAGEMENT",
-    label: "DATA MANAGEMENT",
-    items: [
-      { label: 'Dashboard', icon: Database, path: '/data-management' },
-      { label: 'Suppliers', icon: Building, path: '/data-management/suppliers' },
-      { label: 'Customer Directory', icon: Building, path: '/data-management/customers' },
-      { label: 'Supplier Costing', icon: Calculator, path: '/data-management/supplier-costing' },
-      { label: 'Cost Analysis', icon: BarChart3, path: '/data-management/cost-analysis' },
-      { label: 'Cost Management', icon: Database, path: '/data-management/cost-management' },
-      { label: 'Competitor Pricing', icon: LineChart, path: '/data-management/pricing/competitor-pricing' },
-      { label: 'Price Management', icon: ArrowDownUp, path: '/data-management/pricing/price-management' },
-      { label: 'File Uploads', icon: FileUp, path: '/data-management/uploads' },
-      { label: 'Document Repository', icon: FileArchive, path: '/data-management/documents' },
-      { label: 'Export Data', icon: FileDown, path: '/data-management/export-data' },
-      { label: 'Data Insights', icon: BrainCircuit, path: '/data-management/insights' },
-      { label: 'Data Connections', icon: Server, path: '/data-management/connections' },
-      { label: 'Settings', icon: Settings, path: '/data-management/settings' }
-    ]
-  }
-];
+import BusinessRules from "@/pages/data-management/business-rules/BusinessRules";
+import Strategy from "@/pages/data-management/business-rules/Strategy";
+import AdminConsole from "@/pages/data-management/admin/AdminConsole";
 
 export const DataManagementRoutes = () => {
   return [
@@ -148,18 +125,6 @@ export const DataManagementRoutes = () => {
       </PlatformLayout>
     } />,
     
-    <Route key="data-management-uploads-holding" path="/data-management/uploads/holding" element={
-      <PlatformLayout moduleTitle="Upload Holding" useGlobalNavigation={true}>
-        <UploadsPage />
-      </PlatformLayout>
-    } />,
-    
-    <Route key="data-management-uploads-bulk-import" path="/data-management/uploads/bulk-import" element={
-      <PlatformLayout moduleTitle="Bulk Import" useGlobalNavigation={true}>
-        <UploadsPage />
-      </PlatformLayout>
-    } />,
-    
     <Route key="data-management-documents" path="/data-management/documents" element={
       <PlatformLayout moduleTitle="Documents" useGlobalNavigation={true}>
         <DocumentsPage />
@@ -187,6 +152,24 @@ export const DataManagementRoutes = () => {
     <Route key="data-management-vendor-supplier" path="/data-management/vendor-supplier-comparison" element={
       <PlatformLayout moduleTitle="Supplier Comparison" useGlobalNavigation={true}>
         <SupplierComparison />
+      </PlatformLayout>
+    } />,
+    
+    <Route key="data-management-business-rules" path="/data-management/business-rules" element={
+      <PlatformLayout moduleTitle="Business Rules" useGlobalNavigation={true}>
+        <BusinessRules />
+      </PlatformLayout>
+    } />,
+    
+    <Route key="data-management-strategy" path="/data-management/strategy" element={
+      <PlatformLayout moduleTitle="Strategy & Decisions" useGlobalNavigation={true}>
+        <Strategy />
+      </PlatformLayout>
+    } />,
+    
+    <Route key="data-management-admin-console" path="/data-management/admin-console" element={
+      <PlatformLayout moduleTitle="System Admin Console" useGlobalNavigation={true}>
+        <AdminConsole />
       </PlatformLayout>
     } />,
     

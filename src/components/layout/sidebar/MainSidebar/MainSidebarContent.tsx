@@ -1,5 +1,5 @@
 
-import React, { useEffect } from 'react';
+import React from 'react';
 import { cn } from '@/lib/utils';
 import { SidebarNavigation } from '@/components/layout/sidebar/SidebarNavigation';
 import { NavCategory } from '@/components/layout/sidebar/types';
@@ -30,11 +30,10 @@ export const MainSidebarContent: React.FC<MainSidebarContentProps> = ({
   
   // Check if we're in a data management route
   const isDataManagement = location.pathname.startsWith('/data-management');
-  const dataManagementCategory = globalNavCategories.find(category => category.label === "Data Management");
   
-  if (isDataManagement && dataManagementCategory) {
-    // For data management routes, always use data management category
-    effectiveNavCategories = [dataManagementCategory];
+  if (isDataManagement && useGlobalNavigation) {
+    // For data management routes, always use global navigation categories
+    effectiveNavCategories = globalNavCategories;
     console.log('MainSidebarContent - Using Data Management Navigation');
   } else if (useGlobalNavigation) {
     // Use global navigation categories
@@ -57,13 +56,6 @@ export const MainSidebarContent: React.FC<MainSidebarContentProps> = ({
     }];
     console.log('MainSidebarContent - Using Nav Items');
   }
-
-  // Log navigation data for debugging
-  useEffect(() => {
-    console.log('MainSidebarContent - User:', user?.username, 'Role:', user?.role);
-    console.log('MainSidebarContent - Effective Navigation Categories:', effectiveNavCategories);
-    console.log('MainSidebarContent - Current Location:', location.pathname);
-  }, [user, effectiveNavCategories, location.pathname]);
 
   if (!isOpen) {
     return null;

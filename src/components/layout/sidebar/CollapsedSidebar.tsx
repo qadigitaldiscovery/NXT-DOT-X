@@ -1,28 +1,28 @@
+
 import React from 'react';
-import { NavLink } from 'react-router-dom';
-import { cn } from '../../../lib/utils';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../../../components/ui/tooltip';
+import { NavLink, useLocation } from 'react-router-dom';
+import { cn } from '@/lib/utils';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { NavCategory, NavItem } from './types';
-import { useLocation } from 'react-router-dom';
-import { useAuth } from '../../../context/AuthContext';
+import { useAuth } from '@/context/AuthContext';
 
 interface CollapsedSidebarProps {
   navItems: NavCategory[] | NavItem[];
-  textColor: string;
-  activeBgColor: string;
-  activeTextColor: string;
-  hoverBgColor: string;
+  textColor?: string;
+  activeBgColor?: string;
+  activeTextColor?: string;
+  hoverBgColor?: string;
   homeItem?: NavItem;
 }
 
-export const CollapsedSidebar = ({
+export const CollapsedSidebar: React.FC<CollapsedSidebarProps> = ({
   navItems,
-  textColor,
-  activeBgColor,
-  activeTextColor,
-  hoverBgColor,
+  textColor = "text-blue-200",
+  activeBgColor = "bg-gradient-to-r from-blue-800 to-indigo-700",
+  activeTextColor = "text-white",
+  hoverBgColor = "hover:bg-indigo-900/50",
   homeItem
-}: CollapsedSidebarProps) => {
+}) => {
   const location = useLocation();
   const { user } = useAuth();
   
@@ -49,7 +49,7 @@ export const CollapsedSidebar = ({
 
   let allItems: NavItem[] = [];
   
-  if (navItems.length > 0) {
+  if (navItems && navItems.length > 0) {
     if ('items' in navItems[0]) {
       const categories = navItems as NavCategory[];
       allItems = categories.flatMap(category => 
@@ -73,17 +73,16 @@ export const CollapsedSidebar = ({
           const isHomeItem = item === homeItem && displayItems.length > 1;
           
           const renderIcon = () => {
-            if (typeof item.icon === 'function') {
-              const IconComponent = item.icon;
-              return <IconComponent className="h-5 w-5" />;
-            } else if (React.isValidElement(item.icon)) {
-              return item.icon;
+            if (!item.icon) {
+              return null;
             }
-            return null;
+            
+            const IconComponent = item.icon;
+            return <IconComponent className="h-5 w-5" />;
           };
           
           return (
-            <React.Fragment key={item.label + index}>
+            <React.Fragment key={`${item.label}-${index}`}>
               {isHomeItem && <div className="h-4" />}
               <Tooltip>
                 <TooltipTrigger asChild>
@@ -110,5 +109,3 @@ export const CollapsedSidebar = ({
     </div>
   );
 };
-
-export default CollapsedSidebar;
