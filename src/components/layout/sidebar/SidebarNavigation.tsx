@@ -44,7 +44,7 @@ export const SidebarNavigation: React.FC<SidebarNavigationProps> = ({
       if (accessibleItems.length === 0) return null;
       return <div key={category.name || category.label} className="space-y-2 py-0 my-0">
             {/* Category Header */}
-            <h3 className="font-bold text-sm uppercase tracking-wider px-3 text-blue-100 py-0">
+            <h3 className="font-bold text-sm uppercase tracking-wider text-blue-100 py-0 my-0 px-[17px]">
               {category.label || category.name}
             </h3>
             
