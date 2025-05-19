@@ -83,3 +83,6 @@ export function UsersTab() {
     </Card>
   );
 }
+
+// Add the default export
+export default UsersTab;
