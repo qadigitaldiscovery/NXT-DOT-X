@@ -1,6 +1,6 @@
 
 import { NavCategory } from '@/components/layout/sidebar/types';
-import { Activity, AlertTriangle, BarChart3, LineChart, Settings } from 'lucide-react';
+import { BarChart3, AlertTriangle, LineChart, Settings } from 'lucide-react';
 
 export const ragDashboardNavigation: NavCategory[] = [
   {

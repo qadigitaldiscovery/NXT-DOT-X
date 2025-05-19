@@ -1,3 +1,4 @@
+
 import { 
   LayoutDashboard, 
   Building, 
@@ -13,7 +14,8 @@ import {
   Database,
   BookOpen,
   FileCog,
-  ServerCog
+  ServerCog,
+  Folder
 } from 'lucide-react';
 import { NavItem, NavCategory } from './types';
 
@@ -30,21 +32,15 @@ export const topLevelNavItems: NavItem[] = [
 // Organize navigation items into categories
 export const navCategories: NavCategory[] = [
   {
-    label: "SUPPLIER DIRECTORY",
-    name: "Supplier Directory",
+    label: "DIRECTORIES",
+    name: "Directories",
     items: [
       { 
         label: 'SUPPLIER DIRECTORY', 
         icon: Building, 
         href: '/data-management/suppliers', 
         path: '/data-management/suppliers' 
-      }
-    ]
-  },
-  {
-    label: "CUSTOMER DIRECTORY",
-    name: "Customer Directory",
-    items: [
+      },
       { 
         label: 'CUSTOMER DIRECTORY', 
         icon: Users, 
