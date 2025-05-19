@@ -1,4 +1,3 @@
-import React from 'react';
 
 interface TopbarProps {
   onMenuClick?: () => void;
@@ -14,3 +13,5 @@ export const Topbar = ({ onMenuClick }: TopbarProps) => {
     </header>
   );
 };
+
+export default Topbar;

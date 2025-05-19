@@ -1,13 +1,13 @@
-import React, { useState } from 'react';
+
+import { useState } from 'react';
 import { cn } from '../../../lib/utils';
-import { Button } from '../../../components/ui/button';
-import { ChevronLeft, MenuIcon } from 'lucide-react';
 import { useIsMobile } from '../../../hooks/use-mobile';
 import { SidebarNavList } from './SidebarNavList';
 import { CollapsedSidebar } from './CollapsedSidebar';
 import { NavItem, NavCategory, SidebarProps } from './types';
 import { useAuth } from '../../../context/AuthContext';
 import { SidebarToggleButton } from './SidebarToggleButton';
+import { ChevronLeft, Menu } from 'lucide-react';
 
 // Helper function to normalize navigation items
 const normalizeNavItems = (items: NavItem[] = []): NavItem[] => {
@@ -35,7 +35,6 @@ const Sidebar: React.FC<SidebarProps> = ({
   items = [],
   homeItem,
   customFooterContent,
-  className,
   removeBottomToggle = false,
   showToggleButton = true,
   initialState,
@@ -113,7 +112,7 @@ const Sidebar: React.FC<SidebarProps> = ({
             onClick={toggleSidebar}
             className="p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800"
           >
-            {isOpen ? <ChevronLeft /> : <MenuIcon />}
+            {isOpen ? <ChevronLeft /> : <Menu />}
           </button>
         </div>
 

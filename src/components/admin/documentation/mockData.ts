@@ -1,4 +1,4 @@
-import { DocumentCategory, DocumentType } from './types';
+import { DocumentCategory } from './types';
 
 export const documentCategories: DocumentCategory[] = [
   {

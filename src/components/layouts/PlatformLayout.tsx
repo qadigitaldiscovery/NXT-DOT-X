@@ -1,86 +1,82 @@
-import React, { ReactNode, memo, useCallback, useEffect } from 'react';
-import { NavCategory, NavItem } from '@/components/layout/sidebar/types';
-import { SidebarMain } from '@/components/layout/SidebarMain';
-import Topbar from '@/components/layouts/Topbar';
-import { navCategories as globalNavCategories } from '@/components/layout/sidebar/NavigationConfig';
-import { useLocation } from 'react-router-dom';
 
-export interface PlatformLayoutProps {
+import { ReactNode, useState } from 'react';
+import { MainSidebar } from '@/components/layout/sidebar/MainSidebar';
+import Topbar from '@/components/layout/Topbar';
+import { cn } from '@/lib/utils';
+import { useIsMobile } from '@/hooks/use-mobile';
+
+interface PlatformLayoutProps {
   children: ReactNode;
-  navItems?: NavItem[];
-  navCategories?: NavCategory[];
-  customFooterContent?: ReactNode;
-  removeBottomToggle?: boolean;
-  showTopLeftToggle?: boolean;
+  hideNavigation?: boolean;
+  fullWidth?: boolean;
+  className?: string;
+  showSidebar?: boolean;
+  sidebarState?: 'expanded' | 'collapsed';
   moduleTitle?: string;
-  onSidebarStateChange?: (state: string) => void;
-  initialSidebarState?: string;
-  useGlobalNavigation?: boolean;
+  navCategories?: any[];
 }
 
-// Use memo to prevent unnecessary re-renders
-export const PlatformLayout: React.FC<PlatformLayoutProps> = memo(({
-  children,
-  navItems = [],
-  navCategories = [],
-  customFooterContent,
-  removeBottomToggle = false,
-  showTopLeftToggle = true,
-  moduleTitle = '',
-  onSidebarStateChange,
-  initialSidebarState = 'expanded',
-  useGlobalNavigation = true,
-}) => {
-  const location = useLocation();
-  
-  // For debugging purposes
-  useEffect(() => {
-    console.log('PlatformLayout rendered for path:', location.pathname);
-    console.log('Using global navigation:', useGlobalNavigation);
-    console.log('Module title:', moduleTitle);
-    console.log('Initial sidebar state:', initialSidebarState);
-    console.log('Current location:', location.pathname);
-  }, [location.pathname, useGlobalNavigation, moduleTitle, initialSidebarState]);
+export function PlatformLayout({ 
+  children, 
+  hideNavigation = false, 
+  fullWidth = false,
+  className,
+  showSidebar = true,
+  sidebarState = 'expanded',
+  moduleTitle,
+  navCategories
+}: PlatformLayoutProps) {
+  const isMobile = useIsMobile();
+  const [sidebarOpen, setSidebarOpen] = useState(
+    // If we're on mobile, start with closed sidebar
+    // Otherwise use the prop or default to expanded
+    !isMobile && (sidebarState === 'expanded')
+  );
 
-  // Memoize the handler to prevent re-renders and adapt the function signature
-  const handleSidebarToggle = useCallback(() => {
-    if (onSidebarStateChange) {
-      // Toggle the state - if it was 'expanded', make it 'collapsed' and vice versa
-      const newState = initialSidebarState === 'expanded' ? 'collapsed' : 'expanded';
-      onSidebarStateChange(newState);
-    }
-  }, [onSidebarStateChange, initialSidebarState]);
+  // Always hide the sidebar if hideNavigation is true
+  const shouldShowSidebar = !hideNavigation && showSidebar;
 
-  // Use provided navigation or fall back to global navigation
-  const navigationCategories = navCategories.length > 0 
-    ? navCategories 
-    : (useGlobalNavigation ? globalNavCategories : []);
+  // Handle sidebar toggle
+  const handleSidebarToggle = () => {
+    setSidebarOpen(!sidebarOpen);
+  };
+
+  // Handle sidebar state changes from within the sidebar component
+  const handleSidebarStateChange = (state: 'expanded' | 'collapsed') => {
+    setSidebarOpen(state === 'expanded');
+  };
 
   return (
-    <div className="flex h-screen bg-gray-50 dark:bg-gray-900">
-      <SidebarMain
-        navItems={navItems}
-        navCategories={navigationCategories}
-        customFooterContent={customFooterContent}
-        removeBottomToggle={removeBottomToggle}
-        showToggleButton={showTopLeftToggle}
-        open={initialSidebarState === 'expanded'}
-        onToggle={handleSidebarToggle}
-        initialState={initialSidebarState}
-        onStateChange={onSidebarStateChange}
-        useGlobalNavigation={useGlobalNavigation}
-      />
-      <div className="flex flex-col flex-1 overflow-hidden">
-        <Topbar moduleTitle={moduleTitle} />
-        <main className="flex-1 overflow-y-auto p-4 bg-white dark:bg-gray-900">
+    <div className={cn(
+      "flex min-h-screen bg-gray-100 dark:bg-gray-900",
+      className
+    )}>
+      {shouldShowSidebar && (
+        <MainSidebar 
+          open={sidebarOpen}
+          onToggle={handleSidebarToggle}
+          initialState={sidebarState}
+          onStateChange={handleSidebarStateChange}
+          navCategories={navCategories}
+        />
+      )}
+      
+      <div className={cn(
+        "flex flex-col w-full overflow-x-hidden",
+        shouldShowSidebar && !isMobile && sidebarOpen && "lg:ml-64"
+      )}>
+        {!hideNavigation && (
+          <Topbar onMenuClick={handleSidebarToggle} />
+        )}
+        
+        <main className={cn(
+          "flex-1",
+          !fullWidth && "container mx-auto",
+          !hideNavigation && "py-6"
+        )}>
           {children}
         </main>
       </div>
     </div>
   );
-});
-
-// Add a display name for debugging
-PlatformLayout.displayName = 'PlatformLayout';
-
-export default PlatformLayout;
+}

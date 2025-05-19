@@ -1,24 +1,16 @@
-import { Button } from "@/components/ui/button";
-import { RefreshCw } from "lucide-react";
+import { Button } from '@/components/ui/button';
+import { RefreshCw } from 'lucide-react';
 
 interface RefreshButtonProps {
-  isRefreshing: boolean;
   onRefresh: () => void;
+  isLoading?: boolean;
 }
 
-const RefreshButton = ({ isRefreshing, onRefresh }: RefreshButtonProps) => {
+export function RefreshButton({ onRefresh, isLoading = false }: RefreshButtonProps) {
   return (
-    <Button 
-      variant="outline" 
-      size="sm"
-      onClick={onRefresh} 
-      disabled={isRefreshing}
-      className="flex items-center gap-1"
-    >
-      <RefreshCw className={`h-4 w-4 ${isRefreshing ? 'animate-spin' : ''}`} />
-      {isRefreshing ? 'Refreshing...' : 'Refresh Tables'}
+    <Button variant="outline" size="sm" onClick={onRefresh} disabled={isLoading}>
+      <RefreshCw className={`h-4 w-4 mr-2 ${isLoading ? 'animate-spin' : ''}`} />
+      Refresh
     </Button>
   );
-};
-
-export default RefreshButton;
+}

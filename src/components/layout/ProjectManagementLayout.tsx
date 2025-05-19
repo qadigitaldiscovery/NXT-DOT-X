@@ -4,8 +4,8 @@ import {
   LayoutDashboard, 
   Box, 
   ListTodo, 
-  BarChart3, 
-  BarChart2, 
+  ChartBar, 
+  BarChart4, 
   Settings, 
   Users,
   Home,
@@ -35,7 +35,7 @@ const ProjectManagementLayout = ({ children }: { children?: React.ReactNode }) =
       items: [
         { label: "Overview", path: "#", icon: ListTodo },
         { label: "Kanban Board", path: "#", icon: ListTodo, roles: ["admin", "manager"] },
-        { label: "Gantt Chart", path: "#", icon: BarChart3 },
+        { label: "Gantt Chart", path: "#", icon: ChartBar },
         { label: "Team Members", path: "#", icon: Users },
         { label: "Reports & Analytics", path: "#", icon: BarChart2, roles: ["admin"] },
         { label: "Project Settings", path: "#", icon: Settings, roles: ["admin", "manager"] }

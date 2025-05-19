@@ -1,32 +1,23 @@
-
-import React, { useState } from 'react';
-import PrimaryModules from './modules/PrimaryModules';
-import ModuleStatusIndicator from './ModuleStatusIndicator';
-import SearchAndFilter from './SearchAndFilter';
+import { useNavigate } from 'react-router-dom';
+import Administration from './modules/Administration';
+import AiArmy from './modules/AiArmy';
+import DataManagement from './modules/DataManagement';
+import LoyaltyProgram from './modules/LoyaltyProgram';
+import ProjectManagement from './modules/ProjectManagement';
+import SupplierManagement from './modules/SupplierManagement';
 
 const DashboardModules = () => {
-  const [searchQuery, setSearchQuery] = useState('');
-  const [categories] = useState(['All', 'Data', 'Marketing', 'Tech', 'Operations']);
-  const [activeCategory, setActiveCategory] = useState('All');
+  // Keep navigate for potential future use
+  const navigate = useNavigate();
 
   return (
-    <div className="space-y-6">
-      {/* Search and filtering section */}
-      <SearchAndFilter 
-        searchQuery={searchQuery}
-        setSearchQuery={setSearchQuery}
-        categories={categories}
-        activeCategory={activeCategory}
-        setActiveCategory={setActiveCategory}
-      />
-
-      {/* Module Status Indicators (RAG) */}
-      <div className="mb-8">
-        <ModuleStatusIndicator status="green" size="md" />
-      </div>
-
-      {/* Primary Modules */}
-      <PrimaryModules activeTab={activeCategory} searchQuery={searchQuery} />
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <Administration />
+      <AiArmy />
+      <DataManagement />
+      <LoyaltyProgram />
+      <ProjectManagement />
+      <SupplierManagement />
     </div>
   );
 };

@@ -1,57 +1,46 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-  PieChart,
-  Pie,
-  Cell,
-  Tooltip,
-  Legend,
-  ResponsiveContainer
-} from 'recharts';
+import React from 'react';
+import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from 'recharts';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 
-type SupplierData = {
-  name: string;
-  value: number;
-};
+// Sample data for supplier comparison
+const data = [
+  { name: 'Supplier A', value: 400 },
+  { name: 'Supplier B', value: 300 },
+  { name: 'Supplier C', value: 200 },
+  { name: 'Supplier D', value: 100 },
+];
 
-type SupplierComparisonChartProps = {
-  data: SupplierData[];
-  title: string;
-  description: string;
-  colors: string[];
-  className?: string;
-};
+const COLORS = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444'];
 
-export const SupplierComparisonChart = ({ data, title, description, colors, className }: SupplierComparisonChartProps) => {
+export function SupplierComparisonChart() {
   return (
-    <Card className={`backdrop-blur-md bg-white/30 border border-white/10 ${className}`}>
+    <Card className="transition-all duration-300 hover:shadow-lg">
       <CardHeader>
-        <CardTitle>{title}</CardTitle>
-        <CardDescription>
-          {description}
-        </CardDescription>
+        <CardTitle>Supplier Cost Distribution</CardTitle>
+        <CardDescription>Cost breakdown by supplier</CardDescription>
       </CardHeader>
-      <CardContent className="h-80">
-        <ResponsiveContainer width="100%" height="100%">
-          <PieChart>
-            <Pie
-              data={data}
-              cx="50%"
-              cy="50%"
-              labelLine={false}
-              outerRadius={80}
-              fill="#8884d8"
-              dataKey="value"
-              label={({ name, percent }: { name: string; percent: number }) => `${name} ${(percent * 100).toFixed(0)}%`}
-            >
-              {data.map((entry, index) => (
-                <Cell key={`cell-${index}`} fill={colors[index % colors.length]} />
-              ))}
-            </Pie>
-            <Tooltip formatter={(value: number) => `${value}%`} />
-            <Legend />
-          </PieChart>
-        </ResponsiveContainer>
+      <CardContent>
+        <div className="h-64">
+          <ResponsiveContainer width="100%" height="100%">
+            <PieChart>
+              <Pie
+                data={data}
+                cx="50%"
+                cy="50%"
+                outerRadius={80}
+                fill="#8884d8"
+                dataKey="value"
+                label={({ name, percent }: { name: string; percent: number }) => `${name} ${(percent * 100).toFixed(0)}%`}
+              >
+                {data.map((entry, index) => (
+                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                ))}
+              </Pie>
+              <Tooltip formatter={(value: number) => `$${value}`} />
+            </PieChart>
+          </ResponsiveContainer>
+        </div>
       </CardContent>
     </Card>
   );
-};
+}

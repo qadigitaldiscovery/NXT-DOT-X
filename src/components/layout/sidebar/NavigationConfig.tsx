@@ -1,4 +1,5 @@
-import { Home, FileUp, BarChart3, LineChart, ArrowDownUp, FileDown, Settings, Database, FileArchive, BookOpen, BrainCircuit, Cloud, Server, Users, Truck, UserCog, Shield, Globe, Building, AlertTriangle, Calculator, FileText, Award, FolderOpen, Store, UserSquare2, DollarSign, PieChart, FileBarChart, BookOpenCheck, Cog } from 'lucide-react';
+
+import { Home, Settings, Database, Store, UserSquare2, DollarSign, PieChart, ArrowDownUp } from 'lucide-react';
 import { NavItem, NavCategory } from './types';
 
 // Top level nav items (not in categories)
@@ -54,58 +55,10 @@ export const navCategories: NavCategory[] = [
     name: "Pricing",
     items: [
       { 
-        label: 'Competitor Pricing', 
-        icon: FileBarChart, 
-        href: '/data-management/pricing/competitor-pricing', 
-        path: '/data-management/pricing/competitor-pricing' 
-      },
-      { 
         label: 'Price Management', 
         icon: ArrowDownUp, 
         href: '/data-management/pricing/price-management', 
         path: '/data-management/pricing/price-management' 
-      }
-    ]
-  },
-  {
-    label: "DATA ANALYTICS",
-    name: "Data Analytics",
-    items: [
-      { 
-        label: 'Data Insights', 
-        icon: BrainCircuit, 
-        href: '/data-management/insights', 
-        path: '/data-management/insights' 
-      },
-      { 
-        label: 'Export Data', 
-        icon: FileDown, 
-        href: '/data-management/export-data', 
-        path: '/data-management/export-data' 
-      },
-      { 
-        label: 'Document Repository', 
-        icon: FolderOpen, 
-        href: '/data-management/documents', 
-        path: '/data-management/documents' 
-      }
-    ]
-  },
-  {
-    label: "BUSINESS RULES AND KEY NOTES",
-    name: "Business Rules",
-    items: [
-      { 
-        label: 'Key Business Rules & Operations', 
-        icon: BookOpenCheck, 
-        href: '/data-management/business-rules', 
-        path: '/data-management/business-rules' 
-      },
-      { 
-        label: 'Strategy & Decisions', 
-        icon: Award, 
-        href: '/data-management/strategy', 
-        path: '/data-management/strategy' 
       }
     ]
   },
@@ -121,15 +74,9 @@ export const navCategories: NavCategory[] = [
       },
       { 
         label: 'Data Management Settings', 
-        icon: Cog, 
+        icon: Settings, 
         href: '/data-management/settings', 
         path: '/data-management/settings' 
-      },
-      { 
-        label: 'System Admin Console', 
-        icon: Shield, 
-        href: '/admin/system', 
-        path: '/admin/system' 
       }
     ]
   }

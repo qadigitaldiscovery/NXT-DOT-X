@@ -1,121 +1,85 @@
 
-import React from 'react';
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
-import { Slider } from "@/components/ui/slider";
-import { Switch } from "@/components/ui/switch";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useState, ChangeEvent } from 'react';
+import { Input } from '@/components/ui/input';
+import { Switch } from '@/components/ui/switch';
+import { Card } from '@/components/ui/card';
 
 interface AdvancedConfigFieldProps {
   configKey: string;
-  configValue: any;
-  onUpdate: (key: string, value: any) => void;
+  label: string;
+  type?: 'text' | 'number' | 'boolean' | 'select';
+  value: any;
+  onChange: (key: string, value: any) => void;
+  options?: string[];
+  description?: string;
 }
 
-export const AdvancedConfigField: React.FC<AdvancedConfigFieldProps> = ({
+export const AdvancedConfigField = ({
   configKey,
-  configValue,
-  onUpdate
-}) => {
-  // Determine the field type based on the value type
-  const valueType = typeof configValue;
-  
-  switch (valueType) {
-    case 'boolean':
-      return (
-        <div className="flex items-center space-x-2">
-          <Switch 
-            id={configKey} 
-            checked={configValue} 
-            onCheckedChange={(checked) => onUpdate(configKey, checked)} 
-          />
-          <Label htmlFor={configKey} className="capitalize">
-            {configKey.replace(/_/g, ' ')}
-          </Label>
-        </div>
-      );
-      
-    case 'number':
-      if (configKey.includes('temperature') || (configValue >= 0 && configValue <= 1)) {
-        return (
-          <div className="space-y-2">
-            <div className="flex justify-between">
-              <Label htmlFor={configKey} className="capitalize">{configKey.replace(/_/g, ' ')}</Label>
-              <span className="text-sm">{configValue.toFixed(1)}</span>
-            </div>
-            <Slider 
-              id={configKey}
-              min={0} 
-              max={1} 
-              step={0.1} 
-              value={[configValue]} 
-              onValueChange={(values) => onUpdate(configKey, values[0])} 
+  label,
+  type = 'text',
+  value,
+  onChange,
+  options,
+  description
+}: AdvancedConfigFieldProps) => {
+  const handleValueChange = (newValue: any) => {
+    onChange(configKey, newValue);
+  };
+
+  // Boolean toggle handler
+  const handleBooleanChange = (checked: boolean) => {
+    handleValueChange(checked);
+  };
+
+  // Text/number input handler
+  const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const val = type === 'number' ? parseFloat(e.target.value) : e.target.value;
+    handleValueChange(val);
+  };
+
+  // Select handler
+  const handleSelectChange = (e: ChangeEvent<HTMLSelectElement>) => {
+    handleValueChange(e.target.value);
+  };
+
+  return (
+    <Card className="p-3 mb-3">
+      <div className="flex flex-col space-y-2">
+        <div className="flex justify-between items-center">
+          <label className="text-sm font-medium">{label}</label>
+          
+          {type === 'boolean' ? (
+            <Switch 
+              checked={value} 
+              onCheckedChange={handleBooleanChange} 
             />
-          </div>
-        );
-      } else if (configKey.includes('max_tokens') || configKey.includes('limit')) {
-        return (
-          <div className="space-y-2">
-            <Label htmlFor={configKey} className="capitalize">{configKey.replace(/_/g, ' ')}</Label>
+          ) : type === 'select' && options ? (
+            <select
+              id={configKey}
+              value={value}
+              onChange={handleSelectChange}
+              className="border rounded p-1 text-sm"
+            >
+              {options.map(opt => (
+                <option key={opt} value={opt}>{opt}</option>
+              ))}
+            </select>
+          ) : (
             <Input
               id={configKey}
-              type="number"
-              value={configValue}
-              onChange={(e) => onUpdate(configKey, parseInt(e.target.value) || 0)}
-              className="w-full"
+              value={value}
+              onChange={handleInputChange}
+              type={type}
+              className="w-40 text-sm"
             />
-          </div>
-        );
-      }
-      // For other number types
-      return (
-        <div className="space-y-2">
-          <Label htmlFor={configKey} className="capitalize">{configKey.replace(/_/g, ' ')}</Label>
-          <Input
-            id={configKey}
-            type="number"
-            value={configValue}
-            onChange={(e) => onUpdate(configKey, parseFloat(e.target.value) || 0)}
-            className="w-full"
-          />
+          )}
         </div>
-      );
-      
-    case 'string':
-      if (configKey === 'response_format') {
-        return (
-          <div className="space-y-2">
-            <Label htmlFor={configKey} className="capitalize">{configKey.replace(/_/g, ' ')}</Label>
-            <Select 
-              value={configValue} 
-              onValueChange={(value) => onUpdate(configKey, value)}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Select format" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="text">Text</SelectItem>
-                <SelectItem value="json_object">JSON Object</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-        );
-      }
-      // For other string types
-      return (
-        <div className="space-y-2">
-          <Label htmlFor={configKey} className="capitalize">{configKey.replace(/_/g, ' ')}</Label>
-          <Input
-            id={configKey}
-            type="text"
-            value={configValue}
-            onChange={(e) => onUpdate(configKey, e.target.value)}
-            className="w-full"
-          />
-        </div>
-      );
-      
-    default:
-      return null;
-  }
+        
+        {description && (
+          <p className="text-xs text-gray-500">{description}</p>
+        )}
+      </div>
+    </Card>
+  );
 };

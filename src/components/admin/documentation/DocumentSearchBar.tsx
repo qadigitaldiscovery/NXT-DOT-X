@@ -1,55 +1,29 @@
-import { useState, useEffect } from 'react';
-import { Search, X } from 'lucide-react';
 import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
+import { Search } from 'lucide-react';
+import { useState } from 'react';
 
 interface DocumentSearchBarProps {
   onSearch: (searchTerm: string) => void;
 }
 
-export const DocumentSearchBar = ({ onSearch }: DocumentSearchBarProps) => {
+export function DocumentSearchBar({ onSearch }: DocumentSearchBarProps) {
   const [searchTerm, setSearchTerm] = useState('');
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      onSearch(searchTerm);
-    }, 300);
-    
-    return () => clearTimeout(timer);
-  }, [searchTerm, onSearch]);
-
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    onSearch(searchTerm);
-  };
-
-  const clearSearch = () => {
-    setSearchTerm('');
-    onSearch('');
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setSearchTerm(value);
+    onSearch(value);
   };
 
   return (
-    <form onSubmit={handleSearch} className="relative w-full">
-      <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-gray-500 dark:text-gray-400" />
+    <div className="relative">
+      <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground/50" />
       <Input
-        type="search"
-        placeholder="Search documentation..."
-        className="w-full pl-9 pr-10 bg-white/50 dark:bg-gray-900/50 border border-gray-300 dark:border-gray-700"
+        className="pl-8"
+        placeholder="Search documents..."
         value={searchTerm}
-        onChange={(e) => setSearchTerm(e.target.value)}
+        onChange={handleSearchChange}
       />
-      {searchTerm && (
-        <Button
-          type="button"
-          variant="ghost"
-          size="icon"
-          className="absolute right-1 top-1 h-7 w-7"
-          onClick={clearSearch}
-        >
-          <X className="h-4 w-4 text-gray-500 dark:text-gray-400" />
-          <span className="sr-only">Clear search</span>
-        </Button>
-      )}
-    </form>
+    </div>
   );
-};
+}

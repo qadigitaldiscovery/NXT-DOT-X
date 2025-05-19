@@ -1,110 +1,58 @@
-import { useState } from 'react';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { 
-  Select, 
-  SelectContent, 
-  SelectItem, 
-  SelectTrigger, 
-  SelectValue 
-} from '@/components/ui/select';
-import { toast } from 'sonner';
-import { Save } from 'lucide-react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Switch } from '@/components/ui/switch';
 
-export const DefaultCustomerSettings = () => {
-  const [settings, setSettings] = useState({
-    defaultStatus: 'active',
-    defaultAccountType: 'standard',
-    defaultCurrency: 'USD',
-    defaultPaymentTerms: 'Net 30'
-  });
-
-  const handleChange = (field: string, value: string) => {
-    setSettings(prev => ({
-      ...prev,
-      [field]: value
-    }));
-  };
-
-  const handleSave = () => {
-    console.log('Saving default customer settings:', settings);
-    toast.success('Default customer settings saved successfully');
-  };
-
+export function DefaultCustomerSettings() {
   return (
-    <div className="space-y-6">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="space-y-2">
-          <Label htmlFor="defaultStatus">Default Status</Label>
-          <Select 
-            value={settings.defaultStatus}
-            onValueChange={(value) => handleChange('defaultStatus', value)}
-          >
-            <SelectTrigger id="defaultStatus">
-              <SelectValue placeholder="Select default status" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="active">Active</SelectItem>
-              <SelectItem value="inactive">Inactive</SelectItem>
-              <SelectItem value="pending">Pending</SelectItem>
-            </SelectContent>
-          </Select>
+    <Card>
+      <CardHeader>
+        <CardTitle>Default Settings</CardTitle>
+        <CardDescription>Default settings for new customer profiles</CardDescription>
+      </CardHeader>
+      <CardContent className="space-y-6">
+        <div className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="defaultStatus">Default Status</Label>
+            <Select defaultValue="active">
+              <SelectTrigger id="defaultStatus">
+                <SelectValue placeholder="Select status" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="active">Active</SelectItem>
+                <SelectItem value="inactive">Inactive</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          
+          <div className="space-y-2">
+            <Label htmlFor="defaultCreditLimit">Default Credit Limit</Label>
+            <Input id="defaultCreditLimit" type="number" defaultValue="1000" placeholder="e.g., 1000" />
+          </div>
+          
+          <div className="flex items-center justify-between">
+            <div className="space-y-1">
+              <Label htmlFor="autoApprove">Auto-approve New Customers</Label>
+              <p className="text-xs text-muted-foreground">Automatically approve new customer accounts</p>
+            </div>
+            <Switch id="autoApprove" defaultChecked={false} />
+          </div>
+          
+          <div className="flex items-center justify-between">
+            <div className="space-y-1">
+              <Label htmlFor="emailNotifications">Email Notifications</Label>
+              <p className="text-xs text-muted-foreground">Send welcome email to new customers</p>
+            </div>
+            <Switch id="emailNotifications" defaultChecked={true} />
+          </div>
         </div>
         
-        <div className="space-y-2">
-          <Label htmlFor="defaultAccountType">Default Account Type</Label>
-          <Select 
-            value={settings.defaultAccountType}
-            onValueChange={(value) => handleChange('defaultAccountType', value)}
-          >
-            <SelectTrigger id="defaultAccountType">
-              <SelectValue placeholder="Select default account type" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="standard">Standard</SelectItem>
-              <SelectItem value="premium">Premium</SelectItem>
-              <SelectItem value="enterprise">Enterprise</SelectItem>
-            </SelectContent>
-          </Select>
+        <div className="flex justify-end">
+          <Button>Save Settings</Button>
         </div>
-        
-        <div className="space-y-2">
-          <Label htmlFor="defaultCurrency">Default Currency</Label>
-          <Select 
-            value={settings.defaultCurrency}
-            onValueChange={(value) => handleChange('defaultCurrency', value)}
-          >
-            <SelectTrigger id="defaultCurrency">
-              <SelectValue placeholder="Select default currency" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="USD">US Dollar (USD)</SelectItem>
-              <SelectItem value="EUR">Euro (EUR)</SelectItem>
-              <SelectItem value="GBP">British Pound (GBP)</SelectItem>
-              <SelectItem value="JPY">Japanese Yen (JPY)</SelectItem>
-              <SelectItem value="CAD">Canadian Dollar (CAD)</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-        
-        <div className="space-y-2">
-          <Label htmlFor="defaultPaymentTerms">Default Payment Terms</Label>
-          <Input
-            id="defaultPaymentTerms"
-            value={settings.defaultPaymentTerms}
-            onChange={(e) => handleChange('defaultPaymentTerms', e.target.value)}
-            placeholder="e.g., Net 30"
-          />
-        </div>
-      </div>
-      
-      <div className="flex justify-end">
-        <Button onClick={handleSave}>
-          <Save className="h-4 w-4 mr-2" />
-          Save Settings
-        </Button>
-      </div>
-    </div>
+      </CardContent>
+    </Card>
   );
-};
+}

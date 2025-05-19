@@ -1,5 +1,5 @@
-import { Card, CardContent } from '@/components/ui/card';
-import { ArrowUpIcon, ArrowDownIcon } from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
 
 interface KpiCardProps {
   title: string;
@@ -7,29 +7,21 @@ interface KpiCardProps {
   change: number;
 }
 
-const KpiCard = ({ title, value, change }: KpiCardProps) => {
-  const isPositive = change >= 0;
-
+export default function KpiCard({ title, value, change }: KpiCardProps) {
   return (
-    <Card>
-      <CardContent className="p-4">
-        <h3 className="text-sm font-medium text-muted-foreground">{title}</h3>
-        <div className="flex items-center justify-between mt-2">
-          <p className="text-2xl font-bold">{value}</p>
-          <div className="flex items-center">
-            {isPositive ? (
-              <ArrowUpIcon className="w-4 h-4 text-green-500" />
-            ) : (
-              <ArrowDownIcon className="w-4 h-4 text-red-500" />
-            )}
-            <span className={`ml-1 text-sm ${isPositive ? 'text-green-500' : 'text-red-500'}`}>
-              {Math.abs(change)}%
-            </span>
-          </div>
-        </div>
+    <Card className="transition-all duration-300 hover:shadow-lg">
+      <CardHeader className="flex flex-row items-center justify-between pb-2">
+        <CardTitle className="text-sm font-medium">{title}</CardTitle>
+        <Badge 
+          variant={change >= 0 ? 'default' : 'destructive'}
+          className="text-xs"
+        >
+          {change >= 0 ? '+' : ''}{change}%
+        </Badge>
+      </CardHeader>
+      <CardContent>
+        <div className="text-2xl font-bold">{value}</div>
       </CardContent>
     </Card>
   );
-};
-
-export default KpiCard;
+}

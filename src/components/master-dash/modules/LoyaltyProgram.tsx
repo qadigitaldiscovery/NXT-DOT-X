@@ -1,50 +1,43 @@
-import React from 'react';
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Award, BarChart3, Users, Gift } from "lucide-react";
-import { useNavigate } from "react-router-dom";
-import { useAuth } from '@/context/AuthContext';
 
-export default function LoyaltyProgram() {
+import { useNavigate } from 'react-router-dom';
+import { ModuleCard } from '../ModuleCard';
+import { Gem, Award } from 'lucide-react';
+
+const LoyaltyProgram = () => {
   const navigate = useNavigate();
-  const { hasPermission } = useAuth();
-  
+
+  const loyaltyModules = [
+    {
+      title: 'Loyalty Dashboard',
+      description: 'View loyalty program performance metrics and member activity',
+      icon: <Gem className="h-8 w-8 text-emerald-500" />,
+      onClick: () => navigate('/loyalty/dashboard')
+    },
+    {
+      title: 'Rewards Management',
+      description: 'Manage loyalty rewards, tiers, and redemption options',
+      icon: <Award className="h-8 w-8 text-emerald-500" />,
+      onClick: () => navigate('/loyalty/rewards')
+    }
+  ];
+
   return (
-    <Card className="col-span-1 bg-slate-800">
-      <CardHeader className="pb-2">
-        <CardTitle className="flex items-center space-x-2">
-          <Award className="w-5 h-5 text-yellow-500" />
-          <span>Loyalty Program</span>
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="pb-2">
-        <p className="text-sm text-gray-500">
-          Manage loyalty rewards, member tiers, and customer engagement campaigns.
-        </p>
-        <div className="mt-4 space-y-3">
-          <div className="flex items-center gap-2">
-            <div className="w-2 h-2 rounded-full bg-green-500"></div>
-            <span className="text-sm">Member management</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-2 h-2 rounded-full bg-green-500"></div>
-            <span className="text-sm">Reward programs</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-2 h-2 rounded-full bg-green-500"></div>
-            <span className="text-sm">Analytics & Reporting</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-2 h-2 rounded-full bg-amber-500"></div>
-            <span className="text-sm">System Status <Button variant="link" className="px-1 py-0 h-auto text-amber-400 text-xs" onClick={() => navigate('/dashboard/rag')}>View RAG Dashboard</Button></span>
-          </div>
-        </div>
-      </CardContent>
-      <CardFooter className="flex flex-col space-y-2">
-        <Button onClick={() => navigate('/loyalty-rewards')} className="w-full">
-          Open Loyalty Program
-        </Button>
-      </CardFooter>
-    </Card>
+    <div>
+      <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-6">Loyalty Program</h2>
+      
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {loyaltyModules.map((module, index) => (
+          <ModuleCard
+            key={index}
+            title={module.title}
+            description={module.description}
+            icon={module.icon}
+            onClick={module.onClick}
+          />
+        ))}
+      </div>
+    </div>
   );
-}
+};
+
+export default LoyaltyProgram;

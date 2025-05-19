@@ -1,154 +1,81 @@
-import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-import { 
-  Table, 
-  TableBody, 
-  TableCell, 
-  TableHead, 
-  TableHeader, 
-  TableRow 
-} from '@/components/ui/table';
-import { toast } from 'sonner';
-import { Save, Plus, Trash2 } from 'lucide-react';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Plus, Trash2 } from 'lucide-react';
 
-interface ColumnMapping {
-  id: string;
-  fileColumn: string;
-  systemField: string;
-  required: boolean;
-}
+const mockMappings = [
+  { id: '1', sourceField: 'Customer ID', targetField: 'customer_id', type: 'string', required: true },
+  { id: '2', sourceField: 'Full Name', targetField: 'name', type: 'string', required: true },
+  { id: '3', sourceField: 'Email Address', targetField: 'email', type: 'string', required: false },
+  { id: '4', sourceField: 'Phone Number', targetField: 'phone', type: 'string', required: false },
+  { id: '5', sourceField: 'Total Purchases', targetField: 'total_spend', type: 'number', required: false },
+];
 
-export const CustomerColumnMappings = () => {
-  const [mappings, setMappings] = useState<ColumnMapping[]>([
-    { id: '1', fileColumn: 'Customer Name', systemField: 'name', required: true },
-    { id: '2', fileColumn: 'Customer Code', systemField: 'code', required: true },
-    { id: '3', fileColumn: 'Contact Person', systemField: 'contact_name', required: false },
-    { id: '4', fileColumn: 'Email Address', systemField: 'email', required: false },
-    { id: '5', fileColumn: 'Phone Number', systemField: 'phone', required: false },
-  ]);
-
-  const systemFields = [
-    { value: 'name', label: 'Customer Name' },
-    { value: 'code', label: 'Customer Code' },
-    { value: 'contact_name', label: 'Contact Person' },
-    { value: 'email', label: 'Email Address' },
-    { value: 'phone', label: 'Phone Number' },
-    { value: 'website', label: 'Website' },
-    { value: 'account_type', label: 'Account Type' },
-    { value: 'status', label: 'Status' },
-  ];
-
-  const addMapping = () => {
-    const newId = (mappings.length + 1).toString();
-    setMappings([...mappings, { id: newId, fileColumn: '', systemField: '', required: false }]);
+export function CustomerColumnMappings() {
+  const handleAddMapping = () => {
+    console.log('Adding new mapping');
+    // Implement add functionality
   };
 
-  const removeMapping = (id: string) => {
-    setMappings(mappings.filter(mapping => mapping.id !== id));
-  };
-
-  const updateMapping = (id: string, field: keyof ColumnMapping, value: string | boolean) => {
-    setMappings(mappings.map(mapping => 
-      mapping.id === id ? { ...mapping, [field]: value } : mapping
-    ));
-  };
-
-  const handleSave = () => {
-    console.log('Saving column mappings:', mappings);
-    toast.success('Column mappings saved successfully');
+  const handleRemoveMapping = (id: string, sourceField: string) => {
+    if (window.confirm(`Are you sure you want to remove the mapping for "${sourceField}"?`)) {
+      console.log(`Removing mapping ${id}`);
+      // Implement remove functionality
+    }
   };
 
   return (
-    <div className="space-y-6">
-      <div className="space-y-4">
-        <div className="flex justify-between items-center">
-          <h3 className="text-lg font-medium">Column Mappings</h3>
-          <Button onClick={addMapping} size="sm" variant="outline" className="flex items-center gap-1">
-            <Plus className="h-4 w-4" />
-            Add Mapping
-          </Button>
+    <Card>
+      <CardHeader className="flex flex-row items-center justify-between">
+        <div>
+          <CardTitle>Column Mappings</CardTitle>
+          <CardDescription>Map source data fields to customer attributes</CardDescription>
         </div>
-        
+        <Button size="sm" onClick={handleAddMapping}>
+          <Plus className="h-4 w-4 mr-2" />
+          Add Mapping
+        </Button>
+      </CardHeader>
+      <CardContent>
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>File Column</TableHead>
-              <TableHead>System Field</TableHead>
+              <TableHead>Source Field</TableHead>
+              <TableHead>Target Field</TableHead>
+              <TableHead>Data Type</TableHead>
               <TableHead>Required</TableHead>
-              <TableHead className="w-[100px]"></TableHead>
+              <TableHead className="w-[80px]">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {mappings.map((mapping) => (
-              <TableRow key={mapping.id}>
-                <TableCell>
-                  <Input 
-                    value={mapping.fileColumn} 
-                    onChange={(e) => updateMapping(mapping.id, 'fileColumn', e.target.value)}
-                    placeholder="CSV column name"
-                  />
-                </TableCell>
-                <TableCell>
-                  <Select
-                    value={mapping.systemField}
-                    onValueChange={(value) => updateMapping(mapping.id, 'systemField', value)}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select system field" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {systemFields.map(field => (
-                        <SelectItem key={field.value} value={field.value}>
-                          {field.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </TableCell>
-                <TableCell>
-                  <Select
-                    value={mapping.required.toString()}
-                    onValueChange={(value) => updateMapping(mapping.id, 'required', value === 'true')}
-                  >
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="true">Yes</SelectItem>
-                      <SelectItem value="false">No</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </TableCell>
-                <TableCell>
-                  <Button 
-                    variant="ghost" 
-                    size="icon"
-                    onClick={() => removeMapping(mapping.id)}
-                    disabled={mapping.required} // Don't allow deleting required mappings
-                  >
-                    <Trash2 className="h-4 w-4 text-red-500" />
-                  </Button>
+            {mockMappings.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={5} className="h-24 text-center">
+                  No mappings defined
                 </TableCell>
               </TableRow>
-            ))}
+            ) : (
+              mockMappings.map((mapping) => (
+                <TableRow key={mapping.id}>
+                  <TableCell className="font-medium">{mapping.sourceField}</TableCell>
+                  <TableCell>{mapping.targetField}</TableCell>
+                  <TableCell>{mapping.type}</TableCell>
+                  <TableCell>{mapping.required ? 'Yes' : 'No'}</TableCell>
+                  <TableCell>
+                    <Button 
+                      variant="ghost" 
+                      size="icon" 
+                      onClick={() => handleRemoveMapping(mapping.id, mapping.sourceField)}
+                    >
+                      <Trash2 className="h-4 w-4 text-red-500" />
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              ))
+            )}
           </TableBody>
         </Table>
-      </div>
-      
-      <div className="flex justify-end">
-        <Button onClick={handleSave}>
-          <Save className="h-4 w-4 mr-2" />
-          Save Mappings
-        </Button>
-      </div>
-    </div>
+      </CardContent>
+    </Card>
   );
-};
+}
