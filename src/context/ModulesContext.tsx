@@ -1,10 +1,12 @@
+
 import { createContext, useContext, useState, useEffect } from 'react';
 import { createClient } from '@supabase/supabase-js';
-import { toast } from '@/components/ui/toast';
+import { toast } from 'sonner';
 
+// Use import.meta.env instead of process.env for Vite projects
 const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  import.meta.env.VITE_SUPABASE_URL || 'https://ehzhosyzybzxhvhisojh.supabase.co',
+  import.meta.env.VITE_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVoemhvc3l6eWJ6eGh2aGlzb2poIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDY1MjIwOTQsImV4cCI6MjA2MjA5ODA5NH0.VtWHAoglSqwBEwr_Edujt5nSsLMJMCqEr1ALqbKVEVQ'
 );
 
 interface Module {
@@ -19,6 +21,7 @@ interface ModulesContextType {
   loading: boolean;
   toggleModule: (moduleId: string, enabled: boolean) => Promise<void>;
   refreshModules: () => Promise<void>;
+  hasAccess?: (moduleId: string) => boolean;
 }
 
 const ModulesContext = createContext<ModulesContextType | undefined>(undefined);
@@ -71,8 +74,20 @@ export function ModulesProvider({ children }: { children: React.ReactNode }) {
     await fetchModules();
   };
 
+  // Add hasAccess function to check if a module is enabled
+  const hasAccess = (moduleId: string) => {
+    const module = modules.find(m => m.id === moduleId);
+    return module?.enabled || false;
+  };
+
   return (
-    <ModulesContext.Provider value={{ modules, loading, toggleModule, refreshModules }}>
+    <ModulesContext.Provider value={{ 
+      modules, 
+      loading, 
+      toggleModule, 
+      refreshModules,
+      hasAccess 
+    }}>
       {children}
     </ModulesContext.Provider>
   );
