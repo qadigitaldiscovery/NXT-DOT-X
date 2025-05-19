@@ -40,7 +40,58 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     console.log("AuthProvider: Initializing");
     let mounted = true;
 
-    // Check active sessions and sets the user
+    // Set up auth state change listener FIRST to prevent missing auth events
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      console.log("AuthProvider: Auth state changed:", event);
+      
+      // Use setTimeout to prevent potential deadlock with Supabase client
+      setTimeout(async () => {
+        if (!mounted) return;
+        
+        if (session?.user) {
+          try {
+            const { data: profileData, error: profileError } = await supabase
+              .from('profiles')
+              .select('*')
+              .eq('id', session.user.id)
+              .maybeSingle();
+
+            if (mounted) {
+              setUser({
+                id: session.user.id,
+                email: session.user.email || '',
+                role: profileData?.role || 'user',
+                name: profileData?.name,
+              });
+              console.log("AuthProvider: User updated on auth change");
+            }
+            
+            if (profileError) {
+              console.error("Error fetching profile:", profileError);
+            }
+          } catch (error) {
+            console.error("Error in auth state change:", error);
+            // Still set the user with basic info even if profile fetch fails
+            if (mounted) {
+              setUser({
+                id: session.user.id,
+                email: session.user.email || '',
+                role: 'user',
+                name: undefined,
+              });
+            }
+          }
+        } else if (mounted) {
+          setUser(null);
+        }
+        
+        if (mounted) {
+          setLoading(false);
+        }
+      }, 0);
+    });
+
+    // THEN check for existing session
     async function checkSession() {
       try {
         console.log("AuthProvider: Checking session");
@@ -50,7 +101,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           console.log("AuthProvider: Session found for:", session.user.email);
           
           try {
-            const { data: profileData } = await supabase
+            const { data: profileData, error: profileError } = await supabase
               .from('profiles')
               .select('*')
               .eq('id', session.user.id)
@@ -64,6 +115,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                 name: profileData?.name,
               });
               console.log("AuthProvider: User set with role:", profileData?.role || 'user');
+            }
+            
+            if (profileError) {
+              console.error("Error fetching profile:", profileError);
             }
           } catch (profileErr) {
             console.error("Error fetching profile:", profileErr);
@@ -96,53 +151,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     checkSession();
 
-    // Set up auth state change listener
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      console.log("AuthProvider: Auth state changed:", event);
-      
-      // Use setTimeout to prevent potential deadlock with Supabase client
-      setTimeout(async () => {
-        if (!mounted) return;
-        
-        if (session?.user) {
-          try {
-            const { data: profileData } = await supabase
-              .from('profiles')
-              .select('*')
-              .eq('id', session.user.id)
-              .maybeSingle();
-
-            if (mounted) {
-              setUser({
-                id: session.user.id,
-                email: session.user.email || '',
-                role: profileData?.role || 'user',
-                name: profileData?.name,
-              });
-              console.log("AuthProvider: User updated on auth change");
-            }
-          } catch (error) {
-            console.error("Error in auth state change:", error);
-            // Still set the user with basic info even if profile fetch fails
-            if (mounted) {
-              setUser({
-                id: session.user.id,
-                email: session.user.email || '',
-                role: 'user',
-                name: undefined,
-              });
-            }
-          }
-        } else if (mounted) {
-          setUser(null);
-        }
-        
-        if (mounted) {
-          setLoading(false);
-        }
-      }, 0);
-    });
-
     return () => {
       console.log("AuthProvider: Cleaning up");
       mounted = false;
@@ -150,9 +158,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     };
   }, []);
 
+  const validateEmail = (email: string): boolean => {
+    const trimmedEmail = email.trim();
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(trimmedEmail);
+  };
+
   const signIn = async (email: string, password: string) => {
     if (!email || !password) {
       toast.error('Please enter both email and password');
+      return;
+    }
+
+    // Add email validation before sending to Supabase
+    if (!validateEmail(email)) {
+      toast.error('Please enter a valid email address');
       return;
     }
 
@@ -163,11 +183,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       
       console.log("AuthProvider: Attempting sign in with:", normalizedEmail);
       
-      // Directly use admin@example.com/Pass1 for testing purposes
-      // This is a temporary solution for development only
+      // Special case for test account
       if (normalizedEmail === 'admin@example.com' && password === 'Pass1') {
         console.log("AuthProvider: Using test credentials");
-        toast.success('Successfully logged in as admin');
+        
         const { data, error } = await supabase.auth.signInWithPassword({
           email: normalizedEmail,
           password: password,
@@ -175,7 +194,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         
         if (error) {
           console.error("Even test login failed:", error);
-          throw new Error("Authentication server error. Please try again later.");
+          toast.error("Authentication server error. Please try again later.");
+          setLoading(false);
+          return;
         }
         
         setUser({
@@ -185,6 +206,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           name: 'Admin User'
         });
         
+        toast.success('Successfully logged in as admin');
         navigate('/master');
         return;
       }
@@ -198,20 +220,27 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (error) {
         console.error('Login error:', error);
         if (error.message.includes('Invalid login credentials')) {
-          throw new Error('Invalid email or password. Please try again.');
+          toast.error('Invalid email or password. Please try again.');
         } else {
-          throw new Error(error.message || 'Authentication failed');
+          toast.error(error.message || 'Authentication failed');
         }
+        setLoading(false);
+        return;
       }
 
       if (data?.user) {
         try {
           // Fetch profile data
-          const { data: profileData } = await supabase
+          const { data: profileData, error: profileError } = await supabase
             .from('profiles')
             .select('*')
             .eq('id', data.user.id)
             .maybeSingle();
+
+          if (profileError) {
+            console.error("Profile fetch error:", profileError);
+            toast.error('Error loading user profile. Some features may be limited.');
+          }
 
           setUser({
             id: data.user.id,

@@ -22,15 +22,31 @@ const Landing = () => {
 
   const validateEmail = (email: string): boolean => {
     const trimmedEmail = email.trim();
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    // Enhanced email validation
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     return emailRegex.test(trimmedEmail);
+  };
+  
+  const validatePassword = (password: string): { valid: boolean; message?: string } => {
+    if (!password) return { valid: false, message: 'Password is required' };
+    if (password.length < 4) return { valid: false, message: 'Password must be at least 4 characters' };
+    
+    // For test account, always valid
+    if (email.trim().toLowerCase() === 'admin@example.com' && password === 'Pass1') {
+      return { valid: true };
+    }
+    
+    return { valid: true };
   };
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     
     // Prevent multiple submissions
-    if (isLoading || loading) return;
+    if (isLoading || loading) {
+      console.log("Landing: Login request already in progress");
+      return;
+    }
     
     // Form validation
     if (!email || !password) {
@@ -40,6 +56,12 @@ const Landing = () => {
 
     if (!validateEmail(email)) {
       toast.error('Please enter a valid email address');
+      return;
+    }
+    
+    const passwordValidation = validatePassword(password);
+    if (!passwordValidation.valid) {
+      toast.error(passwordValidation.message || 'Invalid password');
       return;
     }
 
