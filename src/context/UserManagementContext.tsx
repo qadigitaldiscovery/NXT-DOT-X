@@ -86,39 +86,51 @@ export function UserManagementProvider({ children }: { children: React.ReactNode
         return;
       }
 
-      if (!data) {
-        console.log('No user data returned');
+      if (!data || !Array.isArray(data)) {
+        console.log('No user data returned or invalid data format');
         setUsers([]);
         setRoles([]);
         return;
       }
 
-      // Type assertion and safe handling of data
-      const profileData = data as ProfileData[];
-
-      // Map profile data to User interface with safe defaults
-      const mappedUsers = profileData.map(profile => ({
-        id: profile.id,
-        username: profile.name || 'Unknown',
-        email: profile.users?.email || 'No email',
-        role: profile.role || 'user',
-        status: 'active', // Default status
-        created: profile.users?.created_at || new Date().toISOString()
-      }));
+      // Safe type checking and mapping
+      const mappedUsers: User[] = data.map(profile => {
+        // Ensure we have valid profile data
+        if (!profile || typeof profile !== 'object') {
+          return {
+            id: 'unknown',
+            username: 'Unknown',
+            email: 'No email',
+            role: 'user',
+            status: 'active',
+            created: new Date().toISOString()
+          };
+        }
+        
+        const typedProfile = profile as ProfileData;
+        
+        return {
+          id: typedProfile.id || 'unknown',
+          username: typedProfile.name || 'Unknown',
+          email: typedProfile.users?.email || 'No email',
+          role: typedProfile.role || 'user',
+          status: 'active', // Default status
+          created: typedProfile.users?.created_at || new Date().toISOString()
+        };
+      });
       
       setUsers(mappedUsers);
 
       // Extract unique roles with proper type checking
-      const uniqueRoleNames = Array.from(
-        new Set(
-          profileData
-            .map(user => user.role)
-            .filter((role): role is string => typeof role === 'string')
-        )
-      );
+      const roleNames = new Set<string>();
+      data.forEach(profile => {
+        if (profile && typeof profile === 'object' && 'role' in profile && typeof profile.role === 'string') {
+          roleNames.add(profile.role);
+        }
+      });
       
       // Create role objects from unique names
-      const roleObjects = uniqueRoleNames.map(roleName => ({
+      const roleObjects: Role[] = Array.from(roleNames).map(roleName => ({
         id: roleName,
         name: roleName,
         description: `${roleName} role`,

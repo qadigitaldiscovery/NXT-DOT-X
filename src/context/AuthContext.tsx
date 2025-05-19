@@ -158,21 +158,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     };
   }, []);
 
-  const validateEmail = (email: string): boolean => {
-    const trimmedEmail = email.trim();
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(trimmedEmail);
-  };
-
   const signIn = async (email: string, password: string) => {
     if (!email || !password) {
       toast.error('Please enter both email and password');
-      return;
-    }
-
-    // Add email validation before sending to Supabase
-    if (!validateEmail(email)) {
-      toast.error('Please enter a valid email address');
       return;
     }
 
