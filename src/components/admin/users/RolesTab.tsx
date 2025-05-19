@@ -1,85 +1,82 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Button } from '@/components/ui/button';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { 
-  Table, 
-  TableBody, 
-  TableCell, 
-  TableHead, 
-  TableHeader, 
-  TableRow 
-} from '@/components/ui/table';
-import { Badge } from '@/components/ui/badge';
-import { toast } from 'sonner';
-import { useAuth } from '@/context/AuthContext';
-import AddRoleDialog from './AddRoleDialog';
-import { useUserManagement } from '@/context/UserManagementContext';
+import { PlusCircle, Edit, Trash2 } from 'lucide-react';
+import { AddRoleDialog } from './AddRoleDialog';
 
-const RolesTab: React.FC = () => {
-  const { hasPermission } = useAuth();
-  const { roles, permissions, addRole } = useUserManagement();
-  const [roleDialogOpen, setRoleDialogOpen] = useState(false);
+const mockRoles = [
+  { id: '1', name: 'Administrator', description: 'Full system access', permissions: ['read', 'write', 'delete', 'admin'] },
+  { id: '2', name: 'Editor', description: 'Can edit content', permissions: ['read', 'write'] },
+  { id: '3', name: 'Viewer', description: 'Read-only access', permissions: ['read'] },
+];
 
-  const handleAddRole = (newRole: any) => {
-    addRole(newRole);
-    toast.success(`Role ${newRole.name} created successfully`);
-    setRoleDialogOpen(false);
+export function RolesTab() {
+  const [roles, setRoles] = React.useState(mockRoles);
+  const [isAddingRole, setIsAddingRole] = React.useState(false);
+
+  const handleAddRole = (role: { name: string; description?: string; permissions?: string[] }) => {
+    setRoles([...roles, { id: Date.now().toString(), name: role.name, description: role.description || '', permissions: role.permissions || [] }]);
+    setIsAddingRole(false);
+  };
+
+  const handleEditRole = (id: string) => {
+    console.log(`Editing role ${id}`);
+    // Implement edit functionality
+  };
+
+  const handleDeleteRole = (id: string, name: string) => {
+    if (window.confirm(`Are you sure you want to delete the role "${name}"?`)) {
+      setRoles(roles.filter(role => role.id !== id));
+    }
   };
 
   return (
     <Card>
-      <CardHeader className="pb-2">
-        <div className="flex justify-between items-center">
-          <CardTitle>All Roles</CardTitle>
-          {hasPermission('users.create') && (
-            <AddRoleDialog 
-              open={roleDialogOpen} 
-              onOpenChange={setRoleDialogOpen} 
-              onAddRole={handleAddRole} 
-              permissions={permissions}
-            />
-          )}
+      <CardHeader className="flex flex-row items-center justify-between">
+        <div>
+          <CardTitle>Roles</CardTitle>
+          <CardDescription>Manage system roles and permissions</CardDescription>
         </div>
-        <CardDescription>
-          Manage roles and their associated permissions.
-        </CardDescription>
+        <AddRoleDialog open={isAddingRole} onOpenChange={setIsAddingRole} onRoleAdded={handleAddRole} />
       </CardHeader>
       <CardContent>
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Role Name</TableHead>
+              <TableHead>Name</TableHead>
               <TableHead>Description</TableHead>
               <TableHead>Permissions</TableHead>
-              <TableHead className="text-right">Actions</TableHead>
+              <TableHead className="w-[100px]">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {roles.map((role) => (
-              <TableRow key={role.id}>
-                <TableCell className="font-medium">{role.name}</TableCell>
-                <TableCell>{role.description}</TableCell>
-                <TableCell>
-                  <div className="flex flex-wrap gap-1">
-                    {role.permissions.map(p => (
-                      <Badge key={p} variant="outline" className="mr-1 mb-1">
-                        {p}
-                      </Badge>
-                    ))}
-                  </div>
-                </TableCell>
-                <TableCell className="text-right">
-                  <Button size="sm" variant="outline" onClick={() => toast.info("Edit feature coming soon")}>
-                    Edit
-                  </Button>
+            {roles.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={4} className="h-24 text-center">
+                  No roles found
                 </TableCell>
               </TableRow>
-            ))}
+            ) : (
+              roles.map((role) => (
+                <TableRow key={role.id}>
+                  <TableCell className="font-medium">{role.name}</TableCell>
+                  <TableCell>{role.description || '—'}</TableCell>
+                  <TableCell>{role.permissions?.join(', ') || 'None'}</TableCell>
+                  <TableCell className="flex items-center gap-2">
+                    <Button variant="ghost" size="icon" onClick={() => handleEditRole(role.id)}>
+                      <Edit className="h-4 w-4" />
+                    </Button>
+                    <Button variant="ghost" size="icon" onClick={() => handleDeleteRole(role.id, role.name)}>
+                      <Trash2 className="h-4 w-4 text-red-500" />
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              ))
+            )}
           </TableBody>
         </Table>
       </CardContent>
     </Card>
   );
-};
-
-export default RolesTab;
+}

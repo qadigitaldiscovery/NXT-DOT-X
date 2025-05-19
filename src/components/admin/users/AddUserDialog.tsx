@@ -1,71 +1,40 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
-import { 
-  Dialog, 
-  DialogContent, 
-  DialogDescription, 
-  DialogFooter, 
-  DialogHeader, 
-  DialogTitle, 
-  DialogTrigger 
-} from '@/components/ui/dialog';
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/components/ui/form';
-import { 
-  Select, 
-  SelectContent, 
-  SelectItem, 
-  SelectTrigger, 
-  SelectValue 
-} from '@/components/ui/select';
-import { UserPlus } from 'lucide-react';
+import { Label } from '@/components/ui/label';
+import { useToast } from '@/components/ui/use-toast';
+import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm, ControllerRenderProps } from 'react-hook-form';
-import * as z from 'zod';
-import { Role } from '@/context/UserManagementContext';
+import { useForm } from 'react-hook-form';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
-// Enhanced form schema with validation
-const userFormSchema = z.object({
-  username: z
-    .string()
-    .min(3, { message: "Username must be at least 3 characters" })
-    .max(50, { message: "Username must be less than 50 characters" })
-    .regex(/^[a-zA-Z0-9_]+$/, { 
-      message: "Username can only contain letters, numbers and underscores" 
-    }),
-  email: z
-    .string()
-    .email({ message: "Invalid email address" })
-    .max(100, { message: "Email must be less than 100 characters" }),
-  password: z
-    .string()
-    .min(8, { message: "Password must be at least 8 characters" })
-    .max(100, { message: "Password must be less than 100 characters" })
-    .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/, {
-      message: "Password must contain at least one uppercase letter, one lowercase letter, one number and one special character"
-    }),
-  role: z
-    .string()
-    .min(1, { message: "Please select a role" }),
+const userSchema = z.object({
+  username: z.string().min(1, 'Username is required'),
+  email: z.string().email('Invalid email address'),
+  password: z.string().min(6, 'Password must be at least 6 characters'),
+  role: z.string().min(1, 'Role is required'),
 });
 
+type UserFormData = z.infer<typeof userSchema>;
+
+const mockRoles = [
+  { value: 'admin', label: 'Administrator' },
+  { value: 'editor', label: 'Editor' },
+  { value: 'viewer', label: 'Viewer' },
+];
+
 interface AddUserDialogProps {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  onAddUser: (user: any) => void;
-  rolesData: Role[];
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
+  onUserAdded?: (user: { username: string; email: string; role: string }) => void;
 }
 
-const AddUserDialog: React.FC<AddUserDialogProps> = ({ open, onOpenChange, onAddUser, rolesData }) => {
-  const userForm = useForm<z.infer<typeof userFormSchema>>({
-    resolver: zodResolver(userFormSchema),
+export function AddUserDialog({ open, onOpenChange, onUserAdded }: AddUserDialogProps) {
+  const { toast } = useToast();
+  const form = useForm<UserFormData>({
+    resolver: zodResolver(userSchema),
     defaultValues: {
       username: '',
       email: '',
@@ -74,108 +43,107 @@ const AddUserDialog: React.FC<AddUserDialogProps> = ({ open, onOpenChange, onAdd
     },
   });
 
-  const handleAddUser = (data: z.infer<typeof userFormSchema>) => {
-    const newUser = {
-      id: Math.random().toString(36).substring(2, 11),
-      username: data.username,
-      email: data.email,
-      role: data.role,
-      status: 'active',
-      created: new Date().toISOString().split('T')[0]
-    };
-    
-    onAddUser(newUser);
-    userForm.reset();
+  const handleSubmit = (data: UserFormData) => {
+    toast({
+      title: 'User Added',
+      description: `User "${data.username}" has been added successfully.`,
+    });
+    if (onUserAdded) {
+      onUserAdded({
+        username: data.username,
+        email: data.email,
+        role: data.role,
+      });
+    }
+    form.reset();
+    if (onOpenChange) {
+      onOpenChange(false);
+    }
   };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogTrigger asChild>
-        <Button>
-          <UserPlus className="mr-2 h-4 w-4" />
-          Add User
-        </Button>
+        <Button>Add User</Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[500px]">
+      <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>Add New User</DialogTitle>
-          <DialogDescription>
-            Create a new user account with specific role and permissions.
-          </DialogDescription>
         </DialogHeader>
-        <Form {...userForm}>
-          <form onSubmit={userForm.handleSubmit(handleAddUser)} className="space-y-4 py-4">
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4 pt-4">
             <FormField
-              control={userForm.control}
+              control={form.control}
               name="username"
-              render={({ field }: { field: ControllerRenderProps<z.infer<typeof userFormSchema>, "username"> }) => (
+              render={({ field }) => (
                 <FormItem>
                   <FormLabel>Username</FormLabel>
                   <FormControl>
-                    <Input placeholder="Enter username" {...field} />
+                    <Input {...field} placeholder="e.g., johndoe" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
             <FormField
-              control={userForm.control}
+              control={form.control}
               name="email"
-              render={({ field }: { field: ControllerRenderProps<z.infer<typeof userFormSchema>, "email"> }) => (
+              render={({ field }) => (
                 <FormItem>
                   <FormLabel>Email</FormLabel>
                   <FormControl>
-                    <Input placeholder="Enter email" {...field} />
+                    <Input {...field} placeholder="e.g., john@example.com" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
             <FormField
-              control={userForm.control}
+              control={form.control}
               name="password"
-              render={({ field }: { field: ControllerRenderProps<z.infer<typeof userFormSchema>, "password"> }) => (
+              render={({ field }) => (
                 <FormItem>
                   <FormLabel>Password</FormLabel>
                   <FormControl>
-                    <Input type="password" placeholder="Enter password" {...field} />
+                    <Input {...field} type="password" placeholder="Enter password" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
             <FormField
-              control={userForm.control}
+              control={form.control}
               name="role"
-              render={({ field }: { field: ControllerRenderProps<z.infer<typeof userFormSchema>, "role"> }) => (
+              render={({ field }) => (
                 <FormItem>
                   <FormLabel>Role</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
-                    <FormControl>
+                  <FormControl>
+                    <Select value={field.value} onValueChange={field.onChange}>
                       <SelectTrigger>
                         <SelectValue placeholder="Select a role" />
                       </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {rolesData.map(role => (
-                        <SelectItem key={role.id} value={role.name}>
-                          {role.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                      <SelectContent>
+                        {mockRoles.map((role) => (
+                          <SelectItem key={role.value} value={role.value}>
+                            {role.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
-            <DialogFooter>
-              <Button type="submit">Create User</Button>
-            </DialogFooter>
+            <div className="flex justify-end gap-2">
+              <Button type="button" variant="outline" onClick={() => onOpenChange && onOpenChange(false)}>
+                Cancel
+              </Button>
+              <Button type="submit">Add User</Button>
+            </div>
           </form>
         </Form>
       </DialogContent>
     </Dialog>
   );
-};
-
-export default AddUserDialog;
+}

@@ -1,39 +1,27 @@
-
 import React from 'react';
-import { Navbar } from './Navbar';
-import { Sidebar } from './sidebar/Sidebar';
-import { useIsMobile } from '@/hooks/use-mobile';
+import { Outlet } from 'react-router-dom';
+import { SharedNavbar } from './SharedNavbar';
+import { Sidebar } from '@/components/ui/sidebar';
 
-interface Beta1LayoutProps {
-  children: React.ReactNode;
-}
-
-export const Beta1Layout = ({ children }: Beta1LayoutProps) => {
-  const [sidebarOpen, setSidebarOpen] = React.useState(true);
-  const isMobile = useIsMobile();
-
-  React.useEffect(() => {
-    // Close sidebar by default on mobile
-    if (isMobile) {
-      setSidebarOpen(false);
-    } else {
-      setSidebarOpen(true);
-    }
-  }, [isMobile]);
-
-  const toggleSidebar = () => {
-    setSidebarOpen(!sidebarOpen);
+export function Beta1Layout() {
+  const handleMenuClick = () => {
+    console.log('Menu clicked');
+    // Implement menu toggle functionality if needed
   };
 
   return (
-    <div className="flex h-screen overflow-hidden bg-background">
-      <Sidebar open={sidebarOpen} onToggle={toggleSidebar} />
-      <div className="flex flex-col flex-1 overflow-hidden">
-        <Navbar onMenuClick={toggleSidebar} />
-        <main className="flex-1 overflow-y-auto p-4 md:p-6">
-          {children}
-        </main>
+    <div className="flex min-h-screen flex-col">
+      <div className="flex flex-1">
+        <Sidebar className="border-r">
+          {/* Sidebar content can be added here if needed */}
+        </Sidebar>
+        <div className="flex-1 flex flex-col">
+          <SharedNavbar onMenuClick={handleMenuClick} />
+          <main className="flex-1 overflow-auto p-4">
+            <Outlet />
+          </main>
+        </div>
       </div>
     </div>
   );
-};
+}

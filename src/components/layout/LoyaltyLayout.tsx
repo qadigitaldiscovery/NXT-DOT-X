@@ -1,71 +1,28 @@
-import React from 'react';
-import { SharedSidebar } from './SharedSidebar';
+import { Outlet } from 'react-router-dom';
 import { SharedNavbar } from './SharedNavbar';
-import { useIsMobile } from '@/hooks/use-mobile';
-import { cn } from '@/lib/utils';
-import { Home, Users, Gift, BarChart3, Settings, BrainCircuit } from 'lucide-react';
-import { NavCategory } from './sidebar/types';
+import { Sidebar } from '@/components/ui/sidebar';
 
-interface LoyaltyLayoutProps {
-  children: React.ReactNode;
-}
-
-const loyaltyNavItems: NavCategory[] = [
-  {
-    name: "Loyalty Menu",
-    label: "Loyalty Menu",
-    items: [
-      { label: 'Dashboard', icon: Home, path: '/loyalty-rewards' },
-      { label: 'Members', icon: Users, path: '/loyalty-rewards/members' },
-      { label: 'Rewards', icon: Gift, path: '/loyalty-rewards/rewards' },
-      { label: 'Analytics', icon: BarChart3, path: '/loyalty-rewards/analytics' },
-      { label: 'Settings', icon: Settings, path: '/loyalty-rewards/settings' },
-    ]
-  },
-  {
-    name: "Tech Hub",
-    label: "Tech Hub",
-    items: [
-      { label: 'AI Personas', icon: BrainCircuit, path: '/tech-hub/personas' },
-    ]
-  }
-];
-
-export const LoyaltyLayout = ({ children }: LoyaltyLayoutProps) => {
-  const [sidebarOpen, setSidebarOpen] = React.useState(true);
-  const isMobile = useIsMobile();
-
-  React.useEffect(() => {
-    if (isMobile) {
-      setSidebarOpen(false);
-    } else {
-      setSidebarOpen(true);
-    }
-  }, [isMobile]);
-
-  const toggleSidebar = () => {
-    setSidebarOpen(!sidebarOpen);
+export function LoyaltyLayout() {
+  const handleMenuClick = () => {
+    console.log('Menu clicked');
+    // Implement menu toggle functionality if needed
   };
 
   return (
-    <div className="flex h-screen overflow-hidden bg-gray-50">
-      <SharedSidebar 
-        open={sidebarOpen} 
-        onToggle={toggleSidebar} 
-        navItems={loyaltyNavItems}
-      />
-      <div className={cn(
-          "flex flex-col flex-1 overflow-hidden",
-          "md:rounded-tl-xl"
-        )}>
-        <SharedNavbar 
-          onMenuClick={toggleSidebar} 
-          moduleTitle="Loyalty Rewards"
-        />
-        <main className="flex-1 overflow-y-auto p-4 md:p-6 bg-gray-50">
-          {children}
-        </main>
+    <div className="flex min-h-screen flex-col bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
+      <div className="flex flex-1">
+        <Sidebar className="border-r bg-white/80 backdrop-blur-sm">
+          {/* Sidebar content can be added here if needed */}
+        </Sidebar>
+        <div className="flex-1 flex flex-col">
+          <SharedNavbar onMenuClick={handleMenuClick} moduleTitle="Loyalty Rewards" />
+          <main className="flex-1 overflow-auto p-6">
+            <div className="max-w-7xl mx-auto">
+              <Outlet />
+            </div>
+          </main>
+        </div>
       </div>
     </div>
   );
-};
+}
