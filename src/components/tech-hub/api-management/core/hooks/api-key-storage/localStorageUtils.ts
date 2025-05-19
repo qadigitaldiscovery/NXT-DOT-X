@@ -1,65 +1,33 @@
 
-import { useEffect } from 'react';
+export const saveToLocalStorage = (key: string, apiKey: string, model: string, additionalConfig: Record<string, any> = {}) => {
+  localStorage.setItem(key, JSON.stringify({
+    key: apiKey,
+    model,
+    config: additionalConfig,
+    timestamp: Date.now()
+  }));
+};
 
-export const API_KEY_STORAGE_KEY = 'api_keys';
-
-interface StoredApiKey {
-  provider: string;
-  key: string;
-  options?: Record<string, any>;
-}
-
-export const storeApiKey = (provider: string, key: string, options?: Record<string, any>): void => {
+export const loadFromLocalStorage = (key: string, defaultModel: string, defaultConfig: Record<string, any> = {}) => {
+  const storedData = localStorage.getItem(key);
+  
+  if (!storedData) {
+    return { key: '', model: defaultModel, config: defaultConfig };
+  }
+  
   try {
-    // Get existing keys
-    const storedKeysJson = localStorage.getItem(API_KEY_STORAGE_KEY);
-    const storedKeys: StoredApiKey[] = storedKeysJson ? JSON.parse(storedKeysJson) : [];
-    
-    // Check if key for this provider already exists
-    const existingKeyIndex = storedKeys.findIndex(k => k.provider === provider);
-    
-    if (existingKeyIndex >= 0) {
-      // Update existing key
-      storedKeys[existingKeyIndex] = { provider, key, options };
-    } else {
-      // Add new key
-      storedKeys.push({ provider, key, options });
-    }
-    
-    // Save back to storage
-    localStorage.setItem(API_KEY_STORAGE_KEY, JSON.stringify(storedKeys));
+    const parsed = JSON.parse(storedData);
+    return {
+      key: parsed.key || '',
+      model: parsed.model || defaultModel,
+      config: parsed.config || defaultConfig
+    };
   } catch (error) {
-    console.error('Error storing API key:', error);
+    console.error('Error parsing stored API key data:', error);
+    return { key: '', model: defaultModel, config: defaultConfig };
   }
 };
 
-export const retrieveApiKey = (provider: string): { key: string; options?: Record<string, any> } | null => {
-  try {
-    const storedKeysJson = localStorage.getItem(API_KEY_STORAGE_KEY);
-    if (!storedKeysJson) return null;
-    
-    const storedKeys: StoredApiKey[] = JSON.parse(storedKeysJson);
-    const keyData = storedKeys.find(k => k.provider === provider);
-    
-    return keyData ? { key: keyData.key, options: keyData.options } : null;
-  } catch (error) {
-    console.error('Error retrieving API key:', error);
-    return null;
-  }
-};
-
-export const removeApiKey = (provider: string): boolean => {
-  try {
-    const storedKeysJson = localStorage.getItem(API_KEY_STORAGE_KEY);
-    if (!storedKeysJson) return false;
-    
-    const storedKeys: StoredApiKey[] = JSON.parse(storedKeysJson);
-    const updatedKeys = storedKeys.filter(k => k.provider !== provider);
-    
-    localStorage.setItem(API_KEY_STORAGE_KEY, JSON.stringify(updatedKeys));
-    return true;
-  } catch (error) {
-    console.error('Error removing API key:', error);
-    return false;
-  }
+export const clearFromLocalStorage = (key: string) => {
+  localStorage.removeItem(key);
 };

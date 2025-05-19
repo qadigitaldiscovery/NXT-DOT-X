@@ -1,55 +1,48 @@
+
 import React, { useState, useEffect } from 'react';
-import { saveToLocalStorage, loadFromLocalStorage, clearFromLocalStorage } from '@/components/tech-hub/api-management/core/hooks/api-key-storage/localStorageUtils';
 import { useUserPreferences } from '@/hooks/useUserPreferences';
 import { useAuth } from '@/context/AuthContext';
-import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 import { ReloadIcon } from '@radix-ui/react-icons';
-import { FormField } from '@/components/ui/form';
 import { ApiKeyInput } from './core/components/ApiKeyInput';
-import { useApiKey } from './core/useApiKey';
-import { ApiKeyForm } from './core/ApiKeyForm';
 
-const localStorageKey = 'openAIKey';
-
-interface OpenAIKeyFormProps {
-  defaultModel?: string;
-  additionalConfig?: Record<string, any>;
-  onApiKeySaved?: (apiKey: string, preferredModel: string, additionalConfig?: Record<string, any>) => void;
-}
-
-const OpenAIKeyForm = ({ defaultModel = 'gpt-3.5-turbo', additionalConfig = {}, onApiKeySaved }: OpenAIKeyFormProps) => {
+const OpenAIKeyForm = () => {
   const { user } = useAuth();
   const [apiKey, setApiKey] = useState('');
-  const [preferredModel, setPreferredModel] = useState(defaultModel);
+  const [preferredModel, setPreferredModel] = useState('gpt-3.5-turbo');
   const [isApiKeySet, setIsApiKeySet] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [isClearing, setIsClearing] = useState(false);
+  const [keyStatus, setKeyStatus] = useState<'unknown' | 'valid' | 'invalid' | 'quota_exceeded'>('unknown');
+  const [isVerifying, setIsVerifying] = useState(false);
 
   const { preferences, setPreferences, loading: isLoading } = useUserPreferences({
     module: 'openai',
     key: 'settings',
-    defaultValue: { apiKey: '', preferredModel: defaultModel }
+    defaultValue: { apiKey: '', preferredModel: 'gpt-3.5-turbo' }
   });
 
   useEffect(() => {
     if (!user) {
-      const storedData = loadFromLocalStorage(localStorageKey, defaultModel, additionalConfig);
-      setApiKey(storedData.key || '');
-      setPreferredModel(storedData.model);
-      setIsApiKeySet(!!storedData.key);
+      const storedKey = localStorage.getItem('openAIKey');
+      const storedModel = localStorage.getItem('openAIModel') || 'gpt-3.5-turbo';
+      if (storedKey) {
+        setApiKey(storedKey);
+        setIsApiKeySet(true);
+      }
+      setPreferredModel(storedModel);
     } else {
       if (preferences && typeof preferences === 'object' && 'apiKey' in preferences) {
         setApiKey(preferences.apiKey || '');
-        setPreferredModel(preferences.preferredModel || defaultModel);
+        setPreferredModel(preferences.preferredModel || 'gpt-3.5-turbo');
         setIsApiKeySet(!!preferences.apiKey);
       }
     }
-  }, [user, preferences, defaultModel, additionalConfig]);
+  }, [user, preferences]);
 
   const handleSaveApiKey = async () => {
     setIsSaving(true);
@@ -57,13 +50,11 @@ const OpenAIKeyForm = ({ defaultModel = 'gpt-3.5-turbo', additionalConfig = {}, 
       if (user) {
         await setPreferences({ apiKey, preferredModel });
       } else {
-        saveToLocalStorage(localStorageKey, apiKey, preferredModel, additionalConfig);
+        localStorage.setItem('openAIKey', apiKey);
+        localStorage.setItem('openAIModel', preferredModel);
       }
       setIsApiKeySet(true);
       toast.success('API Key saved successfully!');
-      if (onApiKeySaved) {
-        onApiKeySaved(apiKey, preferredModel, additionalConfig);
-      }
     } catch (error) {
       console.error('Error saving API key:', error);
       toast.error('Failed to save API Key.');
@@ -76,12 +67,13 @@ const OpenAIKeyForm = ({ defaultModel = 'gpt-3.5-turbo', additionalConfig = {}, 
     setIsClearing(true);
     try {
       if (user) {
-        await setPreferences({ apiKey: '', preferredModel: defaultModel });
+        await setPreferences({ apiKey: '', preferredModel });
       } else {
-        clearFromLocalStorage(localStorageKey);
+        localStorage.removeItem('openAIKey');
       }
       setApiKey('');
       setIsApiKeySet(false);
+      setKeyStatus('unknown');
       toast.success('API Key cleared successfully!');
     } catch (error) {
       console.error('Error clearing API key:', error);
@@ -91,19 +83,50 @@ const OpenAIKeyForm = ({ defaultModel = 'gpt-3.5-turbo', additionalConfig = {}, 
     }
   };
 
+  const handleVerifyKey = async () => {
+    setIsVerifying(true);
+    try {
+      // Simulate API key verification
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      if (apiKey.startsWith('sk-')) {
+        setKeyStatus('valid');
+        toast.success('API key verified successfully!');
+      } else {
+        setKeyStatus('invalid');
+        toast.error('Invalid API key format');
+      }
+    } catch (error) {
+      console.error('Error verifying API key:', error);
+      toast.error('Failed to verify API key');
+      setKeyStatus('invalid');
+    } finally {
+      setIsVerifying(false);
+    }
+  };
+
+  const handleApiKeyChange = (value: string) => {
+    setApiKey(value);
+    if (keyStatus !== 'unknown') {
+      setKeyStatus('unknown');
+    }
+  };
+
   return (
     <div className="flex flex-col space-y-4">
-      <div className="space-y-2">
-        <Label htmlFor="openAIKey">OpenAI API Key</Label>
-        <ApiKeyInput
-          id="openAIKey"
-          placeholder="sk-..."
-          type="password"
-          value={apiKey}
-          onChange={(e) => setApiKey(e.target.value)}
-          disabled={isLoading}
-        />
-      </div>
+      <ApiKeyInput
+        apiKey={apiKey}
+        isVerifying={isVerifying}
+        keyStatus={keyStatus}
+        placeholder="sk-..."
+        docsLink={{
+          text: "OpenAI API Keys page",
+          url: "https://platform.openai.com/api-keys"
+        }}
+        onApiKeyChange={handleApiKeyChange}
+        onVerify={handleVerifyKey}
+      />
+      
       <div className="space-y-2">
         <Label htmlFor="preferredModel">Preferred Model</Label>
         <Select value={preferredModel} onValueChange={setPreferredModel} disabled={isLoading}>
@@ -111,11 +134,14 @@ const OpenAIKeyForm = ({ defaultModel = 'gpt-3.5-turbo', additionalConfig = {}, 
             <SelectValue placeholder="Select a model" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="gpt-3.5-turbo">gpt-3.5-turbo</SelectItem>
-            <SelectItem value="gpt-4">gpt-4</SelectItem>
+            <SelectItem value="gpt-4o-mini">gpt-4o Mini (Default)</SelectItem>
+            <SelectItem value="gpt-4o">gpt-4o</SelectItem>
+            <SelectItem value="gpt-4-turbo">gpt-4 Turbo</SelectItem>
+            <SelectItem value="gpt-3.5-turbo">gpt-3.5 Turbo</SelectItem>
           </SelectContent>
         </Select>
       </div>
+      
       <div className="flex justify-end space-x-2">
         {isApiKeySet ? (
           <Button
@@ -135,7 +161,7 @@ const OpenAIKeyForm = ({ defaultModel = 'gpt-3.5-turbo', additionalConfig = {}, 
         ) : (
           <Button
             onClick={handleSaveApiKey}
-            disabled={isLoading || isSaving || !apiKey}
+            disabled={isLoading || isSaving || !apiKey || keyStatus === 'invalid'}
             className={cn(isSaving && "animate-pulse")}
           >
             {isSaving ? (

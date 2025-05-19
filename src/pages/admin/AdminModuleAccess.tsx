@@ -2,7 +2,7 @@
 import React from 'react';
 import { useAuth } from '@/context/AuthContext';
 import ModuleTogglePanel from '@/components/admin/ModuleTogglePanel';
-import PermissionGuard from '@/components/admin/PermissionGuard';
+import { PermissionGuard } from '@/components/admin/PermissionGuard';
 import { ShieldCheck } from 'lucide-react';
 
 const AdminModuleAccess = () => {

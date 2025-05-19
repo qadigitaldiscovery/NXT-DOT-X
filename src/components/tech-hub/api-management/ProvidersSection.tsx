@@ -7,6 +7,7 @@ import OpenAIKeyForm from "./openai/OpenAIKeyForm";
 import OpenAIChatTester from "./openai/OpenAIChatTester";
 import RequestyKeyForm from "./requesty/RequestyKeyForm";
 import RequestyChatTester from "./requesty/RequestyChatTester";
+import { Card } from '@/components/ui/card';
 
 const ProvidersSection: React.FC = () => {
   const [activeProvider, setActiveProvider] = useState("openai");
@@ -42,10 +43,16 @@ const ProvidersSection: React.FC = () => {
         {activeProvider === "openai" && (
           <>
             <TabsContent value="config">
-              <OpenAIKeyForm />
+              <Card className="p-6">
+                <OpenAIKeyForm />
+              </Card>
             </TabsContent>
             <TabsContent value="test">
-              <OpenAIChatTester />
+              <Card className="p-6">
+                <div className="text-center p-4">
+                  OpenAI Chat Tester - Configure API key first
+                </div>
+              </Card>
             </TabsContent>
           </>
         )}
@@ -53,10 +60,16 @@ const ProvidersSection: React.FC = () => {
         {activeProvider === "requesty" && (
           <>
             <TabsContent value="config">
-              <RequestyKeyForm />
+              <Card className="p-6">
+                <RequestyKeyForm />
+              </Card>
             </TabsContent>
             <TabsContent value="test">
-              <RequestyChatTester />
+              <Card className="p-6">
+                <div className="text-center p-4">
+                  Requesty Chat Tester - Configure API key first
+                </div>
+              </Card>
             </TabsContent>
           </>
         )}

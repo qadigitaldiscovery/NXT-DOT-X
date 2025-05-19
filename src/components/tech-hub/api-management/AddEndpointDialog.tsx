@@ -1,16 +1,23 @@
+
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Form, FormControl, FormDescription, FormField, FormItem, FormMessage } from '@/components/ui/form';
+import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
-import { endpointSchema } from './types';
+import { endpointSchema, EndpointFormValues } from './types';
 
-export function AddEndpointDialog() {
-  const form = useForm({
+interface AddEndpointDialogProps {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  onSubmit: (values: EndpointFormValues) => void;
+}
+
+export function AddEndpointDialog({ open, onOpenChange, onSubmit }: AddEndpointDialogProps) {
+  const form = useForm<z.infer<typeof endpointSchema>>({
     resolver: zodResolver(endpointSchema),
     defaultValues: {
       name: '',
@@ -20,18 +27,18 @@ export function AddEndpointDialog() {
     },
   });
 
-  function onSubmit(values: z.infer<typeof endpointSchema>) {
-    console.log('Form values:', values);
-  }
+  const handleSubmit = (values: z.infer<typeof endpointSchema>) => {
+    onSubmit(values);
+  };
 
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>Add New Endpoint</DialogTitle>
         </DialogHeader>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
             <FormField
               control={form.control}
               name="name"
@@ -99,3 +106,5 @@ export function AddEndpointDialog() {
     </Dialog>
   );
 }
+
+export default AddEndpointDialog;

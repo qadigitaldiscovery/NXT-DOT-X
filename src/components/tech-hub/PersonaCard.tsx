@@ -27,7 +27,7 @@ interface PersonaCardProps {
   onClick: () => void;
 }
 
-const PersonaCard: React.FC<PersonaCardProps> = ({ persona, isSelected, onClick }) => {
+export const PersonaCard: React.FC<PersonaCardProps> = ({ persona, isSelected, onClick }) => {
   return (
     <Card 
       className={`cursor-pointer transition-all hover:shadow-md ${

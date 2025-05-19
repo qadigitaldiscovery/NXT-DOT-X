@@ -9,7 +9,7 @@ import { toast } from "sonner";
 import { ApiEndpoint, EndpointFormValues } from './types';
 import { sampleEndpoints } from './sampleData';
 import EndpointsTable from './EndpointsTable';
-import AddEndpointDialog from './AddEndpointDialog';
+import { AddEndpointDialog } from './AddEndpointDialog';
 
 const LOCAL_STORAGE_KEY = 'tech-hub-api-endpoints';
 

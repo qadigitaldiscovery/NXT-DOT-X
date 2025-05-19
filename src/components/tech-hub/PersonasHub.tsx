@@ -1,11 +1,10 @@
 
 import { useState } from 'react';
 import TaskInput from './TaskInput';
-import PersonaCard from './PersonaCard';
+import PersonaCard, { Persona } from './PersonaCard';
 import PersonaDetails from './PersonaDetails';
 import ResultsPanel from './ResultsPanel';
 import { personas } from './personasData';
-import { Persona } from './PersonaCard';
 
 export const PersonasHub = () => {
   const [selectedPersona, setSelectedPersona] = useState<Persona | null>(null);
