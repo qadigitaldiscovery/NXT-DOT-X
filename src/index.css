@@ -1,4 +1,6 @@
 
+@import './styles/tokens.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -102,4 +104,20 @@
   .glass-dark {
     @apply backdrop-blur-sm bg-black/60 border border-gray-800 shadow-md;
   }
+  
+  /* Add new component classes */
+  .frosted-card {
+    @apply relative rounded-3xl p-6 text-silver-100/90;
+    background: rgba(59,0,0,0.55);
+    backdrop-filter: blur(18px) saturate(180%);
+    border: 1px solid rgba(255,255,255,0.06);
+    box-shadow: 0 2px 24px rgba(0,0,0,0.55);
+  }
+  
+  .glossy-overlay {
+    @apply absolute inset-0 rounded-3xl pointer-events-none;
+    background: var(--grad-silver-flare);
+    mix-blend-mode: screen;
+  }
 }
+

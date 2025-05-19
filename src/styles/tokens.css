@@ -1,0 +1,36 @@
+
+:root {
+  /* Black spectrum */
+  --black-950: #000000;
+  --black-900: #0B0B0B;
+  --black-800: #141414;
+  
+  /* Dark-red spectrum */
+  --red-metal-800: #3B0000;
+  --red-metal-600: #580404;
+  --red-metal-400: #8E0D0D;
+  
+  /* Metallic-silver spectrum */
+  --silver-600: #757575;
+  --silver-300: #BFBFBF;
+  --silver-100: #F4F4F4;
+
+  /* Gradients */
+  --grad-metal-primary: linear-gradient(135deg, var(--red-metal-400) 0%, var(--red-metal-800) 40%, var(--black-900) 100%);
+  --grad-silver-flare: radial-gradient(circle at 30% 20%, rgba(244,244,244,0.50) 0%, rgba(244,244,244,0.05) 55%, transparent 70%);
+}
+
+/* Components */
+.frosted-card {
+  @apply relative rounded-3xl p-6 text-silver-100/90;
+  background: rgba(59,0,0,0.55);
+  backdrop-filter: blur(18px) saturate(180%);
+  border: 1px solid rgba(255,255,255,0.06);
+  box-shadow: 0 2px 24px rgba(0,0,0,0.55);
+}
+
+.glossy-overlay {
+  @apply absolute inset-0 rounded-3xl pointer-events-none;
+  background: var(--grad-silver-flare);
+  mix-blend-mode: screen;
+}

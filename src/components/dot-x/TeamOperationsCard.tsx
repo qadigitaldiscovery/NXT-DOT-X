@@ -1,6 +1,6 @@
 
 import { Card } from "@/components/ui/card";
-import { Users, Shield } from "lucide-react";
+import { Users } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 interface TeamMember {
@@ -24,48 +24,50 @@ export const TeamOperationsCard = ({
   ]
 }: TeamOperationsProps) => {
   return (
-    <Card className="overflow-hidden bg-gradient-to-br from-slate-900 to-slate-800 text-white p-0 rounded-3xl border-0 shadow-lg">
-      <div className="p-6">
+    <div className="frosted-card h-full">
+      <div className="glossy-overlay" />
+      
+      <div className="flex flex-col h-full">
         <div className="flex justify-between items-center mb-4">
           <div className="flex items-center">
-            <Users className="h-5 w-5 text-blue-400 mr-2" />
-            <h3 className="text-white font-medium">Team Operations</h3>
+            <Users className="h-5 w-5 text-silver-300/70 mr-2" />
+            <h3 className="text-silver-100 font-medium">Team Operations</h3>
           </div>
           
-          <div className="bg-blue-500/20 px-2 py-1 rounded-full text-xs font-medium text-blue-400">
+          <div className="bg-redmetal-400/30 px-2 py-1 rounded-full text-xs font-medium text-silver-300">
             {members.filter(m => m.status === 'online').length}/{members.length} Active
           </div>
         </div>
         
-        <div className="space-y-3 mt-4">
+        <div className="space-y-3 mt-4 flex-1">
           {members.map((member) => (
-            <div key={member.id} className="flex items-center justify-between bg-slate-800/50 p-2.5 rounded-xl">
+            <div key={member.id} className="flex items-center justify-between bg-black-800/50 p-2.5 rounded-xl">
               <div className="flex items-center">
-                <Avatar className="h-8 w-8 mr-3 border border-slate-700">
+                <Avatar className="h-8 w-8 mr-3 border border-redmetal-600">
                   <AvatarImage src={member.avatar} alt={member.name} />
-                  <AvatarFallback className="bg-slate-700 text-white">
+                  <AvatarFallback className="bg-black-800 text-silver-300">
                     {member.name.split(' ').map(n => n[0]).join('')}
                   </AvatarFallback>
                 </Avatar>
                 
                 <div>
-                  <p className="text-sm font-medium">{member.name}</p>
-                  <p className="text-xs text-gray-400">{member.role}</p>
+                  <p className="text-sm font-medium text-silver-100">{member.name}</p>
+                  <p className="text-xs text-silver-300/60">{member.role}</p>
                 </div>
               </div>
               
               <div className="flex items-center">
                 <div className={`w-2 h-2 rounded-full mr-2 ${
                   member.status === 'online' ? 'bg-emerald-500' : 
-                  member.status === 'mission' ? 'bg-blue-500' : 
+                  member.status === 'mission' ? 'bg-redmetal-400' : 
                   'bg-gray-500'
                 }`}></div>
-                <span className="text-xs text-gray-400">{member.location}</span>
+                <span className="text-xs text-silver-300/70">{member.location}</span>
               </div>
             </div>
           ))}
         </div>
       </div>
-    </Card>
+    </div>
   );
 };

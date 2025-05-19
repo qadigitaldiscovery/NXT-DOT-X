@@ -1,6 +1,5 @@
 
 import { Card } from "@/components/ui/card";
-import { Activity } from "lucide-react";
 
 interface QuantumCoreProps {
   core?: {
@@ -19,14 +18,16 @@ export const QuantumCoreCard = ({
   const highestIndex = core.days.indexOf(Math.max(...core.days));
   
   return (
-    <Card className="overflow-hidden bg-gradient-to-br from-slate-900 to-slate-800 text-white p-0 rounded-3xl border-0 shadow-lg">
-      <div className="p-6">
-        <h3 className="text-gray-300 mb-2 font-medium">Progress</h3>
+    <div className="frosted-card h-full">
+      <div className="glossy-overlay" />
+      
+      <div className="flex flex-col h-full">
+        <h3 className="text-silver-300/80 mb-2 font-medium">Quantum Progress</h3>
         
         {/* Progress indicator pill */}
         <div className="relative my-6">
-          <div className="absolute w-full h-px bg-slate-700/50 top-1/2 -translate-y-1/2"></div>
-          <div className="absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 bg-white text-slate-900 rounded-full px-3 py-1 text-xs font-medium">
+          <div className="absolute w-full h-px bg-black-800 top-1/2 -translate-y-1/2"></div>
+          <div className="absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 bg-redmetal-400 text-silver-100 rounded-full px-3 py-1 text-xs font-medium">
             {core.progress}%
           </div>
         </div>
@@ -36,19 +37,22 @@ export const QuantumCoreCard = ({
           {core.days.map((value, index) => {
             const dayNumber = index + 11; // Starting from day 11
             const height = `${value}%`;
+            const isHighlight = index === highestIndex;
             
             return (
               <div key={index} className="flex flex-col items-center">
                 <div 
-                  className={`w-3 rounded-full ${index === highestIndex ? 'bg-emerald-500' : 'bg-blue-500'}`} 
+                  className={`w-3 rounded-full ${isHighlight ? 'bg-silver-300' : 'bg-redmetal-400'}`}
                   style={{ height }}
                 ></div>
-                <span className="text-xs text-gray-400 mt-2">{dayNumber}</span>
+                <span className={`text-xs mt-2 ${isHighlight ? 'text-silver-100' : 'text-silver-300/60'} tabular-nums`}>
+                  {dayNumber}
+                </span>
               </div>
             );
           })}
         </div>
       </div>
-    </Card>
+    </div>
   );
 };
