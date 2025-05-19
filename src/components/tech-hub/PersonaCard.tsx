@@ -2,12 +2,12 @@
 import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 
-interface PersonaTrait {
+export interface PersonaTrait {
   name: string;
   description?: string;
 }
 
-interface PersonaResponsibility {
+export interface PersonaResponsibility {
   text: string;
 }
 

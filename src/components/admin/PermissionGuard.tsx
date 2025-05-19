@@ -19,14 +19,30 @@ export function PermissionGuard({
 }: PermissionGuardProps) {
   const location = useLocation();
 
-  // This is a simplified implementation - in a real scenario,
-  // you would check against the actual user permissions from context or props
+  // Check if user has required permission
   if (requiredPermission && !userPermissions.includes(requiredPermission)) {
     return <Navigate to="/unauthorized" state={{ from: location }} replace />;
   }
 
-  // For now, we're just returning the children
-  // In a real app, you would check if the user has the required role
+  // Check if user has required role (this is just a placeholder)
+  // In a real implementation, you would check against user roles from context
+  if (requiredRole) {
+    const userRoles = ['admin']; // Replace with actual user roles from context
+    if (!userRoles.includes(requiredRole)) {
+      return <Navigate to="/unauthorized" state={{ from: location }} replace />;
+    }
+  }
+
+  // Check if user has access to module (this is just a placeholder)
+  // In a real implementation, you would check against user module access from context
+  if (moduleSlug) {
+    const accessibleModules = ['admin', 'dashboard']; // Replace with actual modules
+    if (!accessibleModules.includes(moduleSlug)) {
+      return <Navigate to="/unauthorized" state={{ from: location }} replace />;
+    }
+  }
+
+  // If all checks pass, render children
   return <>{children}</>;
 }
 

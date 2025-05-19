@@ -27,7 +27,7 @@ const TaskInput: React.FC<TaskInputProps> = ({
   isLoading
 }) => {
   return (
-    <Card className="h-full">
+    <Card className="mt-4">
       <CardHeader>
         <CardTitle className="text-lg">Your Task</CardTitle>
         <CardDescription>

@@ -6,14 +6,12 @@ import { toast } from 'sonner';
 import { Persona } from './PersonaCard';
 
 interface ResultsPanelProps {
-  result: string | null;
+  result: string;
   persona: Persona;
   clearResult: () => void;
 }
 
 const ResultsPanel: React.FC<ResultsPanelProps> = ({ result, persona, clearResult }) => {
-  if (!result) return null;
-
   return (
     <Card>
       <CardHeader>
