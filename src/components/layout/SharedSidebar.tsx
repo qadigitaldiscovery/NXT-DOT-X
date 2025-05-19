@@ -1,47 +1,44 @@
-import React from 'react';
-import { MainSidebar } from './sidebar/MainSidebar';
-import { NavCategory } from './sidebar/types';
+import { useEffect, useState } from 'react';
+import { MainSidebar } from './sidebar/MainSidebar/MainSidebar';
+import { useModules } from '@/hooks/useModules';
+import type { NavItem, NavCategory } from './sidebar/types';
+import { Home } from 'lucide-react';
 
-interface SharedSidebarProps {
-  open?: boolean;
-  onToggle?: () => void;
-  navItems?: unknown[];
-  navCategories?: NavCategory[];
-  items?: unknown[];
-  homeItem?: unknown;
-  className?: string;
-  removeBottomToggle?: boolean;
-  showToggleButton?: boolean;
-  initialState?: 'expanded' | 'collapsed';
-  onStateChange?: (state: 'expanded' | 'collapsed') => void;
-}
+const defaultHomeItem: NavItem = {
+  label: 'Home',
+  href: '/dashboard',
+  icon: Home
+};
 
-export const SharedSidebar: React.FC<SharedSidebarProps> = ({
-  open,
-  onToggle,
-  navItems,
-  navCategories,
-  items,
-  homeItem,
-  className,
-  removeBottomToggle,
-  showToggleButton,
-  initialState,
-  onStateChange,
-}) => {
+export function SharedSidebar() {
+  const { modules } = useModules();
+  const [navigationCategories, setNavigationCategories] = useState<NavCategory[]>([]);
+
+  useEffect(() => {
+    // Convert modules to navigation items
+    const items: NavItem[] = modules
+      .filter(module => module.status === 'enabled')
+      .map(module => ({
+        label: module.name,
+        href: `/modules/${module.id}`,
+        // Since module.icon is a string, we'll need to handle icon mapping in a real implementation
+        // For now, we'll use Home as a default icon
+        icon: Home
+      }));
+
+    // Create a single category containing all items
+    const categories: NavCategory[] = [{
+      label: 'Modules',
+      items: items
+    }];
+
+    setNavigationCategories(categories);
+  }, [modules]);
+
   return (
     <MainSidebar
-      open={open}
-      onToggle={onToggle}
-      navItems={navItems}
-      navCategories={navCategories}
-      items={items}
-      homeItem={homeItem}
-      className={className}
-      removeBottomToggle={removeBottomToggle}
-      showToggleButton={showToggleButton}
-      initialState={initialState}
-      onStateChange={onStateChange}
+      homeItem={defaultHomeItem}
+      items={navigationCategories}
     />
   );
-};
+}
