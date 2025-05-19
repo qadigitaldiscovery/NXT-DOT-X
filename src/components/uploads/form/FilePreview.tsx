@@ -3,7 +3,9 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { FileTypeIcon } from "../FileTypeIcon";
 import { FileSize } from "../FileSize";
-import xlsx from 'xlsx';
+
+// @ts-ignore
+const XLSX = require('xlsx');
 
 type FilePreviewProps = {
   file: File | null;
@@ -112,12 +114,12 @@ export function FilePreview({ file, onDetectedSupplier }: FilePreviewProps) {
       reader.onload = async (e) => {
         try {
           const data = new Uint8Array(e.target?.result as ArrayBuffer);
-          const workbook = xlsx.read(data, { type: 'array' });
+          const workbook = XLSX.read(data, { type: 'array' });
           
           const firstSheetName = workbook.SheetNames[0];
           const worksheet = workbook.Sheets[firstSheetName];
           
-          const jsonData = xlsx.utils.sheet_to_json(worksheet, { header: 1 }) as ExcelData;
+          const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 }) as ExcelData;
           
           const previewRows = jsonData.slice(0, 5).map(row => 
             Array.isArray(row) ? row.join('\t') : String(row)
