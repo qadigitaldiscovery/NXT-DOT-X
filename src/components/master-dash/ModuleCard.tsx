@@ -52,43 +52,48 @@ export const ModuleCard: React.FC<ModuleCardProps> = ({
     >
       {useImageBackground && (
         <div 
-          className="absolute inset-0 z-0 bg-cover bg-center opacity-90"
+          className="absolute inset-0 z-0 bg-cover bg-center"
           style={{ 
             backgroundImage: "url('/lovable-uploads/ef96cca8-3fb8-484a-b9f3-a93d6966ce77.png')",
-            backgroundSize: "cover" 
+            backgroundSize: "cover",
+            imageRendering: "crisp-edges"
           }}
         />
       )}
       
-      {/* Glass effect overlay */}
+      {/* Enhanced glass effect overlay with glossy finish */}
       <div className={cn(
         "absolute inset-0", 
-        useImageBackground ? "bg-white/10 dark:bg-black/30" : "bg-white/30",
-        "backdrop-blur-[2px] rounded-2xl"
-      )}></div>
+        useImageBackground ? "bg-gradient-to-b from-white/20 via-white/10 to-black/20 dark:from-white/10 dark:via-transparent dark:to-black/40" : "bg-white/30",
+        "backdrop-blur-[1px] rounded-2xl"
+      )}>
+        {/* Glossy highlight effect */}
+        <div className="absolute inset-x-0 top-0 h-1/3 bg-gradient-to-b from-white/40 to-transparent rounded-t-2xl"></div>
+        <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/50 to-transparent"></div>
+      </div>
       
       {/* Content container */}
       <div className="relative z-10 flex flex-col items-center">
-        {/* Icon container with glossy effect */}
-        <div className="mb-4 p-3 bg-white/80 rounded-xl shadow-md backdrop-blur-sm">
+        {/* Icon container with enhanced glossy effect */}
+        <div className="mb-4 p-3 bg-gradient-to-b from-white/90 to-white/70 dark:from-white/80 dark:to-white/60 rounded-xl shadow-md backdrop-blur-sm border border-white/50">
           <div className="text-blue-500 dark:text-blue-400 transform transition-all duration-500 group-hover:scale-110">
             {icon}
           </div>
         </div>
         
-        {/* Title with subtle text shadow */}
+        {/* Title with enhanced text shadow */}
         <h3 className={cn(
           "font-semibold text-lg text-center group-hover:text-gray-900",
-          useImageBackground ? "text-white drop-shadow-md" : "text-gray-800"
+          useImageBackground ? "text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.5)]" : "text-gray-800"
         )}>
           {title}
         </h3>
         
-        {/* Subtle shine effect */}
+        {/* Enhanced shine effect */}
         <div className="absolute -inset-1 bg-gradient-to-tr from-white/80 via-white/20 to-transparent rounded-full blur-md opacity-0 group-hover:opacity-70 transition-opacity duration-500"></div>
       </div>
       
-      {/* Bottom highlight */}
+      {/* Enhanced bottom highlight */}
       <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-white/80 to-transparent opacity-50 group-hover:opacity-100 transition-opacity"></div>
     </motion.div>
   );
