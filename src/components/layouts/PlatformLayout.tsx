@@ -1,9 +1,10 @@
 
-import React from 'react';
-import { MainSidebar } from '@/components/layout/sidebar/MainSidebar';
+import React, { useState } from 'react';
+import { MainSidebar } from '@/components/layout/sidebar/MainSidebar/MainSidebar';
 import { NavCategory } from '@/components/layout/sidebar/types';
 import { masterDashItem } from '@/components/layout/sidebar/NavigationConfig';
 import { SharedNavbar } from '@/components/layout/SharedNavbar';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface PlatformLayoutProps {
   children: React.ReactNode;
@@ -27,16 +28,28 @@ export const PlatformLayout: React.FC<PlatformLayoutProps> = ({
   className,
   showTopLeftToggle = false,
   removeBottomToggle = true,
-  initialSidebarState,
+  initialSidebarState = 'expanded',
   onSidebarStateChange,
   moduleTitle,
   useGlobalNavigation = false
 }) => {
+  const isMobile = useIsMobile();
+  const [sidebarOpen, setSidebarOpen] = useState(!isMobile);
+
+  const toggleSidebar = () => {
+    setSidebarOpen(!sidebarOpen);
+  };
+
   return (
     <div className="flex h-screen flex-col">
-      <SharedNavbar onMenuClick={() => {}} moduleTitle={moduleTitle} />
+      <SharedNavbar 
+        onMenuClick={toggleSidebar} 
+        moduleTitle={moduleTitle} 
+      />
       <div className="flex flex-1 overflow-hidden">
         <MainSidebar
+          open={sidebarOpen}
+          onToggle={toggleSidebar}
           navItems={navItems}
           navCategories={navCategories}
           items={items}
