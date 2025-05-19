@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Outlet } from 'react-router-dom';
 import { SharedNavbar } from './SharedNavbar';
@@ -25,3 +26,5 @@ export function Beta1Layout() {
     </div>
   );
 }
+
+export default Beta1Layout;

@@ -83,3 +83,5 @@ export const VendorLayout = () => {
     </div>
   );
 };
+
+export default VendorLayout;

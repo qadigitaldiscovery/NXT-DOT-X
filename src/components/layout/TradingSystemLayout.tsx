@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
 import { 
@@ -119,3 +120,5 @@ export const TradingSystemLayout: React.FC<TradingSystemLayoutProps> = (props) =
     </SidebarProvider>
   );
 };
+
+export default TradingSystemLayout;
