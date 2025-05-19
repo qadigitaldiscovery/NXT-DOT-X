@@ -1,46 +1,44 @@
 
-// API Provider Types
-export type ApiKeyStatus = 'active' | 'expired' | 'unconfigured' | 'invalid';
-
-export interface ApiProviderConfig {
+export interface ApiProvider {
+  id: string;
   name: string;
   description: string;
-  apiKey: string | null;
-  status: ApiKeyStatus;
-  preferredModel?: string;
-  models?: string[];
-  endpoint?: string;
+  status: 'configured' | 'unconfigured' | 'error';
+  logo?: string;
 }
 
-// API Endpoint Types
 export interface ApiEndpoint {
   id: string;
   name: string;
   url: string;
   apiKey: string;
-  method: 'GET' | 'POST' | 'PUT' | 'DELETE';
-  status: 'active' | 'inactive' | 'error';
+  method: 'POST' | 'GET' | 'PUT' | 'DELETE';
+  status: 'active' | 'inactive';
   lastUsed: string;
 }
 
-// Form types for endpoints
 export interface EndpointFormValues {
   name: string;
   url: string;
   apiKey: string;
-  method: 'GET' | 'POST' | 'PUT' | 'DELETE';
-  status: 'active' | 'inactive' | 'error';
-  description?: string;
+  method: 'POST' | 'GET' | 'PUT' | 'DELETE';
+  status: 'active' | 'inactive';
 }
 
-// Zod schema for endpoint form validation
-import { z } from 'zod';
-
-export const endpointSchema = z.object({
-  name: z.string().min(1, "Endpoint name is required"),
-  url: z.string().url("Please enter a valid URL"),
-  apiKey: z.string().min(1, "API key is required"),
-  method: z.enum(['GET', 'POST', 'PUT', 'DELETE']),
-  status: z.enum(['active', 'inactive', 'error']).default('active'),
-  description: z.string().optional()
-});
+export interface ApiKeyFormProps {
+  providerName: string;
+  apiKey?: string;
+  isKeySet?: boolean;
+  isVisible?: boolean;
+  config?: Record<string, any>;
+  onApiKeyChange?: (apiKey: string) => void;
+  onVisibilityToggle?: () => void;
+  onConfigUpdate?: (key: string, value: any) => void;
+  apiKeyPlaceholder?: string;
+  docsLink?: { text: string; url: string };
+  onVerify?: (apiKey: string) => Promise<boolean>;
+  preferredModelOptions?: { value: string; label: string }[];
+  initialModel?: string;
+  footerText?: string;
+  additionalConfig?: Record<string, any>;
+}

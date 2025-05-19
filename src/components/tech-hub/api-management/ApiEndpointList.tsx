@@ -1,26 +1,21 @@
+
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Plus } from "lucide-react";
-import { toast } from "sonner";
-
-import { ApiEndpoint, EndpointFormValues } from './types';
 import { sampleEndpoints } from './sampleData';
-import EndpointsTable from './EndpointsTable';
+import { ApiEndpoint } from './types';
+import { ApiEndpointRow } from './ApiEndpointRow';
 import { AddEndpointDialog } from './AddEndpointDialog';
+import { toast } from 'sonner';
 
-const LOCAL_STORAGE_KEY = 'tech-hub-api-endpoints';
-
-const ApiEndpointList: React.FC = () => {
+export function ApiEndpointList() {
   const [endpoints, setEndpoints] = useState<ApiEndpoint[]>([]);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [dialogOpen, setDialogOpen] = useState(false);
-  const [showApiKeys, setShowApiKeys] = useState<{[key: string]: boolean}>({});
+  const [showAddDialog, setShowAddDialog] = useState(false);
+  const [selectedEndpoint, setSelectedEndpoint] = useState<ApiEndpoint | null>(null);
   
-  // Load endpoints from localStorage on initial render
   useEffect(() => {
-    const storedEndpoints = localStorage.getItem(LOCAL_STORAGE_KEY);
+    // Load endpoints from localStorage or use sample data
+    const storedEndpoints = localStorage.getItem('apiEndpoints');
     if (storedEndpoints) {
       setEndpoints(JSON.parse(storedEndpoints));
     } else {
@@ -29,120 +24,93 @@ const ApiEndpointList: React.FC = () => {
     }
   }, []);
   
-  // Save endpoints to localStorage whenever they change
-  useEffect(() => {
-    if (endpoints.length > 0) {
-      localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(endpoints));
-    }
-  }, [endpoints]);
-  
-  const filteredEndpoints = endpoints.filter(endpoint => 
-    endpoint.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
-    endpoint.url.toLowerCase().includes(searchQuery.toLowerCase())
-  );
-  
-  const handleTestEndpoint = (id: string) => {
-    toast.info(`Testing API endpoint ${id}...`);
-    // In a real app, this would make an actual API call to test the endpoint
-    setTimeout(() => {
-      toast.success(`API endpoint ${id} is responding correctly`);
-    }, 1500);
-  };
-  
-  const handleAddEndpoint = () => {
-    setDialogOpen(true);
-  };
-
-  const toggleApiKeyVisibility = (id: string) => {
-    setShowApiKeys(prev => ({
-      ...prev,
-      [id]: !prev[id]
-    }));
-  };
-
-  const copyApiKey = (apiKey: string, name: string) => {
-    navigator.clipboard.writeText(apiKey);
-    toast.success(`API key for ${name} copied to clipboard`);
-  };
-  
-  const handleDeleteEndpoint = (id: string, name: string) => {
-    // Filter out the endpoint with the given id
-    const updatedEndpoints = endpoints.filter(endpoint => endpoint.id !== id);
-    setEndpoints(updatedEndpoints);
-    
-    // Update localStorage
-    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(updatedEndpoints));
-    
-    // Show confirmation message
-    toast.success(`API endpoint "${name}" has been deleted`);
-  };
-
-  const onSubmit = (data: EndpointFormValues) => {
-    // Create a new endpoint with the form data
-    const newEndpoint: ApiEndpoint = {
-      id: `${Date.now()}`, // Use timestamp for unique ID
-      name: data.name,
-      url: data.url,
-      apiKey: data.apiKey,
-      method: data.method,
-      status: data.status,
-      lastUsed: new Date().toISOString()
-    };
-
-    // Add the new endpoint to the list
+  const handleAddEndpoint = (newEndpoint: ApiEndpoint) => {
     const updatedEndpoints = [...endpoints, newEndpoint];
     setEndpoints(updatedEndpoints);
-    
-    // Save to localStorage immediately as well
-    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(updatedEndpoints));
-    
-    // Close the dialog
-    setDialogOpen(false);
-    
-    // Show a success message
-    toast.success(`API endpoint "${data.name}" has been added successfully`);
+    localStorage.setItem('apiEndpoints', JSON.stringify(updatedEndpoints));
+    toast.success(`Endpoint "${newEndpoint.name}" added successfully`);
+  };
+  
+  const handleEditEndpoint = (endpoint: ApiEndpoint) => {
+    setSelectedEndpoint(endpoint);
+    setShowAddDialog(true);
+  };
+  
+  const handleUpdateEndpoint = (updatedEndpoint: ApiEndpoint) => {
+    const index = endpoints.findIndex(ep => ep.id === updatedEndpoint.id);
+    if (index !== -1) {
+      const newEndpoints = [...endpoints];
+      newEndpoints[index] = updatedEndpoint;
+      setEndpoints(newEndpoints);
+      localStorage.setItem('apiEndpoints', JSON.stringify(newEndpoints));
+      toast.success(`Endpoint "${updatedEndpoint.name}" updated successfully`);
+    }
+  };
+  
+  const handleDeleteEndpoint = (id: string) => {
+    const newEndpoints = endpoints.filter(endpoint => endpoint.id !== id);
+    setEndpoints(newEndpoints);
+    localStorage.setItem('apiEndpoints', JSON.stringify(newEndpoints));
+    toast.info('Endpoint deleted successfully');
+  };
+  
+  const handleOpenAddDialog = () => {
+    setSelectedEndpoint(null);
+    setShowAddDialog(true);
+  };
+  
+  const handleCloseDialog = () => {
+    setShowAddDialog(false);
+    setSelectedEndpoint(null);
   };
   
   return (
-    <>
-      <Card>
-        <CardHeader className="flex flex-row items-center justify-between">
-          <div>
-            <CardTitle>API Endpoints</CardTitle>
-            <CardDescription>Configure and manage connected API endpoints</CardDescription>
+    <Card>
+      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+        <div>
+          <CardTitle>API Endpoints</CardTitle>
+          <CardDescription>
+            Configure endpoints for different AI providers
+          </CardDescription>
+        </div>
+        <Button onClick={handleOpenAddDialog}>
+          Add Endpoint
+        </Button>
+      </CardHeader>
+      <CardContent>
+        {endpoints.length === 0 ? (
+          <div className="text-center py-6">
+            <p className="text-muted-foreground">No endpoints configured yet.</p>
+            <Button 
+              variant="outline" 
+              onClick={handleOpenAddDialog}
+              className="mt-4"
+            >
+              Add your first endpoint
+            </Button>
           </div>
-          <Button onClick={handleAddEndpoint}>
-            <Plus className="h-4 w-4 mr-1" /> Add Endpoint
-          </Button>
-        </CardHeader>
-        <CardContent>
-          <div className="mb-4">
-            <Input 
-              placeholder="Search endpoints..." 
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="max-w-sm"
-            />
+        ) : (
+          <div className="space-y-2">
+            {endpoints.map(endpoint => (
+              <ApiEndpointRow
+                key={endpoint.id}
+                endpoint={endpoint}
+                onEdit={() => handleEditEndpoint(endpoint)}
+                onDelete={() => handleDeleteEndpoint(endpoint.id)}
+              />
+            ))}
           </div>
-          
-          <EndpointsTable 
-            endpoints={filteredEndpoints}
-            showApiKeys={showApiKeys}
-            onToggleApiKey={toggleApiKeyVisibility}
-            onCopyApiKey={copyApiKey}
-            onTestEndpoint={handleTestEndpoint}
-            onDeleteEndpoint={handleDeleteEndpoint}
-          />
-        </CardContent>
-      </Card>
-
-      <AddEndpointDialog 
-        open={dialogOpen}
-        onOpenChange={setDialogOpen}
-        onSubmit={onSubmit}
+        )}
+      </CardContent>
+      
+      <AddEndpointDialog
+        open={showAddDialog}
+        onOpenChange={setShowAddDialog}
+        endpoint={selectedEndpoint}
+        onAdd={handleAddEndpoint}
+        onUpdate={handleUpdateEndpoint}
+        onClose={handleCloseDialog}
       />
-    </>
+    </Card>
   );
-};
-
-export default ApiEndpointList;
+}

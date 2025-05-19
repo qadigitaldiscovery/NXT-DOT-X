@@ -1,3 +1,4 @@
+
 import * as React from "react"
 import { ChevronLeft, ChevronRight } from "lucide-react"
 import { DayPicker } from "react-day-picker"
@@ -52,6 +53,7 @@ function Calendar({
         ...classNames,
       }}
       components={{
+        // Fix the type issue by using a proper type definition without unused parameters
         IconLeft: () => <ChevronLeft className="h-4 w-4" />,
         IconRight: () => <ChevronRight className="h-4 w-4" />,
       }}
