@@ -48,9 +48,9 @@ export const ModuleCard: React.FC<ModuleCardProps> = ({
   };
   return <div className={`${getCardStyle()} ${className}`} onClick={handleClick}>
       {/* Content container */}
-      <div className="flex flex-col p-6 bg-[#1e0404]">
+      <div className="flex flex-col p-6 bg-zinc-100">
         {/* Title */}
-        <h3 className="font-bold text-xl mb-6 text-center text-slate-300">
+        <h3 className="text-xl mb-6 text-center font-bold text-slate-500">
           {title}
         </h3>
         
