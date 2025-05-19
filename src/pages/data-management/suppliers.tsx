@@ -23,8 +23,10 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
-import { Search, FileUp, BarChart2, Users, FileText, RefreshCw } from 'lucide-react';
+import { Search, FileUp, BarChart2, Users, FileText, RefreshCw, Upload } from 'lucide-react';
 import { Partner, vendorToPartner, supplierToPartner } from '@/types/partner';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { BulkSupplierUpload } from '@/components/uploads/BulkSupplierUpload';
 
 export default function SupplierVendors() {
   const navigate = useNavigate();
@@ -35,6 +37,7 @@ export default function SupplierVendors() {
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [partners, setPartners] = useState<Partner[]>([]);
   const [activeTab, setActiveTab] = useState('unified');
+  const [showBulkUploadDialog, setShowBulkUploadDialog] = useState(false);
   
   // Get URL parameters for redirects from old pages
   const location = window.location;
@@ -117,6 +120,11 @@ export default function SupplierVendors() {
     }
   };
 
+  // Handle bulk upload
+  const handleBulkUpload = () => {
+    setShowBulkUploadDialog(true);
+  };
+
   return (
     <div className="container mx-auto py-6 space-y-8">
       <div className="flex justify-between items-center">
@@ -129,6 +137,10 @@ export default function SupplierVendors() {
         <div className="flex gap-2">
           <Button onClick={() => navigate('/data-management/suppliers/new')} variant="default">
             Add New Supplier
+          </Button>
+          <Button onClick={handleBulkUpload} variant="outline">
+            <Upload className="mr-2 h-4 w-4" />
+            Bulk Import
           </Button>
           <Button onClick={handleRefresh} variant="outline" disabled={isRefreshing}>
             <RefreshCw className={`mr-2 h-4 w-4 ${isRefreshing ? 'animate-spin' : ''}`} />
@@ -351,6 +363,16 @@ export default function SupplierVendors() {
           </div>
         </CardContent>
       </Card>
+
+      {/* Bulk Import Dialog */}
+      <Dialog open={showBulkUploadDialog} onOpenChange={setShowBulkUploadDialog}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>Bulk Supplier Import</DialogTitle>
+          </DialogHeader>
+          <BulkSupplierUpload />
+        </DialogContent>
+      </Dialog>
     </div>
   );
-} 
+}

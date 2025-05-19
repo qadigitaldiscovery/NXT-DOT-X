@@ -6,12 +6,15 @@ import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
 import { SuppliersTable } from '@/components/suppliers/SuppliersTable';
 import { useSuppliers } from '@/hooks/use-suppliers';
-import { PlusCircle, Search, RefreshCw } from 'lucide-react';
+import { PlusCircle, Search, RefreshCw, Upload } from 'lucide-react';
+import { BulkSupplierUpload } from '@/components/uploads/BulkSupplierUpload';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 
 const SupplierDirectoryPage = () => {
   const navigate = useNavigate();
   const { data: suppliers, isLoading, refetch } = useSuppliers();
   const [searchQuery, setSearchQuery] = useState('');
+  const [showBulkUploadDialog, setShowBulkUploadDialog] = useState(false);
   
   const filteredSuppliers = suppliers?.filter(supplier => 
     supplier.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -25,6 +28,10 @@ const SupplierDirectoryPage = () => {
 
   const handleRefresh = () => {
     refetch();
+  };
+
+  const handleBulkUpload = () => {
+    setShowBulkUploadDialog(true);
   };
   
   return (
@@ -64,6 +71,14 @@ const SupplierDirectoryPage = () => {
                 Refresh
               </Button>
               <Button 
+                variant="outline"
+                onClick={handleBulkUpload}
+                className="flex items-center gap-1"
+              >
+                <Upload className="h-4 w-4" />
+                Bulk Import
+              </Button>
+              <Button 
                 onClick={handleAddSupplier}
                 className="flex items-center gap-1"
               >
@@ -77,6 +92,16 @@ const SupplierDirectoryPage = () => {
           <SuppliersTable />
         </CardContent>
       </Card>
+
+      {/* Bulk Supplier Import Dialog */}
+      <Dialog open={showBulkUploadDialog} onOpenChange={setShowBulkUploadDialog}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>Bulk Supplier Import</DialogTitle>
+          </DialogHeader>
+          <BulkSupplierUpload />
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
