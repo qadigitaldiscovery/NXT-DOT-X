@@ -46,7 +46,7 @@ export const sampleEndpoints: ApiEndpoint[] = [
 ];
 
 // Sample function to simulate API key verification
-export const verifyApiKey = (provider: string, key: string): Promise<boolean> => {
+export const verifyApiKey = (providerName: string, key: string): Promise<boolean> => {
   return new Promise((resolve) => {
     setTimeout(() => {
       // Simple validation - in reality would make API call

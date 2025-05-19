@@ -8,7 +8,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
-import { endpointSchema, EndpointFormValues } from './types';
+import { EndpointFormValues, endpointSchema } from './types';
 
 interface AddEndpointDialogProps {
   open: boolean;
@@ -23,6 +23,8 @@ export function AddEndpointDialog({ open, onOpenChange, onSubmit }: AddEndpointD
       name: '',
       url: '',
       method: 'GET',
+      apiKey: '',
+      status: 'active',
       description: '',
     },
   });
@@ -58,6 +60,18 @@ export function AddEndpointDialog({ open, onOpenChange, onSubmit }: AddEndpointD
                 <FormItem>
                   <FormControl>
                     <Input placeholder="https://api.example.com/resource" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="apiKey"
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <Input placeholder="API Key" type="password" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

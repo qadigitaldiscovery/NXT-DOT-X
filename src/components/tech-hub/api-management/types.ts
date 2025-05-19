@@ -30,4 +30,17 @@ export interface EndpointFormValues {
   apiKey: string;
   method: 'GET' | 'POST' | 'PUT' | 'DELETE';
   status: 'active' | 'inactive' | 'error';
+  description?: string;
 }
+
+// Zod schema for endpoint form validation
+import { z } from 'zod';
+
+export const endpointSchema = z.object({
+  name: z.string().min(1, "Endpoint name is required"),
+  url: z.string().url("Please enter a valid URL"),
+  apiKey: z.string().min(1, "API key is required"),
+  method: z.enum(['GET', 'POST', 'PUT', 'DELETE']),
+  status: z.enum(['active', 'inactive', 'error']).default('active'),
+  description: z.string().optional()
+});
