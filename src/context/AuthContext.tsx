@@ -1,3 +1,4 @@
+
 import { createContext, useContext, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
@@ -88,6 +89,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signIn = async (email: string, password: string) => {
     try {
+      setLoading(true);
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
@@ -110,10 +112,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           name: profileData?.name,
         });
 
+        toast.success('Successfully logged in');
         navigate('/master');
       }
     } catch (error: any) {
+      console.error('Login error:', error);
       toast.error(error.message || 'Error signing in');
+    } finally {
+      setLoading(false);
     }
   };
 

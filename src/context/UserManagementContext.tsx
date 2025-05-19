@@ -1,3 +1,4 @@
+
 import { createContext, useContext, useState, useEffect } from 'react';
 import { supabase } from '../integrations/supabase/client';
 
@@ -45,15 +46,6 @@ export function UserManagementProvider({ children }: { children: React.ReactNode
   const [permissions, setPermissions] = useState<Permission[]>([]);
 
   useEffect(() => {
-    async function fetchUsers() {
-      const { data, error } = await supabase.from('users').select('*');
-      if (error) {
-        console.error('Error fetching users:', error);
-      } else {
-        setUsers(data || []);
-      }
-    }
-
     // Roles and permissions are stored in the profiles table
     async function fetchUsersWithRoles() {
       interface ProfileData {
@@ -66,40 +58,44 @@ export function UserManagementProvider({ children }: { children: React.ReactNode
         } | null;
       }
 
-      const { data, error } = await supabase
-        .from('profiles')
-        .select(`
-          id,
-          name,
-          role,
-          users (
-            email,
-            created_at
-          )
-        `) as { data: ProfileData[] | null; error: Error | null };
+      try {
+        const { data, error } = await supabase
+          .from('profiles')
+          .select(`
+            id,
+            name,
+            role,
+            users (
+              email,
+              created_at
+            )
+          `) as { data: ProfileData[] | null; error: Error | null };
 
-      if (error) {
-        console.error('Error fetching users:', error);
-      } else {
-        // Map profile data to User interface
-        const mappedUsers = (data || []).map(profile => ({
-          id: profile.id,
-          username: profile.name || '',
-          email: profile.users?.email || '',
-          role: profile.role || 'user',
-          status: 'active',
-          created: profile.users?.created_at || new Date().toISOString()
-        }));
-        setUsers(mappedUsers);
+        if (error) {
+          console.error('Error fetching users:', error);
+        } else {
+          // Map profile data to User interface
+          const mappedUsers = (data || []).map(profile => ({
+            id: profile.id,
+            username: profile.name || '',
+            email: profile.users?.email || '',
+            role: profile.role || 'user',
+            status: 'active',
+            created: profile.users?.created_at || new Date().toISOString()
+          }));
+          setUsers(mappedUsers);
 
-        // Extract unique roles, filtering out null values
-        const uniqueRoles = [...new Set(data?.map(user => user.role).filter((role): role is string => role !== null) || [])];
-        setRoles(uniqueRoles.map(role => ({
-          id: role,
-          name: role,
-          description: `${role} role`,
-          permissions: []
-        })));
+          // Extract unique roles, filtering out null values
+          const uniqueRoles = [...new Set(data?.map(user => user.role).filter((role): role is string => role !== null) || [])];
+          setRoles(uniqueRoles.map(role => ({
+            id: role,
+            name: role,
+            description: `${role} role`,
+            permissions: []
+          })));
+        }
+      } catch (err) {
+        console.error('Failed to fetch user data:', err);
       }
     }
 
@@ -107,56 +103,80 @@ export function UserManagementProvider({ children }: { children: React.ReactNode
   }, []);
 
   const addUser = async (user: User) => {
-    const { data, error } = await supabase.from('users').insert(user);
-    if (error) {
-      console.error('Error adding user:', error);
-    } else if (data) {
-      setUsers(prev => [...prev, data[0]]);
+    try {
+      const { data, error } = await supabase.from('users').insert(user);
+      if (error) {
+        console.error('Error adding user:', error);
+      } else if (data) {
+        setUsers(prev => [...prev, data[0]]);
+      }
+    } catch (err) {
+      console.error('Failed to add user:', err);
     }
   };
 
   const addRole = async (role: Role) => {
-    const { data, error } = await supabase.from('roles').insert(role);
-    if (error) {
-      console.error('Error adding role:', error);
-    } else if (data) {
-      setRoles(prev => [...prev, data[0]]);
+    try {
+      const { data, error } = await supabase.from('roles').insert(role);
+      if (error) {
+        console.error('Error adding role:', error);
+      } else if (data) {
+        setRoles(prev => [...prev, data[0]]);
+      }
+    } catch (err) {
+      console.error('Failed to add role:', err);
     }
   };
 
   const updateUser = async (id: string, userData: Partial<User>) => {
-    const { data, error } = await supabase.from('users').update(userData).eq('id', id);
-    if (error) {
-      console.error('Error updating user:', error);
-    } else if (data) {
-      setUsers(prev => prev.map(user => (user.id === id ? { ...user, ...userData } : user)));
+    try {
+      const { data, error } = await supabase.from('users').update(userData).eq('id', id);
+      if (error) {
+        console.error('Error updating user:', error);
+      } else if (data) {
+        setUsers(prev => prev.map(user => (user.id === id ? { ...user, ...userData } : user)));
+      }
+    } catch (err) {
+      console.error('Failed to update user:', err);
     }
   };
 
   const updateRole = async (id: string, roleData: Partial<Role>) => {
-    const { data, error } = await supabase.from('roles').update(roleData).eq('id', id);
-    if (error) {
-      console.error('Error updating role:', error);
-    } else if (data) {
-      setRoles(prev => prev.map(role => (role.id === id ? { ...role, ...roleData } : role)));
+    try {
+      const { data, error } = await supabase.from('roles').update(roleData).eq('id', id);
+      if (error) {
+        console.error('Error updating role:', error);
+      } else if (data) {
+        setRoles(prev => prev.map(role => (role.id === id ? { ...role, ...roleData } : role)));
+      }
+    } catch (err) {
+      console.error('Failed to update role:', err);
     }
   };
 
   const deleteUser = async (id: string) => {
-    const { error } = await supabase.from('users').delete().eq('id', id);
-    if (error) {
-      console.error('Error deleting user:', error);
-    } else {
-      setUsers(prev => prev.filter(user => user.id !== id));
+    try {
+      const { error } = await supabase.from('users').delete().eq('id', id);
+      if (error) {
+        console.error('Error deleting user:', error);
+      } else {
+        setUsers(prev => prev.filter(user => user.id !== id));
+      }
+    } catch (err) {
+      console.error('Failed to delete user:', err);
     }
   };
 
   const deleteRole = async (id: string) => {
-    const { error } = await supabase.from('roles').delete().eq('id', id);
-    if (error) {
-      console.error('Error deleting role:', error);
-    } else {
-      setRoles(prev => prev.filter(role => role.id !== id));
+    try {
+      const { error } = await supabase.from('roles').delete().eq('id', id);
+      if (error) {
+        console.error('Error deleting role:', error);
+      } else {
+        setRoles(prev => prev.filter(role => role.id !== id));
+      }
+    } catch (err) {
+      console.error('Failed to delete role:', err);
     }
   };
 

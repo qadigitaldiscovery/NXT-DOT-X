@@ -9,11 +9,11 @@ import { useAuth } from '@/context/AuthContext';
 import { AspectRatio } from '@/components/ui/aspect-ratio';
 
 const Landing = () => {
-  const [usernameOrEmail, setUsernameOrEmail] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
-  const { signIn, isAuthenticated } = useAuth();
+  const { signIn, isAuthenticated, loading } = useAuth();
 
   // Check if user is already logged in and redirect to master dashboard
   useEffect(() => {
@@ -27,19 +27,16 @@ const Landing = () => {
     setIsLoading(true);
 
     // Simple validation
-    if (!usernameOrEmail || !password) {
-      toast.error('Please enter both username/email and password');
+    if (!email || !password) {
+      toast.error('Please enter both email and password');
       setIsLoading(false);
       return;
     }
 
-    // For development login - make it clear to the user
-    const normalizedEmail = usernameOrEmail.toLowerCase();
-    console.log('Attempting login with:', normalizedEmail);
-
-    // Authenticate user
     try {
-      await signIn(normalizedEmail, password);
+      // Trim whitespace from email to prevent login issues
+      const trimmedEmail = email.trim().toLowerCase();
+      await signIn(trimmedEmail, password);
       // Navigation is handled by AuthContext after successful login
     } catch (error: any) {
       console.error('Login error:', error);
@@ -74,14 +71,14 @@ const Landing = () => {
                 <div className="space-y-2">
                   <div className="relative">
                     <Input 
-                      id="usernameOrEmail" 
-                      type="text" 
-                      placeholder="Username or Email" 
-                      value={usernameOrEmail} 
-                      onChange={e => setUsernameOrEmail(e.target.value)} 
+                      id="email" 
+                      type="email" 
+                      placeholder="Email" 
+                      value={email} 
+                      onChange={e => setEmail(e.target.value)} 
                       required 
                       className="bg-white/90 border-blue-lighter focus:border-blue h-11 pl-10 text-blue-dark rounded-xl"
-                      autoComplete="username" 
+                      autoComplete="email" 
                     />
                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                       <span className="text-blue-light">👤</span>
@@ -109,12 +106,13 @@ const Landing = () => {
                 
                 <Button 
                   type="submit" 
-                  disabled={isLoading} 
+                  loading={isLoading}
+                  disabled={isLoading || loading} 
                   className="w-full bg-gradient-to-r from-blue to-blue-light hover:from-blue-light hover:to-blue 
                              h-12 text-white 
                              font-bold uppercase tracking-wider rounded-xl transition-all duration-300 shadow-md hover:shadow-lg"
                 >
-                  {isLoading ? 'AUTHENTICATING...' : 'LOGIN'}
+                  LOGIN
                 </Button>
                 
                 <div className="text-sm text-center text-gray-500 mt-4">
