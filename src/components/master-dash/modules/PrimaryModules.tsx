@@ -1,5 +1,4 @@
 
-import { Database, Share2, Megaphone, TrendingUp, ClipboardList, Brain, Cpu } from 'lucide-react';
 import DataManagement from './DataManagement';
 import SocialMediaMarketing from './SocialMediaMarketing';
 import BrandMarketing from './BrandMarketing';
