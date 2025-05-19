@@ -1,3 +1,4 @@
+
 import { NavCategory, NavItem } from './types';
 import { SidebarItem } from './SidebarItem';
 import { cn } from '../../../lib/utils';
@@ -113,13 +114,14 @@ export function SidebarNavList({
               <div className="pl-3 space-y-1">
                 {category.items.map((item) => {
                   const isActive = isItemActive(item);
+                  const itemIcon = item.icon ? <item.icon className="w-5 h-5" /> : undefined;
                   
                   return (
                     <SidebarItem
                       key={item.label}
                       label={item.label}
                       path={item.path}
-                      icon={item.icon && <item.icon className="w-5 h-5" />}
+                      icon={itemIcon}
                       isActive={isActive}
                       textColor={textColor}
                       textHoverColor={textHoverColor}

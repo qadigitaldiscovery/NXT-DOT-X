@@ -19,10 +19,12 @@ export function SearchBar({
 }: SearchBarProps) {
   // Handle both new and old prop patterns
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (onChange) onChange(e.target.value);
-    if (setSearchTerm) setSearchTerm(e.target.value);
+    const newValue = e.target.value;
+    if (onChange) onChange(newValue);
+    if (setSearchTerm) setSearchTerm(newValue);
   };
   
+  // Use searchTerm if provided, otherwise use value
   const inputValue = searchTerm !== undefined ? searchTerm : value;
   
   return (
@@ -37,4 +39,3 @@ export function SearchBar({
     </div>
   );
 }
-

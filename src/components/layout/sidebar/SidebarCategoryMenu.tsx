@@ -7,7 +7,7 @@ interface SidebarCategoryMenuProps {
   title?: string;
   items: NavItem[];
   currentPath: string;
-  userRole: string;
+  userRole?: string;
 }
 
 export const SidebarCategoryMenu = ({
@@ -50,7 +50,7 @@ export const SidebarCategoryMenu = ({
         <ul className="mt-1 space-y-1">
           {items.map((item, index) => {
             const isActive = item.path === currentPath;
-            const itemIcon = item.icon ? <item.icon className="w-5 h-5" /> : undefined;
+            const itemIcon = item.icon ? <item.icon className="w-5 h-5" /> : null;
             
             return (
               <li key={index} className="px-1">

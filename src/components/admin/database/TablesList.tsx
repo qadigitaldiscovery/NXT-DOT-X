@@ -49,7 +49,12 @@ const TablesList: React.FC<TablesListProps> = ({
     <Card>
       <CardContent className="p-4">
         <div className="flex justify-between items-center pb-4">
-          <SearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
+          <SearchBar 
+            value={searchTerm} 
+            onChange={setSearchTerm} 
+            searchTerm={searchTerm} 
+            setSearchTerm={setSearchTerm}
+          />
           <RefreshButton isRefreshing={isRefreshing} onRefresh={handleRefreshTables} />
         </div>
         
