@@ -117,7 +117,9 @@ export function SidebarNavList({
                   return (
                     <SidebarItem
                       key={item.label}
-                      item={item}
+                      label={item.label}
+                      path={item.path}
+                      icon={item.icon && <item.icon className="w-5 h-5" />}
                       isActive={isActive}
                       textColor={textColor}
                       textHoverColor={textHoverColor}

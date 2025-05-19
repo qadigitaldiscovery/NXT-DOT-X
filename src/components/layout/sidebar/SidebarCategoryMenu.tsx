@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+
+import { useState } from 'react';
 import { SidebarItem } from './SidebarItem';
 import { NavItem } from './types';
 
@@ -12,8 +13,7 @@ interface SidebarCategoryMenuProps {
 export const SidebarCategoryMenu = ({
   title,
   items,
-  currentPath,
-  userRole
+  currentPath
 }: SidebarCategoryMenuProps) => {
   const [isExpanded, setIsExpanded] = useState(true);
 
@@ -50,6 +50,7 @@ export const SidebarCategoryMenu = ({
         <ul className="mt-1 space-y-1">
           {items.map((item, index) => {
             const isActive = item.path === currentPath;
+            const itemIcon = item.icon ? <item.icon className="w-5 h-5" /> : undefined;
             
             return (
               <li key={index} className="px-1">
@@ -57,9 +58,8 @@ export const SidebarCategoryMenu = ({
                   key={index}
                   label={item.label}
                   path={item.path}
-                  icon={item.icon}
+                  icon={itemIcon}
                   isActive={isActive}
-                  onClick={() => item.onClick?.()}
                   textColor="text-gray-400"
                   textHoverColor="hover:text-white"
                   activeBgColor="bg-blue-900/50"

@@ -10,7 +10,15 @@ import { ThemeProvider } from "@/context/ThemeContext";
 import { AppRoutes } from "@/routes/AppRoutes";
 
 // Create a client
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
+      retry: false,
+      staleTime: 5 * 60 * 1000, // 5 minutes
+    },
+  },
+});
 
 const App = () => {
   return (

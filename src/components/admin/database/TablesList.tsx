@@ -2,11 +2,11 @@
 import React, { useState } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { toast } from "sonner";
-import TableItem from './TableItem';
-import SearchBar from './SearchBar';
-import RefreshButton from './RefreshButton';
-import LoadingState from './LoadingState';
-import EmptyState from './EmptyState';
+import { TableItem } from './TableItem';
+import { SearchBar } from './SearchBar';
+import { RefreshButton } from './RefreshButton';
+import { LoadingState } from './LoadingState';
+import { EmptyState } from './EmptyState';
 
 interface TableData {
   name: string;
