@@ -3,7 +3,7 @@ import React from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Users, Shield, CheckCircle2 } from 'lucide-react';
-import UsersTab from '@/components/admin/users/UsersTab';
+import { UsersTab } from '@/components/admin/users/UsersTab';
 import RolesTab from '@/components/admin/users/RolesTab';
 import PermissionsTab from '@/components/admin/users/PermissionsTab';
 import { UserManagementProvider } from '@/context/UserManagementContext';

@@ -7,21 +7,18 @@ import { Edit, Trash2 } from 'lucide-react';
 import { AddRoleDialog } from './AddRoleDialog';
 
 const mockRoles = [
-  { id: '1', name: 'Administrator', description: 'Full system access', permissions: ['read', 'write', 'delete', 'admin'] },
-  { id: '2', name: 'Editor', description: 'Can edit content', permissions: ['read', 'write'] },
-  { id: '3', name: 'Viewer', description: 'Read-only access', permissions: ['read'] },
+  { id: '1', name: 'Administrator', description: 'Full system access', permissions: 15 },
+  { id: '2', name: 'Editor', description: 'Content management access', permissions: 8 },
+  { id: '3', name: 'Viewer', description: 'Read-only access', permissions: 3 },
 ];
-
-// Available permissions
-const availablePermissions = ['read', 'write', 'delete', 'admin', 'export', 'import', 'manage-users'];
 
 export function RolesTab() {
   const [roles, setRoles] = React.useState(mockRoles);
-  const [isAddingRole, setIsAddingRole] = React.useState(false);
+  const [dialogOpen, setDialogOpen] = React.useState(false);
 
-  const handleAddRole = (role: { name: string; description: string; permissions: string[] }) => {
-    setRoles([...roles, { id: Date.now().toString(), ...role }]);
-    setIsAddingRole(false);
+  const handleAddRole = (role: { name: string; description: string }) => {
+    setRoles([...roles, { id: Date.now().toString(), ...role, permissions: 0 }]);
+    setDialogOpen(false);
   };
 
   const handleEditRole = (id: string) => {
@@ -40,12 +37,9 @@ export function RolesTab() {
       <CardHeader className="flex flex-row items-center justify-between">
         <div>
           <CardTitle>Roles</CardTitle>
-          <CardDescription>Manage system roles and permissions</CardDescription>
+          <CardDescription>Manage user roles and permissions</CardDescription>
         </div>
-        <AddRoleDialog 
-          permissions={availablePermissions} 
-          onAddRole={handleAddRole}
-        />
+        <AddRoleDialog open={dialogOpen} onOpenChange={setDialogOpen} onRoleAdded={handleAddRole} />
       </CardHeader>
       <CardContent>
         <Table>
@@ -68,8 +62,8 @@ export function RolesTab() {
               roles.map((role) => (
                 <TableRow key={role.id}>
                   <TableCell className="font-medium">{role.name}</TableCell>
-                  <TableCell>{role.description || '—'}</TableCell>
-                  <TableCell>{role.permissions?.join(', ') || 'None'}</TableCell>
+                  <TableCell>{role.description}</TableCell>
+                  <TableCell>{role.permissions}</TableCell>
                   <TableCell className="flex items-center gap-2">
                     <Button variant="ghost" size="icon" onClick={() => handleEditRole(role.id)}>
                       <Edit className="h-4 w-4" />

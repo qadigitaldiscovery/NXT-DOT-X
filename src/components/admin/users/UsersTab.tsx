@@ -84,5 +84,5 @@ export function UsersTab() {
   );
 }
 
-// Add the default export
+// We maintain both named and default exports for compatibility
 export default UsersTab;
