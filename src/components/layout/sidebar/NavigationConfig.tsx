@@ -1,3 +1,4 @@
+
 import { 
   LayoutDashboard, 
   Building, 
@@ -36,8 +37,8 @@ export const navCategories: NavCategory[] = [
       { 
         label: 'SUPPLIER DIRECTORY', 
         icon: Building, 
-        href: '/data-management/suppliers', 
-        path: '/data-management/suppliers' 
+        href: '/supplier-management/directory', 
+        path: '/supplier-management/directory' 
       },
       { 
         label: 'CUSTOMER DIRECTORY', 
