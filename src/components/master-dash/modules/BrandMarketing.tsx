@@ -1,3 +1,4 @@
+
 import { ModuleCard } from '../ModuleCard';
 import { useNavigate } from 'react-router-dom';
 import { Megaphone, TrendingUp } from 'lucide-react';
@@ -8,15 +9,13 @@ const BrandMarketing = () => {
   const marketingModules = [
     {
       title: 'Campaign Analytics',
-      description: 'Track and analyze the performance of your brand marketing campaigns.',
       icon: <TrendingUp className="h-8 w-8 text-orange-500" />,
-      onClick: () => navigate('/brand-marketing/campaigns')
+      path: '/brand-marketing/campaigns',
     },
     {
       title: 'Brand Awareness',
-      description: 'Enhance brand visibility and recognition through strategic marketing initiatives.',
       icon: <Megaphone className="h-8 w-8 text-orange-500" />,
-      onClick: () => navigate('/brand-marketing/awareness')
+      path: '/brand-marketing/awareness',
     }
   ];
 
@@ -29,9 +28,8 @@ const BrandMarketing = () => {
           <ModuleCard
             key={index}
             title={module.title}
-            description={module.description}
             icon={module.icon}
-            onClick={module.onClick}
+            path={module.path}
           />
         ))}
       </div>

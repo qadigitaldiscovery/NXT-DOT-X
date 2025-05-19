@@ -9,15 +9,13 @@ const LoyaltyProgram = () => {
   const loyaltyModules = [
     {
       title: 'Loyalty Dashboard',
-      description: 'View loyalty program performance metrics and member activity',
       icon: <Gem className="h-8 w-8 text-emerald-500" />,
-      onClick: () => navigate('/loyalty/dashboard')
+      path: '/loyalty/dashboard',
     },
     {
       title: 'Rewards Management',
-      description: 'Manage loyalty rewards, tiers, and redemption options',
       icon: <Award className="h-8 w-8 text-emerald-500" />,
-      onClick: () => navigate('/loyalty/rewards')
+      path: '/loyalty/rewards',
     }
   ];
 
@@ -30,9 +28,8 @@ const LoyaltyProgram = () => {
           <ModuleCard
             key={index}
             title={module.title}
-            description={module.description}
             icon={module.icon}
-            onClick={module.onClick}
+            path={module.path}
           />
         ))}
       </div>

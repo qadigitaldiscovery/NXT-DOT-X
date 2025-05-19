@@ -9,17 +9,13 @@ const AiArmy = () => {
   const aiModules = [
     {
       title: 'AI Studio',
-      description: 'Create and manage AI models and flows',
       icon: <BrainCircuit className="h-8 w-8 text-purple-500" />,
       path: '/ai-army/studio',
-      onClick: () => navigate('/ai-army/studio')
     },
     {
       title: 'Bot Management',
-      description: 'Configure and deploy AI bots to various platforms',
       icon: <Bot className="h-8 w-8 text-purple-500" />,
       path: '/ai-army/bots',
-      onClick: () => navigate('/ai-army/bots')
     }
   ];
 
@@ -32,9 +28,8 @@ const AiArmy = () => {
           <ModuleCard
             key={index}
             title={module.title}
-            description={module.description}
             icon={module.icon}
-            onClick={module.onClick}
+            path={module.path}
           />
         ))}
       </div>

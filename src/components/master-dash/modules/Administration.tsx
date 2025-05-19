@@ -9,17 +9,13 @@ const Administration = () => {
   const adminModules = [
     {
       title: 'User Management',
-      description: 'Manage users, roles, and permissions',
       icon: <Users className="h-8 w-8 text-indigo-500" />,
       path: '/admin/users',
-      onClick: () => navigate('/admin/users')
     },
     {
       title: 'Security Controls',
-      description: 'Manage security policies and access control',
       icon: <Shield className="h-8 w-8 text-indigo-500" />,
       path: '/admin/security',
-      onClick: () => navigate('/admin/security')
     }
   ];
 
@@ -32,9 +28,8 @@ const Administration = () => {
           <ModuleCard
             key={index}
             title={module.title}
-            description={module.description}
             icon={module.icon}
-            onClick={module.onClick}
+            path={module.path}
           />
         ))}
       </div>

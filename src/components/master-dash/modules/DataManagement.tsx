@@ -9,15 +9,13 @@ const DataManagement = () => {
   const dataModules = [
     {
       title: 'Data Management',
-      description: 'Centralized data hub for suppliers, customers, and pricing',
       icon: <Database className="h-8 w-8 text-blue-500" />,
-      onClick: () => navigate('/data-management')
+      path: '/data-management',
     },
     {
       title: 'Cost Analysis',
-      description: 'Analyze cost trends, supplier comparisons, and category variations',
       icon: <BarChart3 className="h-8 w-8 text-blue-500" />,
-      onClick: () => navigate('/data-management/cost-analysis')
+      path: '/data-management/cost-analysis',
     }
   ];
 
@@ -30,9 +28,8 @@ const DataManagement = () => {
           <ModuleCard
             key={index}
             title={module.title}
-            description={module.description}
             icon={module.icon}
-            onClick={module.onClick}
+            path={module.path}
           />
         ))}
       </div>
