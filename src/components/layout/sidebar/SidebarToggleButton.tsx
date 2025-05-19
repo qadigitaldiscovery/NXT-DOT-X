@@ -1,7 +1,14 @@
+
 import React from 'react';
 import { Button } from '../../../components/ui/button';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import { SidebarToggleButtonProps } from './types';
+
+interface SidebarToggleButtonProps { 
+  collapsed?: boolean; 
+  onClick?: () => void;
+  open?: boolean;
+  onToggle?: () => void;
+}
 
 export const SidebarToggleButton: React.FC<SidebarToggleButtonProps> = ({ 
   collapsed, 
@@ -17,7 +24,7 @@ export const SidebarToggleButton: React.FC<SidebarToggleButtonProps> = ({
     <Button
       variant="ghost"
       size="icon"
-      className="fixed bottom-4 left-4 z-30 rounded-full bg-slate-900 text-white hover:bg-slate-800 shadow-lg"
+      className="fixed bottom-4 left-4 z-30 rounded-full bg-gray-800 text-white hover:bg-gray-700 shadow-lg"
       onClick={handleClick}
     >
       {isOpen ? (

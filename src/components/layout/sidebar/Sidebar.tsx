@@ -4,7 +4,7 @@ import { cn } from '../../../lib/utils';
 import { useIsMobile } from '../../../hooks/use-mobile';
 import { SidebarNavList } from './SidebarNavList';
 import { CollapsedSidebar } from './CollapsedSidebar';
-import { NavItem, NavCategory, SidebarProps } from './types';
+import { NavItem, NavCategory } from './types';
 import { useAuth } from '../../../context/AuthContext';
 import { SidebarToggleButton } from './SidebarToggleButton';
 import { ChevronLeft, Menu } from 'lucide-react';
@@ -26,6 +26,20 @@ const normalizeNavCategories = (categories: NavCategory[] = []): NavCategory[] =
     }))
   }));
 };
+
+interface SidebarProps {
+  open?: boolean;
+  onToggle?: () => void;
+  navItems?: NavItem[];
+  navCategories?: NavCategory[];
+  items?: NavCategory[];
+  homeItem?: NavItem;
+  customFooterContent?: React.ReactNode;
+  removeBottomToggle?: boolean;
+  showToggleButton?: boolean;
+  initialState?: "expanded" | "collapsed";
+  onStateChange?: (state: "expanded" | "collapsed") => void;
+}
 
 const Sidebar: React.FC<SidebarProps> = ({
   open,
@@ -94,23 +108,23 @@ const Sidebar: React.FC<SidebarProps> = ({
       <aside 
         className={cn(
           "fixed md:sticky top-0 left-0 h-screen z-30 shadow-lg flex flex-col transition-all duration-300 ease-in-out",
-          "bg-white dark:bg-gray-900",
-          "border-r border-gray-200 dark:border-gray-800",
+          "bg-gray-900",
+          "border-r border-gray-800",
           isOpen ? "w-64" : "w-0 md:w-16",
           isMobile && !isOpen && "-translate-x-full",
           isMobile && isOpen && "translate-x-0"
         )}
       >
         {/* Header */}
-        <div className="h-16 flex items-center justify-between px-4 border-b border-gray-200 dark:border-gray-800">
+        <div className="h-16 flex items-center justify-between px-4 border-b border-gray-800">
           {isOpen && (
-            <span className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+            <span className="text-lg font-semibold text-gray-100">
               Data Management
             </span>
           )}
           <button
             onClick={toggleSidebar}
-            className="p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800"
+            className="p-2 rounded-md hover:bg-gray-800 text-gray-300"
           >
             {isOpen ? <ChevronLeft /> : <Menu />}
           </button>
@@ -119,8 +133,8 @@ const Sidebar: React.FC<SidebarProps> = ({
         {/* Full Navigation List (Visible when open) */}
         <nav className={cn(
           "flex-1 pt-4 px-3 overflow-y-auto scrollbar-thin",
-          "scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-700",
-          "scrollbar-track-gray-100 dark:scrollbar-track-gray-800",
+          "scrollbar-thumb-gray-700",
+          "scrollbar-track-gray-800",
           !isOpen && "hidden"
         )}>
           <SidebarNavList 
@@ -128,11 +142,11 @@ const Sidebar: React.FC<SidebarProps> = ({
             userRole={user?.role}
             expandedCategories={expandedItems}
             onCategoryToggle={toggleExpanded}
-            textColor="text-gray-700 dark:text-gray-300"
-            textHoverColor="hover:text-gray-900 dark:hover:text-gray-100"
-            activeBgColor="bg-gray-100 dark:bg-gray-800"
-            activeTextColor="text-gray-900 dark:text-gray-100"
-            hoverBgColor="hover:bg-gray-50 dark:hover:bg-gray-800/50"
+            textColor="text-gray-300"
+            textHoverColor="hover:text-gray-100"
+            activeBgColor="bg-gray-800"
+            activeTextColor="text-gray-100"
+            hoverBgColor="hover:bg-gray-800/50"
           />
         </nav>
 
@@ -140,17 +154,17 @@ const Sidebar: React.FC<SidebarProps> = ({
         {!isOpen && !isMobile && (
           <CollapsedSidebar 
             navItems={allCategories}
-            textColor="text-gray-700 dark:text-gray-300"
-            activeBgColor="bg-gray-100 dark:bg-gray-800"
-            activeTextColor="text-gray-900 dark:text-gray-100"
-            hoverBgColor="hover:bg-gray-50 dark:hover:bg-gray-800/50"
+            textColor="text-gray-300"
+            activeBgColor="bg-gray-800"
+            activeTextColor="text-gray-100"
+            hoverBgColor="hover:bg-gray-800/50"
             homeItem={homeItem}
           />
         )}
 
         {/* Footer */}
         {customFooterContent && (
-          <div className="border-t border-gray-200 dark:border-gray-800 p-4">
+          <div className="border-t border-gray-800 p-4">
             {customFooterContent}
           </div>
         )}

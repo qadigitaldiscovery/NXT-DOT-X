@@ -121,16 +121,16 @@ const MasterDash = () => {
 
   // Custom footer with navigation controls
   const navigationFooter = (
-    <div className="flex items-center justify-between p-2 border-t border-gray-700/50 mt-auto bg-nxt-gray">
-      <Button variant="ghost" size="icon" onClick={() => navigate(-1)} className="text-gray-300 hover:text-white hover:bg-indigo-900 rounded-lg">
+    <div className="flex items-center justify-between p-2 border-t border-gray-700/50 mt-auto bg-gray-900">
+      <Button variant="ghost" size="icon" onClick={() => navigate(-1)} className="text-gray-300 hover:text-white hover:bg-gray-800 rounded-lg">
         <ChevronLeft className="h-5 w-5" />
       </Button>
       
-      <Button variant="ghost" size="icon" onClick={() => navigate('/master')} className="text-gray-300 hover:text-white hover:bg-indigo-900 rounded-lg">
+      <Button variant="ghost" size="icon" onClick={() => navigate('/master')} className="text-gray-300 hover:text-white hover:bg-gray-800 rounded-lg">
         <Home className="h-5 w-5" />
       </Button>
       
-      <Button variant="ghost" size="icon" onClick={() => navigate(1)} className="text-gray-300 hover:text-white hover:bg-indigo-900 rounded-lg">
+      <Button variant="ghost" size="icon" onClick={() => navigate(1)} className="text-gray-300 hover:text-white hover:bg-gray-800 rounded-lg">
         <ChevronRight className="h-5 w-5" />
       </Button>
     </div>
@@ -155,10 +155,10 @@ const MasterDash = () => {
   // If preferences are loading, render a more stable loading state
   if (prefsLoading) {
     return (
-      <div className="flex h-screen w-full items-center justify-center bg-background">
+      <div className="flex h-screen w-full items-center justify-center bg-gray-900">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary mx-auto mb-4"></div>
-          <p className="text-muted-foreground">Loading dashboard preferences...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-white mx-auto mb-4"></div>
+          <p className="text-gray-300">Loading dashboard preferences...</p>
         </div>
       </div>
     );
@@ -177,6 +177,7 @@ const MasterDash = () => {
       removeBottomToggle={false} 
       initialSidebarState={sidebarState} 
       onSidebarStateChange={updateSidebarState}
+      sidebarClassName="bg-gray-900"
     >
       <DashboardModules />
     </SharedDashboardLayout>

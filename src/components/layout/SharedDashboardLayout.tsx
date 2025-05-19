@@ -26,7 +26,7 @@ const SharedDashboardLayout: React.FC<SharedDashboardLayoutProps> = ({
   removeBottomToggle = false,
   initialSidebarState = "expanded",
   onSidebarStateChange,
-  sidebarClassName = "bg-indigo-950"
+  sidebarClassName = "bg-gray-900"
 }) => {
   const [expandedItems, setExpandedItems] = useState<string[]>([]);
   const [sidebarExpanded, setSidebarExpanded] = useState<boolean>(initialSidebarState !== "collapsed");
@@ -51,28 +51,28 @@ const SharedDashboardLayout: React.FC<SharedDashboardLayoutProps> = ({
       setExpandedItems([...expandedItems, label]);
     }
   };
-  return <div className="flex h-screen bg-zinc-900 text-white">
+  return <div className="flex h-screen bg-gray-900 text-white">
       {/* Sidebar */}
       <aside className={`${sidebarClassName} transition-all duration-300 flex flex-col ${sidebarExpanded ? 'w-64' : 'w-16'} border-r border-gray-800`}>
         {/* Logo/Header */}
-        <div className="p-4 flex items-center justify-between border-b border-gray-800 rounded-sm bg-nxt-gray">
+        <div className="p-4 flex items-center justify-between border-b border-gray-800 rounded-sm bg-gray-900">
           {sidebarExpanded && <h1 className="text-lg font-semibold">NXT Platform</h1>}
-          {showTopLeftToggle && <button onClick={handleToggleSidebar} className="p-1 rounded-md hover:bg-indigo-900 text-gray-300 hover:text-white">
+          {showTopLeftToggle && <button onClick={handleToggleSidebar} className="p-1 rounded-md hover:bg-gray-800 text-gray-300 hover:text-white">
               {sidebarExpanded ? <ChevronsLeft size={18} /> : <ChevronsRight size={18} />}
             </button>}
         </div>
         
         {/* Navigation */}
-        <div className="flex-1 overflow-y-auto py-2 bg-nxt-gray">
-          {sidebarExpanded ? <SidebarNavList categories={navCategories} userRole={currentRole as 'admin' | 'manager' | 'user'} expandedCategories={expandedItems} onCategoryToggle={handleToggleExpand} textColor="text-gray-300" textHoverColor="hover:text-white" activeBgColor="bg-indigo-500" activeTextColor="text-white" hoverBgColor="hover:bg-indigo-900/50" /> : <CompactSidebar navItems={navCategories.flatMap(cat => cat.items)} />}
+        <div className="flex-1 overflow-y-auto py-2 bg-gray-900">
+          {sidebarExpanded ? <SidebarNavList categories={navCategories} userRole={currentRole as 'admin' | 'manager' | 'user'} expandedCategories={expandedItems} onCategoryToggle={handleToggleExpand} textColor="text-gray-300" textHoverColor="hover:text-white" activeBgColor="bg-gray-700" activeTextColor="text-white" hoverBgColor="hover:bg-gray-800/50" /> : <CompactSidebar navItems={navCategories.flatMap(cat => cat.items)} />}
         </div>
         
         {/* Footer content if provided */}
         {customFooterContent && sidebarExpanded && <div>{customFooterContent}</div>}
         
         {/* Bottom toggle button */}
-        {!removeBottomToggle && <div className="p-2 border-t border-gray-800 bg-nxt-gray">
-            <button onClick={handleToggleSidebar} className="w-full flex justify-center p-1 rounded-md hover:bg-indigo-900 text-gray-300 hover:text-white">
+        {!removeBottomToggle && <div className="p-2 border-t border-gray-800 bg-gray-900">
+            <button onClick={handleToggleSidebar} className="w-full flex justify-center p-1 rounded-md hover:bg-gray-800 text-gray-300 hover:text-white">
               {sidebarExpanded ? <ChevronsLeft size={18} /> : <ChevronsRight size={18} />}
             </button>
           </div>}
@@ -81,8 +81,8 @@ const SharedDashboardLayout: React.FC<SharedDashboardLayoutProps> = ({
       {/* Main Content */}
       <div className="flex flex-col flex-1 overflow-hidden">
         {/* Top navigation */}
-        <header className="border-b border-zinc-700 p-4 flex items-center justify-between py-[9px] bg-slate-100">
-          <h1 className="text-xl text-gray-500 font-extrabold">{moduleTitle}</h1>
+        <header className="border-b border-gray-800 p-4 flex items-center justify-between py-[9px] bg-gray-800">
+          <h1 className="text-xl text-white font-semibold">{moduleTitle}</h1>
           <div className="flex items-center space-x-4">
             <ThemeToggle />
             <UserMenu />
@@ -90,7 +90,7 @@ const SharedDashboardLayout: React.FC<SharedDashboardLayoutProps> = ({
         </header>
         
         {/* Content area */}
-        <main className="flex-1 overflow-y-auto p-6 bg-white">
+        <main className="flex-1 overflow-y-auto p-6 bg-gray-800">
           {children}
         </main>
       </div>

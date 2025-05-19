@@ -1,17 +1,16 @@
 
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
 import { Code, Server, Database, Key } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
+import { useNavigate } from 'react-router-dom';
 
 export const DeveloperAccess = () => {
   const navigate = useNavigate();
 
   return (
-    <Card className="border rounded-lg overflow-hidden shadow-md flex flex-col h-full transition-all hover:shadow-lg bg-gradient-to-br from-gray-900 to-gray-800">
-      <CardHeader className="bg-gradient-to-r from-gray-900 to-gray-800 p-4 border-b border-gray-700 flex flex-row items-center justify-between">
+    <Card className="border border-gray-700 rounded-lg overflow-hidden shadow-md flex flex-col h-full bg-gray-800 hover:bg-gray-700">
+      <CardHeader className="bg-gray-800 p-4 border-b border-gray-700 flex flex-row items-center justify-between">
         <div>
           <CardTitle className="text-white text-lg md:text-xl">Developer Access</CardTitle>
           <CardDescription className="text-gray-300">Tools & APIs for technical users</CardDescription>
@@ -69,7 +68,7 @@ export const DeveloperAccess = () => {
             <div className="grid grid-cols-1 gap-2">
               <Button 
                 variant="secondary" 
-                className="w-full justify-between border text-white"
+                className="w-full justify-between border border-gray-600 bg-gray-700 hover:bg-gray-600 text-white"
                 onClick={() => navigate('/tech-hub')}
               >
                 <span>Open Developer Hub</span>
