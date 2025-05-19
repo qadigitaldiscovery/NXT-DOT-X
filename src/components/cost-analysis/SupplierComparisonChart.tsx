@@ -1,5 +1,9 @@
+<<<<<<< Updated upstream
 
 import { useEffect } from 'react';
+=======
+import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from 'recharts';
+>>>>>>> Stashed changes
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
 

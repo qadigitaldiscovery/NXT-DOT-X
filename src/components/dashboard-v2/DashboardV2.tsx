@@ -1,5 +1,4 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { DollarSign, ShoppingCart, Users, TrendingUp } from 'lucide-react';
 import KpiCard from './KpiCard';
 import { formatCurrency } from '@/lib/utils';
 

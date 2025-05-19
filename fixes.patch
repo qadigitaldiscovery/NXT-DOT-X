@@ -1,0 +1,74 @@
+
+# Default exports for layout components
+diff --git a/src/components/layout/Beta1Layout.tsx b/src/components/layout/Beta1Layout.tsx
+index 0000000..1111111
+--- a/src/components/layout/Beta1Layout.tsx
++++ b/src/components/layout/Beta1Layout.tsx
+@@
+-export function Beta1Layout() {
++export function Beta1Layout() {
+   // existing implementation
+ }
++export default Beta1Layout;
+
+diff --git a/src/components/layout/Beta2Layout.tsx b/src/components/layout/Beta2Layout.tsx
+index 0000000..2222222
+--- a/src/components/layout/Beta2Layout.tsx
++++ b/src/components/layout/Beta2Layout.tsx
+@@
+-export function Beta2Layout() {
++export function Beta2Layout() {
+   // existing implementation
+ }
++export default Beta2Layout;
+
+diff --git a/src/components/layout/TradingSystemLayout.tsx b/src/components/layout/TradingSystemLayout.tsx
+index 0000000..3333333
+--- a/src/components/layout/TradingSystemLayout.tsx
++++ b/src/components/layout/TradingSystemLayout.tsx
+@@
+-export function TradingSystemLayout() {
++export function TradingSystemLayout() {
+   // existing implementation
+ }
++export default TradingSystemLayout;
+
+diff --git a/src/components/layout/VendorLayout.tsx b/src/components/layout/VendorLayout.tsx
+index 0000000..4444444
+--- a/src/components/layout/VendorLayout.tsx
++++ b/src/components/layout/VendorLayout.tsx
+@@
+-export function VendorLayout() {
++export function VendorLayout() {
+   // existing implementation
+ }
++export default VendorLayout;
+
+# Supabase extract-zip edge function
+diff --git a/supabase/functions/extract-zip/index.ts b/supabase/functions/extract-zip/index.ts
+new file mode 100644
+--- /dev/null
++++ b/supabase/functions/extract-zip/index.ts
+@@
++import { serve } from "https://deno.land/std@0.177.0/http/server.ts";
++import JSZip from "https://esm.sh/jszip";
++
++serve(async (req) => {
++  try {
++    const { bucket, path } = await req.json();
++    // TODO: fetch ZIP from Supabase storage, unzip, and re-upload files
++    return new Response(JSON.stringify({ success: true }), { status: 200 });
++  } catch (err) {
++    console.error("extract-zip error:", err);
++    return new Response(JSON.stringify({ success: false, error: err.message }), { status: 500 });
++  }
++});
+
+# Python import fix
+diff --git a/server/ADA_Online.py b/server/ADA_Online.py
+index 5555555..6666666
+--- a/server/ADA_Online.py
++++ b/server/ADA_Online.py
+@@
+-from google.generativeai.types import FunctionDeclaration, Tool, GenerateContentConfig
++from google.generativeai.types import FunctionDeclaration, Tool

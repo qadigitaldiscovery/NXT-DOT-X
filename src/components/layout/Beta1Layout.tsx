@@ -1,5 +1,8 @@
+<<<<<<< Updated upstream
 
 import React from 'react';
+=======
+>>>>>>> Stashed changes
 import { Outlet } from 'react-router-dom';
 import { SharedNavbar } from './SharedNavbar';
 import { Sidebar } from '@/components/ui/sidebar';

@@ -1,9 +1,7 @@
-import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Trophy, Medal } from 'lucide-react';
-import { useAuth } from '@/context/AuthContext';
 
 export function LoyaltyStatusCard() {
   // Mock data - in a real app, this would come from a data hook
