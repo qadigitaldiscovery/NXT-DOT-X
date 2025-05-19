@@ -110,7 +110,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           name: profileData?.name,
         });
 
-        navigate('/dashboard');
+        navigate('/master');
       }
     } catch (error: any) {
       toast.error(error.message || 'Error signing in');

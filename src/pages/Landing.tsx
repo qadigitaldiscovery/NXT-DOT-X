@@ -13,12 +13,12 @@ const Landing = () => {
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
-  const { login, isAuthenticated } = useAuth();
+  const { signIn, isAuthenticated } = useAuth();
 
-  // Check if user is already logged in
+  // Check if user is already logged in and redirect to master dashboard
   useEffect(() => {
     if (isAuthenticated) {
-      navigate('/');
+      navigate('/master');
     }
   }, [navigate, isAuthenticated]);
 
@@ -39,11 +39,15 @@ const Landing = () => {
     }
 
     // Authenticate user
-    const success = await login(usernameOrEmail, password);
-    if (success) {
-      navigate('/');
+    try {
+      await signIn(usernameOrEmail, password);
+      // Navigation is handled by AuthContext after successful login
+    } catch (error: any) {
+      console.error('Login error:', error);
+      toast.error(error.message || 'Failed to login');
+    } finally {
+      setIsLoading(false);
     }
-    setIsLoading(false);
   };
 
   return (

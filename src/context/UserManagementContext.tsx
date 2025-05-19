@@ -54,27 +54,56 @@ export function UserManagementProvider({ children }: { children: React.ReactNode
       }
     }
 
-    async function fetchRoles() {
-      const { data, error } = await supabase.from('roles').select('*');
+    // Roles and permissions are stored in the profiles table
+    async function fetchUsersWithRoles() {
+      interface ProfileData {
+        id: string;
+        name: string | null;
+        role: string | null;
+        users: {
+          email: string;
+          created_at: string;
+        } | null;
+      }
+
+      const { data, error } = await supabase
+        .from('profiles')
+        .select(`
+          id,
+          name,
+          role,
+          users (
+            email,
+            created_at
+          )
+        `) as { data: ProfileData[] | null; error: Error | null };
+
       if (error) {
-        console.error('Error fetching roles:', error);
+        console.error('Error fetching users:', error);
       } else {
-        setRoles(data || []);
+        // Map profile data to User interface
+        const mappedUsers = (data || []).map(profile => ({
+          id: profile.id,
+          username: profile.name || '',
+          email: profile.users?.email || '',
+          role: profile.role || 'user',
+          status: 'active',
+          created: profile.users?.created_at || new Date().toISOString()
+        }));
+        setUsers(mappedUsers);
+
+        // Extract unique roles, filtering out null values
+        const uniqueRoles = [...new Set(data?.map(user => user.role).filter((role): role is string => role !== null) || [])];
+        setRoles(uniqueRoles.map(role => ({
+          id: role,
+          name: role,
+          description: `${role} role`,
+          permissions: []
+        })));
       }
     }
 
-    async function fetchPermissions() {
-      const { data, error } = await supabase.from('permissions').select('*');
-      if (error) {
-        console.error('Error fetching permissions:', error);
-      } else {
-        setPermissions(data || []);
-      }
-    }
-
-    fetchUsers();
-    fetchRoles();
-    fetchPermissions();
+    fetchUsersWithRoles();
   }, []);
 
   const addUser = async (user: User) => {
