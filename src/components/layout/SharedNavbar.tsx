@@ -1,3 +1,4 @@
+
 import { Button } from '@/components/ui/button';
 import { Menu, User } from 'lucide-react';
 import { useLocation } from 'react-router-dom';
@@ -31,4 +32,3 @@ export function SharedNavbar({ onMenuClick, moduleTitle }: SharedNavbarProps) {
     </header>
   );
 }
-

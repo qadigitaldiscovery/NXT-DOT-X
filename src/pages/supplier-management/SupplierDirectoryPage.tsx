@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
@@ -10,8 +10,9 @@ import { PlusCircle, Search, RefreshCw, Upload } from 'lucide-react';
 import { BulkSupplierUpload } from '@/components/uploads/BulkSupplierUpload';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { toast } from 'sonner';
+import { SupplierManagementLayout } from '@/components/layout/SupplierManagementLayout';
 
-const SupplierDirectoryPage = () => {
+const SupplierDirectoryPageContent = () => {
   const navigate = useNavigate();
   const { refetch } = useSuppliers();
   const [showBulkUploadDialog, setShowBulkUploadDialog] = useState(false);
@@ -91,6 +92,14 @@ const SupplierDirectoryPage = () => {
         </DialogContent>
       </Dialog>
     </div>
+  );
+};
+
+const SupplierDirectoryPage = () => {
+  return (
+    <SupplierManagementLayout>
+      <SupplierDirectoryPageContent />
+    </SupplierManagementLayout>
   );
 };
 
