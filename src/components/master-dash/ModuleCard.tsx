@@ -1,42 +1,50 @@
 
 import React from 'react';
 import { cn } from '@/lib/utils';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { useNavigate } from 'react-router-dom';
 
 interface ModuleCardProps {
   title: string;
-  description?: string | React.ReactNode;
-  icon?: React.ReactNode;
-  onClick?: () => void;
+  icon: React.ReactNode;
+  path: string;
   className?: string;
 }
 
 export const ModuleCard: React.FC<ModuleCardProps> = ({
   title,
-  description,
   icon,
-  onClick,
+  path,
   className
 }) => {
+  const navigate = useNavigate();
+  
+  const handleClick = () => {
+    if (path) {
+      navigate(path);
+    } else {
+      console.warn(`No path defined for module: ${title}`);
+    }
+  };
+
   return (
-    <Card 
+    <div 
       className={cn(
-        "overflow-hidden transition-all hover:shadow-md cursor-pointer border border-[#e5effc] dark:border-[#2d3748] bg-white dark:bg-[#1a1f2c]",
+        "flex flex-col items-center justify-center p-6 cursor-pointer transition-all",
+        "hover:scale-105 active:scale-95 text-center",
+        "bg-gradient-to-br from-[#f7faff] to-[#e5effc] dark:from-[#1a1f2c] dark:to-[#2d3748]",
+        "rounded-xl shadow-lg hover:shadow-xl border-2 border-[#e5effc] dark:border-[#2d3748]",
+        "transform perspective-1000 hover:-rotate-2",
         className
       )}
-      onClick={onClick}
+      onClick={handleClick}
     >
-      <CardHeader className="pb-2 bg-gradient-to-r from-[#f7faff] to-[#e5effc] dark:from-[#1a1f2c] dark:to-[#2d3748]">
-        <div className="flex items-center justify-between">
-          <CardTitle className="text-xl text-[#005fea] dark:text-[#4cacfe]">{title}</CardTitle>
-          {icon && <div className="text-[#005fea] dark:text-[#4cacfe]">{icon}</div>}
+      <div className="text-[#005fea] dark:text-[#4cacfe] mb-4 transform transition-transform hover:rotate-12">
+        <div className="p-4 bg-white dark:bg-[#1a1f2c] rounded-full shadow-inner border border-[#e5effc] dark:border-[#2d3748]">
+          {icon}
         </div>
-      </CardHeader>
-      {description && (
-        <CardContent className="pt-4">
-          <div className="text-sm text-muted-foreground">{description}</div>
-        </CardContent>
-      )}
-    </Card>
+      </div>
+      <h3 className="font-bold text-lg text-[#005fea] dark:text-[#4cacfe]">{title}</h3>
+    </div>
   );
 };
+

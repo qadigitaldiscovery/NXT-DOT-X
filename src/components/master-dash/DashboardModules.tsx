@@ -1,11 +1,7 @@
 
 import { useState } from 'react';
-import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import PrimaryModules from './modules/PrimaryModules';
 import { SetupTestUser } from '@/components/SetupTestUser';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-import { Search } from 'lucide-react';
 import SearchAndFilter from './SearchAndFilter';
 
 export default function DashboardModules() {
@@ -27,7 +23,7 @@ export default function DashboardModules() {
         </div>
       </div>
       
-      {/* Search and Filter Section using the new color scheme */}
+      {/* Search and Filter Section */}
       <SearchAndFilter 
         searchQuery={searchQuery}
         setSearchQuery={setSearchQuery}
