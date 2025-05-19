@@ -1,8 +1,9 @@
-import React from 'react';
+
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Share2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+
 export default function SocialMediaMarketing() {
   const navigate = useNavigate();
   return <Card className="col-span-1 bg-zinc-400">

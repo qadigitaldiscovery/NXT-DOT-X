@@ -1,11 +1,11 @@
+
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Pencil, Trash2, RefreshCcw, Search } from 'lucide-react';
+import { Pencil, Trash2, RefreshCcw } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import { useNavigate } from 'react-router-dom';
 
 interface Supplier {
   id: string;
@@ -24,7 +24,6 @@ interface SuppliersTableProps {
 
 export function SuppliersTable({ suppliers, onDelete, onEdit, onRefresh }: SuppliersTableProps) {
   const [searchQuery, setSearchQuery] = useState('');
-  const navigate = useNavigate();
 
   const filteredSuppliers = suppliers.filter(supplier =>
     supplier.name.toLowerCase().includes(searchQuery.toLowerCase()) ||

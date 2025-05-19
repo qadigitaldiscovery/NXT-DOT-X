@@ -1,4 +1,3 @@
-
 import { 
   LayoutDashboard, 
   Building, 
@@ -14,8 +13,7 @@ import {
   Database,
   BookOpen,
   FileCog,
-  ServerCog,
-  Folder
+  ServerCog
 } from 'lucide-react';
 import { NavItem, NavCategory } from './types';
 

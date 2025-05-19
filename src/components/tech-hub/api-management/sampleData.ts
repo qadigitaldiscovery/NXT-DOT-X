@@ -1,5 +1,6 @@
 
-import { EndpointFormValues } from './types';
+// No need to import EndpointFormValues if we're not using it directly in this file
+// import { EndpointFormValues } from './types';
 
 export const apiProviders = [
   {
@@ -32,6 +33,7 @@ export const apiProviders = [
   }
 ];
 
+// Make this a regular array, not readonly
 export const sampleEndpoints = [
   {
     id: 'endpoint-1',
@@ -60,14 +62,14 @@ export const sampleEndpoints = [
     status: 'inactive',
     lastUsed: '2025-04-28T11:15:00Z',
   }
-] as const;
+];
 
-// Function to simulate API key verification
+// Function to simulate API key verification - fix the return type issue
 export const verifyApiKey = (apiKey: string): Promise<boolean> => {
   return new Promise((resolve) => {
     setTimeout(() => {
-      // Simple check to validate non-empty strings
-      resolve(apiKey && apiKey.length > 0);
+      // Simple check to validate non-empty strings - ensure it returns a boolean
+      resolve(apiKey ? apiKey.length > 0 : false);
     }, 1000);
   });
 };
