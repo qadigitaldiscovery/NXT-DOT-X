@@ -8,17 +8,19 @@ export function useDatabaseTables(searchTerm: string = '') {
     queryFn: async () => {
       console.log('Fetching tables with search term:', searchTerm);
 
+      // Use metadata API instead of direct pg_tables query for better compatibility
       const { data, error } = await supabase
-        .from('pg_tables')
-        .select('tablename')
-        .ilike('tablename', `%${searchTerm}%`);
+        .from('information_schema.tables')
+        .select('table_name')
+        .eq('table_schema', 'public')
+        .ilike('table_name', `%${searchTerm}%`);
 
       if (error) {
         console.error('Error fetching tables:', error);
         return [];
       }
 
-      return data?.map((table) => ({ name: table.tablename })) || [];
+      return data?.map((table) => ({ name: table.table_name })) || [];
     },
     refetchOnWindowFocus: false // Disable automatic refetches on window focus for better control
   });
