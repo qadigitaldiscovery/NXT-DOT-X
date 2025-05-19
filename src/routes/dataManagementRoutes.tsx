@@ -1,5 +1,6 @@
+
 import React from 'react';
-import { Route, Routes } from "react-router-dom";
+import { Route } from "react-router-dom";
 import { PlatformLayout } from "@/components/layouts/PlatformLayout";
 import { Users, Settings, BarChart3, FileUp, Home, Database, Building, Calculator, LineChart, ArrowDownUp, FileDown, FileArchive, BrainCircuit, Server } from 'lucide-react';
 import type { NavCategory } from "@/components/layout/sidebar/types";
@@ -56,145 +57,143 @@ export const dataNavCategories: NavCategory[] = dataManagementCategory ? [dataMa
 ];
 
 export const DataManagementRoutes = () => {
-  return (
-    <Routes>
-      <Route path="/" element={
-        <PlatformLayout moduleTitle="Data Management Dashboard" useGlobalNavigation={true}>
-          <DashboardHome />
-        </PlatformLayout>
-      } />
-      
-      <Route path="deployment-test" element={
-        <PlatformLayout moduleTitle="Deployment Test" useGlobalNavigation={true}>
-          <DeploymentTest />
-        </PlatformLayout>
-      } />
-      
-      <Route path="settings" element={
-        <PlatformLayout moduleTitle="Data Management Settings" useGlobalNavigation={true}>
-          <DataManagementSettings />
-        </PlatformLayout>
-      } />
-      
-      <Route path="suppliers" element={
-        <PlatformLayout moduleTitle="Suppliers" useGlobalNavigation={true}>
-          <Suppliers />
-        </PlatformLayout>
-      } />
-      
-      <Route path="suppliers/new" element={
-        <PlatformLayout moduleTitle="Add New Supplier" useGlobalNavigation={true}>
-          <NewSupplier />
-        </PlatformLayout>
-      } />
-      
-      <Route path="supplier-vendors" element={
-        <PlatformLayout moduleTitle="Suppliers" useGlobalNavigation={true}>
-          <Suppliers />
-        </PlatformLayout>
-      } />
-      
-      <Route path="supplier-vendors/new" element={
-        <PlatformLayout moduleTitle="Add New Supplier" useGlobalNavigation={true}>
-          <NewSupplier />
-        </PlatformLayout>
-      } />
-      
-      <Route path="customers" element={
-        <PlatformLayout moduleTitle="Customers" useGlobalNavigation={true}>
-          <CustomersPage />
-        </PlatformLayout>
-      } />
-      
-      <Route path="supplier-costing" element={
-        <PlatformLayout moduleTitle="Supplier Costing" useGlobalNavigation={true}>
-          <SupplierCosting />
-        </PlatformLayout>
-      } />
-      
-      <Route path="cost-management" element={
-        <PlatformLayout moduleTitle="Cost Management" useGlobalNavigation={true}>
-          <CostDashboard />
-        </PlatformLayout>
-      } />
-      
-      <Route path="cost-analysis" element={
-        <PlatformLayout moduleTitle="Cost Analysis" useGlobalNavigation={true}>
-          <CostAnalysis />
-        </PlatformLayout>
-      } />
-      
-      <Route path="pricing/competitor-pricing" element={
-        <PlatformLayout moduleTitle="Competitor Pricing" useGlobalNavigation={true}>
-          <CompetitorPricing />
-        </PlatformLayout>
-      } />
-      
-      <Route path="pricing/price-management" element={
-        <PlatformLayout moduleTitle="Price Management" useGlobalNavigation={true}>
-          <PriceManagement />
-        </PlatformLayout>
-      } />
-      
-      <Route path="uploads" element={
-        <PlatformLayout moduleTitle="File Uploads" useGlobalNavigation={true}>
-          <UploadsPage />
-        </PlatformLayout>
-      } />
-      
-      <Route path="uploads/new" element={
-        <PlatformLayout moduleTitle="New Upload" useGlobalNavigation={true}>
-          <NewUploadPage />
-        </PlatformLayout>
-      } />
-      
-      <Route path="uploads/holding" element={
-        <PlatformLayout moduleTitle="Upload Holding" useGlobalNavigation={true}>
-          <UploadsPage />
-        </PlatformLayout>
-      } />
-      
-      <Route path="uploads/bulk-import" element={
-        <PlatformLayout moduleTitle="Bulk Import" useGlobalNavigation={true}>
-          <UploadsPage />
-        </PlatformLayout>
-      } />
-      
-      <Route path="documents" element={
-        <PlatformLayout moduleTitle="Documents" useGlobalNavigation={true}>
-          <DocumentsPage />
-        </PlatformLayout>
-      } />
-      
-      <Route path="export-data" element={
-        <PlatformLayout moduleTitle="Export Data" useGlobalNavigation={true}>
-          <ExportData />
-        </PlatformLayout>
-      } />
-      
-      <Route path="insights" element={
-        <PlatformLayout moduleTitle="Data Insights" useGlobalNavigation={true}>
-          <DataInsights />
-        </PlatformLayout>
-      } />
-      
-      <Route path="connections" element={
-        <PlatformLayout moduleTitle="Data Connections" useGlobalNavigation={true}>
-          <DataConnections />
-        </PlatformLayout>
-      } />
-      
-      <Route path="vendor-supplier-comparison" element={
-        <PlatformLayout moduleTitle="Supplier Comparison" useGlobalNavigation={true}>
-          <SupplierComparison />
-        </PlatformLayout>
-      } />
-      
-      <Route path="*" element={
-        <PlatformLayout moduleTitle="Not Found" useGlobalNavigation={true}>
-          <NotFound />
-        </PlatformLayout>
-      } />
-    </Routes>
-  );
+  return [
+    <Route key="data-management-index" path="/data-management" element={
+      <PlatformLayout moduleTitle="Data Management Dashboard" useGlobalNavigation={true}>
+        <DashboardHome />
+      </PlatformLayout>
+    } />,
+    
+    <Route key="data-management-deployment-test" path="/data-management/deployment-test" element={
+      <PlatformLayout moduleTitle="Deployment Test" useGlobalNavigation={true}>
+        <DeploymentTest />
+      </PlatformLayout>
+    } />,
+    
+    <Route key="data-management-settings" path="/data-management/settings" element={
+      <PlatformLayout moduleTitle="Data Management Settings" useGlobalNavigation={true}>
+        <DataManagementSettings />
+      </PlatformLayout>
+    } />,
+    
+    <Route key="data-management-suppliers" path="/data-management/suppliers" element={
+      <PlatformLayout moduleTitle="Suppliers" useGlobalNavigation={true}>
+        <Suppliers />
+      </PlatformLayout>
+    } />,
+    
+    <Route key="data-management-suppliers-new" path="/data-management/suppliers/new" element={
+      <PlatformLayout moduleTitle="Add New Supplier" useGlobalNavigation={true}>
+        <NewSupplier />
+      </PlatformLayout>
+    } />,
+    
+    <Route key="data-management-supplier-vendors" path="/data-management/supplier-vendors" element={
+      <PlatformLayout moduleTitle="Suppliers" useGlobalNavigation={true}>
+        <Suppliers />
+      </PlatformLayout>
+    } />,
+    
+    <Route key="data-management-supplier-vendors-new" path="/data-management/supplier-vendors/new" element={
+      <PlatformLayout moduleTitle="Add New Supplier" useGlobalNavigation={true}>
+        <NewSupplier />
+      </PlatformLayout>
+    } />,
+    
+    <Route key="data-management-customers" path="/data-management/customers" element={
+      <PlatformLayout moduleTitle="Customers" useGlobalNavigation={true}>
+        <CustomersPage />
+      </PlatformLayout>
+    } />,
+    
+    <Route key="data-management-supplier-costing" path="/data-management/supplier-costing" element={
+      <PlatformLayout moduleTitle="Supplier Costing" useGlobalNavigation={true}>
+        <SupplierCosting />
+      </PlatformLayout>
+    } />,
+    
+    <Route key="data-management-cost-management" path="/data-management/cost-management" element={
+      <PlatformLayout moduleTitle="Cost Management" useGlobalNavigation={true}>
+        <CostDashboard />
+      </PlatformLayout>
+    } />,
+    
+    <Route key="data-management-cost-analysis" path="/data-management/cost-analysis" element={
+      <PlatformLayout moduleTitle="Cost Analysis" useGlobalNavigation={true}>
+        <CostAnalysis />
+      </PlatformLayout>
+    } />,
+    
+    <Route key="data-management-pricing-competitor" path="/data-management/pricing/competitor-pricing" element={
+      <PlatformLayout moduleTitle="Competitor Pricing" useGlobalNavigation={true}>
+        <CompetitorPricing />
+      </PlatformLayout>
+    } />,
+    
+    <Route key="data-management-pricing-price-management" path="/data-management/pricing/price-management" element={
+      <PlatformLayout moduleTitle="Price Management" useGlobalNavigation={true}>
+        <PriceManagement />
+      </PlatformLayout>
+    } />,
+    
+    <Route key="data-management-uploads" path="/data-management/uploads" element={
+      <PlatformLayout moduleTitle="File Uploads" useGlobalNavigation={true}>
+        <UploadsPage />
+      </PlatformLayout>
+    } />,
+    
+    <Route key="data-management-uploads-new" path="/data-management/uploads/new" element={
+      <PlatformLayout moduleTitle="New Upload" useGlobalNavigation={true}>
+        <NewUploadPage />
+      </PlatformLayout>
+    } />,
+    
+    <Route key="data-management-uploads-holding" path="/data-management/uploads/holding" element={
+      <PlatformLayout moduleTitle="Upload Holding" useGlobalNavigation={true}>
+        <UploadsPage />
+      </PlatformLayout>
+    } />,
+    
+    <Route key="data-management-uploads-bulk-import" path="/data-management/uploads/bulk-import" element={
+      <PlatformLayout moduleTitle="Bulk Import" useGlobalNavigation={true}>
+        <UploadsPage />
+      </PlatformLayout>
+    } />,
+    
+    <Route key="data-management-documents" path="/data-management/documents" element={
+      <PlatformLayout moduleTitle="Documents" useGlobalNavigation={true}>
+        <DocumentsPage />
+      </PlatformLayout>
+    } />,
+    
+    <Route key="data-management-export-data" path="/data-management/export-data" element={
+      <PlatformLayout moduleTitle="Export Data" useGlobalNavigation={true}>
+        <ExportData />
+      </PlatformLayout>
+    } />,
+    
+    <Route key="data-management-insights" path="/data-management/insights" element={
+      <PlatformLayout moduleTitle="Data Insights" useGlobalNavigation={true}>
+        <DataInsights />
+      </PlatformLayout>
+    } />,
+    
+    <Route key="data-management-connections" path="/data-management/connections" element={
+      <PlatformLayout moduleTitle="Data Connections" useGlobalNavigation={true}>
+        <DataConnections />
+      </PlatformLayout>
+    } />,
+    
+    <Route key="data-management-vendor-supplier" path="/data-management/vendor-supplier-comparison" element={
+      <PlatformLayout moduleTitle="Supplier Comparison" useGlobalNavigation={true}>
+        <SupplierComparison />
+      </PlatformLayout>
+    } />,
+    
+    <Route key="data-management-not-found" path="/data-management/*" element={
+      <PlatformLayout moduleTitle="Not Found" useGlobalNavigation={true}>
+        <NotFound />
+      </PlatformLayout>
+    } />
+  ];
 };
