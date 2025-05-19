@@ -1,7 +1,7 @@
 
-// No need to import EndpointFormValues if we're not using it directly in this file
+import { ApiProvider, ApiEndpoint } from './types';
 
-export const apiProviders = [
+export const apiProviders: ApiProvider[] = [
   {
     id: 'openai',
     name: 'OpenAI',
@@ -32,14 +32,14 @@ export const apiProviders = [
   }
 ];
 
-// Explicitly specify the correct types for method to match the ApiEndpoint interface
-export const sampleEndpoints = [
+// Create sample endpoints with the correct type
+export const sampleEndpoints: ApiEndpoint[] = [
   {
     id: 'endpoint-1',
     name: 'Primary Chat Endpoint',
     url: 'https://api.openai.com/v1/chat/completions',
     apiKey: 'sk-.....',
-    method: 'POST' as const, // Type assertion to specific string literal
+    method: 'POST',
     status: 'active',
     lastUsed: '2025-05-01T08:30:00Z',
   },
@@ -48,7 +48,7 @@ export const sampleEndpoints = [
     name: 'Embeddings API',
     url: 'https://api.openai.com/v1/embeddings',
     apiKey: 'sk-.....',
-    method: 'POST' as const,
+    method: 'POST',
     status: 'active',
     lastUsed: '2025-05-05T14:22:00Z',
   },
@@ -57,18 +57,18 @@ export const sampleEndpoints = [
     name: 'Custom Endpoint',
     url: 'https://api.yourcompany.com/ai/process',
     apiKey: 'api-key-.....',
-    method: 'POST' as const,
+    method: 'POST',
     status: 'inactive',
     lastUsed: '2025-04-28T11:15:00Z',
   }
 ];
 
-// Function to simulate API key verification - fix the return type issue
+// Function to simulate API key verification with a proper boolean return
 export const verifyApiKey = (apiKey: string): Promise<boolean> => {
   return new Promise((resolve) => {
     setTimeout(() => {
       // Simple check to validate non-empty strings - ensure it returns a boolean
-      resolve(apiKey ? apiKey.length > 0 : false);
+      resolve(Boolean(apiKey && apiKey.length > 0));
     }, 1000);
   });
 };

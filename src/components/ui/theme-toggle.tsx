@@ -1,5 +1,4 @@
 
-// Remove the dependency on next-themes since it's not available
 import { Moon, Sun } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useContext } from "react";

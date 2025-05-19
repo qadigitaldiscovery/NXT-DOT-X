@@ -1,15 +1,20 @@
 
-import React, { createContext, useState, useEffect, ReactNode } from 'react';
+import React, { createContext, useState, useEffect, ReactNode, useContext } from 'react';
 
 interface ThemeContextType {
   theme: 'light' | 'dark';
   setTheme: (theme: 'light' | 'dark') => void;
+  toggleTheme: () => void;
 }
 
 export const ThemeContext = createContext<ThemeContextType>({
   theme: 'light',
   setTheme: () => {},
+  toggleTheme: () => {},
 });
+
+// Create and export the useTheme hook
+export const useTheme = () => useContext(ThemeContext);
 
 interface ThemeProviderProps {
   children: ReactNode;
@@ -41,8 +46,13 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
     localStorage.setItem('theme', theme);
   }, [theme]);
   
+  // Add a toggleTheme function for convenience
+  const toggleTheme = () => {
+    setTheme(prevTheme => prevTheme === 'light' ? 'dark' : 'light');
+  };
+  
   return (
-    <ThemeContext.Provider value={{ theme, setTheme }}>
+    <ThemeContext.Provider value={{ theme, setTheme, toggleTheme }}>
       {children}
     </ThemeContext.Provider>
   );
