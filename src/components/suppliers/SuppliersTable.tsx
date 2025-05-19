@@ -1,5 +1,5 @@
 
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -8,52 +8,62 @@ import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { useNavigate } from 'react-router-dom';
 import { Supplier } from '@/hooks/suppliers/types';
+import { useSuppliers } from '@/hooks/use-suppliers';
 
 interface SuppliersTableProps {
-  suppliers?: Supplier[];
   onDelete?: (id: string) => void;
   onEdit?: (id: string) => void;
   onRefresh?: () => void;
 }
 
 export function SuppliersTable({ 
-  suppliers = [], 
-  onDelete = () => {}, 
-  onEdit = () => {}, 
-  onRefresh = () => {} 
+  onDelete, 
+  onEdit, 
+  onRefresh 
 }: SuppliersTableProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const navigate = useNavigate();
-
-  // Make sure suppliers is an array before filtering
-  const suppliersList = Array.isArray(suppliers) ? suppliers : [];
+  const { data: suppliers = [], isLoading, refetch } = useSuppliers();
   
-  const filteredSuppliers = suppliersList.filter(supplier =>
+  // Filter suppliers based on search query
+  const filteredSuppliers = suppliers.filter(supplier =>
     supplier.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
     (supplier.email && supplier.email.toLowerCase().includes(searchQuery.toLowerCase())) ||
     (supplier.phone && supplier.phone.toLowerCase().includes(searchQuery.toLowerCase()))
   );
   
-  // Use default handler functions if not provided through props
+  // Handle edit action - either use provided handler or navigate to edit page
   const handleEdit = (id: string) => {
     if (onEdit) {
       onEdit(id);
     } else {
-      navigate(`/data-management/suppliers/${id}`);
+      navigate(`/supplier-management/${id}`);
     }
   };
 
+  // Handle delete action
   const handleDelete = (id: string) => {
-    onDelete(id);
+    if (onDelete) {
+      onDelete(id);
+    }
   };
 
+  // Handle refresh action
   const handleRefresh = () => {
-    onRefresh();
+    if (onRefresh) {
+      onRefresh();
+    } else {
+      refetch();
+    }
   };
+
+  if (isLoading) {
+    return <div className="text-center py-8">Loading suppliers...</div>;
+  }
 
   return (
     <Card>
-      <CardContent>
+      <CardContent className="p-4">
         <div className="flex flex-wrap gap-4 items-center justify-between pb-4">
           <Input
             placeholder="Search suppliers..."

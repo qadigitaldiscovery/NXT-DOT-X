@@ -9,11 +9,12 @@ import SupplierDirectoryPage from '@/pages/supplier-management/SupplierDirectory
 export const SupplierManagementRoutes = () => {
   return [
     <Route key="supplier-management" path="/supplier-management">
-      <Route index element={<Navigate to="/data-management/suppliers" replace />} />
+      <Route index element={<Navigate to="/supplier-management/directory" replace />} />
       <Route path="directory" element={<SupplierDirectoryPage />} />
       <Route path="settings" element={<Navigate to="/data-management/suppliers/settings" replace />} />
       <Route path=":id" element={<VendorDetailPage />} />
-      <Route path="*" element={<Navigate to="/data-management/suppliers" replace />} />
+      <Route path="new" element={<Navigate to="/data-management/suppliers/new" replace />} />
+      <Route path="*" element={<Navigate to="/supplier-management/directory" replace />} />
     </Route>
   ];
 };

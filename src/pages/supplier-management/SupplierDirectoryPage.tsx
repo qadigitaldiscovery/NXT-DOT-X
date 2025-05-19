@@ -9,29 +9,33 @@ import { useSuppliers } from '@/hooks/use-suppliers';
 import { PlusCircle, Search, RefreshCw, Upload } from 'lucide-react';
 import { BulkSupplierUpload } from '@/components/uploads/BulkSupplierUpload';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { toast } from 'sonner';
 
 const SupplierDirectoryPage = () => {
   const navigate = useNavigate();
-  const { data: suppliers, isLoading, refetch } = useSuppliers();
-  const [searchQuery, setSearchQuery] = useState('');
+  const { refetch } = useSuppliers();
   const [showBulkUploadDialog, setShowBulkUploadDialog] = useState(false);
   
-  const filteredSuppliers = suppliers?.filter(supplier => 
-    supplier.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    supplier.code.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    (supplier.contact_name && supplier.contact_name.toLowerCase().includes(searchQuery.toLowerCase()))
-  );
-
   const handleAddSupplier = () => {
     navigate('/supplier-management/new');
   };
 
   const handleRefresh = () => {
     refetch();
+    toast.success("Supplier data refreshed");
   };
 
   const handleBulkUpload = () => {
     setShowBulkUploadDialog(true);
+  };
+
+  const handleEdit = (id: string) => {
+    navigate(`/supplier-management/${id}`);
+  };
+  
+  const handleDelete = (id: string) => {
+    // In a real implementation, this would open a confirmation dialog
+    toast.info(`Would delete supplier with ID: ${id}`);
   };
   
   return (
@@ -43,55 +47,39 @@ const SupplierDirectoryPage = () => {
         </p>
       </div>
       
-      <Card>
-        <CardHeader>
-          <CardTitle>Suppliers</CardTitle>
-          <CardDescription>
-            Browse, search and manage your supplier database
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between mb-4">
-            <div className="flex items-center gap-2 w-full md:w-1/2">
-              <Search className="h-4 w-4 text-muted-foreground" />
-              <Input
-                placeholder="Search suppliers..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full"
-              />
-            </div>
-            <div className="flex items-center gap-2">
-              <Button 
-                variant="outline" 
-                onClick={handleRefresh} 
-                className="flex items-center gap-1"
-              >
-                <RefreshCw className="h-4 w-4" />
-                Refresh
-              </Button>
-              <Button 
-                variant="outline"
-                onClick={handleBulkUpload}
-                className="flex items-center gap-1"
-              >
-                <Upload className="h-4 w-4" />
-                Bulk Import
-              </Button>
-              <Button 
-                onClick={handleAddSupplier}
-                className="flex items-center gap-1"
-              >
-                <PlusCircle className="h-4 w-4" />
-                Add Supplier
-              </Button>
-            </div>
-          </div>
-          
-          {/* Modified: We're now using SuppliersTable without passing any props */}
-          <SuppliersTable />
-        </CardContent>
-      </Card>
+      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+        <div className="flex items-center gap-2">
+          <Button 
+            variant="outline" 
+            onClick={handleRefresh} 
+            className="flex items-center gap-1"
+          >
+            <RefreshCw className="h-4 w-4" />
+            Refresh
+          </Button>
+          <Button 
+            variant="outline"
+            onClick={handleBulkUpload}
+            className="flex items-center gap-1"
+          >
+            <Upload className="h-4 w-4" />
+            Bulk Import
+          </Button>
+        </div>
+        <Button 
+          onClick={handleAddSupplier}
+          className="flex items-center gap-1"
+        >
+          <PlusCircle className="h-4 w-4" />
+          Add Supplier
+        </Button>
+      </div>
+      
+      <SuppliersTable 
+        onDelete={handleDelete}
+        onEdit={handleEdit}
+        onRefresh={handleRefresh}
+      />
 
       {/* Bulk Supplier Import Dialog */}
       <Dialog open={showBulkUploadDialog} onOpenChange={setShowBulkUploadDialog}>
