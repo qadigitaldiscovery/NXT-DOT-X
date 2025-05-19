@@ -1,11 +1,8 @@
 
 import { ModuleCard } from '../ModuleCard';
-import { useNavigate } from 'react-router-dom';
 import { Megaphone, TrendingUp } from 'lucide-react';
 
 const BrandMarketing = () => {
-  const navigate = useNavigate();
-
   const marketingModules = [
     {
       title: 'Campaign Analytics',

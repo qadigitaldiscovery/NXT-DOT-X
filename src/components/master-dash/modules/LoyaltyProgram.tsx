@@ -8,11 +8,13 @@ const LoyaltyProgram = () => {
       title: 'Loyalty Dashboard',
       icon: <Gem className="h-8 w-8 text-emerald-500" />,
       path: '/loyalty/dashboard',
+      color: "bg-gradient-to-br from-emerald-50 to-emerald-100"
     },
     {
       title: 'Rewards Management',
       icon: <Award className="h-8 w-8 text-emerald-500" />,
       path: '/loyalty/rewards',
+      color: "bg-gradient-to-br from-green-50 to-green-100"
     }
   ];
 
@@ -27,6 +29,7 @@ const LoyaltyProgram = () => {
             title={module.title}
             icon={module.icon}
             path={module.path}
+            color={module.color}
           />
         ))}
       </div>

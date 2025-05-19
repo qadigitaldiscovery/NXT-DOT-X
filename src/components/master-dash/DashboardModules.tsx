@@ -25,7 +25,7 @@ export default function DashboardModules() {
         transition={{ duration: 0.5, delay: 0.2 }}
       >
         <div>
-          <h1 className="text-3xl font-bold mb-2 text-transparent bg-clip-text bg-gradient-to-r from-[#005fea] to-[#4cacfe]">
+          <h1 className="text-3xl font-bold mb-2 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
             Platform Modules
           </h1>
           <p className="text-muted-foreground">Access and manage your platform modules</p>

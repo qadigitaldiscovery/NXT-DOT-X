@@ -8,11 +8,13 @@ const AiArmy = () => {
       title: 'AI Studio',
       icon: <BrainCircuit className="h-8 w-8 text-purple-500" />,
       path: '/ai-army/studio',
+      color: "bg-gradient-to-br from-purple-50 to-purple-100"
     },
     {
       title: 'Bot Management',
       icon: <Bot className="h-8 w-8 text-purple-500" />,
       path: '/ai-army/bots',
+      color: "bg-gradient-to-br from-indigo-50 to-indigo-100"
     }
   ];
 
@@ -27,6 +29,7 @@ const AiArmy = () => {
             title={module.title}
             icon={module.icon}
             path={module.path}
+            color={module.color}
           />
         ))}
       </div>

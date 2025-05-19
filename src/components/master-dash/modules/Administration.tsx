@@ -8,11 +8,13 @@ const Administration = () => {
       title: 'User Management',
       icon: <Users className="h-8 w-8 text-indigo-500" />,
       path: '/admin/users',
+      color: "bg-gradient-to-br from-indigo-50 to-indigo-100"
     },
     {
       title: 'Security Controls',
       icon: <Shield className="h-8 w-8 text-indigo-500" />,
       path: '/admin/security',
+      color: "bg-gradient-to-br from-blue-50 to-blue-100"
     }
   ];
 
@@ -27,6 +29,7 @@ const Administration = () => {
             title={module.title}
             icon={module.icon}
             path={module.path}
+            color={module.color}
           />
         ))}
       </div>

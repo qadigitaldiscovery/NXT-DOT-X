@@ -8,11 +8,13 @@ const DataManagement = () => {
       title: 'Data Management',
       icon: <Database className="h-8 w-8 text-blue-500" />,
       path: '/data-management',
+      color: "bg-gradient-to-br from-blue-50 to-blue-100"
     },
     {
       title: 'Cost Analysis',
       icon: <BarChart3 className="h-8 w-8 text-blue-500" />,
       path: '/data-management/cost-analysis',
+      color: "bg-gradient-to-br from-cyan-50 to-cyan-100"
     }
   ];
 
@@ -27,6 +29,7 @@ const DataManagement = () => {
             title={module.title}
             icon={module.icon}
             path={module.path}
+            color={module.color}
           />
         ))}
       </div>
