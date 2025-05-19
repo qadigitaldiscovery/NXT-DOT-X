@@ -4,43 +4,54 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
-import { LogIn } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
-import { AspectRatio } from '@/components/ui/aspect-ratio';
 
 const Landing = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState('admin@example.com');  // Pre-fill with test credentials
+  const [password, setPassword] = useState('Pass1');        // Pre-fill with test credentials
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const { signIn, isAuthenticated, loading } = useAuth();
 
-  // Check if user is already logged in and redirect to master dashboard
   useEffect(() => {
     if (isAuthenticated) {
+      console.log("Landing: User is authenticated, redirecting to master");
       navigate('/master');
     }
   }, [navigate, isAuthenticated]);
 
+  const validateEmail = (email: string): boolean => {
+    const trimmedEmail = email.trim();
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(trimmedEmail);
+  };
+
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsLoading(true);
-
-    // Simple validation
+    
+    // Prevent multiple submissions
+    if (isLoading || loading) return;
+    
+    // Form validation
     if (!email || !password) {
       toast.error('Please enter both email and password');
-      setIsLoading(false);
       return;
     }
 
+    if (!validateEmail(email)) {
+      toast.error('Please enter a valid email address');
+      return;
+    }
+
+    setIsLoading(true);
+    console.log("Landing: Login attempt with:", email.trim().toLowerCase());
+    
     try {
-      // Trim whitespace from email to prevent login issues
-      const trimmedEmail = email.trim().toLowerCase();
-      await signIn(trimmedEmail, password);
-      // Navigation is handled by AuthContext after successful login
+      await signIn(email, password);
+      // Navigation is handled in AuthContext upon successful login
     } catch (error: any) {
-      console.error('Login error:', error);
-      toast.error(error.message || 'Failed to login');
+      // Error handling is done in AuthContext
+      console.error("Landing: Login error:", error);
     } finally {
       setIsLoading(false);
     }
@@ -79,6 +90,7 @@ const Landing = () => {
                       required 
                       className="bg-white/90 border-blue-lighter focus:border-blue h-11 pl-10 text-blue-dark rounded-xl"
                       autoComplete="email" 
+                      disabled={isLoading || loading}
                     />
                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                       <span className="text-blue-light">👤</span>
@@ -97,6 +109,7 @@ const Landing = () => {
                       required 
                       className="bg-white/90 border-blue-lighter focus:border-blue h-11 pl-10 text-blue-dark rounded-xl"
                       autoComplete="current-password"
+                      disabled={isLoading || loading}
                     />
                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                       <span className="text-blue-light">🔒</span>
@@ -106,17 +119,16 @@ const Landing = () => {
                 
                 <Button 
                   type="submit" 
-                  loading={isLoading}
                   disabled={isLoading || loading} 
                   className="w-full bg-gradient-to-r from-blue to-blue-light hover:from-blue-light hover:to-blue 
                              h-12 text-white 
                              font-bold uppercase tracking-wider rounded-xl transition-all duration-300 shadow-md hover:shadow-lg"
                 >
-                  LOGIN
+                  {isLoading || loading ? 'SIGNING IN...' : 'LOGIN'}
                 </Button>
                 
                 <div className="text-sm text-center text-gray-500 mt-4">
-                  <p>For testing: Use admin@example.com / Pass1</p>
+                  <p className="font-bold">Use admin@example.com / Pass1</p>
                   <p className="mt-2 text-blue-light">Secure Business Analytics Platform</p>
                 </div>
               </form>

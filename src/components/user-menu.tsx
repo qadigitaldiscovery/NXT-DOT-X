@@ -14,12 +14,16 @@ import { useAuth } from "@/context/AuthContext";
 import { UserCircle } from "lucide-react";
 
 export function UserMenu() {
-  const { user, logout } = useAuth();
+  const { user, signOut } = useAuth();
   const navigate = useNavigate();
 
-  const handleLogout = () => {
-    logout();
-    navigate('/landing');
+  const handleLogout = async () => {
+    try {
+      await signOut();
+      // Navigation is handled in AuthContext
+    } catch (error) {
+      console.error("Error during logout:", error);
+    }
   };
 
   return (
@@ -31,7 +35,7 @@ export function UserMenu() {
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         <DropdownMenuLabel>
-          {user?.username || "Guest"} 
+          {user?.name || user?.email || "Guest"} 
           {user?.role && <span className="text-xs ml-1 text-muted-foreground">({user.role})</span>}
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
