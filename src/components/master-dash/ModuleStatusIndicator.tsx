@@ -15,17 +15,17 @@ const getStatusColor = (status: ModuleStatus | string): string => {
   switch (status) {
     case 'active':
     case 'green':
-      return 'bg-green-500/15 text-green-500 border-green-500/30';
+      return 'bg-[#e5effc] text-[#005fea] border-[#aee1f9]';
     case 'beta':
     case 'orange':
     case 'maintenance':
-      return 'bg-amber-500/15 text-amber-500 border-amber-500/30';
+      return 'bg-[#fdf0ec] text-[#f97316] border-[#fdcfbc]';
     case 'deprecated':
     case 'red':
     case 'inactive':
-      return 'bg-red-500/15 text-red-500 border-red-500/30';
+      return 'bg-[#fdecf0] text-[#ef4444] border-[#faccda]';
     default:
-      return 'bg-slate-500/15 text-slate-500 border-slate-500/30';
+      return 'bg-[#f1f0fb] text-[#6e59a5] border-[#d6bcfa]';
   }
 };
 

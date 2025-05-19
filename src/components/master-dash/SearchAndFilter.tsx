@@ -18,16 +18,16 @@ const SearchAndFilter: React.FC<SearchAndFilterProps> = ({
   setActiveCategory
 }) => {
   return (
-    <div className="flex flex-wrap items-center justify-between gap-4 mb-6 bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm border border-gray-100 dark:border-gray-700">
+    <div className="flex flex-wrap items-center justify-between gap-4 mb-6 bg-white dark:bg-[#1a1f2c] p-4 rounded-lg shadow-sm border border-[#e5effc] dark:border-[#2d3748]">
       {/* Category filters on the left */}
       <div className="flex flex-wrap gap-2">
         {categories.map(category => (
           <button
             key={category}
             className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-              activeCategory === category 
-                ? 'bg-blue-500 text-white' 
-                : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
+              activeCategory.toLowerCase() === category.toLowerCase()
+                ? 'bg-[#005fea] text-white' 
+                : 'bg-[#e5effc] dark:bg-[#2d3748] text-gray-700 dark:text-gray-300 hover:bg-[#4cacfe] hover:text-white dark:hover:bg-[#005fea]'
             }`}
             onClick={() => setActiveCategory(category)}
           >
@@ -42,7 +42,7 @@ const SearchAndFilter: React.FC<SearchAndFilterProps> = ({
         <input
           type="text"
           placeholder="Search modules..."
-          className="pl-10 pr-4 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-md text-gray-800 dark:text-white w-64 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="pl-10 pr-4 py-2 bg-[#f7faff] dark:bg-[#1e293b] border border-[#aee1f9] dark:border-[#3a4a63] rounded-md text-gray-800 dark:text-white w-64 focus:outline-none focus:ring-2 focus:ring-[#005fea]"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
         />
