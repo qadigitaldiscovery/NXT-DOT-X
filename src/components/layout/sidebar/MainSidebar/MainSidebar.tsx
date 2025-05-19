@@ -2,7 +2,7 @@ import React from 'react';
 import { cn } from '@/lib/utils';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useAuth } from '@/context/AuthContext';
-import { NavCategory } from '@/components/layout/sidebar/types';
+import { NavCategory, NavItem } from '@/components/layout/sidebar/types';
 import { MainSidebarContent } from './MainSidebarContent';
 import { MainSidebarBackdrop } from './MainSidebarBackdrop';
 import { MainSidebarCollapsed } from './MainSidebarCollapsed';
@@ -12,10 +12,10 @@ import { SidebarToggleButton } from '@/components/layout/sidebar/SidebarToggleBu
 interface MainSidebarProps {
   open?: boolean;
   onToggle?: () => void;
-  navItems?: unknown[];
+  navItems?: NavItem[];
   navCategories?: NavCategory[];
-  items?: unknown[];
-  homeItem?: unknown;
+  items?: NavCategory[];
+  homeItem?: NavItem;
   className?: string;
   removeBottomToggle?: boolean;
   showToggleButton?: boolean;
@@ -91,7 +91,7 @@ export const MainSidebar: React.FC<MainSidebarProps> = ({
           navCategories={navCategories}
           navItems={navItems}
           items={items}
-          user={user}
+          user={user ?? undefined}
           useGlobalNavigation={useGlobalNavigation}
         />
 

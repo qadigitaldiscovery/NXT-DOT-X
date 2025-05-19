@@ -1,15 +1,15 @@
 import React from 'react';
 import { SidebarNavigation } from '@/components/layout/sidebar/SidebarNavigation';
-import { NavCategory } from '@/components/layout/sidebar/types';
+import { NavCategory, NavItem } from '@/components/layout/sidebar/types';
 import { useLocation } from 'react-router-dom';
 import { navCategories as globalNavCategories } from '@/components/layout/sidebar/NavigationConfig';
 
 interface MainSidebarContentProps {
   isOpen: boolean;
   navCategories: NavCategory[];
-  navItems: unknown[];
-  items: unknown[];
-  user: unknown;
+  navItems: NavItem[];
+  items: NavCategory[];
+  user: { role?: string } | undefined;
   useGlobalNavigation: boolean;
 }
 
@@ -49,7 +49,7 @@ export const MainSidebarContent: React.FC<MainSidebarContentProps> = ({
     effectiveNavCategories = [{
       name: 'Navigation',
       label: 'Navigation',
-      items: navItems as unknown[]
+      items: navItems as NavItem[]
     }];
     console.log('MainSidebarContent - Using Nav Items');
   }
