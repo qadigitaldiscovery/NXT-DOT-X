@@ -1,6 +1,5 @@
-
 import { createClient } from '@supabase/supabase-js';
-import type { Database } from './types';
+import type { Database } from './types.extended';
 
 // Define fallback URL and key for development purposes
 // These should match your Supabase project settings
