@@ -6,13 +6,15 @@ const BrandMarketing = () => {
   const marketingModules = [
     {
       title: 'Campaign Analytics',
-      icon: <TrendingUp className="h-8 w-8 text-orange-500" />,
+      icon: <TrendingUp className="h-7 w-7 text-orange-500" />,
       path: '/brand-marketing/campaigns',
+      color: "bg-gradient-to-br from-orange-50 to-orange-100"
     },
     {
       title: 'Brand Awareness',
-      icon: <Megaphone className="h-8 w-8 text-orange-500" />,
+      icon: <Megaphone className="h-7 w-7 text-orange-500" />,
       path: '/brand-marketing/awareness',
+      color: "bg-gradient-to-br from-amber-50 to-amber-100"
     }
   ];
 
@@ -27,6 +29,7 @@ const BrandMarketing = () => {
             title={module.title}
             icon={module.icon}
             path={module.path}
+            color={module.color}
           />
         ))}
       </div>

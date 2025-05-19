@@ -1,40 +1,40 @@
-import React from 'react';
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { LineChart } from "lucide-react";
-import { useNavigate } from "react-router-dom";
-export default function TradingSystem() {
-  const navigate = useNavigate();
-  return <Card className="col-span-1 bg-gray-800">
-      <CardHeader className="pb-2">
-        <CardTitle className="flex items-center space-x-2">
-          <LineChart className="w-5 h-5 text-green-500" />
-          <span>Trading System</span>
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="pb-2">
-        <p className="text-sm text-gray-500">
-          Monitor market activity, execute trades, and analyze performance.
-        </p>
-        <div className="mt-4 space-y-3">
-          <div className="flex items-center gap-2">
-            <div className="w-2 h-2 rounded-full bg-green-500"></div>
-            <span className="text-sm">Market dashboard</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-2 h-2 rounded-full bg-green-500"></div>
-            <span className="text-sm">Trading history</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-2 h-2 rounded-full bg-green-500"></div>
-            <span className="text-sm">Performance metrics</span>
-          </div>
-        </div>
-      </CardContent>
-      <CardFooter>
-        <Button onClick={() => navigate('/trading-system')} className="w-full">
-          Open Trading System
-        </Button>
-      </CardFooter>
-    </Card>;
-}
+
+import { ModuleCard } from '../ModuleCard';
+import { TrendingUp, LineChart } from 'lucide-react';
+
+const TradingSystem = () => {
+  const tradingModules = [
+    {
+      title: 'Market Analytics',
+      icon: <TrendingUp className="h-7 w-7 text-emerald-500" />,
+      path: '/trading-system/analytics',
+      color: "bg-gradient-to-br from-emerald-50 to-emerald-100"
+    },
+    {
+      title: 'Trading History',
+      icon: <LineChart className="h-7 w-7 text-emerald-500" />,
+      path: '/trading-system/history',
+      color: "bg-gradient-to-br from-green-50 to-green-100"
+    }
+  ];
+
+  return (
+    <div>
+      <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-6">Trading System</h2>
+      
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {tradingModules.map((module, index) => (
+          <ModuleCard
+            key={index}
+            title={module.title}
+            icon={module.icon}
+            path={module.path}
+            color={module.color}
+          />
+        ))}
+      </div>
+    </div>
+  );
+};
+
+export default TradingSystem;

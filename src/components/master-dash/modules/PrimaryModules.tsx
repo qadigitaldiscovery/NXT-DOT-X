@@ -20,98 +20,98 @@ export default function PrimaryModules({ activeTab = "all", searchQuery = "" }: 
       category: "data", 
       path: "/data-management", 
       name: "Data Management",
-      icon: <Database className="h-8 w-8" />,
+      icon: <Database className="h-7 w-7" />,
       color: "bg-gradient-to-br from-blue-50 to-blue-100",
     },
     { 
       category: "marketing", 
       path: "/loyalty-rewards", 
       name: "Loyalty Program",
-      icon: <Award className="h-8 w-8" />,
+      icon: <Award className="h-7 w-7" />,
       color: "bg-gradient-to-br from-amber-50 to-amber-100",
     },
     { 
       category: "operations", 
       path: "/trading-system", 
       name: "Trading System",
-      icon: <LineChart className="h-8 w-8" />,
-      color: "bg-gradient-to-br from-emerald-50 to-emerald-100",
+      icon: <LineChart className="h-7 w-7" />,
+      color: "bg-gradient-to-br from-green-50 to-green-100",
     },
     { 
       category: "marketing", 
       path: "/social-media", 
       name: "Social Media",
-      icon: <Share2 className="h-8 w-8" />,
+      icon: <Share2 className="h-7 w-7" />,
       color: "bg-gradient-to-br from-pink-50 to-pink-100",
     },
     { 
       category: "tech", 
       path: "/tech-hub", 
       name: "Tech Hub",
-      icon: <Code className="h-8 w-8" />,
+      icon: <Code className="h-7 w-7" />,
       color: "bg-gradient-to-br from-indigo-50 to-indigo-100",
     },
     { 
       category: "tech", 
       path: "/dot-x", 
       name: "DOT-X Platform",
-      icon: <Layers className="h-8 w-8" />,
+      icon: <Layers className="h-7 w-7" />,
       color: "bg-gradient-to-br from-purple-50 to-purple-100",
     },
     { 
       category: "marketing", 
       path: "/brand-marketing", 
       name: "Brand Marketing",
-      icon: <Briefcase className="h-8 w-8" />,
+      icon: <Briefcase className="h-7 w-7" />,
       color: "bg-gradient-to-br from-orange-50 to-orange-100",
     },
     { 
       category: "operations", 
       path: "/projects", 
       name: "Project Management",
-      icon: <Users className="h-8 w-8" />,
+      icon: <Users className="h-7 w-7" />,
       color: "bg-gradient-to-br from-sky-50 to-sky-100",
     },
     { 
       category: "analytics", 
       path: "/dashboard/rag", 
       name: "System Monitor",
-      icon: <Activity className="h-8 w-8" />,
+      icon: <Activity className="h-7 w-7" />,
       color: "bg-gradient-to-br from-red-50 to-red-100",
     },
     {
       category: "operations",
       path: "/customer-management",
       name: "Customer Management",
-      icon: <Building className="h-8 w-8" />,
+      icon: <Building className="h-7 w-7" />,
       color: "bg-gradient-to-br from-teal-50 to-teal-100",
     },
     {
       category: "analytics",
       path: "/data-management/cost-analysis",
       name: "Analytics",
-      icon: <BarChart3 className="h-8 w-8" />,
+      icon: <BarChart3 className="h-7 w-7" />,
       color: "bg-gradient-to-br from-cyan-50 to-cyan-100",
     },
     {
       category: "admin",
       path: "/admin/security",
       name: "Security",
-      icon: <Shield className="h-8 w-8" />,
+      icon: <Shield className="h-7 w-7" />,
       color: "bg-gradient-to-br from-rose-50 to-rose-100",
     },
     {
       category: "admin",
       path: "/admin/system-settings",
       name: "System Settings",
-      icon: <Settings className="h-8 w-8" />,
+      icon: <Settings className="h-7 w-7" />,
       color: "bg-gradient-to-br from-gray-50 to-gray-100",
     },
     {
       category: "tech",
       path: "/tech-hub/integrations",
       name: "Integrations",
-      icon: <Zap className="h-8 w-8" />,
+      icon: <Zap className="h-7 w-7" />,
       color: "bg-gradient-to-br from-violet-50 to-violet-100",
     }
   ];
@@ -167,7 +167,7 @@ export default function PrimaryModules({ activeTab = "all", searchQuery = "" }: 
   
   return (
     <motion.div 
-      className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6"
+      className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6"
       variants={container}
       initial="hidden"
       animate="show"
@@ -187,7 +187,7 @@ export default function PrimaryModules({ activeTab = "all", searchQuery = "" }: 
             icon={module.icon}
             path={module.path}
             color={module.color}
-            className="h-44 w-full"
+            className="h-32 w-full"
           />
         </motion.div>
       ))}

@@ -6,13 +6,13 @@ const Administration = () => {
   const adminModules = [
     {
       title: 'User Management',
-      icon: <Users className="h-8 w-8 text-indigo-500" />,
+      icon: <Users className="h-7 w-7 text-indigo-500" />,
       path: '/admin/users',
-      color: "bg-gradient-to-br from-indigo-50 to-indigo-100"
+      color: "bg-gradient-to-br from-slate-50 to-slate-100"
     },
     {
       title: 'Security Controls',
-      icon: <Shield className="h-8 w-8 text-indigo-500" />,
+      icon: <Shield className="h-7 w-7 text-blue-500" />,
       path: '/admin/security',
       color: "bg-gradient-to-br from-blue-50 to-blue-100"
     }

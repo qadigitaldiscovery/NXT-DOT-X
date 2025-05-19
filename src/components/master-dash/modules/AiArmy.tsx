@@ -6,13 +6,13 @@ const AiArmy = () => {
   const aiModules = [
     {
       title: 'AI Studio',
-      icon: <BrainCircuit className="h-8 w-8 text-purple-500" />,
+      icon: <BrainCircuit className="h-7 w-7 text-purple-500" />,
       path: '/ai-army/studio',
       color: "bg-gradient-to-br from-purple-50 to-purple-100"
     },
     {
       title: 'Bot Management',
-      icon: <Bot className="h-8 w-8 text-purple-500" />,
+      icon: <Bot className="h-7 w-7 text-indigo-500" />,
       path: '/ai-army/bots',
       color: "bg-gradient-to-br from-indigo-50 to-indigo-100"
     }
