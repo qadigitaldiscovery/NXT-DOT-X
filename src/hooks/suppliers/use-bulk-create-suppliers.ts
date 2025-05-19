@@ -10,6 +10,10 @@ export function useCreateBulkSuppliers() {
     mutationFn: async ({ csvData }: { csvData: string }) => {
       // Parse CSV data
       const lines = csvData.split('\n');
+      if (lines.length < 2) {
+        throw new Error('CSV file must contain at least a header row and one data row');
+      }
+      
       const headers = lines[0].toLowerCase().split(',').map(h => h.trim().replace(/"/g, ''));
       
       // Validate required headers
@@ -17,7 +21,6 @@ export function useCreateBulkSuppliers() {
       const missingHeaders = requiredHeaders.filter(h => !headers.includes(h));
       
       if (missingHeaders.length > 0) {
-        toast.error(`Missing required headers: ${missingHeaders.join(', ')}`);
         throw new Error(`Missing required headers: ${missingHeaders.join(', ')}`);
       }
       
@@ -55,14 +58,23 @@ export function useCreateBulkSuppliers() {
           }
         });
         
+        // Validate required fields in each row
+        const missingFields = requiredHeaders.filter(field => !supplier[field]);
+        if (missingFields.length > 0) {
+          // Skip rows with missing required fields
+          console.warn(`Row ${i} skipped: Missing required fields: ${missingFields.join(', ')}`);
+          continue;
+        }
+        
         suppliers.push(supplier);
       }
       
       // Insert suppliers
       if (suppliers.length === 0) {
-        toast.error('No valid suppliers found in CSV');
         throw new Error('No valid suppliers found in CSV');
       }
+      
+      console.log('Inserting suppliers:', suppliers);
       
       // Type assertion to match the expected schema
       const { data, error } = await supabase
@@ -72,11 +84,8 @@ export function useCreateBulkSuppliers() {
       
       if (error) {
         console.error('Error creating suppliers:', error);
-        toast.error('Failed to create suppliers');
-        throw error;
+        throw new Error(`Failed to create suppliers: ${error.message}`);
       }
-      
-      toast.success(`Successfully created ${suppliers.length} suppliers`);
       
       return { count: suppliers.length, ids: data };
     },

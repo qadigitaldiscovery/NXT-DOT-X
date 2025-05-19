@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Button } from "@/components/ui/button";
-import { UploadCloud } from 'lucide-react';
+import { Upload, Loader2 } from "lucide-react";
 
 interface ImportButtonProps {
   onSubmit: () => void;
@@ -12,13 +12,21 @@ interface ImportButtonProps {
 export function ImportButton({ onSubmit, isUploading, isDisabled }: ImportButtonProps) {
   return (
     <Button
-      className="w-full"
       onClick={onSubmit}
       disabled={isDisabled || isUploading}
-      {...(isUploading && { "aria-busy": true })}
+      className="w-full"
     >
-      <UploadCloud className="h-4 w-4 mr-2" />
-      {isUploading ? 'Importing...' : 'Import Suppliers'}
+      {isUploading ? (
+        <>
+          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+          Importing...
+        </>
+      ) : (
+        <>
+          <Upload className="mr-2 h-4 w-4" />
+          Import Suppliers
+        </>
+      )}
     </Button>
   );
 }

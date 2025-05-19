@@ -1,6 +1,8 @@
+
 export interface Supplier {
   id: string;
   name: string;
+  code: string;
   email?: string;
   phone?: string;
   website?: string;
@@ -12,4 +14,5 @@ export interface Supplier {
   created_at?: string;
   updated_at?: string;
   credit_rating?: 'A' | 'B' | 'C' | 'D' | 'F';
-} 
+  contact_name?: string;
+}

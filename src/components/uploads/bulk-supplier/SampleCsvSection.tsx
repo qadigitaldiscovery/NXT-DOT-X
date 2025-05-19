@@ -1,62 +1,75 @@
 
+import React from 'react';
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { AlertCircle, Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Copy, Info } from "lucide-react";
-import { toast } from "sonner";
-
-const SAMPLE_CSV = `name,code,contact_name,email,phone,website,payment_terms,status
-Acme Supplies,ACM001,John Doe,john@acme.com,555-123-4567,https://acme.com,Net 30,active
-Global Parts,GLB002,Jane Smith,jane@globalparts.com,555-987-6543,https://globalparts.com,Net 45,active
-Mega Industries,MEG003,Bob Johnson,bob@megaind.com,555-555-5555,https://megaind.com,Net 60,active`;
+import { Badge } from "@/components/ui/badge";
 
 export function SampleCsvSection() {
-  const handleCopySample = () => {
-    navigator.clipboard.writeText(SAMPLE_CSV);
-    toast.success("Sample CSV copied to clipboard");
+  const downloadSampleCsv = () => {
+    // Create sample CSV content with required and optional fields
+    const headers = ["name", "code", "contact_name", "email", "phone", "website", "payment_terms", "status"];
+    const sampleData = [
+      ["Acme Supplies", "ACME001", "John Doe", "john@acme.com", "+1-555-123-4567", "https://acme.com", "Net 30", "active"],
+      ["GlobalTech", "GTECH002", "Jane Smith", "jane@globaltech.com", "+1-555-987-6543", "https://globaltech.com", "Net 45", "active"],
+      ["Local Distributors", "LDIST003", "Robert Johnson", "robert@localdist.com", "+1-555-456-7890", "https://localdist.com", "Net 15", "active"]
+    ];
+    
+    // Convert to CSV string
+    const csvContent = [
+      headers.join(','),
+      ...sampleData.map(row => row.join(','))
+    ].join('\n');
+    
+    // Create download link
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.setAttribute('href', url);
+    link.setAttribute('download', 'sample_suppliers.csv');
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   };
-
+  
   return (
-    <div className="bg-muted p-4 rounded-lg space-y-2">
-      <div className="flex items-start gap-2">
-        <Info className="h-5 w-5 text-muted-foreground mt-0.5" />
-        <div>
-          <h3 className="font-medium">CSV Format</h3>
-          <p className="text-sm text-muted-foreground">
-            Your CSV file should include these columns (only name and code are required):
-          </p>
-        </div>
-      </div>
+    <div className="space-y-4">
+      <Alert>
+        <AlertCircle className="h-4 w-4" />
+        <AlertTitle>Required CSV Format</AlertTitle>
+        <AlertDescription>
+          <div className="mt-2 space-y-2">
+            <p>Your CSV file must include the following headers:</p>
+            <div className="flex flex-wrap gap-2 mt-1">
+              <Badge variant="outline" className="bg-red-50 text-red-800 hover:bg-red-100 border-red-200">
+                name*
+              </Badge>
+              <Badge variant="outline" className="bg-red-50 text-red-800 hover:bg-red-100 border-red-200">
+                code*
+              </Badge>
+              <Badge variant="outline">contact_name</Badge>
+              <Badge variant="outline">email</Badge>
+              <Badge variant="outline">phone</Badge>
+              <Badge variant="outline">website</Badge>
+              <Badge variant="outline">payment_terms</Badge>
+              <Badge variant="outline">status</Badge>
+            </div>
+            <p className="text-sm text-muted-foreground mt-1">* Required fields</p>
+          </div>
+        </AlertDescription>
+      </Alert>
       
-      <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 text-xs">
-        <div className="bg-background p-2 rounded border">
-          <span className="font-semibold">name</span> (required)
-        </div>
-        <div className="bg-background p-2 rounded border">
-          <span className="font-semibold">code</span> (required)
-        </div>
-        <div className="bg-background p-2 rounded border">
-          <span className="font-semibold">contact_name</span>
-        </div>
-        <div className="bg-background p-2 rounded border">
-          <span className="font-semibold">email</span>
-        </div>
-        <div className="bg-background p-2 rounded border">
-          <span className="font-semibold">phone</span>
-        </div>
-        <div className="bg-background p-2 rounded border">
-          <span className="font-semibold">website</span>
-        </div>
-        <div className="bg-background p-2 rounded border">
-          <span className="font-semibold">payment_terms</span>
-        </div>
-        <div className="bg-background p-2 rounded border">
-          <span className="font-semibold">status</span> (active/inactive)
-        </div>
+      <div className="flex justify-end">
+        <Button 
+          variant="outline" 
+          size="sm" 
+          onClick={downloadSampleCsv}
+          className="flex items-center gap-1"
+        >
+          <Download className="h-4 w-4" />
+          Download Sample CSV
+        </Button>
       </div>
-      
-      <Button variant="outline" size="sm" className="w-full" onClick={handleCopySample}>
-        <Copy className="h-4 w-4 mr-2" />
-        Copy Sample CSV
-      </Button>
     </div>
   );
 }
