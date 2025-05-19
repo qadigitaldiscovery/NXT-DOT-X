@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { supabase } from '@/integrations/supabase/client';
-import { useToast } from '@/hooks/use-toast';
+import React, { useState, useEffect, JSX } from 'react';
+import { toast } from 'sonner';
+import { useModules } from '@/context/ModulesContext';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
 import { Badge } from '@/components/ui/badge';
@@ -8,108 +8,41 @@ import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { ModuleAccess } from '@/hooks/useModuleAccess';
+import { useAuth } from '@/context/AuthContext';
+
+interface User {
+  id: string;
+  username: string;
+}
 
 interface ModuleTogglePanelProps {
   userId: string;
 }
 
-const ModuleTogglePanel: React.FC<ModuleTogglePanelProps> = ({ userId }) => {
-  const [accessList, setAccessList] = useState<ModuleAccess[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [users, setUsers] = useState<{ id: string; username: string }[]>([]);
+const ModuleTogglePanel: React.FC<ModuleTogglePanelProps> = ({ userId }): JSX.Element => {
+  const { modules, moduleAccess, loading, error, toggleAccess, addModuleAccess, refreshAccess } = useModules();
   const [selectedUser, setSelectedUser] = useState<string>(userId);
-  const { toast } = useToast();
+  const [users, setUsers] = useState<User[]>([]);
+  const { user } = useAuth();
 
-  const fetchModuleAccess = async (uid: string) => {
-    setLoading(true);
-    try {
-      const { data, error } = await supabase
-        .from('user_module_access')
-        .select('*')
-        .eq('user_id', uid);
-        
-      if (error) throw error;
-      setAccessList(data?.map(item => ({
-        ...item,
-        submenu_slug: item.submenu_slug || undefined,
-        category: item.category || undefined
-      })) || []);
-    } catch (err) {
-      console.error('Error fetching module access:', err);
-      toast.error({
-        title: "Error",
-        description: "Failed to load module access settings"
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const fetchUsers = async () => {
-    try {
-      // In a real implementation, you'd fetch from the profiles table
-      // This is a placeholder since we don't have direct access to auth.users
-      const { data, error } = await supabase
-        .from('user_roles')
-        .select('user_id')
-        .eq('role', 'admin');
-        
-      if (error) throw error;
-      
-      // For demonstration, we'll just use the user IDs
-      // In a real app, you'd join with a profiles table
-      setUsers(data.map(u => ({ 
-        id: u.user_id, 
-        username: u.user_id.substring(0, 8) + '...' 
-      })));
-
-    } catch (err) {
-      console.error('Error fetching users:', err);
-    }
-  };
-
-  useEffect(() => {
-    fetchUsers();
-    if (userId) {
-      fetchModuleAccess(userId);
-      setSelectedUser(userId);
-    }
-  }, [userId]);
+  // Filter access list for the selected user
+  const userAccessList = moduleAccess.filter(access => access.user_id === selectedUser);
 
   const handleUserChange = (uid: string) => {
     setSelectedUser(uid);
-    fetchModuleAccess(uid);
   };
 
-  const toggleAccess = async (id: string, currentValue: boolean) => {
+  const handleToggleAccess = async (id: string, currentValue: boolean) => {
     try {
-      const { error } = await supabase
-        .from('user_module_access')
-        .update({ is_enabled: !currentValue })
-        .eq('id', id);
-        
-      if (error) throw error;
-      
-      // Update local state
-      setAccessList(prev => prev.map(item => 
-        item.id === id ? { ...item, is_enabled: !currentValue } : item
-      ));
-
-      toast({
-        title: "Access Updated",
-        description: `Module access has been ${!currentValue ? 'enabled' : 'disabled'}`
-      });
+      await toggleAccess(id, !currentValue);
+      toast.success(`Module access ${!currentValue ? 'enabled' : 'disabled'}`);
     } catch (err) {
       console.error('Error toggling access:', err);
-      toast.error({
-        title: "Error",
-        description: "Failed to update module access"
-      });
+      toast.error('Failed to update module access');
     }
   };
 
-  const addModuleAccess = async (event: React.FormEvent<HTMLFormElement>) => {
+  const handleAddModuleAccess = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
     const moduleSlug = formData.get('moduleSlug') as string;
@@ -117,49 +50,51 @@ const ModuleTogglePanel: React.FC<ModuleTogglePanelProps> = ({ userId }) => {
     const category = formData.get('category') as string;
 
     if (!moduleSlug) {
-      toast.error({
-        title: "Validation Error",
-        description: "Module slug is required"
-      });
+      toast.error('Module slug is required');
       return;
     }
 
     try {
-      const { data, error } = await supabase
-        .from('user_module_access')
-        .insert([{ 
-          user_id: selectedUser,
-          module_slug: moduleSlug,
-          submenu_slug: submenuSlug || undefined,
-          category: category || undefined,
-          is_enabled: true
-        }])
-        .select();
-        
-      if (error) throw error;
-      
-      setAccessList(prev => [...prev, {
-        ...data[0],
-        submenu_slug: data[0].submenu_slug || undefined,
-        category: data[0].category || undefined
-      }]);
-      
-      toast({
-        title: "Success",
-        description: "Module access added successfully"
+      await addModuleAccess({
+        user_id: selectedUser,
+        module_slug: moduleSlug,
+        submenu_slug: submenuSlug || undefined,
+        category: category || undefined,
+        is_enabled: true
       });
-      
+
+      // Refresh the access list
+      await refreshAccess();
+
       // Reset the form
       (event.target as HTMLFormElement).reset();
-      
+      toast.success('Module access added successfully');
     } catch (err) {
       console.error('Error adding module access:', err);
-      toast.error({
-        title: "Error",
-        description: "Failed to add module access"
-      });
+      toast.error('Failed to add module access');
     }
   };
+
+  useEffect(() => {
+    // For demonstration, we'll just use the current user
+    // In a real app, you'd fetch the list of users from your backend
+    if (user) {
+      setUsers([
+        {
+          id: user.id,
+          username: user.email || user.id
+        }
+      ]);
+    }
+  }, [user]);
+
+  if (error) {
+    return (
+      <div className="p-4 text-red-500">
+        Error loading module access: {error.message}
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-8">
@@ -191,13 +126,13 @@ const ModuleTogglePanel: React.FC<ModuleTogglePanelProps> = ({ userId }) => {
             <div className="flex justify-center py-8">
               <div className="w-8 h-8 border-t-2 border-b-2 border-gray-500 rounded-full animate-spin"></div>
             </div>
-          ) : accessList.length === 0 ? (
+          ) : userAccessList.length === 0 ? (
             <div className="text-center py-8 text-gray-500">
               No module access settings found for this user
             </div>
           ) : (
             <div className="space-y-4">
-              {accessList.map(access => (
+              {userAccessList.map(access => (
                 <div key={access.id} className="flex justify-between items-center border p-3 rounded-md">
                   <div>
                     <div className="font-medium">{access.module_slug}</div>
@@ -214,7 +149,7 @@ const ModuleTogglePanel: React.FC<ModuleTogglePanelProps> = ({ userId }) => {
                   </div>
                   <Switch 
                     checked={access.is_enabled} 
-                    onCheckedChange={() => toggleAccess(access.id, access.is_enabled)} 
+                    onCheckedChange={() => handleToggleAccess(access.id, access.is_enabled)} 
                   />
                 </div>
               ))}
@@ -231,11 +166,22 @@ const ModuleTogglePanel: React.FC<ModuleTogglePanelProps> = ({ userId }) => {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={addModuleAccess} className="space-y-4">
+          <form onSubmit={handleAddModuleAccess} className="space-y-4">
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="space-y-2">
                 <Label htmlFor="moduleSlug">Module Slug *</Label>
-                <Input id="moduleSlug" name="moduleSlug" placeholder="e.g., dashboard" required />
+                <Select name="moduleSlug" required>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select a module" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {modules.map(module => (
+                      <SelectItem key={module.id} value={module.id}>
+                        {module.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
               <div className="space-y-2">
                 <Label htmlFor="submenuSlug">Submenu Slug (Optional)</Label>
