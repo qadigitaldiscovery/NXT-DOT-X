@@ -32,8 +32,8 @@ export function SupplierForm({ initialData, isEditing = false, onDelete }: Suppl
   const { mutate: createSupplier, status: createStatus } = useCreateSupplier();
   const { mutate: updateSupplier, status: updateStatus } = useUpdateSupplier();
   
-  const isCreating = createStatus === 'loading';
-  const isUpdating = updateStatus === 'loading';
+  const isCreating = createStatus === 'pending';
+  const isUpdating = updateStatus === 'pending';
   
   const [formData, setFormData] = React.useState<Partial<Supplier>>({
     name: initialData?.name || '',
