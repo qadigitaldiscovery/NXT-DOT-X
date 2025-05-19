@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -12,10 +13,7 @@ const Landing = () => {
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
-  const {
-    login,
-    isAuthenticated
-  } = useAuth();
+  const { login, isAuthenticated } = useAuth();
 
   // Check if user is already logged in
   useEffect(() => {
@@ -33,6 +31,11 @@ const Landing = () => {
       toast.error('Please enter both username/email and password');
       setIsLoading(false);
       return;
+    }
+
+    // For development login - make it clear to the user
+    if (usernameOrEmail === 'admin@example.com') {
+      console.log('Attempting admin login with provided credentials');
     }
 
     // Authenticate user
@@ -111,8 +114,9 @@ const Landing = () => {
                   {isLoading ? 'AUTHENTICATING...' : 'LOGIN'}
                 </Button>
                 
-                <div className="text-sm text-center text-blue-light mt-4">
-                  Secure Business Analytics Platform
+                <div className="text-sm text-center text-gray-500 mt-4">
+                  <p>For testing: Use admin@example.com / Pass1</p>
+                  <p className="mt-2 text-blue-light">Secure Business Analytics Platform</p>
                 </div>
               </form>
             </div>

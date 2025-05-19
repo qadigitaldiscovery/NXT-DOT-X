@@ -1,3 +1,4 @@
+
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react-swc';
 import path from 'path';
@@ -23,14 +24,14 @@ export default defineConfig(({ mode }) => ({
   },
   server: {
     host: "::",
-    port: 3000,
+    port: 8080,
     strictPort: false,
     proxy: {},
     // Enable SPA routing
     open: true,
   },
   preview: {
-    port: 3000,
+    port: 8080,
     // Enable SPA routing in preview
     open: true,
   },

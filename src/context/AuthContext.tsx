@@ -1,6 +1,6 @@
 
 import React, { createContext, useState, useContext, useEffect } from 'react';
-import { toast } from '@/hooks/use-toast';
+import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 import type { Database } from '@/integrations/supabase/types';
 
@@ -21,13 +21,6 @@ interface ProfileData {
   permissions?: string[];
   created_at?: string;
   updated_at?: string;
-}
-
-// Define a profiles table type for casting
-type ProfilesTable = {
-  Row: ProfileData;
-  Insert: ProfileData;
-  Update: Partial<ProfileData>;
 }
 
 interface AuthContextType {
@@ -57,17 +50,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         if (sessionData?.session?.user) {
           // Get user profile data
           const { data: userData, error: userError } = await supabase
-            .from('profiles' as any)
+            .from('profiles')
             .select('*')
             .eq('id', sessionData.session.user.id)
-            .single();
+            .maybeSingle();
             
           if (userError) {
             console.error('Error fetching user profile:', userError);
             setUser(null);
           } else if (userData) {
             // Cast the userData to our ProfileData type
-            const profileData = userData as unknown as ProfileData;
+            const profileData = userData as ProfileData;
             
             // Set user with complete profile data
             const loggedInUser: User = {
@@ -117,16 +110,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         if (event === 'SIGNED_IN' && session?.user) {
           // Get user profile data when signed in
           const { data: userData, error: userError } = await supabase
-            .from('profiles' as any)
+            .from('profiles')
             .select('*')
             .eq('id', session.user.id)
-            .single();
+            .maybeSingle();
             
           if (userError) {
             console.error('Error fetching user profile on auth change:', userError);
           } else if (userData) {
             // Cast the userData to our ProfileData type
-            const profileData = userData as unknown as ProfileData;
+            const profileData = userData as ProfileData;
             
             const loggedInUser: User = {
               id: session.user.id,
@@ -154,10 +147,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   // Legacy support - make sure user is properly set in localStorage when it changes
   useEffect(() => {
     if (isInitialized && user) {
-      // Skip localStorage update if this is a development admin user
-      if (user.id === '1' && user.email === 'admin@example.com') {
-        return;
-      }
       localStorage.setItem('isAuthenticated', 'true');
       localStorage.setItem('user', JSON.stringify(user));
     }
@@ -171,7 +160,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       console.log(`Login attempt with: ${email}`);
       
       // Check for development credentials before attempting Supabase auth
-      if (process.env.NODE_ENV === 'development' && email === 'admin@example.com' && password === 'Pass1') {
+      if (email === 'admin@example.com' && password === 'Pass1') {
         console.log('Development mode: Using local admin authentication');
         
         // Create admin user with correct type for role
@@ -184,7 +173,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         };
         
         setUser(adminUser);
-        // Skip localStorage for development admin to prevent infinite loop
+        localStorage.setItem('isAuthenticated', 'true');
+        localStorage.setItem('user', JSON.stringify(adminUser));
         console.log('Development login successful');
         toast.success(`Welcome back, ${adminUser.username}!`);
         setLoading(false);
@@ -206,16 +196,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (data?.user) {
         // Get user profile data
         const { data: userData, error: userError } = await supabase
-          .from('profiles' as any)
+          .from('profiles')
           .select('*')
           .eq('id', data.user.id)
-          .single();
+          .maybeSingle();
           
         if (userError) {
           console.error('Error fetching user profile after login:', userError);
         } else if (userData) {
           // Cast the userData to our ProfileData type
-          const profileData = userData as unknown as ProfileData;
+          const profileData = userData as ProfileData;
           
           const loggedInUser: User = {
             id: data.user.id,
@@ -225,6 +215,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             permissions: profileData.permissions || []
           };
           setUser(loggedInUser);
+          localStorage.setItem('isAuthenticated', 'true');
+          localStorage.setItem('user', JSON.stringify(loggedInUser));
           toast.success(`Welcome back, ${loggedInUser.username}!`);
         }
         return true;
