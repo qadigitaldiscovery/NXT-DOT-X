@@ -1,7 +1,7 @@
 
 import { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { X, ChevronRight, ChevronDown, Home } from "lucide-react";
+import { X, ChevronRight, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { NavCategory, NavItem } from '@/components/layout/sidebar/types';
@@ -78,7 +78,8 @@ export function MainSidebarContent({
     if (item.href || item.path) {
       navigate(item.href || item.path || '/');
     }
-    if (item.onClick) {
+    // Handle custom onClick if provided
+    if ('onClick' in item && typeof item.onClick === 'function') {
       item.onClick();
     }
     if (onClose && window.innerWidth < 768) {

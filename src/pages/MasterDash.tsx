@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { toast } from 'sonner';
@@ -8,6 +9,7 @@ import { Layout, Key, Users, Settings, FileText, CreditCard, Database, Shield, G
 import { Button } from "@/components/ui/button";
 import { useUserPreferences } from '@/hooks/useUserPreferences';
 import { NavCategory } from '@/components/layout/sidebar/types';
+
 const MasterDash = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -118,7 +120,8 @@ const MasterDash = () => {
   }];
 
   // Custom footer with navigation controls
-  const navigationFooter = <div className="flex items-center justify-between p-2 border-t border-gray-700/50 mt-auto bg-nxt-gray">
+  const navigationFooter = (
+    <div className="flex items-center justify-between p-2 border-t border-gray-700/50 mt-auto bg-nxt-gray">
       <Button variant="ghost" size="icon" onClick={() => navigate(-1)} className="text-gray-300 hover:text-white hover:bg-indigo-900 rounded-lg">
         <ChevronLeft className="h-5 w-5" />
       </Button>
@@ -130,30 +133,54 @@ const MasterDash = () => {
       <Button variant="ghost" size="icon" onClick={() => navigate(1)} className="text-gray-300 hover:text-white hover:bg-indigo-900 rounded-lg">
         <ChevronRight className="h-5 w-5" />
       </Button>
-    </div>;
+    </div>
+  );
 
   // If there's an error loading preferences, show fallback
   if (error) {
-    return <SharedDashboardLayout moduleTitle="Business Management Platform" navCategories={navCategories} customFooterContent={navigationFooter} showTopLeftToggle={true} removeBottomToggle={false} onSidebarStateChange={updateSidebarState}>
+    return (
+      <SharedDashboardLayout 
+        moduleTitle="Business Management Platform" 
+        navCategories={navCategories} 
+        customFooterContent={navigationFooter} 
+        showTopLeftToggle={true} 
+        removeBottomToggle={false} 
+        onSidebarStateChange={updateSidebarState}
+      >
         <DashboardModules />
-      </SharedDashboardLayout>;
+      </SharedDashboardLayout>
+    );
   }
 
   // If preferences are loading, render a more stable loading state
   if (prefsLoading) {
-    return <div className="flex h-screen w-full items-center justify-center bg-background">
+    return (
+      <div className="flex h-screen w-full items-center justify-center bg-background">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary mx-auto mb-4"></div>
           <p className="text-muted-foreground">Loading dashboard preferences...</p>
         </div>
-      </div>;
+      </div>
+    );
   }
 
   // Safely access preferences with proper type handling and fallbacks
   const prefsObject = typeof preferences === 'object' && preferences ? preferences : {};
   const sidebarState = prefsObject.sidebar || "expanded";
-  return <SharedDashboardLayout moduleTitle="Business Management Platform" navCategories={navCategories} customFooterContent={navigationFooter} showTopLeftToggle={sidebarState !== "collapsed"} removeBottomToggle={false} initialSidebarState={sidebarState} onSidebarStateChange={updateSidebarState}>
+  
+  return (
+    <SharedDashboardLayout 
+      moduleTitle="Business Management Platform" 
+      navCategories={navCategories} 
+      customFooterContent={navigationFooter} 
+      showTopLeftToggle={sidebarState !== "collapsed"} 
+      removeBottomToggle={false} 
+      initialSidebarState={sidebarState} 
+      onSidebarStateChange={updateSidebarState}
+    >
       <DashboardModules />
-    </SharedDashboardLayout>;
+    </SharedDashboardLayout>
+  );
 };
+
 export default MasterDash;

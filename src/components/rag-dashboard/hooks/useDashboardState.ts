@@ -1,7 +1,6 @@
 
 import { useState, useMemo, useEffect } from 'react';
 import { Module } from '@/hooks/useModules';
-import { useAlerts } from '@/hooks/useAlerts';
 import { useUserPreferences } from '@/hooks/useUserPreferences';
 import { useAuth } from '@/context/AuthContext';
 
@@ -96,6 +95,11 @@ export const useDashboardState = (modules: Module[], alerts: any[]) => {
     }
   };
 
+  const handleViewDetails = (module: Module) => {
+    setSelectedModule(module);
+    setIsDetailsOpen(true);
+  };
+
   return {
     // State
     selectedStatus,
@@ -114,9 +118,6 @@ export const useDashboardState = (modules: Module[], alerts: any[]) => {
     alertCountByModule,
 
     // Actions
-    handleViewDetails: (module: Module) => {
-      setSelectedModule(module);
-      setIsDetailsOpen(true);
-    }
+    handleViewDetails
   };
 };

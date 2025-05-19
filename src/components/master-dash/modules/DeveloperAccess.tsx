@@ -1,253 +1,86 @@
-import React from 'react';
-import { ModuleCard } from '../ModuleCard';
-import { FolderOpen } from 'lucide-react';
 
-// This component provides a single access point to all 
-// pages that are not currently linked in the main navigation
-export const DeveloperAccess: React.FC = () => {
-  // Group all the features by category
-  const allFeatures = [
-    // Beta Modules
-    { 
-      name: "Beta1 Dashboard", 
-      path: "/beta1/dashboard", 
-      category: "Beta" 
-    },
-    { 
-      name: "Beta2 Dashboard", 
-      path: "/beta2/dashboard", 
-      category: "Beta" 
-    },
-    { 
-      name: "Dashboard V2", 
-      path: "/dashboard/v2", 
-      category: "Beta" 
-    },
-    
-    // Auto Generated Pages
-    { 
-      name: "AI Extract", 
-      path: "/ai-extract", 
-      category: "Auto" 
-    },
-    { 
-      name: "Categories", 
-      path: "/categories", 
-      category: "Auto" 
-    },
-    { 
-      name: "Contracts", 
-      path: "/contracts", 
-      category: "Auto" 
-    },
-    { 
-      name: "Entities", 
-      path: "/entities", 
-      category: "Auto" 
-    },
-    { 
-      name: "Events", 
-      path: "/events", 
-      category: "Auto" 
-    },
-    { 
-      name: "Files", 
-      path: "/files", 
-      category: "Auto" 
-    },
-    { 
-      name: "Requests", 
-      path: "/requests", 
-      category: "Auto" 
-    },
-    { 
-      name: "Risk Register", 
-      path: "/risk-register", 
-      category: "Auto" 
-    },
-    { 
-      name: "Scorecards", 
-      path: "/scorecards", 
-      category: "Auto" 
-    },
-    { 
-      name: "Workflows", 
-      path: "/workflows", 
-      category: "Auto" 
-    },
-    
-    // Data Management
-    { 
-      name: "Data Connections", 
-      path: "/data-management/connections", 
-      category: "Data" 
-    },
-    { 
-      name: "Business Rules", 
-      path: "/data-management/business-rules", 
-      category: "Data" 
-    },
-    { 
-      name: "Strategy", 
-      path: "/data-management/strategy", 
-      category: "Data" 
-    },
-    { 
-      name: "Export Data", 
-      path: "/data-management/export-data", 
-      category: "Data" 
-    },
-    { 
-      name: "Data Insights", 
-      path: "/data-management/insights", 
-      category: "Data" 
-    },
-    
-    // Vendor System
-    { 
-      name: "Vendors", 
-      path: "/vendors", 
-      category: "Vendor" 
-    },
-    { 
-      name: "Vendor Detail", 
-      path: "/vendors/1", 
-      category: "Vendor" 
-    },
-    
-    // Admin
-    { 
-      name: "Database Admin", 
-      path: "/admin/database", 
-      category: "Admin" 
-    },
-    { 
-      name: "Documentation", 
-      path: "/admin/documentation", 
-      category: "Admin" 
-    },
-    { 
-      name: "Module Access", 
-      path: "/admin/module-access", 
-      category: "Admin" 
-    },
-    
-    // Tech Hub
-    { 
-      name: "Personas Hub", 
-      path: "/tech-hub/personas", 
-      category: "Tech" 
-    },
-    { 
-      name: "Odoo Integration", 
-      path: "/tech-hub/integrations/odoo", 
-      category: "Tech" 
-    },
-    { 
-      name: "WooCommerce", 
-      path: "/tech-hub/integrations/woocommerce", 
-      category: "Tech" 
-    },
-    { 
-      name: "BlackBox AI", 
-      path: "/tech-hub/cloud-services/blackbox-ai", 
-      category: "Tech" 
-    },
-    
-    // DOT-X
-    { 
-      name: "DOT-X Dashboard", 
-      path: "/dot-x", 
-      category: "DOT-X" 
-    },
-    { 
-      name: "DOT-X-2", 
-      path: "/dot-x/dot-x-2", 
-      category: "DOT-X" 
-    },
-    { 
-      name: "DOT-X API", 
-      path: "/dot-x/api", 
-      category: "DOT-X" 
-    },
-    { 
-      name: "DOT-X Data Services", 
-      path: "/dot-x/data-services", 
-      category: "DOT-X" 
-    },
-    { 
-      name: "DOT-X Plugins", 
-      path: "/dot-x/plugins", 
-      category: "DOT-X" 
-    },
-    { 
-      name: "DOT-X Settings", 
-      path: "/dot-x/settings", 
-      category: "DOT-X" 
-    },
-    
-    // Social Media
-    { 
-      name: "Social Media Dashboard", 
-      path: "/social-media", 
-      category: "Social" 
-    },
-    { 
-      name: "Social Media Accounts", 
-      path: "/social-media/accounts", 
-      category: "Social" 
-    },
-    { 
-      name: "Social Media Calendar", 
-      path: "/social-media/calendar", 
-      category: "Social" 
-    },
-    { 
-      name: "Social Media Engagement", 
-      path: "/social-media/engagement", 
-      category: "Social" 
-    },
-    { 
-      name: "Social Media Settings", 
-      path: "/social-media/settings", 
-      category: "Social" 
-    },
-    
-    // Trading System
-    { 
-      name: "Trading System Dashboard", 
-      path: "/trading-system", 
-      category: "Trading" 
-    },
-    { 
-      name: "Trading System Trades", 
-      path: "/trading-system/trades", 
-      category: "Trading" 
-    },
-    { 
-      name: "Trading System Analytics", 
-      path: "/trading-system/analytics", 
-      category: "Trading" 
-    },
-    { 
-      name: "Trading System History", 
-      path: "/trading-system/history", 
-      category: "Trading" 
-    },
-    { 
-      name: "Trading System Settings", 
-      path: "/trading-system/settings", 
-      category: "Trading" 
-    },
-  ];
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Code, Server, Database, Key } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Separator } from '@/components/ui/separator';
+
+export const DeveloperAccess = () => {
+  const navigate = useNavigate();
 
   return (
-    <ModuleCard
-      title="Developer Access Hub"
-      variant="accent"
-      features={allFeatures}
-      allAccess={true}
-      className="col-span-full md:col-span-1 h-full"
-    />
+    <Card className="border rounded-lg overflow-hidden shadow-md flex flex-col h-full transition-all hover:shadow-lg bg-gradient-to-br from-gray-900 to-gray-800">
+      <CardHeader className="bg-gradient-to-r from-gray-900 to-gray-800 p-4 border-b border-gray-700 flex flex-row items-center justify-between">
+        <div>
+          <CardTitle className="text-white text-lg md:text-xl">Developer Access</CardTitle>
+          <CardDescription className="text-gray-300">Tools & APIs for technical users</CardDescription>
+        </div>
+        <Code className="h-6 w-6 text-white" />
+      </CardHeader>
+      
+      <CardContent className="p-4 flex-1 flex flex-col">
+        <div className="space-y-4">
+          <div className="space-y-2">
+            <h3 className="text-md font-medium text-white">Systems & APIs</h3>
+            <div className="grid grid-cols-1 gap-2">
+              <Button 
+                variant="ghost" 
+                className="justify-start h-auto py-2 px-3 text-gray-200 hover:text-white hover:bg-gray-700"
+                onClick={() => navigate('/tech-hub/api-management')}
+              >
+                <Key className="mr-2 h-4 w-4" />
+                <div className="text-left">
+                  <p className="font-medium">API Keys Management</p>
+                  <p className="text-xs text-gray-400">Configure API credentials</p>
+                </div>
+              </Button>
+              
+              <Button 
+                variant="ghost"
+                className="justify-start h-auto py-2 px-3 text-gray-200 hover:text-white hover:bg-gray-700"
+                onClick={() => navigate('/admin/database')}
+              >
+                <Database className="mr-2 h-4 w-4" />
+                <div className="text-left">
+                  <p className="font-medium">Database Management</p>
+                  <p className="text-xs text-gray-400">Run queries and view tables</p>
+                </div>
+              </Button>
+              
+              <Button 
+                variant="ghost"
+                className="justify-start h-auto py-2 px-3 text-gray-200 hover:text-white hover:bg-gray-700"
+                onClick={() => navigate('/tech-hub/integrations')}
+              >
+                <Server className="mr-2 h-4 w-4" />
+                <div className="text-left">
+                  <p className="font-medium">External Integrations</p>
+                  <p className="text-xs text-gray-400">Connect to third-party services</p>
+                </div>
+              </Button>
+            </div>
+          </div>
+          
+          <Separator className="bg-gray-700" />
+          
+          <div className="space-y-2">
+            <h3 className="text-md font-medium text-white">Developer Hub</h3>
+            <div className="grid grid-cols-1 gap-2">
+              <Button 
+                variant="secondary" 
+                className="w-full justify-between border text-white"
+                onClick={() => navigate('/tech-hub')}
+              >
+                <span>Open Developer Hub</span>
+                <Code className="h-4 w-4 ml-2" />
+              </Button>
+            </div>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
   );
 };
+
+export default DeveloperAccess;
