@@ -10,6 +10,7 @@ interface Feature {
   name: string;
   path: string;
   description?: string;
+  category?: string;
 }
 
 interface ModuleCardProps {
