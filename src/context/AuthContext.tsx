@@ -176,22 +176,47 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         console.log("AuthProvider: Using test account");
         
         try {
-          // Create a new user for the test account if it doesn't exist
-          const { data: existingUser } = await supabase.auth.signUp({
-            email: normalizedEmail,
-            password: password
-          });
-          
-          // Now sign in
+          // Sign in with the test account credentials
           const { data, error } = await supabase.auth.signInWithPassword({
             email: normalizedEmail,
             password: password
           });
           
           if (error) {
-            console.error("Test login failed:", error);
-            toast.error("Authentication failed. Please try again.");
-            return;
+            // If login fails, the user might not exist yet - try creating it
+            if (error.message.includes('Invalid login credentials')) {
+              console.log("Test account doesn't exist yet, creating...");
+              
+              const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
+                email: normalizedEmail,
+                password: password
+              });
+              
+              if (signUpError) {
+                console.error("Failed to create test account:", signUpError);
+                toast.error("Failed to set up test account");
+                return;
+              }
+              
+              // Now try to sign in again
+              const { data: secondTry, error: secondError } = await supabase.auth.signInWithPassword({
+                email: normalizedEmail,
+                password: password
+              });
+              
+              if (secondError) {
+                console.error("Test login failed after creation:", secondError);
+                toast.error("Authentication failed. Please try again.");
+                return;
+              }
+              
+              // Use the data from the successful sign-in
+              data = secondTry;
+            } else {
+              console.error("Test login failed:", error);
+              toast.error(error.message || "Authentication failed");
+              return;
+            }
           }
           
           // Create or update the profile if needed

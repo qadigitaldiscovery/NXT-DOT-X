@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
 import { useAuth } from '@/context/AuthContext';
+import { SetupTestUser } from '@/components/SetupTestUser';
 
 const Landing = () => {
   const [email, setEmail] = useState('admin@example.com');  // Pre-fill with test credentials
@@ -154,6 +155,11 @@ const Landing = () => {
                   <p className="mt-2 text-blue-light">Secure Business Analytics Platform</p>
                 </div>
               </form>
+              
+              {/* Setup Test User Button */}
+              <div className="mt-6 w-full flex justify-center">
+                <SetupTestUser />
+              </div>
             </div>
           </div>
         </div>
