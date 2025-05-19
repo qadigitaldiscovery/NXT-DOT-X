@@ -1,13 +1,11 @@
 
 import { ModuleCard } from '../ModuleCard';
-import { ClipboardList } from 'lucide-react';
 
 const ProjectManagement = () => {
   return (
     <div className="col-span-1">
       <ModuleCard
         title="Project Management"
-        icon={<ClipboardList className="h-8 w-8" />}
         path="/projects"
         variant="default"
         features={[

@@ -1,13 +1,11 @@
 
 import { ModuleCard } from '../ModuleCard';
-import { Globe } from 'lucide-react';
 
 const WebServices = () => {
   return (
     <div className="col-span-1">
       <ModuleCard
         title="Web Services"
-        icon={<Globe className="h-8 w-8" />}
         path="/web-services"
         variant="default"
         features={[

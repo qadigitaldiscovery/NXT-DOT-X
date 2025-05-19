@@ -1,13 +1,11 @@
 
 import { ModuleCard } from '../ModuleCard';
-import { Brain } from 'lucide-react';
 
 const DotX = () => {
   return (
     <div className="col-span-1">
       <ModuleCard
         title="Intelligence Management (DOT-X)"
-        icon={<Brain className="h-8 w-8" />}
         path="/dot-x"
         variant="default"
         features={[

@@ -1,13 +1,11 @@
 
 import { ModuleCard } from '../ModuleCard';
-import { Share2 } from 'lucide-react';
 
 const SocialMediaMarketing = () => {
   return (
     <div className="col-span-1">
       <ModuleCard
         title="Social Media Marketing"
-        icon={<Share2 className="h-8 w-8" />}
         path="/social-media"
         variant="default"
         features={[

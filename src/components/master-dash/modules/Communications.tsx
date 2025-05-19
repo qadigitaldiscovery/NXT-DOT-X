@@ -1,13 +1,11 @@
 
 import { ModuleCard } from '../ModuleCard';
-import { MessageSquare } from 'lucide-react';
 
 const Communications = () => {
   return (
     <div className="col-span-1">
       <ModuleCard
         title="Communications"
-        icon={<MessageSquare className="h-8 w-8" />}
         path="/communications"
         variant="default"
         features={[

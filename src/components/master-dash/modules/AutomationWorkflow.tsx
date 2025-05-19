@@ -1,13 +1,11 @@
 
 import { ModuleCard } from '../ModuleCard';
-import { Workflow } from 'lucide-react';
 
 const AutomationWorkflow = () => {
   return (
     <div className="col-span-1">
       <ModuleCard
         title="Automation + Workflow"
-        icon={<Workflow className="h-8 w-8" />}
         path="/automation-workflow"
         variant="default"
         features={[

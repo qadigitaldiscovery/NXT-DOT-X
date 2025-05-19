@@ -1,13 +1,11 @@
 
 import { ModuleCard } from '../ModuleCard';
-import { Shield } from 'lucide-react';
 
 const Administration = () => {
   return (
     <div className="col-span-1">
       <ModuleCard
         title="Administration"
-        icon={<Shield className="h-8 w-8" />}
         path="/admin"
         variant="default"
         features={[

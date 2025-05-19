@@ -1,13 +1,11 @@
 
 import { ModuleCard } from '../ModuleCard';
-import { Award } from 'lucide-react';
 
 const LoyaltyProgram = () => {
   return (
     <div className="col-span-1">
       <ModuleCard
         title="Loyalty Program"
-        icon={<Award className="h-8 w-8" />}
         path="/loyalty-rewards"
         variant="default"
         features={[

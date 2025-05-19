@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { ModuleCard } from '../ModuleCard';
 import { FolderOpen } from 'lucide-react';
@@ -245,7 +244,6 @@ export const DeveloperAccess: React.FC = () => {
   return (
     <ModuleCard
       title="Developer Access Hub"
-      icon={<FolderOpen className="h-8 w-8" />}
       variant="accent"
       features={allFeatures}
       allAccess={true}

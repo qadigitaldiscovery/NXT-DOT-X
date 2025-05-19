@@ -1,13 +1,11 @@
 
 import { ModuleCard } from '../ModuleCard';
-import { Truck } from 'lucide-react';
 
 const SupplierManagement = () => {
   return (
     <div className="col-span-1">
       <ModuleCard
         title="Supplier Management"
-        icon={<Truck className="h-8 w-8" />}
         path="/supplier-management"
         variant="default"
         features={[

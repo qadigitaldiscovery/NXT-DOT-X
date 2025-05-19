@@ -1,13 +1,11 @@
 
 import { ModuleCard } from '../ModuleCard';
-import { Megaphone } from 'lucide-react';
 
 const BrandMarketing = () => {
   return (
     <div className="col-span-1">
       <ModuleCard
         title="Brand Marketing"
-        icon={<Megaphone className="h-8 w-8" />}
         path="/brand-marketing"
         variant="default"
         features={[

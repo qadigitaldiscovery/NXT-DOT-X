@@ -1,13 +1,11 @@
 
 import { ModuleCard } from '../ModuleCard';
-import { Database } from 'lucide-react';
 
 const DataManagement = () => {
   return (
     <div className="col-span-1">
       <ModuleCard
         title="Data Management"
-        icon={<Database className="h-8 w-8" />}
         path="/data-management"
         variant="default"
         features={[

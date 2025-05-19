@@ -1,13 +1,11 @@
 
 import { ModuleCard } from '../ModuleCard';
-import { Settings } from 'lucide-react';
 
 const Operations = () => {
   return (
     <div className="col-span-1">
       <ModuleCard
         title="Operations"
-        icon={<Settings className="h-8 w-8" />}
         path="/operations"
         variant="default"
         features={[

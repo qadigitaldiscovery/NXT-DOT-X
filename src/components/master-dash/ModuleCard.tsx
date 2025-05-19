@@ -11,7 +11,6 @@ interface Feature {
 }
 interface ModuleCardProps {
   title: string;
-  icon: React.ReactNode;
   path?: string;
   className?: string;
   variant?: 'default' | 'red' | 'dark' | 'light' | 'accent';
@@ -20,7 +19,6 @@ interface ModuleCardProps {
 }
 export const ModuleCard: React.FC<ModuleCardProps> = ({
   title,
-  icon,
   path,
   className,
   features = [],
@@ -47,18 +45,13 @@ export const ModuleCard: React.FC<ModuleCardProps> = ({
     return "relative cursor-pointer rounded-lg shadow-sm border bg-white text-gray-800 border-gray-200";
   };
   return <div className={`${getCardStyle()} ${className}`} onClick={handleClick}>
-      {/* Content container - further reduced height with more compact spacing */}
+      {/* Content container - reduced height with more compact spacing */}
       <div className="flex flex-col p-1 bg-zinc-100">
-        {/* Title - smaller text and margins */}
+        {/* Title - centered text */}
         <h3 className="text-sm mb-1 text-center font-medium text-slate-500">
           {title}
         </h3>
         
-        {/* Icon container - smaller padding and margin */}
-        <div className="mx-auto rounded-full p-1 mb-1 bg-gray-100 text-gray-600">
-          {icon}
-        </div>
-
         {/* All Access Tag - positioned to fit reduced height */}
         {allAccess && <span className="absolute top-1 right-1 bg-amber-600 text-white text-xs font-semibold px-1 py-0.5 rounded-full">
             All Access
