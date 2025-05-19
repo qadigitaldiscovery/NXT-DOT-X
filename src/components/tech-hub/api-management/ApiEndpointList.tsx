@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -25,8 +24,8 @@ const ApiEndpointList: React.FC = () => {
     if (storedEndpoints) {
       setEndpoints(JSON.parse(storedEndpoints));
     } else {
-      // Use sample data as fallback
-      setEndpoints(sampleEndpoints);
+      // Use sample data as fallback - ensure it's typed correctly
+      setEndpoints(sampleEndpoints as ApiEndpoint[]);
     }
   }, []);
   

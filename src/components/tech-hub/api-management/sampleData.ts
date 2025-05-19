@@ -33,14 +33,14 @@ export const apiProviders = [
   }
 ];
 
-// Make this a regular array, not readonly
+// Explicitly specify the correct types for method to match the ApiEndpoint interface
 export const sampleEndpoints = [
   {
     id: 'endpoint-1',
     name: 'Primary Chat Endpoint',
     url: 'https://api.openai.com/v1/chat/completions',
     apiKey: 'sk-.....',
-    method: 'POST',
+    method: 'POST' as const, // Type assertion to specific string literal
     status: 'active',
     lastUsed: '2025-05-01T08:30:00Z',
   },
@@ -49,7 +49,7 @@ export const sampleEndpoints = [
     name: 'Embeddings API',
     url: 'https://api.openai.com/v1/embeddings',
     apiKey: 'sk-.....',
-    method: 'POST',
+    method: 'POST' as const,
     status: 'active',
     lastUsed: '2025-05-05T14:22:00Z',
   },
@@ -58,7 +58,7 @@ export const sampleEndpoints = [
     name: 'Custom Endpoint',
     url: 'https://api.yourcompany.com/ai/process',
     apiKey: 'api-key-.....',
-    method: 'POST',
+    method: 'POST' as const,
     status: 'inactive',
     lastUsed: '2025-04-28T11:15:00Z',
   }
