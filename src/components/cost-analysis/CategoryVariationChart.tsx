@@ -1,42 +1,54 @@
-import React from 'react';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { ResponsiveContainer, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, Legend } from 'recharts';
 
-// Sample data for category variation
-const data = [
-  { category: 'Electronics', current: 4000, previous: 4500, change: -11.1 },
-  { category: 'Office Supplies', current: 3000, previous: 2800, change: 7.1 },
-  { category: 'Furniture', current: 2000, previous: 1800, change: 11.1 },
-  { category: 'Software', current: 1500, previous: 2000, change: -25.0 },
-  { category: 'Services', current: 1000, previous: 800, change: 25.0 },
-];
+interface CategoryVariationChartProps {
+  data: {
+    category: string;
+    value: number;
+    average?: number;
+  }[];
+  title: string;
+  description?: string;
+}
 
-export function CategoryVariationChart() {
+export const CategoryVariationChart = ({ data, title, description }: CategoryVariationChartProps) => {
   return (
-    <Card className="transition-all duration-300 hover:shadow-lg">
+    <Card className="w-full">
       <CardHeader>
-        <CardTitle>Category Cost Variation</CardTitle>
-        <CardDescription>Comparison of costs by category over time</CardDescription>
+        <CardTitle>{title}</CardTitle>
+        {description && <CardDescription>{description}</CardDescription>}
       </CardHeader>
       <CardContent>
-        <div className="h-64">
+        <div className="h-[350px]">
           <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={data} layout="vertical" margin={{ left: 10 }}>
-              <CartesianGrid strokeDasharray="3 3" horizontal={false} />
-              <XAxis type="number" tickFormatter={(value: number) => `$${value}`} />
-              <YAxis 
-                dataKey="category" 
-                type="category" 
-                width={100} 
-                tick={{ fontSize: 12 }}
+            <RadarChart cx="50%" cy="50%" outerRadius="80%" data={data}>
+              <PolarGrid />
+              <PolarAngleAxis dataKey="category" />
+              <PolarRadiusAxis />
+              <Radar
+                name="Actual"
+                dataKey="value"
+                stroke="#8884d8"
+                fill="#8884d8"
+                fillOpacity={0.6}
               />
-              <Tooltip formatter={(value: number) => `$${value}`} />
-              <Bar dataKey="current" name="Current Period" fill="#3b82f6" radius={[0, 4, 4, 0]} />
-              <Bar dataKey="previous" name="Previous Period" fill="#d1d5db" radius={[0, 4, 4, 0]} />
-            </BarChart>
+              {data.some(d => d.average !== undefined) && (
+                <Radar
+                  name="Average"
+                  dataKey="average"
+                  stroke="#82ca9d"
+                  fill="#82ca9d"
+                  fillOpacity={0.6}
+                />
+              )}
+              <Legend />
+            </RadarChart>
           </ResponsiveContainer>
         </div>
       </CardContent>
     </Card>
   );
-}
+};
+
+export default CategoryVariationChart;

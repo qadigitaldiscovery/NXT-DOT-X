@@ -1,180 +1,92 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { PlusCircle, Search, MoreHorizontal, Edit, Trash2, FileText } from "lucide-react";
-import { Supplier, useSuppliers, useDeleteSupplier } from '@/hooks/use-suppliers';
+import { useState } from 'react';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Pencil, Trash2, RefreshCcw, Search } from 'lucide-react';
+import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import { toast } from 'sonner';
+import { useNavigate } from 'react-router-dom';
 
-export function SuppliersTable() {
+interface Supplier {
+  id: string;
+  name: string;
+  email: string;
+  phone: string;
+  status: 'active' | 'inactive';
+}
+
+interface SuppliersTableProps {
+  suppliers: Supplier[];
+  onDelete: (id: string) => void;
+  onEdit: (id: string) => void;
+  onRefresh: () => void;
+}
+
+export function SuppliersTable({ suppliers, onDelete, onEdit, onRefresh }: SuppliersTableProps) {
+  const [searchQuery, setSearchQuery] = useState('');
   const navigate = useNavigate();
-  const { data: suppliers = [], isLoading, error } = useSuppliers();
-  const { mutate: deleteSupplier } = useDeleteSupplier();
-  const [searchTerm, setSearchTerm] = useState('');
 
-  const filteredSuppliers = suppliers.filter(supplier => 
-    supplier.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
-    supplier.code.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredSuppliers = suppliers.filter(supplier =>
+    supplier.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    supplier.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    supplier.phone.toLowerCase().includes(searchQuery.toLowerCase())
   );
-
-  const handleDelete = (id: string, name: string) => {
-    if (window.confirm(`Are you sure you want to delete supplier "${name}"?`)) {
-      deleteSupplier(id);
-    }
-  };
-
-  const handleNewSupplier = () => {
-    toast.info('New supplier page will be available soon');
-    // navigate("/data-management/suppliers/new");
-  };
-
-  const handleEditSupplier = (supplierId: string) => {
-    toast.info(`Editing supplier: ${supplierId}`);
-    // navigate(`/data-management/suppliers/${supplierId}`);
-  };
-
-  const handleViewCosts = (supplierId: string) => {
-    toast.info(`Viewing costs for supplier: ${supplierId}`);
-    // navigate(`/data-management/suppliers/${supplierId}/costs`);
-  };
-
-  if (isLoading) {
-    return (
-      <Card>
-        <CardHeader>
-          <CardTitle>Suppliers</CardTitle>
-          <CardDescription>Loading suppliers...</CardDescription>
-        </CardHeader>
-      </Card>
-    );
-  }
-
-  if (error) {
-    return (
-      <Card>
-        <CardHeader>
-          <CardTitle>Suppliers</CardTitle>
-          <CardDescription>Error loading suppliers</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <p className="text-red-500">Failed to load suppliers. Please try again.</p>
-        </CardContent>
-      </Card>
-    );
-  }
 
   return (
     <Card>
-      <CardHeader className="flex flex-row items-center justify-between">
-        <div>
-          <CardTitle>Suppliers</CardTitle>
-          <CardDescription>
-            Manage your supplier information and cost data
-          </CardDescription>
-        </div>
-        <Button onClick={handleNewSupplier}>
-          <PlusCircle className="h-4 w-4 mr-2" />
-          New Supplier
-        </Button>
-      </CardHeader>
       <CardContent>
-        <div className="mb-4 flex items-center gap-2">
-          <Search className="h-4 w-4 text-muted-foreground" />
-          <Input 
-            placeholder="Search suppliers..." 
+        <div className="flex flex-wrap gap-4 items-center justify-between pb-4">
+          <Input
+            placeholder="Search suppliers..."
+            value={searchQuery}
+            onChange={e => setSearchQuery(e.target.value)}
             className="max-w-sm"
-            value={searchTerm} 
-            onChange={e => setSearchTerm(e.target.value)}
           />
+          <div className="flex items-center space-x-2">
+            <Button variant="outline" size="sm" onClick={onRefresh}>
+              <RefreshCcw className="mr-2 h-4 w-4" />
+              Refresh
+            </Button>
+          </div>
         </div>
-        
-        <div className="rounded-md border">
+        <div className="overflow-auto">
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Supplier Code</TableHead>
                 <TableHead>Name</TableHead>
-                <TableHead>Contact</TableHead>
                 <TableHead>Email</TableHead>
+                <TableHead>Phone</TableHead>
                 <TableHead>Status</TableHead>
                 <TableHead className="w-[100px]">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {filteredSuppliers.length === 0 ? (
-                <TableRow>
-                  <TableCell colSpan={6} className="text-center h-32 text-muted-foreground">
-                    {searchTerm ? "No suppliers match your search" : "No suppliers found"}
+              {filteredSuppliers.map(supplier => (
+                <TableRow key={supplier.id}>
+                  <TableCell>{supplier.name}</TableCell>
+                  <TableCell>{supplier.email}</TableCell>
+                  <TableCell>{supplier.phone}</TableCell>
+                  <TableCell>
+                    <Badge variant={supplier.status === 'active' ? 'default' : 'secondary'}>
+                      {supplier.status}
+                    </Badge>
+                  </TableCell>
+                  <TableCell className="flex items-center space-x-2">
+                    <Button variant="ghost" size="icon" onClick={() => onEdit(supplier.id)}>
+                      <Pencil className="h-4 w-4" />
+                    </Button>
+                    <Button variant="ghost" size="icon" onClick={() => onDelete(supplier.id)}>
+                      <Trash2 className="h-4 w-4 text-red-500" />
+                    </Button>
                   </TableCell>
                 </TableRow>
-              ) : (
-                filteredSuppliers.map((supplier) => (
-                  <TableRow key={supplier.id}>
-                    <TableCell className="font-medium">{supplier.code}</TableCell>
-                    <TableCell>{supplier.name}</TableCell>
-                    <TableCell>{supplier.contact_name || "—"}</TableCell>
-                    <TableCell>{supplier.email || "—"}</TableCell>
-                    <TableCell>
-                      <Badge 
-                        variant={supplier.status === "active" ? "default" : "secondary"}
-                      >
-                        {supplier.status === "active" ? "Active" : "Inactive"}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" className="h-8 w-8 p-0">
-                            <MoreHorizontal className="h-4 w-4" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                          <DropdownMenuItem onClick={() => handleEditSupplier(supplier.id)}>
-                            <Edit className="h-4 w-4 mr-2" />
-                            Edit Supplier
-                          </DropdownMenuItem>
-                          <DropdownMenuItem onClick={() => handleViewCosts(supplier.id)}>
-                            <FileText className="h-4 w-4 mr-2" />
-                            View Costs
-                          </DropdownMenuItem>
-                          <DropdownMenuSeparator />
-                          <DropdownMenuItem
-                            className="text-red-600"
-                            onClick={() => handleDelete(supplier.id, supplier.name)}
-                          >
-                            <Trash2 className="h-4 w-4 mr-2" />
-                            Delete
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </TableCell>
-                  </TableRow>
-                ))
+              ))}
+              {filteredSuppliers.length === 0 && (
+                <TableRow>
+                  <TableCell colSpan={5} className="text-center py-4">
+                    No suppliers found.
+                  </TableCell>
+                </TableRow>
               )}
             </TableBody>
           </Table>

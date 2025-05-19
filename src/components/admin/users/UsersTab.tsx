@@ -1,8 +1,9 @@
+
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Edit, Trash2, UserPlus } from 'lucide-react';
+import { Edit, Trash2 } from 'lucide-react';
 import { AddUserDialog } from './AddUserDialog';
 
 const mockUsers = [

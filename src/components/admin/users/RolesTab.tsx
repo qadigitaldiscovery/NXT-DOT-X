@@ -17,9 +17,11 @@ const availablePermissions = ['read', 'write', 'delete', 'admin', 'export', 'imp
 
 export function RolesTab() {
   const [roles, setRoles] = React.useState(mockRoles);
+  const [isAddingRole, setIsAddingRole] = React.useState(false);
 
   const handleAddRole = (role: { name: string; description: string; permissions: string[] }) => {
     setRoles([...roles, { id: Date.now().toString(), ...role }]);
+    setIsAddingRole(false);
   };
 
   const handleEditRole = (id: string) => {
@@ -40,7 +42,10 @@ export function RolesTab() {
           <CardTitle>Roles</CardTitle>
           <CardDescription>Manage system roles and permissions</CardDescription>
         </div>
-        <AddRoleDialog onAddRole={handleAddRole} permissions={availablePermissions} />
+        <AddRoleDialog 
+          permissions={availablePermissions} 
+          onAddRole={handleAddRole}
+        />
       </CardHeader>
       <CardContent>
         <Table>

@@ -17,6 +17,7 @@ export interface AdvancedConfigSectionProps {
     options?: string[];
   }>;
   className?: string;
+  onConfigUpdate?: (key: string, value: any) => void; // Added to match usage in ApiKeyForm
 }
 
 export function AdvancedConfigSection({
@@ -26,7 +27,17 @@ export function AdvancedConfigSection({
   onUpdate,
   fieldDefinitions,
   className,
+  onConfigUpdate,
 }: AdvancedConfigSectionProps) {
+  // Use onConfigUpdate if provided, otherwise fall back to onUpdate
+  const handleUpdate = (key: string, value: any) => {
+    if (onConfigUpdate) {
+      onConfigUpdate(key, value);
+    } else {
+      onUpdate(key, value);
+    }
+  };
+
   return (
     <div className={cn("space-y-3", className)}>
       <div>
@@ -42,7 +53,7 @@ export function AdvancedConfigSection({
             configLabel={field.label}
             type={field.type}
             value={config[field.key]}
-            onUpdate={onUpdate}
+            onUpdate={handleUpdate}
             options={field.options}
           />
         ))}

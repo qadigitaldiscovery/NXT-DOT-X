@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { saveToLocalStorage, loadFromLocalStorage, clearFromLocalStorage } from '@/components/tech-hub/api-management/core/hooks/api-key-storage/localStorageUtils';
 import { useUserPreferences } from '@/hooks/useUserPreferences';
@@ -10,6 +9,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 import { ReloadIcon } from '@radix-ui/react-icons';
+import { FormField } from '@/components/ui/form';
+import { ApiKeyInput } from './core/components/ApiKeyInput';
+import { useApiKey } from './core/useApiKey';
+import { ApiKeyForm } from './core/ApiKeyForm';
 
 const localStorageKey = 'openAIKey';
 
@@ -92,7 +95,7 @@ const OpenAIKeyForm = ({ defaultModel = 'gpt-3.5-turbo', additionalConfig = {}, 
     <div className="flex flex-col space-y-4">
       <div className="space-y-2">
         <Label htmlFor="openAIKey">OpenAI API Key</Label>
-        <Input
+        <ApiKeyInput
           id="openAIKey"
           placeholder="sk-..."
           type="password"
