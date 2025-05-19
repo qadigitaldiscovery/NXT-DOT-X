@@ -15,6 +15,10 @@ import SearchAndFilter from './SearchAndFilter';
 import { DeveloperAccess } from './modules/DeveloperAccess';
 import Administration from './modules/Administration';
 import AiArmy from './modules/AiArmy';
+import Communications from './modules/Communications';
+import AutomationWorkflow from './modules/AutomationWorkflow';
+import Operations from './modules/Operations';
+import WebServices from './modules/WebServices';
 
 const DashboardModules: React.FC = () => {
   const [activeCategory, setActiveCategory] = useState('all');
@@ -82,6 +86,10 @@ const DashboardModules: React.FC = () => {
               <ProjectManagement />
               <DotX /> {/* Intelligence Management (DOT-X) */}
               <TechHub />
+              <Communications />
+              <AutomationWorkflow />
+              <Operations />
+              <WebServices />
             </>
           )
         }
