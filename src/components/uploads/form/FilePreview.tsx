@@ -4,6 +4,17 @@ import { Badge } from '@/components/ui/badge';
 import { FileTypeIcon } from "../FileTypeIcon";
 import { FileSize } from "../FileSize";
 
+// @ts-ignore
+const XLSX = require('xlsx') as {
+  read(data: Uint8Array, opts?: { type: string }): {
+    SheetNames: string[];
+    Sheets: { [key: string]: any };
+  };
+  utils: {
+    sheet_to_json<T>(worksheet: any, opts?: { header: number }): T[];
+  };
+};
+
 type FilePreviewProps = {
   file: File | null;
   onDetectedSupplier?: (supplierName: string) => void;
@@ -108,9 +119,8 @@ export function FilePreview({ file, onDetectedSupplier }: FilePreviewProps) {
     // For Excel files - use SheetJS to extract and preview content
     else if (file.name.endsWith('.xlsx') || file.name.endsWith('.xls')) {
       const reader = new FileReader();
-      reader.onload = async (e) => {
+      reader.onload = (e) => {
         try {
-          const XLSX = await import('xlsx');
           const data = new Uint8Array(e.target?.result as ArrayBuffer);
           const workbook = XLSX.read(data, { type: 'array' });
           
