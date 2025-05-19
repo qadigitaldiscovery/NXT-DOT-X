@@ -1,5 +1,4 @@
 
-import React from 'react';
 import { ModuleCard } from '../ModuleCard';
 import { BrainCircuit } from 'lucide-react';
 
@@ -10,7 +9,7 @@ const AiArmy = () => {
         title="AI Army"
         icon={<BrainCircuit className="h-8 w-8" />}
         path="/ai-army"
-        variant="red"
+        variant="default"
         features={[
           { name: 'AI Studio', path: '/ai-army/studio' },
           { name: 'Bot Management', path: '/ai-army/bots' }

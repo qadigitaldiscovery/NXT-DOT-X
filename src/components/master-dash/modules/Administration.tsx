@@ -1,5 +1,4 @@
 
-import React from 'react';
 import { ModuleCard } from '../ModuleCard';
 import { Shield } from 'lucide-react';
 
@@ -10,7 +9,7 @@ const Administration = () => {
         title="Administration"
         icon={<Shield className="h-8 w-8" />}
         path="/admin"
-        variant="red"
+        variant="default"
         features={[
           { name: 'User Management', path: '/admin/users' },
           { name: 'Security Controls', path: '/admin/security' },

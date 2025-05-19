@@ -1,3 +1,4 @@
+
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Zap } from "lucide-react";
@@ -17,10 +18,10 @@ export default function DotX() {
   };
 
   return (
-    <Card className="col-span-1">
+    <Card className="col-span-1 bg-white border border-gray-200 shadow-sm">
       <CardHeader className="pb-2">
         <CardTitle className="flex items-center space-x-2">
-          <Zap className="w-5 h-5 text-indigo-500" />
+          <Zap className="w-5 h-5" />
           <span>DOT-X</span>
         </CardTitle>
       </CardHeader>
@@ -58,7 +59,7 @@ export default function DotX() {
         <Button 
           onClick={handleNavigateToDotX2} 
           variant="outline"
-          className="w-full border-blue-500/30 text-blue-500 hover:bg-blue-500/10"
+          className="w-full"
           disabled={!hasAccess('dot-x-2')}
         >
           Open DOT-X-2

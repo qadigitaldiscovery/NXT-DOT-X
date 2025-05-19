@@ -1,5 +1,4 @@
 
-import React from 'react';
 import { ModuleCard } from '../ModuleCard';
 import { Megaphone } from 'lucide-react';
 
@@ -10,7 +9,7 @@ const BrandMarketing = () => {
         title="Brand Marketing"
         icon={<Megaphone className="h-8 w-8" />}
         path="/brand-marketing"
-        variant="red"
+        variant="default"
         features={[
           { name: 'Campaign Analytics', path: '/brand-marketing/campaigns' },
           { name: 'Brand Awareness', path: '/brand-marketing/awareness' },

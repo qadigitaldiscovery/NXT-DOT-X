@@ -1,5 +1,4 @@
 
-import React from 'react';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { BrainCircuit } from "lucide-react";
@@ -9,10 +8,10 @@ export default function TechHub() {
   const navigate = useNavigate();
 
   return (
-    <Card className="col-span-1">
+    <Card className="col-span-1 bg-white border border-gray-200 shadow-sm">
       <CardHeader className="pb-2">
         <CardTitle className="flex items-center space-x-2">
-          <BrainCircuit className="w-5 h-5 text-purple-500" />
+          <BrainCircuit className="w-5 h-5" />
           <span>Tech Hub</span>
         </CardTitle>
       </CardHeader>

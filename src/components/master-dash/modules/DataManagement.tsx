@@ -1,5 +1,4 @@
 
-import React from 'react';
 import { ModuleCard } from '../ModuleCard';
 import { Database } from 'lucide-react';
 
@@ -10,7 +9,7 @@ const DataManagement = () => {
         title="Data Management"
         icon={<Database className="h-8 w-8" />}
         path="/data-management"
-        variant="red"
+        variant="default"
         features={[
           { name: 'Dashboard', path: '/data-management' },
           { name: 'Cost Analysis', path: '/data-management/cost-analysis' },

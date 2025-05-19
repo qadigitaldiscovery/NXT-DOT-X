@@ -1,5 +1,4 @@
 
-import React from 'react';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Users } from "lucide-react";
@@ -9,10 +8,10 @@ export default function CustomerManagement() {
   const navigate = useNavigate();
 
   return (
-    <Card className="col-span-1">
+    <Card className="col-span-1 bg-white border border-gray-200 shadow-sm">
       <CardHeader className="pb-2">
         <CardTitle className="flex items-center space-x-2">
-          <Users className="w-5 h-5 text-teal-500" />
+          <Users className="w-5 h-5" />
           <span>Customer Management</span>
         </CardTitle>
       </CardHeader>

@@ -1,5 +1,4 @@
 
-import React from 'react';
 import { ModuleCard } from '../ModuleCard';
 import { TrendingUp } from 'lucide-react';
 
@@ -10,7 +9,7 @@ const TradingSystem = () => {
         title="Trading System"
         icon={<TrendingUp className="h-8 w-8" />}
         path="/trading-system"
-        variant="red"
+        variant="default"
         features={[
           { name: 'Dashboard', path: '/trading-system' },
           { name: 'Market Analytics', path: '/trading-system/analytics' },

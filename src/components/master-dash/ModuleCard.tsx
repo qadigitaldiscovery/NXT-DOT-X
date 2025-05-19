@@ -1,9 +1,8 @@
 
-import React, { useState } from 'react';
-import { cn } from '@/lib/utils';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { ChevronDown, ChevronUp, ExternalLink } from 'lucide-react';
+import { useState } from 'react';
 
 interface Feature {
   name: string;
@@ -49,47 +48,9 @@ export const ModuleCard: React.FC<ModuleCardProps> = ({
     navigate(featurePath);
   };
 
-  // Simplified variant classes with minimal styling
-  const getVariantClasses = () => {
-    switch (variant) {
-      case 'red':
-        return "bg-white text-gray-800 border-red-200";
-      case 'dark':
-        return "bg-white text-gray-800 border-gray-200";
-      case 'light':
-        return "bg-white text-gray-800 border-gray-200";
-      case 'accent':
-        return "bg-white text-gray-800 border-blue-200";
-      default:
-        return "bg-white text-gray-800 border-gray-200";
-    }
-  };
-
-  // Simplified icon container styling
-  const getIconContainerClasses = () => {
-    switch (variant) {
-      case 'red':
-        return "bg-red-100 text-red-600";
-      case 'dark':
-        return "bg-gray-100 text-gray-600";
-      case 'light':
-        return "bg-white text-gray-600 border border-gray-200";
-      case 'accent':
-        return "bg-blue-100 text-blue-600";
-      default:
-        return "bg-gray-100 text-gray-600";
-    }
-  };
-
   return (
     <div 
-      className={cn(
-        "relative cursor-pointer", 
-        "rounded-lg shadow-sm border", 
-        getVariantClasses(), 
-        className,
-        showFeatures && "pb-4"
-      )} 
+      className={`relative cursor-pointer rounded-lg shadow-sm border bg-white text-gray-800 border-gray-200 ${className}`} 
       onClick={handleClick}
     >
       {/* Content container */}
@@ -100,10 +61,7 @@ export const ModuleCard: React.FC<ModuleCardProps> = ({
         </h3>
         
         {/* Icon container - centered */}
-        <div className={cn(
-          "mx-auto rounded-full p-4 mb-4", 
-          getIconContainerClasses()
-        )}>
+        <div className="mx-auto rounded-full p-4 mb-4 bg-gray-100 text-gray-600">
           {icon}
         </div>
 
@@ -136,7 +94,7 @@ export const ModuleCard: React.FC<ModuleCardProps> = ({
 
       {/* Feature list - shown only when expanded */}
       {showFeatures && features.length > 0 && (
-        <div className="relative px-4 pt-2">
+        <div className="relative px-4 pt-2 pb-4">
           <div className="bg-gray-50 rounded-lg p-3 border border-gray-200">
             <p className="text-sm text-gray-600 mb-3 font-medium">Available Features:</p>
             <div className="grid grid-cols-1 gap-2 max-h-60 overflow-y-auto pr-1">

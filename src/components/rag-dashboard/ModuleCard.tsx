@@ -32,46 +32,44 @@ const ModuleCard: React.FC<ModuleCardProps> = ({ module, alertCount, onViewDetai
   };
   
   return (
-    <Card className="shadow-sm border rounded-lg overflow-hidden">      
-      <div>
-        <CardHeader className="pb-2">
-          <div className="flex justify-between items-start">
-            <CardTitle className="text-xl font-bold">{module.name}</CardTitle>
-            <Badge className={getStatusColor(module.status)}>
-              {getStatusText(module.status)}
-            </Badge>
-          </div>
-          {module.description && (
-            <CardDescription className="mt-1">
-              {module.description}
-            </CardDescription>
+    <Card className="border rounded-lg shadow-sm bg-white">      
+      <CardHeader className="pb-2">
+        <div className="flex justify-between items-start">
+          <CardTitle className="text-xl font-bold">{module.name}</CardTitle>
+          <Badge className={getStatusColor(module.status)}>
+            {getStatusText(module.status)}
+          </Badge>
+        </div>
+        {module.description && (
+          <CardDescription className="mt-1">
+            {module.description}
+          </CardDescription>
+        )}
+      </CardHeader>
+      
+      <CardContent className="pb-0">
+        <div className="flex items-center justify-between">
+          <StatusGauge status={module.status} size="md" />
+          
+          {alertCount > 0 && (
+            <div className="flex items-center text-amber-700 bg-amber-50 px-3 py-1 rounded-full">
+              <AlertTriangle className="mr-1 h-4 w-4" />
+              <span className="text-sm font-medium">{alertCount} alert{alertCount !== 1 ? 's' : ''}</span>
+            </div>
           )}
-        </CardHeader>
-        
-        <CardContent className="pb-0">
-          <div className="flex items-center justify-between">
-            <StatusGauge status={module.status} size="md" />
-            
-            {alertCount > 0 && (
-              <div className="flex items-center text-amber-700 bg-amber-50 px-3 py-1 rounded-full">
-                <AlertTriangle className="mr-1 h-4 w-4" />
-                <span className="text-sm font-medium">{alertCount} alert{alertCount !== 1 ? 's' : ''}</span>
-              </div>
-            )}
-          </div>
-        </CardContent>
-        
-        <CardFooter className="pt-4">
-          <Button 
-            variant="outline" 
-            onClick={() => onViewDetails(module)}
-            className="w-full flex items-center justify-between"
-          >
-            View Details
-            <ChevronRight className="h-4 w-4" />
-          </Button>
-        </CardFooter>
-      </div>
+        </div>
+      </CardContent>
+      
+      <CardFooter className="pt-4">
+        <Button 
+          variant="outline" 
+          onClick={() => onViewDetails(module)}
+          className="w-full flex items-center justify-between"
+        >
+          View Details
+          <ChevronRight className="h-4 w-4" />
+        </Button>
+      </CardFooter>
     </Card>
   );
 };
