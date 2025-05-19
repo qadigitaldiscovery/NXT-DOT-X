@@ -10,6 +10,7 @@ interface ModuleCardProps {
   path: string;
   className?: string;
   color?: string;
+  useImageBackground?: boolean;
 }
 
 export const ModuleCard: React.FC<ModuleCardProps> = ({
@@ -17,7 +18,8 @@ export const ModuleCard: React.FC<ModuleCardProps> = ({
   icon,
   path,
   className,
-  color = "bg-gradient-to-br from-blue-50 to-blue-100"
+  color = "bg-gradient-to-br from-blue-50 to-blue-100",
+  useImageBackground = true
 }) => {
   const navigate = useNavigate();
   
@@ -33,7 +35,7 @@ export const ModuleCard: React.FC<ModuleCardProps> = ({
     <motion.div 
       className={cn(
         "relative group overflow-hidden p-6 cursor-pointer",
-        color,
+        useImageBackground ? "" : color,
         "rounded-2xl shadow-lg hover:shadow-xl",
         "border border-white/50 dark:border-white/10",
         "backdrop-blur-sm",
@@ -48,8 +50,22 @@ export const ModuleCard: React.FC<ModuleCardProps> = ({
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4 }}
     >
+      {useImageBackground && (
+        <div 
+          className="absolute inset-0 z-0 bg-cover bg-center opacity-90"
+          style={{ 
+            backgroundImage: "url('/lovable-uploads/ef96cca8-3fb8-484a-b9f3-a93d6966ce77.png')",
+            backgroundSize: "cover" 
+          }}
+        />
+      )}
+      
       {/* Glass effect overlay */}
-      <div className="absolute inset-0 bg-white/30 backdrop-blur-[2px] rounded-2xl"></div>
+      <div className={cn(
+        "absolute inset-0", 
+        useImageBackground ? "bg-white/10 dark:bg-black/30" : "bg-white/30",
+        "backdrop-blur-[2px] rounded-2xl"
+      )}></div>
       
       {/* Content container */}
       <div className="relative z-10 flex flex-col items-center">
@@ -61,7 +77,10 @@ export const ModuleCard: React.FC<ModuleCardProps> = ({
         </div>
         
         {/* Title with subtle text shadow */}
-        <h3 className="font-semibold text-lg text-gray-800 text-center group-hover:text-gray-900">
+        <h3 className={cn(
+          "font-semibold text-lg text-center group-hover:text-gray-900",
+          useImageBackground ? "text-white drop-shadow-md" : "text-gray-800"
+        )}>
           {title}
         </h3>
         

@@ -188,6 +188,7 @@ export default function PrimaryModules({ activeTab = "all", searchQuery = "" }: 
             path={module.path}
             color={module.color}
             className="h-32 w-full"
+            useImageBackground={true}
           />
         </motion.div>
       ))}
