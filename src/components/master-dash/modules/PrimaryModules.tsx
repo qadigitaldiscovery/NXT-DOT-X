@@ -1,16 +1,11 @@
 
 import { useState, useEffect } from "react";
-import DataManagement from "./DataManagement";
-import LoyaltyProgram from "./LoyaltyProgram";
-import TradingSystem from "./TradingSystem";
-import SocialMediaMarketing from "./SocialMediaMarketing";
-import TechHub from "./TechHub";
-import DotX from "./DotX";
-import BrandMarketing from "./BrandMarketing";
-import ProjectManagement from "./ProjectManagement";
-import { Card } from "@/components/ui/card";
 import { ModuleCard } from "../ModuleCard";
-import { Database, Users, LineChart, Code, Briefcase, Share2, Award, Layers } from "lucide-react";
+import { Card } from "@/components/ui/card";
+import { 
+  Database, Users, LineChart, Code, Briefcase, Share2, Award, Layers, 
+  BarChart3, Building, Shield, Settings, Activity, Zap
+} from "lucide-react";
 
 interface PrimaryModulesProps {
   activeTab?: string;
@@ -21,60 +16,88 @@ export default function PrimaryModules({ activeTab = "all", searchQuery = "" }: 
   // Define all modules with their metadata
   const allModules = [
     { 
-      component: <DataManagement key="data" />, 
       category: "data", 
       path: "/data-management", 
       name: "Data Management",
       icon: <Database className="h-12 w-12" />,
     },
     { 
-      component: <LoyaltyProgram key="loyalty" />, 
       category: "marketing", 
       path: "/loyalty-rewards", 
       name: "Loyalty Program",
       icon: <Award className="h-12 w-12" />,
     },
     { 
-      component: <TradingSystem key="trading" />, 
       category: "operations", 
       path: "/trading-system", 
       name: "Trading System",
       icon: <LineChart className="h-12 w-12" />,
     },
     { 
-      component: <SocialMediaMarketing key="social" />, 
       category: "marketing", 
       path: "/social-media", 
       name: "Social Media",
       icon: <Share2 className="h-12 w-12" />,
     },
     { 
-      component: <TechHub key="tech" />, 
       category: "tech", 
       path: "/tech-hub", 
       name: "Tech Hub",
       icon: <Code className="h-12 w-12" />,
     },
     { 
-      component: <DotX key="dotx" />, 
       category: "tech", 
       path: "/dot-x", 
       name: "DOT-X Platform",
       icon: <Layers className="h-12 w-12" />,
     },
     { 
-      component: <BrandMarketing key="brand" />, 
       category: "marketing", 
       path: "/brand-marketing", 
       name: "Brand Marketing",
       icon: <Briefcase className="h-12 w-12" />,
     },
     { 
-      component: <ProjectManagement key="project" />, 
       category: "operations", 
       path: "/projects", 
       name: "Project Management",
       icon: <Users className="h-12 w-12" />,
+    },
+    { 
+      category: "analytics", 
+      path: "/dashboard/rag", 
+      name: "System Monitor",
+      icon: <Activity className="h-12 w-12" />,
+    },
+    {
+      category: "operations",
+      path: "/customer-management",
+      name: "Customer Management",
+      icon: <Building className="h-12 w-12" />,
+    },
+    {
+      category: "analytics",
+      path: "/data-management/cost-analysis",
+      name: "Analytics",
+      icon: <BarChart3 className="h-12 w-12" />,
+    },
+    {
+      category: "admin",
+      path: "/admin/security",
+      name: "Security",
+      icon: <Shield className="h-12 w-12" />,
+    },
+    {
+      category: "admin",
+      path: "/admin/system-settings",
+      name: "System Settings",
+      icon: <Settings className="h-12 w-12" />,
+    },
+    {
+      category: "tech",
+      path: "/tech-hub/integrations",
+      name: "Integrations",
+      icon: <Zap className="h-12 w-12" />,
     }
   ];
   
@@ -104,21 +127,21 @@ export default function PrimaryModules({ activeTab = "all", searchQuery = "" }: 
   
   if (filteredModules.length === 0) {
     return (
-      <Card className="p-8 text-center bg-[#f0f9ec] border-[#e5effc]">
-        <p className="text-muted-foreground">No modules found matching your search criteria.</p>
+      <Card className="p-8 text-center bg-gradient-to-br from-[#f7faff] to-[#e5effc] border-[#e5effc]">
+        <p className="text-[#005fea]/70">No modules found matching your search criteria.</p>
       </Card>
     );
   }
   
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
-      {filteredModules.map((module) => (
+    <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+      {filteredModules.map((module, index) => (
         <ModuleCard 
-          key={module.path}
+          key={`${module.path}-${index}`}
           title={module.name}
           icon={module.icon}
           path={module.path}
-          className="h-48"
+          className="h-44 w-full"
         />
       ))}
     </div>

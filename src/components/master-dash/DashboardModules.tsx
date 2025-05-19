@@ -8,13 +8,15 @@ export default function DashboardModules() {
   const [activeTab, setActiveTab] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
   
-  const categories = ["All", "Data", "Marketing", "Tech", "Operations"];
+  const categories = ["All", "Data", "Marketing", "Tech", "Operations", "Analytics", "Admin"];
   
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
         <div>
-          <h1 className="text-3xl font-bold mb-2 text-[#005fea]">Platform Modules</h1>
+          <h1 className="text-3xl font-bold mb-2 text-transparent bg-clip-text bg-gradient-to-r from-[#005fea] to-[#4cacfe]">
+            Platform Modules
+          </h1>
           <p className="text-muted-foreground">Access and manage your platform modules</p>
         </div>
         
