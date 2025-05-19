@@ -99,36 +99,73 @@ interface UserManagementContextType {
 }
 
 // Create the context
-const UserManagementContext = createContext<UserManagementContextType | undefined>(undefined);
+const UserManagementContext = createContext<UserManagementContextType>(undefined as any);
 
 // Create the provider component
 export const UserManagementProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [users, setUsers] = useState<User[]>(initialUsers);
+    const [permissions] = useState<Permission[]>(initialPermissions);
+    const [roles, setRoles] = useState<Role[]>([]);
+    const [users, setUsers] = useState<User[]>([]);
+    
+    // Fetch users and roles from an API or state management
+    // Ensure proper sanitization and validation where necessary
+// Ensuring proper sanitization and validation where necessary
+const deleteUser = (id: string) => {
+    setUsers((prevUsers) => prevUsers.filter((user) => user.id !== id));
+    console.log('User deleted:', id);
+};
+
+const updateRole = (id: string, roleData: Partial<Role>) => {
+    setRoles((prevRoles) =>
+        prevRoles.map((role) =>
+            role.id === id ? { ...role, ...roleData } : role
+        )
+    );
+    console.log('Role updated:', { id, roleData });
+};
+  const deleteUser = (id: string) => {
+  setUsers((prevUsers) => prevUsers.filter((user) => user.id !== id));
   const [roles, setRoles] = useState<Role[]>(initialRoles);
   const [permissions] = useState<Permission[]>(initialPermissions);
 
-  const addUser = (user: User) => {
-    setUsers((prevUsers) => [...prevUsers, user]);
+const addUser = (user: User) => {
+       setUsers((prevUsers) => [...prevUsers, user]);
+      setUsers((prevUsers) => [...prevUsers, user]);
+      // Logging the added user for debugging
+      console.log('User added:', user);
   };
 
   const addRole = (role: Role) => {
-    setRoles((prevRoles) => [...prevRoles, role]);
+      setRoles((prevRoles) => [...prevRoles, role]);
+      // Logging the added role for debugging
+      console.log('Role added:', role);
   };
 
   const updateUser = (id: string, userData: Partial<User>) => {
-    setUsers((prevUsers) => 
-      prevUsers.map((user) => 
-        user.id === id ? { ...user, ...userData } : user
-      )
-    );
+      setUsers((prevUsers) =>
+          prevUsers.map((user) =>
+              user.id === id ? { ...user, ...userData } : user
+          )
+      );
+      // Logging the updated user for debugging
+      console.log('User updated:', { id, userData });
+      };
+    };
   };
 
-  const updateRole = (id: string, roleData: Partial<Role>) => {
-    setRoles((prevRoles) => 
-      prevRoles.map((role) => 
-        role.id === id ? { ...role, ...roleData } : role
-      )
-    );
+        setRoles((prevRoles) =>
+            prevRoles.map((role) =>
+                role.id === id ? { ...role, ...roleData } : role
+            )
+        );
+          prevRoles.map((role) =>
+              role.id === id ? { ...role, ...roleData } : role
+          )
+      });
+      // Logging the updated role for debugging
+      console.log('Role updated:', { id, roleData });
+      };
+    });
   };
 
   const deleteUser = (id: string) => {
@@ -136,7 +173,9 @@ export const UserManagementProvider: React.FC<{ children: ReactNode }> = ({ chil
   };
 
   const deleteRole = (id: string) => {
-    setRoles((prevRoles) => prevRoles.filter((role) => role.id !== id));
+      setRoles((prevRoles) => prevRoles.filter((role) => role.id !== id));
+      // Logging the deleted role for debugging
+      console.log('Role deleted:', id);
   };
 
   return (
@@ -157,7 +196,7 @@ export const UserManagementProvider: React.FC<{ children: ReactNode }> = ({ chil
     >
       {children}
     </UserManagementContext.Provider>
-  );
+  };
 };
 
 // Create a hook to use the context

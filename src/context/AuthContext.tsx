@@ -49,7 +49,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         if (sessionData?.session?.user) {
           // Get user profile data
           const { data: userData, error: userError } = await supabase
-            .from('profiles')
+            .from('users') // Correct the table reference to 'users'
             .select('*')
             .eq('id', sessionData.session.user.id)
             .maybeSingle();
@@ -109,7 +109,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         if (event === 'SIGNED_IN' && session?.user) {
           // Get user profile data when signed in
           const { data: userData, error: userError } = await supabase
-            .from('profiles')
+            .from('users') // Correct the table reference to 'users'
             .select('*')
             .eq('id', session.user.id)
             .maybeSingle();
@@ -195,7 +195,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (data?.user) {
         // Get user profile data
         const { data: userData, error: userError } = await supabase
-          .from('profiles')
+          .from('users') // Correct the table reference to 'users'
           .select('*')
           .eq('id', data.user.id)
           .maybeSingle();

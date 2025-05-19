@@ -91,7 +91,7 @@ export const MainSidebar: React.FC<MainSidebarProps> = ({
           navCategories={navCategories}
           navItems={navItems}
           items={items}
-          user={user ?? undefined}
+          user={user ? { role: user.role } : undefined}
           useGlobalNavigation={useGlobalNavigation}
         />
 

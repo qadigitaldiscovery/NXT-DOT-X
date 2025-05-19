@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
@@ -10,6 +9,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { ModuleAccess } from '@/hooks/useModuleAccess';
+
+// Import the new component at the top of the file
+import NewComponent from '@/components/new/NewComponent';
 
 interface ModuleTogglePanelProps {
   userId: string;
