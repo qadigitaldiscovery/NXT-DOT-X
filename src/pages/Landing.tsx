@@ -34,13 +34,12 @@ const Landing = () => {
     }
 
     // For development login - make it clear to the user
-    if (usernameOrEmail === 'admin@example.com') {
-      console.log('Attempting admin login with provided credentials');
-    }
+    const normalizedEmail = usernameOrEmail.toLowerCase();
+    console.log('Attempting login with:', normalizedEmail);
 
     // Authenticate user
     try {
-      await signIn(usernameOrEmail, password);
+      await signIn(normalizedEmail, password);
       // Navigation is handled by AuthContext after successful login
     } catch (error: any) {
       console.error('Login error:', error);
