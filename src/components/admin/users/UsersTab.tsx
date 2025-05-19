@@ -1,10 +1,10 @@
-
-import React from 'react';
-import { Button } from '@/components/ui/button';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import React, { useState } from 'react';
+import { Button } from '../../../components/ui/button';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../../../components/ui/table';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../../components/ui/card';
 import { Edit, Trash2 } from 'lucide-react';
 import { AddUserDialog } from './AddUserDialog';
+import { EditUserDialog } from './EditUserDialog';
 
 // Define a type for users
 interface User {
@@ -22,8 +22,9 @@ const mockUsers: User[] = [
 ];
 
 export function UsersTab() {
-  const [users, setUsers] = React.useState<User[]>(mockUsers);
-  const [isAddingUser, setIsAddingUser] = React.useState(false);
+  const [users, setUsers] = useState<User[]>(mockUsers);
+  const [isAddingUser, setIsAddingUser] = useState(false);
+  const [editingUser, setEditingUser] = useState<User | undefined>();
 
   const handleAddUser = (user: { username: string; email: string; role: string }) => {
     const newUser: User = {
@@ -36,8 +37,17 @@ export function UsersTab() {
   };
 
   const handleEditUser = (id: string) => {
-    console.log(`Editing user ${id}`);
-    // TODO: Implement edit functionality
+    const userToEdit = users.find(user => user.id === id);
+    setEditingUser(userToEdit);
+  };
+
+  const handleUserUpdated = (id: string, updatedUser: { username: string; email: string; role: string; status: string }) => {
+    setUsers(users.map(user => 
+      user.id === id 
+        ? { ...user, ...updatedUser }
+        : user
+    ));
+    setEditingUser(undefined);
   };
 
   const handleDeleteUser = (id: string, username: string) => {
@@ -56,6 +66,12 @@ export function UsersTab() {
         <AddUserDialog open={isAddingUser} onOpenChange={setIsAddingUser} onUserAdded={handleAddUser} />
       </CardHeader>
       <CardContent>
+        <EditUserDialog 
+          user={editingUser}
+          open={!!editingUser}
+          onOpenChange={(open: boolean) => !open && setEditingUser(undefined)}
+          onUserUpdated={handleUserUpdated}
+        />
         <Table>
           <TableHeader>
             <TableRow>
