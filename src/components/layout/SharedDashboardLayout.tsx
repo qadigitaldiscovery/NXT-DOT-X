@@ -55,7 +55,7 @@ const SharedDashboardLayout: React.FC<SharedDashboardLayoutProps> = ({
       {/* Sidebar */}
       <aside className={`${sidebarClassName} transition-all duration-300 flex flex-col ${sidebarExpanded ? 'w-64' : 'w-16'} border-r border-gray-800`}>
         {/* Logo/Header */}
-        <div className="p-4 flex items-center justify-between border-b border-gray-800 bg-nxt-gray rounded-sm">
+        <div className="p-4 flex items-center justify-between border-b border-gray-800 rounded-sm bg-nxt-gray">
           {sidebarExpanded && <h1 className="text-lg font-semibold">NXT Platform</h1>}
           {showTopLeftToggle && <button onClick={handleToggleSidebar} className="p-1 rounded-md hover:bg-indigo-900 text-gray-300 hover:text-white">
               {sidebarExpanded ? <ChevronsLeft size={18} /> : <ChevronsRight size={18} />}
