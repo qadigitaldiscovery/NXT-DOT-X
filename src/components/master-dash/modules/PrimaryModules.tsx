@@ -21,84 +21,98 @@ export default function PrimaryModules({ activeTab = "all", searchQuery = "" }: 
       path: "/data-management", 
       name: "Data Management",
       icon: <Database className="h-8 w-8" />,
+      variant: "red" as const,
     },
     { 
       category: "marketing", 
       path: "/loyalty-rewards", 
       name: "Loyalty Program",
       icon: <Award className="h-8 w-8" />,
+      variant: "default" as const,
     },
     { 
       category: "operations", 
       path: "/trading-system", 
       name: "Trading System",
       icon: <LineChart className="h-8 w-8" />,
+      variant: "dark" as const,
     },
     { 
       category: "marketing", 
       path: "/social-media", 
       name: "Social Media",
       icon: <Share2 className="h-8 w-8" />,
+      variant: "accent" as const,
     },
     { 
       category: "tech", 
       path: "/tech-hub", 
       name: "Tech Hub",
       icon: <Code className="h-8 w-8" />,
+      variant: "red" as const,
     },
     { 
       category: "tech", 
       path: "/dot-x", 
       name: "DOT-X Platform",
       icon: <Layers className="h-8 w-8" />,
+      variant: "dark" as const,
     },
     { 
       category: "marketing", 
       path: "/brand-marketing", 
       name: "Brand Marketing",
       icon: <Briefcase className="h-8 w-8" />,
+      variant: "accent" as const,
     },
     { 
       category: "operations", 
       path: "/projects", 
       name: "Project Management",
       icon: <Users className="h-8 w-8" />,
+      variant: "default" as const,
     },
     { 
       category: "analytics", 
       path: "/dashboard/rag", 
       name: "System Monitor",
       icon: <Activity className="h-8 w-8" />,
+      variant: "red" as const,
     },
     {
       category: "operations",
       path: "/customer-management",
       name: "Customer Management",
       icon: <Building className="h-8 w-8" />,
+      variant: "light" as const,
     },
     {
       category: "analytics",
       path: "/data-management/cost-analysis",
       name: "Analytics",
       icon: <BarChart3 className="h-8 w-8" />,
+      variant: "accent" as const,
     },
     {
       category: "admin",
       path: "/admin/security",
       name: "Security",
       icon: <Shield className="h-8 w-8" />,
+      variant: "dark" as const,
     },
     {
       category: "admin",
       path: "/admin/system-settings",
       name: "System Settings",
       icon: <Settings className="h-8 w-8" />,
+      variant: "light" as const,
     },
     {
       category: "tech",
       path: "/tech-hub/integrations",
       name: "Integrations",
       icon: <Zap className="h-8 w-8" />,
+      variant: "red" as const,
     }
   ];
   
@@ -172,7 +186,8 @@ export default function PrimaryModules({ activeTab = "all", searchQuery = "" }: 
             title={module.name}
             icon={module.icon}
             path={module.path}
-            className="h-36 w-full"
+            variant={module.variant}
+            className="h-40 w-full"
           />
         </motion.div>
       ))}

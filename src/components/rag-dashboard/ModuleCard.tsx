@@ -31,30 +31,41 @@ const ModuleCard: React.FC<ModuleCardProps> = ({ module, alertCount, onViewDetai
     }
   };
   
+  const getBackgroundGradient = (status: string) => {
+    switch (status) {
+      case 'green': return 'from-gray-900 to-green-950';
+      case 'orange': return 'from-gray-900 to-orange-950';
+      case 'red': return 'from-gray-900 to-red-950';
+      default: return 'from-gray-900 to-gray-950';
+    }
+  };
+  
   return (
-    <Card className="relative shadow-md hover:shadow-lg transition-shadow rounded-xl overflow-hidden">
-      {/* Background image */}
+    <Card className="relative shadow-md hover:shadow-lg transition-shadow rounded-xl overflow-hidden border border-gray-700">
+      {/* Background gradient based on status */}
       <div 
-        className="absolute inset-0 z-0"
+        className={`absolute inset-0 bg-gradient-to-br ${getBackgroundGradient(module.status)} z-0`}
+      />
+      
+      {/* Background pattern */}
+      <div 
+        className="absolute inset-0 opacity-10 z-0"
         style={{ 
-          backgroundImage: "url('/lovable-uploads/6ba5c2e8-f93f-4ecc-801b-ded87459ddc8.png')",
+          backgroundImage: "url('/lovable-uploads/f591cd6e-de49-44cf-bfb9-207fcd31b3ce.png')",
           backgroundSize: "cover",
         }}
       />
       
-      {/* Overlay for readability */}
-      <div className="absolute inset-0 bg-white/70 dark:bg-gray-900/70" />
-      
-      <div className="relative z-10">
+      <div className="relative z-10 text-white">
         <CardHeader className="pb-2">
           <div className="flex justify-between items-start">
-            <CardTitle>{module.name}</CardTitle>
+            <CardTitle className="text-xl font-bold">{module.name}</CardTitle>
             <Badge className={getStatusColor(module.status)}>
               {getStatusText(module.status)}
             </Badge>
           </div>
           {module.description && (
-            <CardDescription className="mt-1">
+            <CardDescription className="mt-1 text-gray-300">
               {module.description}
             </CardDescription>
           )}
@@ -65,7 +76,7 @@ const ModuleCard: React.FC<ModuleCardProps> = ({ module, alertCount, onViewDetai
             <StatusGauge status={module.status} size="md" />
             
             {alertCount > 0 && (
-              <div className="flex items-center text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-900/20 px-3 py-1 rounded-full">
+              <div className="flex items-center text-amber-300 bg-amber-900/30 px-3 py-1 rounded-full">
                 <AlertTriangle className="mr-1 h-4 w-4" />
                 <span className="text-sm font-medium">{alertCount} alert{alertCount !== 1 ? 's' : ''}</span>
               </div>
@@ -77,7 +88,7 @@ const ModuleCard: React.FC<ModuleCardProps> = ({ module, alertCount, onViewDetai
           <Button 
             variant="outline" 
             onClick={() => onViewDetails(module)}
-            className="w-full flex items-center justify-between bg-white/50 dark:bg-gray-800/50 hover:bg-white/80 dark:hover:bg-gray-800/80"
+            className="w-full flex items-center justify-between border-gray-600 bg-black/30 hover:bg-black/50 text-white"
           >
             View Details
             <ChevronRight className="h-4 w-4" />
