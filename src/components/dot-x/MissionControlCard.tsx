@@ -1,5 +1,4 @@
 
-import { Card } from "@/components/ui/card";
 import { Activity } from "lucide-react";
 
 interface MissionControlProps {

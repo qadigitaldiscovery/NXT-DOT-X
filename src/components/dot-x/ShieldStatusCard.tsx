@@ -1,5 +1,4 @@
 
-import { Card } from "@/components/ui/card";
 import { ArrowUpRight } from "lucide-react";
 
 interface ShieldStatusProps {

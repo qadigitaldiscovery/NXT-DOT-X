@@ -1,7 +1,6 @@
 
 import React from 'react';
-import { Label } from "@/components/ui/label";
-import { SAMPLE_CSV } from './SampleCsvSection';
+import { Textarea } from "@/components/ui/textarea";
 
 interface CsvPasteAreaProps {
   value: string;
@@ -12,14 +11,15 @@ interface CsvPasteAreaProps {
 export function CsvPasteArea({ value, onChange, isUploading }: CsvPasteAreaProps) {
   return (
     <div className="space-y-2">
-      <Label htmlFor="csv-text">Paste CSV Content</Label>
-      <textarea
-        id="csv-text"
-        className="min-h-[200px] w-full rounded-md border border-input bg-background p-3 text-sm font-mono"
-        placeholder={SAMPLE_CSV}
+      <p className="text-sm text-muted-foreground">
+        Paste CSV content here. Make sure the first row contains headers.
+      </p>
+      <Textarea
+        placeholder="name,code,contact_name,email,phone,website,payment_terms,status"
         value={value}
         onChange={(e) => onChange(e.target.value)}
         disabled={isUploading}
+        className="h-[200px] font-mono text-sm"
       />
     </div>
   );

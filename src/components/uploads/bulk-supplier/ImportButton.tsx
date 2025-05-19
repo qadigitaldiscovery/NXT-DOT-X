@@ -15,7 +15,7 @@ export function ImportButton({ onSubmit, isUploading, isDisabled }: ImportButton
       className="w-full"
       onClick={onSubmit}
       disabled={isDisabled || isUploading}
-      loading={isUploading}
+      {...(isUploading && { "aria-busy": true })}
     >
       <UploadCloud className="h-4 w-4 mr-2" />
       {isUploading ? 'Importing...' : 'Import Suppliers'}

@@ -1,6 +1,7 @@
+
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { toast } from '@/components/ui/toast';
+import { toast } from 'sonner';
 
 export function useCreateBulkSuppliers() {
   const queryClient = useQueryClient();
@@ -16,10 +17,7 @@ export function useCreateBulkSuppliers() {
       const missingHeaders = requiredHeaders.filter(h => !headers.includes(h));
       
       if (missingHeaders.length > 0) {
-        toast.error({
-          title: "Validation Error",
-          description: `Missing required headers: ${missingHeaders.join(', ')}`
-        });
+        toast.error(`Missing required headers: ${missingHeaders.join(', ')}`);
         throw new Error(`Missing required headers: ${missingHeaders.join(', ')}`);
       }
       
@@ -62,10 +60,7 @@ export function useCreateBulkSuppliers() {
       
       // Insert suppliers
       if (suppliers.length === 0) {
-        toast.error({
-          title: "Validation Error",
-          description: 'No valid suppliers found in CSV'
-        });
+        toast.error('No valid suppliers found in CSV');
         throw new Error('No valid suppliers found in CSV');
       }
       
@@ -77,17 +72,11 @@ export function useCreateBulkSuppliers() {
       
       if (error) {
         console.error('Error creating suppliers:', error);
-        toast.error({
-          title: "Error",
-          description: 'Failed to create suppliers'
-        });
+        toast.error('Failed to create suppliers');
         throw error;
       }
       
-      toast.default({
-        title: "Success",
-        description: `Successfully created ${suppliers.length} suppliers`
-      });
+      toast.success(`Successfully created ${suppliers.length} suppliers`);
       
       return { count: suppliers.length, ids: data };
     },

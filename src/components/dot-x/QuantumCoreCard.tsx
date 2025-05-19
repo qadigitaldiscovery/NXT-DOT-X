@@ -1,6 +1,4 @@
 
-import { Card } from "@/components/ui/card";
-
 interface QuantumCoreProps {
   core?: {
     progress: number;
