@@ -9,6 +9,8 @@ import { ThemeProvider } from "@/context/ThemeContext";
 import { ModulesProvider } from "@/context/ModulesContext";
 import { AppRoutes } from "@/routes";
 import ErrorBoundary from "@/components/ErrorBoundary";
+import { useEffect } from "react";
+import { runMigrations } from "@/integrations/supabase/migrate";
 
 // Create a client
 const queryClient = new QueryClient({
@@ -21,7 +23,12 @@ const queryClient = new QueryClient({
   },
 });
 
-const App = () => {
+// Initialize migrations
+const AppWithMigrations = () => {
+  useEffect(() => {
+    runMigrations().catch(console.error);
+  }, []);
+
   return (
     <ErrorBoundary>
       <QueryClientProvider client={queryClient}>
@@ -44,4 +51,6 @@ const App = () => {
   );
 };
 
+// Export the application
+const App = AppWithMigrations;
 export default App;

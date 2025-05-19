@@ -32,8 +32,10 @@ export function SetupTestUser() {
     }
   };
 
-  // Only show for admins
-  if (user?.role !== 'admin') {
+  // On landing page, we want to show this button to all users
+  // On other pages, only show for admins
+  const isLandingPage = window.location.pathname === '/landing';
+  if (!isLandingPage && user?.role !== 'admin') {
     return null;
   }
   
