@@ -1,4 +1,5 @@
 
+import React from "react";
 import { Route } from "react-router-dom";
 import { PlatformLayout } from '@/components/layouts/PlatformLayout';
 import RiskRegisterPage from "@/pages/auto/RiskRegisterPage";
@@ -20,8 +21,8 @@ export const RiskRegisterNavCategories: NavCategory[] = [
 ];
 
 export const RiskRegisterRoutes = () => {
-  return (
-    <Route path="/risk-register">
+  return [
+    <Route key="risk-register-index" path="/risk-register">
       <Route index element={
         <PlatformLayout
           moduleTitle="Risk Register"
@@ -63,5 +64,5 @@ export const RiskRegisterRoutes = () => {
         </PlatformLayout>
       } />
     </Route>
-  );
+  ];
 };

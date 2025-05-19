@@ -1,4 +1,5 @@
 
+import React from "react";
 import { Route } from "react-router-dom";
 import { PlatformLayout } from '@/components/layouts/PlatformLayout';
 import CategoriesPage from "@/pages/auto/CategoriesPage";
@@ -20,8 +21,8 @@ export const CategoriesNavCategories: NavCategory[] = [
 ];
 
 export const CategoriesRoutes = () => {
-  return (
-    <Route path="/categories">
+  return [
+    <Route key="categories-index" path="/categories">
       <Route index element={
         <PlatformLayout
           moduleTitle="Categories"
@@ -63,5 +64,5 @@ export const CategoriesRoutes = () => {
         </PlatformLayout>
       } />
     </Route>
-  );
+  ];
 };

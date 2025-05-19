@@ -1,4 +1,5 @@
 
+import React from "react";
 import { Route } from "react-router-dom";
 import { PlatformLayout } from '@/components/layouts/PlatformLayout';
 import EntitiesPage from "@/pages/auto/EntitiesPage";
@@ -22,8 +23,8 @@ export const EntitiesNavCategories: NavCategory[] = [
 ];
 
 export const EntitiesRoutes = () => {
-  return (
-    <Route path="/entities">
+  return [
+    <Route key="entities-index" path="/entities">
       <Route index element={
         <ProtectedRoute>
           <PlatformLayout
@@ -85,5 +86,5 @@ export const EntitiesRoutes = () => {
         </ProtectedRoute>
       } />
     </Route>
-  );
+  ];
 };

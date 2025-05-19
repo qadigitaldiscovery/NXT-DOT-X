@@ -1,4 +1,5 @@
 
+import React from "react";
 import { Route } from "react-router-dom";
 import { PlatformLayout } from "@/components/layouts/PlatformLayout";
 import CustomerDashboard from "@/pages/customer-management/CustomerDashboard";
@@ -24,8 +25,8 @@ const customerNavCategories: NavCategory[] = [
 ];
 
 export const CustomerManagementRoutes = () => {
-  return (
-    <Route path="/customer-management">
+  return [
+    <Route key="customer-management-index" path="/customer-management">
       <Route index element={
         <PlatformLayout
           moduleTitle="Customer Management"
@@ -67,5 +68,5 @@ export const CustomerManagementRoutes = () => {
         </PlatformLayout>
       } />
     </Route>
-  );
+  ];
 };

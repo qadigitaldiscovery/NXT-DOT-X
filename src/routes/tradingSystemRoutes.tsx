@@ -1,4 +1,5 @@
 
+import React from "react";
 import { Route } from "react-router-dom";
 import { PlatformLayout } from "@/components/layouts/PlatformLayout";
 import TradingSystemDashboard from "@/pages/TradingSystemDashboard";
@@ -24,48 +25,46 @@ const tradingSystemNavCategories: NavCategory[] = [
 ];
 
 export const TradingSystemRoutes = () => {
-  return (
-    <Route path="/trading-system">
-      <Route index element={
-        <PlatformLayout
-          moduleTitle="Trading System"
-          navCategories={tradingSystemNavCategories}
-        >
-          <TradingSystemDashboard />
-        </PlatformLayout>
-      } />
-      <Route path="trades" element={
-        <PlatformLayout
-          moduleTitle="Trading System - Trades"
-          navCategories={tradingSystemNavCategories}
-        >
-          <TradingSystemTrades />
-        </PlatformLayout>
-      } />
-      <Route path="analytics" element={
-        <PlatformLayout
-          moduleTitle="Trading System - Analytics"
-          navCategories={tradingSystemNavCategories}
-        >
-          <TradingSystemAnalytics />
-        </PlatformLayout>
-      } />
-      <Route path="history" element={
-        <PlatformLayout
-          moduleTitle="Trading System - History"
-          navCategories={tradingSystemNavCategories}
-        >
-          <TradingSystemHistory />
-        </PlatformLayout>
-      } />
-      <Route path="settings" element={
-        <PlatformLayout
-          moduleTitle="Trading System - Settings"
-          navCategories={tradingSystemNavCategories}
-        >
-          <TradingSystemSettings />
-        </PlatformLayout>
-      } />
-    </Route>
-  );
+  return [
+    <Route key="trading-system-index" path="/trading-system" element={
+      <PlatformLayout
+        moduleTitle="Trading System"
+        navCategories={tradingSystemNavCategories}
+      >
+        <TradingSystemDashboard />
+      </PlatformLayout>
+    } />,
+    <Route key="trading-system-trades" path="/trading-system/trades" element={
+      <PlatformLayout
+        moduleTitle="Trading System - Trades"
+        navCategories={tradingSystemNavCategories}
+      >
+        <TradingSystemTrades />
+      </PlatformLayout>
+    } />,
+    <Route key="trading-system-analytics" path="/trading-system/analytics" element={
+      <PlatformLayout
+        moduleTitle="Trading System - Analytics"
+        navCategories={tradingSystemNavCategories}
+      >
+        <TradingSystemAnalytics />
+      </PlatformLayout>
+    } />,
+    <Route key="trading-system-history" path="/trading-system/history" element={
+      <PlatformLayout
+        moduleTitle="Trading System - History"
+        navCategories={tradingSystemNavCategories}
+      >
+        <TradingSystemHistory />
+      </PlatformLayout>
+    } />,
+    <Route key="trading-system-settings" path="/trading-system/settings" element={
+      <PlatformLayout
+        moduleTitle="Trading System - Settings"
+        navCategories={tradingSystemNavCategories}
+      >
+        <TradingSystemSettings />
+      </PlatformLayout>
+    } />
+  ];
 };

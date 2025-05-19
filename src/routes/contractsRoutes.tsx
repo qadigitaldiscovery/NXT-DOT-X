@@ -1,4 +1,5 @@
 
+import React from "react";
 import { Route } from "react-router-dom";
 import { PlatformLayout } from '@/components/layouts/PlatformLayout';
 import ContractsPage from "@/pages/auto/ContractsPage";
@@ -20,8 +21,8 @@ export const ContractsNavCategories: NavCategory[] = [
 ];
 
 export const ContractsRoutes = () => {
-  return (
-    <Route path="/contracts">
+  return [
+    <Route key="contracts-index" path="/contracts">
       <Route index element={
         <PlatformLayout
           moduleTitle="Contracts Dashboard"
@@ -63,5 +64,5 @@ export const ContractsRoutes = () => {
         </PlatformLayout>
       } />
     </Route>
-  );
+  ];
 };

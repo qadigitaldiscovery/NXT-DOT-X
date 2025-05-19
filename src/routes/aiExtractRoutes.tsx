@@ -1,4 +1,5 @@
 
+import React from "react";
 import { Route } from "react-router-dom";
 import { PlatformLayout } from '@/components/layouts/PlatformLayout';
 import AIExtractPage from "@/pages/auto/AIExtractPage";
@@ -20,8 +21,8 @@ export const AIExtractNavCategories: NavCategory[] = [
 ];
 
 export const AIExtractRoutes = () => {
-  return (
-    <Route path="/ai-extract">
+  return [
+    <Route key="ai-extract-index" path="/ai-extract">
       <Route index element={
         <PlatformLayout
           moduleTitle="AI Extract"
@@ -63,5 +64,5 @@ export const AIExtractRoutes = () => {
         </PlatformLayout>
       } />
     </Route>
-  );
+  ];
 };

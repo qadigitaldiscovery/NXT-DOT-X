@@ -1,4 +1,5 @@
 
+import React from "react";
 import { Route } from "react-router-dom";
 import { PlatformLayout } from "@/components/layouts/PlatformLayout";
 import ProtectedRoute from "@/components/ProtectedRoute";
@@ -27,8 +28,8 @@ export const dotXNavCategories: NavCategory[] = [
 ];
 
 export const DotXRoutes = () => {
-  return (
-    <Route path="/dot-x">
+  return [
+    <Route key="dot-x-index" path="/dot-x">
       <Route index element={
         <ProtectedRoute>
           <PlatformLayout
@@ -95,5 +96,5 @@ export const DotXRoutes = () => {
         </ProtectedRoute>
       } />
     </Route>
-  );
+  ];
 };

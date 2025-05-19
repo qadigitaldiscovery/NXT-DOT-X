@@ -1,4 +1,5 @@
 
+import React from "react";
 import { Route } from "react-router-dom";
 import { PlatformLayout } from '@/components/layouts/PlatformLayout';
 import ScorecardsPage from "@/pages/auto/ScorecardsPage";
@@ -20,8 +21,8 @@ export const ScorecardsNavCategories: NavCategory[] = [
 ];
 
 export const ScorecardsRoutes = () => {
-  return (
-    <Route path="/scorecards">
+  return [
+    <Route key="scorecards-index" path="/scorecards">
       <Route index element={
         <PlatformLayout
           moduleTitle="Scorecards"
@@ -63,5 +64,5 @@ export const ScorecardsRoutes = () => {
         </PlatformLayout>
       } />
     </Route>
-  );
+  ];
 };

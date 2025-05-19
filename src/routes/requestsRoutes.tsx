@@ -1,4 +1,5 @@
 
+import React from "react";
 import { Route } from "react-router-dom";
 import { PlatformLayout } from '@/components/layouts/PlatformLayout';
 import RequestsPage from "@/pages/auto/RequestsPage";
@@ -20,8 +21,8 @@ export const RequestsNavCategories: NavCategory[] = [
 ];
 
 export const RequestsRoutes = () => {
-  return (
-    <Route path="/requests">
+  return [
+    <Route key="requests-index" path="/requests">
       <Route index element={
         <PlatformLayout
           moduleTitle="Requests Dashboard"
@@ -63,5 +64,5 @@ export const RequestsRoutes = () => {
         </PlatformLayout>
       } />
     </Route>
-  );
+  ];
 };

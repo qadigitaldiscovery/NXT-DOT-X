@@ -1,4 +1,5 @@
 
+import React from "react";
 import { Route } from "react-router-dom";
 import { PlatformLayout } from '@/components/layouts/PlatformLayout';
 import SocialMediaDashboard from "@/pages/social-media/Dashboard";
@@ -24,8 +25,8 @@ const socialMediaNavCategories: NavCategory[] = [
 ];
 
 export const SocialMediaRoutes = () => {
-  return (
-    <Route path="/social-media">
+  return [
+    <Route key="social-media-index" path="/social-media">
       <Route index element={
         <PlatformLayout
           moduleTitle="Social Media Marketing"
@@ -67,5 +68,5 @@ export const SocialMediaRoutes = () => {
         </PlatformLayout>
       } />
     </Route>
-  );
+  ];
 };
