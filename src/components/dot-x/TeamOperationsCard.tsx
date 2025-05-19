@@ -1,73 +1,71 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Users } from "lucide-react";
-import { TeamMember } from "../../pages/dot-x/types";
 
-interface TeamOperationsCardProps {
-  members: TeamMember[];
+import { Card } from "@/components/ui/card";
+import { Users, Shield } from "lucide-react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+
+interface TeamMember {
+  id: string;
+  name: string;
+  role: string;
+  avatar?: string;
+  status: 'online' | 'offline' | 'mission';
+  location?: string;
 }
 
-export function TeamOperationsCard({ members }: TeamOperationsCardProps) {
-  const fieldMembers = members.filter(m => m.status === 'field').length;
-  
+interface TeamOperationsProps {
+  members?: TeamMember[];
+}
+
+export const TeamOperationsCard = ({ 
+  members = [
+    { id: "team-1", name: "Alex Wright", role: "Squad Leader", avatar: "/agents/agent-1.jpg", status: "online" as const, location: "HQ" },
+    { id: "team-2", name: "Sarah Chen", role: "Tactical Lead", avatar: "/agents/agent-2.jpg", status: "mission" as const, location: "Field" },
+    { id: "team-3", name: "Miguel Rodriguez", role: "Intel Officer", avatar: "/agents/agent-3.jpg", status: "online" as const, location: "HQ" }
+  ]
+}: TeamOperationsProps) => {
   return (
-    <Card className="border-amber-500/20 bg-gradient-to-br from-amber-900/10 to-orange-900/5">
-      <CardHeader className="pb-2">
-        <div className="flex justify-between items-center">
-          <CardTitle className="flex items-center gap-2">
-            <Users className="h-5 w-5 text-amber-500" />
-            <span>Team Operations</span>
-          </CardTitle>
-          <Badge variant="outline" className="bg-amber-500/10 text-amber-400 border-amber-500/20">
-            Active
-          </Badge>
-        </div>
-        <CardDescription>Team coordination and deployment</CardDescription>
-      </CardHeader>
-      <CardContent>
-        <div className="space-y-4">
-          <div className="grid grid-cols-2 gap-2">
-            <div className="flex flex-col p-3 bg-amber-950/20 rounded-lg">
-              <span className="text-xs text-amber-300">Team Members</span>
-              <span className="text-xl font-bold">{members.length}</span>
-            </div>
-            <div className="flex flex-col p-3 bg-amber-950/20 rounded-lg">
-              <span className="text-xs text-amber-300">Field Ops</span>
-              <span className="text-xl font-bold">{fieldMembers}</span>
-            </div>
+    <Card className="overflow-hidden bg-gradient-to-br from-slate-900 to-slate-800 text-white p-0 rounded-3xl border-0 shadow-lg">
+      <div className="p-6">
+        <div className="flex justify-between items-center mb-4">
+          <div className="flex items-center">
+            <Users className="h-5 w-5 text-blue-400 mr-2" />
+            <h3 className="text-white font-medium">Team Operations</h3>
           </div>
           
-          <div className="space-y-2">
-            {members.slice(0, 3).map(member => (
-              <div key={member.id} className="flex items-center justify-between p-2 bg-amber-950/20 rounded-lg">
+          <div className="bg-blue-500/20 px-2 py-1 rounded-full text-xs font-medium text-blue-400">
+            {members.filter(m => m.status === 'online').length}/{members.length} Active
+          </div>
+        </div>
+        
+        <div className="space-y-3 mt-4">
+          {members.map((member) => (
+            <div key={member.id} className="flex items-center justify-between bg-slate-800/50 p-2.5 rounded-xl">
+              <div className="flex items-center">
+                <Avatar className="h-8 w-8 mr-3 border border-slate-700">
+                  <AvatarImage src={member.avatar} alt={member.name} />
+                  <AvatarFallback className="bg-slate-700 text-white">
+                    {member.name.split(' ').map(n => n[0]).join('')}
+                  </AvatarFallback>
+                </Avatar>
+                
                 <div>
-                  <div className="font-medium text-sm">{member.name}</div>
-                  <div className="text-xs text-amber-300/80">{member.role}</div>
+                  <p className="text-sm font-medium">{member.name}</p>
+                  <p className="text-xs text-gray-400">{member.role}</p>
                 </div>
-                <Badge 
-                  variant="outline" 
-                  className={
-                    member.status === 'active' ? 'bg-green-500/10 text-green-400 border-green-500/30' :
-                    member.status === 'field' ? 'bg-blue-500/10 text-blue-400 border-blue-500/30' :
-                    'bg-amber-500/10 text-amber-400 border-amber-500/30'
-                  }
-                >
-                  {member.status}
-                </Badge>
               </div>
-            ))}
-          </div>
-          
-          <Button 
-            variant="outline" 
-            className="w-full flex items-center gap-2 bg-amber-500/10 hover:bg-amber-500/20 border-amber-500/30 text-amber-100"
-          >
-            <Users className="h-4 w-4" />
-            Team Dashboard
-          </Button>
+              
+              <div className="flex items-center">
+                <div className={`w-2 h-2 rounded-full mr-2 ${
+                  member.status === 'online' ? 'bg-emerald-500' : 
+                  member.status === 'mission' ? 'bg-blue-500' : 
+                  'bg-gray-500'
+                }`}></div>
+                <span className="text-xs text-gray-400">{member.location}</span>
+              </div>
+            </div>
+          ))}
         </div>
-      </CardContent>
+      </div>
     </Card>
   );
-}
+};

@@ -11,7 +11,7 @@ interface ShieldStatusProps {
   onUpgrade?: () => void;
 }
 
-export const ShieldStatusCard = ({ status = { level: 1248, change: 3.51, description: "Current balance" }, onUpgrade }: ShieldStatusProps) => {
+export const ShieldStatusCard = ({ status = { level: 1248, change: 3.51, description: "Current balance" } }: ShieldStatusProps) => {
   return (
     <Card className="overflow-hidden bg-gradient-to-br from-slate-900 to-slate-800 text-white p-0 rounded-3xl border-0 shadow-lg">
       <div className="p-6 relative">

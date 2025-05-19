@@ -1,6 +1,6 @@
 
 import { Card } from "@/components/ui/card";
-import { Progress } from "lucide-react";
+import { Activity } from "lucide-react";
 
 interface QuantumCoreProps {
   core?: {
