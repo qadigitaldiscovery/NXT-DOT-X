@@ -1,4 +1,5 @@
 
+import React from 'react';
 import { ModuleCard } from '../ModuleCard';
 import { Shield, Users } from 'lucide-react';
 
@@ -8,31 +9,30 @@ const Administration = () => {
       title: 'User Management',
       icon: <Users className="h-7 w-7 text-indigo-500" />,
       path: '/admin/users',
-      color: "bg-gradient-to-br from-slate-50 to-slate-100"
+      variant: "dark" as const
     },
     {
       title: 'Security Controls',
       icon: <Shield className="h-7 w-7 text-blue-500" />,
       path: '/admin/security',
-      color: "bg-gradient-to-br from-blue-50 to-blue-100"
+      variant: "dark" as const
     }
   ];
 
   return (
-    <div>
-      <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-6">Administration</h2>
-      
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {adminModules.map((module, index) => (
-          <ModuleCard
-            key={index}
-            title={module.title}
-            icon={module.icon}
-            path={module.path}
-            color={module.color}
-          />
-        ))}
-      </div>
+    <div className="col-span-1">
+      <ModuleCard
+        title="Administration"
+        icon={<Shield className="h-8 w-8" />}
+        path="/admin"
+        variant="red"
+        features={[
+          { name: 'User Management', path: '/admin/users' },
+          { name: 'Security Controls', path: '/admin/security' },
+          { name: 'Module Access', path: '/admin/module-access' },
+          { name: 'Database Admin', path: '/admin/database' }
+        ]}
+      />
     </div>
   );
 };

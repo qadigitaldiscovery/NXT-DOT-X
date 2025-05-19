@@ -1,19 +1,20 @@
+
 import React, { useEffect, useState } from 'react';
-import { PrimaryModules } from './modules/PrimaryModules';
-import { BrandMarketing } from './modules/BrandMarketing';
-import { AiArmy } from './modules/AiArmy';
-import { Administration } from './modules/Administration';
-import { TechHub } from './modules/TechHub';
-import { CustomerManagement } from './modules/CustomerManagement';
-import { SupplierManagement } from './modules/SupplierManagement';
-import { ProjectManagement } from './modules/ProjectManagement';
-import { DataManagement } from './modules/DataManagement';
-import { SystemTechnicalConfig } from './modules/SystemTechnicalConfig';
-import { LoyaltyProgram } from './modules/LoyaltyProgram';
-import { TradingSystem } from './modules/TradingSystem';
-import { SocialMediaMarketing } from './modules/SocialMediaMarketing';
-import { DotX } from './modules/DotX';
-import { SearchAndFilter } from './SearchAndFilter';
+import PrimaryModules from './modules/PrimaryModules';
+import BrandMarketing from './modules/BrandMarketing';
+import AiArmy from './modules/AiArmy';
+import Administration from './modules/Administration';
+import TechHub from './modules/TechHub';
+import CustomerManagement from './modules/CustomerManagement';
+import SupplierManagement from './modules/SupplierManagement';
+import ProjectManagement from './modules/ProjectManagement';
+import DataManagement from './modules/DataManagement';
+import SystemTechnicalConfig from './modules/SystemTechnicalConfig';
+import LoyaltyProgram from './modules/LoyaltyProgram';
+import TradingSystem from './modules/TradingSystem';
+import SocialMediaMarketing from './modules/SocialMediaMarketing';
+import DotX from './modules/DotX';
+import SearchAndFilter from './SearchAndFilter';
 import { DeveloperAccess } from './modules/DeveloperAccess';
 
 const DashboardModules: React.FC = () => {
@@ -28,7 +29,7 @@ const DashboardModules: React.FC = () => {
   });
   
   // Add a state to show/hide the developer access
-  const [showDevAccess, setShowDevAccess] = useState(true);
+  const [showDevAccess] = useState(true);
 
   useEffect(() => {
     // Filter modules based on active category and search term
