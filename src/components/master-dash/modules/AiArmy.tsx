@@ -5,7 +5,7 @@ const AiArmy = () => {
   return (
     <div className="col-span-1">
       <ModuleCard
-        title="AI Army"
+        title="AI ARMY"
         path="/ai-army"
         variant="default"
         features={[

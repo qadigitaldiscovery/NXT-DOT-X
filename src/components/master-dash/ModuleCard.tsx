@@ -1,82 +1,81 @@
 
-import { useNavigate } from 'react-router-dom';
+import React from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { ChevronDown, ChevronUp, ExternalLink } from 'lucide-react';
-import { useState } from 'react';
+import { cn } from '@/lib/utils';
+import { Link } from 'react-router-dom';
+
 interface Feature {
   name: string;
   path: string;
-  description?: string;
-  category?: string;
 }
+
 interface ModuleCardProps {
   title: string;
-  path?: string;
-  className?: string;
-  variant?: 'default' | 'red' | 'dark' | 'light' | 'accent';
+  path: string;
+  variant?: 'default' | 'primary' | 'secondary';
   features?: Feature[];
-  allAccess?: boolean;
+  className?: string;
 }
-export const ModuleCard: React.FC<ModuleCardProps> = ({
-  title,
-  path,
-  className,
+
+export const ModuleCard: React.FC<ModuleCardProps> = ({ 
+  title, 
+  path, 
+  variant = 'default', 
   features = [],
-  allAccess = false
+  className
 }) => {
-  const navigate = useNavigate();
-  const [showFeatures, setShowFeatures] = useState(false);
-  const handleClick = () => {
-    if (path && features.length === 0) {
-      navigate(path);
-    } else if (features.length > 0) {
-      setShowFeatures(!showFeatures);
-    } else {
-      console.warn(`No path or features defined for module: ${title}`);
-    }
-  };
-  const handleFeatureClick = (featurePath: string, e: React.MouseEvent) => {
-    e.stopPropagation();
-    navigate(featurePath);
+  const cardVariants = {
+    default: "bg-gradient-to-br from-redmetal-600 to-black border-blue-800/40 backdrop-blur-sm",
+    primary: "bg-gradient-to-br from-blue-800/90 to-blue-900 border-blue-600/60 backdrop-blur-sm",
+    secondary: "bg-gradient-to-br from-purple-800/90 to-purple-900 border-purple-600/60 backdrop-blur-sm"
   };
 
-  // Apply card styling based on variant
-  const getCardStyle = () => {
-    return "relative cursor-pointer rounded-lg shadow-sm border bg-white text-gray-800 border-gray-200";
-  };
-  return <div className={`${getCardStyle()} ${className}`} onClick={handleClick}>
-      {/* Content container - reduced height with more compact spacing */}
-      <div className="flex flex-col p-1 bg-zinc-100">
-        {/* Title - centered text */}
-        <h3 className="text-sm mb-1 text-center font-medium text-slate-500">
+  return (
+    <Card className={cn(cardVariants[variant], "overflow-hidden", className)}>
+      {/* Background pattern */}
+      <div 
+        className="absolute inset-0 opacity-10"
+        style={{ 
+          backgroundImage: "url('/lovable-uploads/f591cd6e-de49-44cf-bfb9-207fcd31b3ce.png')",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+        }}
+      />
+      
+      {/* Neon splash */}
+      <div 
+        className="absolute -top-4 -right-4 w-24 h-24 rounded-full blur-xl"
+        style={{
+          background: variant === 'default' 
+            ? "radial-gradient(circle at center, rgba(56,189,248,0.6) 0%, rgba(59,130,246,0.3) 40%, transparent 70%)"
+            : variant === 'primary'
+              ? "radial-gradient(circle at center, rgba(96,165,250,0.6) 0%, rgba(37,99,235,0.3) 40%, transparent 70%)"
+              : "radial-gradient(circle at center, rgba(167,139,250,0.6) 0%, rgba(126,34,206,0.3) 40%, transparent 70%)",
+          zIndex: 0
+        }}
+      />
+      
+      <CardHeader className="relative z-10 pb-2 pt-4">
+        <CardTitle className="text-lg font-medium text-white text-center">
           {title}
-        </h3>
-        
-        {/* All Access Tag - positioned to fit reduced height */}
-        {allAccess && <span className="absolute top-1 right-1 bg-amber-600 text-white text-xs font-semibold px-1 py-0.5 rounded-full">
-            All Access
-          </span>}
-        
-        {/* Toggle button for features - smaller with less margin */}
-        {features.length > 0 && <Button variant="outline" size="sm" className="mt-1 py-0.5 text-xs h-6" onClick={e => {
-        e.stopPropagation();
-        setShowFeatures(!showFeatures);
-      }}>
-            {showFeatures ? <>Hide <ChevronUp className="ml-1 h-2 w-2" /></> : <>Show <ChevronDown className="ml-1 h-2 w-2" /></>}
-          </Button>}
-      </div>
-
-      {/* Feature list - shown only when expanded */}
-      {showFeatures && features.length > 0 && <div className="relative px-2 pt-1 pb-1">
-          <div className="bg-gray-50 rounded-lg p-1 border border-gray-200">
-            <p className="text-xs text-gray-600 mb-1 font-medium">Features:</p>
-            <div className="grid grid-cols-1 gap-0.5 max-h-32 overflow-y-auto pr-1">
-              {features.map((feature, index) => <Button key={index} variant="ghost" size="sm" className="justify-start text-gray-700 hover:bg-gray-100 font-normal text-xs py-0.5 h-6" onClick={e => handleFeatureClick(feature.path, e)}>
-                  <span className="truncate">{feature.name}</span>
-                  <ExternalLink className="ml-auto h-2 w-2 text-gray-400" />
-                </Button>)}
-            </div>
-          </div>
-        </div>}
-    </div>;
+        </CardTitle>
+      </CardHeader>
+      
+      <CardContent className="relative z-10 space-y-2">
+        {features.map((feature, index) => (
+          <Button 
+            key={index}
+            variant="outline" 
+            className="w-full border-gray-600 bg-black/30 hover:bg-black/50 text-white justify-center mb-1"
+            asChild
+          >
+            <Link to={feature.path}>
+              {feature.name}
+            </Link>
+          </Button>
+        ))}
+      </CardContent>
+    </Card>
+  );
 };

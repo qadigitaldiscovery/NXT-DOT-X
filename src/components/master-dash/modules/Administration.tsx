@@ -5,7 +5,7 @@ const Administration = () => {
   return (
     <div className="col-span-1">
       <ModuleCard
-        title="Administration"
+        title="ADMINISTRATION"
         path="/admin"
         variant="default"
         features={[

@@ -5,15 +5,14 @@ const AutomationWorkflow = () => {
   return (
     <div className="col-span-1">
       <ModuleCard
-        title="Automation + Workflow"
-        path="/automation-workflow"
+        title="AUTOMATION + WORKFLOW"
+        path="/automation"
         variant="default"
         features={[
-          { name: 'Workflow Builder', path: '/automation-workflow/builder' },
-          { name: 'Automation Rules', path: '/automation-workflow/rules' },
-          { name: 'Task Scheduling', path: '/automation-workflow/scheduling' },
-          { name: 'Integrations', path: '/automation-workflow/integrations' },
-          { name: 'Reporting', path: '/automation-workflow/reports' }
+          { name: 'Workflow Builder', path: '/automation/workflows' },
+          { name: 'Task Automation', path: '/automation/tasks' },
+          { name: 'Triggers', path: '/automation/triggers' },
+          { name: 'Analytics', path: '/automation/analytics' }
         ]}
       />
     </div>

@@ -5,7 +5,7 @@ const DotX = () => {
   return (
     <div className="col-span-1">
       <ModuleCard
-        title="Intelligence Management (DOT-X)"
+        title="INTELLIGENCE MANAGEMENT (DOT-X)"
         path="/dot-x"
         variant="default"
         features={[

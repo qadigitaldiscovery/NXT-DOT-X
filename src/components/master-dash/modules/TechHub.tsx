@@ -5,7 +5,7 @@ const TechHub = () => {
   return (
     <div className="col-span-1">
       <ModuleCard
-        title="Tech Hub"
+        title="TECH HUB"
         path="/tech-hub"
         variant="default"
         features={[

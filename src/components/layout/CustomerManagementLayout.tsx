@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { MainSidebar } from './sidebar/MainSidebar/MainSidebar';
 import { SharedNavbar } from './SharedNavbar';
@@ -44,7 +45,7 @@ export const CustomerManagementLayout = ({ children }: CustomerManagementLayoutP
   };
 
   return (
-    <div className="flex h-screen overflow-hidden bg-gray-50">
+    <div className="flex h-screen overflow-hidden">
       <MainSidebar 
         open={sidebarOpen} 
         onToggle={toggleSidebar} 
@@ -52,15 +53,15 @@ export const CustomerManagementLayout = ({ children }: CustomerManagementLayoutP
         homeItem={homeNavItem}
         useGlobalNavigation={false}
       />
-      <div className={cn(
-          "flex flex-col flex-1 overflow-hidden",
-          "md:rounded-tl-xl"
-        )}>
+      <div className="flex flex-col flex-1 overflow-hidden">
         <SharedNavbar 
           onMenuClick={toggleSidebar} 
           moduleTitle="Customer Management"
         />
-        <main className="flex-1 overflow-y-auto p-4 md:p-6 bg-gray-50">
+        <main className={cn(
+          "flex-1 overflow-y-auto p-4 md:p-6",
+          "bg-gradient-to-b from-gray-50 to-gray-100 dark:from-gray-900 dark:to-black"
+        )}>
           {children || <Outlet />}
         </main>
       </div>

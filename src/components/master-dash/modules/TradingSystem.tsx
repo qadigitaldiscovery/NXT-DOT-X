@@ -5,7 +5,7 @@ const TradingSystem = () => {
   return (
     <div className="col-span-1">
       <ModuleCard
-        title="Trading System"
+        title="TRADING SYSTEM"
         path="/trading-system"
         variant="default"
         features={[
