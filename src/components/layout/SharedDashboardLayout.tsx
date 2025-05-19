@@ -55,7 +55,7 @@ const SharedDashboardLayout: React.FC<SharedDashboardLayoutProps> = ({
       {/* Sidebar */}
       <aside className={`${sidebarClassName} transition-all duration-300 flex flex-col ${sidebarExpanded ? 'w-64' : 'w-16'} border-r border-gray-800`}>
         {/* Logo/Header */}
-        <div className="p-4 flex items-center justify-between border-b border-gray-800">
+        <div className="p-4 flex items-center justify-between border-b border-gray-800 bg-nxt-gray rounded-sm">
           {sidebarExpanded && <h1 className="text-lg font-semibold">NXT Platform</h1>}
           {showTopLeftToggle && <button onClick={handleToggleSidebar} className="p-1 rounded-md hover:bg-indigo-900 text-gray-300 hover:text-white">
               {sidebarExpanded ? <ChevronsLeft size={18} /> : <ChevronsRight size={18} />}
@@ -63,7 +63,7 @@ const SharedDashboardLayout: React.FC<SharedDashboardLayoutProps> = ({
         </div>
         
         {/* Navigation */}
-        <div className="flex-1 overflow-y-auto py-2">
+        <div className="flex-1 overflow-y-auto py-2 bg-nxt-gray">
           {sidebarExpanded ? <SidebarNavList categories={navCategories} userRole={currentRole as 'admin' | 'manager' | 'user'} expandedCategories={expandedItems} onCategoryToggle={handleToggleExpand} textColor="text-gray-300" textHoverColor="hover:text-white" activeBgColor="bg-indigo-500" activeTextColor="text-white" hoverBgColor="hover:bg-indigo-900/50" /> : <CompactSidebar navItems={navCategories.flatMap(cat => cat.items)} />}
         </div>
         
@@ -71,7 +71,7 @@ const SharedDashboardLayout: React.FC<SharedDashboardLayoutProps> = ({
         {customFooterContent && sidebarExpanded && <div>{customFooterContent}</div>}
         
         {/* Bottom toggle button */}
-        {!removeBottomToggle && <div className="p-2 border-t border-gray-800">
+        {!removeBottomToggle && <div className="p-2 border-t border-gray-800 bg-nxt-gray">
             <button onClick={handleToggleSidebar} className="w-full flex justify-center p-1 rounded-md hover:bg-indigo-900 text-gray-300 hover:text-white">
               {sidebarExpanded ? <ChevronsLeft size={18} /> : <ChevronsRight size={18} />}
             </button>
