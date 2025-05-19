@@ -1,9 +1,8 @@
 
 import React from 'react';
-import { Search } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { cn } from '@/lib/utils';
+import { Search } from 'lucide-react';
 
 interface SearchAndFilterProps {
   activeCategory: string;
@@ -18,45 +17,49 @@ const SearchAndFilter: React.FC<SearchAndFilterProps> = ({
   searchTerm,
   onSearchChange
 }) => {
-  const categories = [
-    { id: 'all', label: 'All' },
-    { id: 'primary', label: 'Primary' },
-    { id: 'data', label: 'Data' },
-    { id: 'marketing', label: 'Marketing' },
-    { id: 'tech', label: 'Tech' },
-    { id: 'operations', label: 'Operations' }
-  ];
-
   return (
-    <div className="space-y-4">
+    <div className="flex flex-col space-y-4 sm:space-y-0 sm:flex-row sm:justify-between sm:items-center">
+      {/* Search Input */}
       <div className="relative">
-        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground h-4 w-4" />
         <Input
-          type="text"
           placeholder="Search modules..."
           value={searchTerm}
           onChange={(e) => onSearchChange(e.target.value)}
-          className="pl-10 bg-white dark:bg-gray-800"
+          className="w-full sm:w-[250px] pl-9"
         />
       </div>
       
-      <div className="flex flex-wrap gap-2">
-        {categories.map((category) => (
-          <Button
-            key={category.id}
-            onClick={() => onCategoryChange(category.id)}
-            variant={activeCategory === category.id ? "default" : "outline"}
-            size="sm"
-            className={cn(
-              "rounded-full",
-              activeCategory === category.id 
-                ? "bg-primary text-primary-foreground" 
-                : "bg-background hover:bg-muted"
-            )}
-          >
-            {category.label}
-          </Button>
-        ))}
+      {/* Category Filter Buttons */}
+      <div className="flex space-x-2 overflow-x-auto pb-2 sm:pb-0">
+        <Button
+          variant={activeCategory === 'all' ? 'default' : 'outline'}
+          size="sm"
+          onClick={() => onCategoryChange('all')}
+        >
+          All
+        </Button>
+        <Button
+          variant={activeCategory === 'primary' ? 'default' : 'outline'}
+          size="sm"
+          onClick={() => onCategoryChange('primary')}
+        >
+          Primary
+        </Button>
+        <Button
+          variant={activeCategory === 'secondary' ? 'default' : 'outline'}
+          size="sm"
+          onClick={() => onCategoryChange('secondary')}
+        >
+          Secondary
+        </Button>
+        <Button
+          variant={activeCategory === 'subcategory' ? 'default' : 'outline'}
+          size="sm"
+          onClick={() => onCategoryChange('subcategory')}
+        >
+          Sub-Category
+        </Button>
       </div>
     </div>
   );

@@ -48,9 +48,14 @@ export const ModuleCard: React.FC<ModuleCardProps> = ({
     navigate(featurePath);
   };
 
+  // Apply card styling based on variant
+  const getCardStyle = () => {
+    return "relative cursor-pointer rounded-lg shadow-sm border bg-white text-gray-800 border-gray-200";
+  };
+
   return (
     <div 
-      className={`relative cursor-pointer rounded-lg shadow-sm border bg-white text-gray-800 border-gray-200 ${className}`} 
+      className={`${getCardStyle()} ${className}`} 
       onClick={handleClick}
     >
       {/* Content container */}

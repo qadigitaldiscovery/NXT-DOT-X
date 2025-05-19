@@ -1,6 +1,4 @@
 
-import { cn } from "@/lib/utils"
-
 // Export context and provider
 export { useSidebar, SidebarProvider } from "./sidebar-context"
 

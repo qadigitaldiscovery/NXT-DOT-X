@@ -1,70 +1,24 @@
 
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Zap } from "lucide-react";
-import { useNavigate } from "react-router-dom";
-import { useModules } from "../../../context/ModulesContext";
+import { ModuleCard } from '../ModuleCard';
+import { Brain } from 'lucide-react';
 
-export default function DotX() {
-  const navigate = useNavigate();
-  const { hasAccess } = useModules();
-
-  const handleNavigateToDotX = () => {
-    navigate('/dot-x');
-  };
-
-  const handleNavigateToDotX2 = () => {
-    navigate('/dot-x/dot-x-2');
-  };
-
+const DotX = () => {
   return (
-    <Card className="col-span-1 bg-white border border-gray-200 shadow-sm">
-      <CardHeader className="pb-2">
-        <CardTitle className="flex items-center space-x-2">
-          <Zap className="w-5 h-5" />
-          <span>DOT-X</span>
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="pb-2">
-        <p className="text-sm text-gray-500">
-          Advanced command center with AI agents and neural shield protection.
-        </p>
-        <div className="mt-4 space-y-3">
-          <div className="flex items-center gap-2">
-            <div className="w-2 h-2 rounded-full bg-green-500"></div>
-            <span className="text-sm">Mission control</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-2 h-2 rounded-full bg-green-500"></div>
-            <span className="text-sm">AI commandos</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-2 h-2 rounded-full bg-green-500"></div>
-            <span className="text-sm">Neural shield</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-2 h-2 rounded-full bg-blue-500"></div>
-            <span className="text-sm">DOT-X-2 (New)</span>
-          </div>
-        </div>
-      </CardContent>
-      <CardFooter className="flex flex-col space-y-2">
-        <Button 
-          onClick={handleNavigateToDotX} 
-          className="w-full"
-          disabled={!hasAccess('dot-x')}
-        >
-          Open DOT-X
-        </Button>
-        <Button 
-          onClick={handleNavigateToDotX2} 
-          variant="outline"
-          className="w-full"
-          disabled={!hasAccess('dot-x-2')}
-        >
-          Open DOT-X-2
-        </Button>
-      </CardFooter>
-    </Card>
+    <div className="col-span-1">
+      <ModuleCard
+        title="Intelligence Management (DOT-X)"
+        icon={<Brain className="h-8 w-8" />}
+        path="/dot-x"
+        variant="default"
+        features={[
+          { name: 'Command Center', path: '/dot-x/command-center' },
+          { name: 'AI Agents', path: '/dot-x/agents' },
+          { name: 'Intelligence Reports', path: '/dot-x/reports' },
+          { name: 'Knowledge Base', path: '/dot-x/knowledge' }
+        ]}
+      />
+    </div>
   );
-}
+};
+
+export default DotX;

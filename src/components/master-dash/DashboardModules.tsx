@@ -1,8 +1,8 @@
+
 import React, { useEffect, useState } from 'react';
 import PrimaryModules from './modules/PrimaryModules';
 import BrandMarketing from './modules/BrandMarketing';
-import AiArmy from './modules/AiArmy';
-import Administration from './modules/Administration';
+import TradingSystem from './modules/TradingSystem';
 import TechHub from './modules/TechHub';
 import CustomerManagement from './modules/CustomerManagement';
 import SupplierManagement from './modules/SupplierManagement';
@@ -10,21 +10,20 @@ import ProjectManagement from './modules/ProjectManagement';
 import DataManagement from './modules/DataManagement';
 import SystemTechnicalConfig from './modules/SystemTechnicalConfig';
 import LoyaltyProgram from './modules/LoyaltyProgram';
-import TradingSystem from './modules/TradingSystem';
 import SocialMediaMarketing from './modules/SocialMediaMarketing';
 import DotX from './modules/DotX';
 import SearchAndFilter from './SearchAndFilter';
 import { DeveloperAccess } from './modules/DeveloperAccess';
+import Administration from './modules/Administration';
+import AiArmy from './modules/AiArmy';
 
 const DashboardModules: React.FC = () => {
   const [activeCategory, setActiveCategory] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
   const [filteredModules, setFilteredModules] = useState({
     primary: true,
-    data: true,
-    marketing: true,
-    tech: true,
-    operations: true,
+    secondary: true,
+    subcategory: true,
   });
   
   // Add a state to show/hide the developer access
@@ -33,25 +32,19 @@ const DashboardModules: React.FC = () => {
   useEffect(() => {
     // Filter modules based on active category and search term
     let primary = true;
-    let data = true;
-    let marketing = true;
-    let tech = true;
-    let operations = true;
+    let secondary = true;
+    let subcategory = true;
 
     if (activeCategory !== 'all') {
       primary = activeCategory === 'primary';
-      data = activeCategory === 'data';
-      marketing = activeCategory === 'marketing';
-      tech = activeCategory === 'tech';
-      operations = activeCategory === 'operations';
+      secondary = activeCategory === 'secondary';
+      subcategory = activeCategory === 'subcategory';
     }
 
     setFilteredModules({
       primary: primary && (searchTerm === '' || 'primary'.includes(searchTerm.toLowerCase())),
-      data: data && (searchTerm === '' || 'data'.includes(searchTerm.toLowerCase())),
-      marketing: marketing && (searchTerm === '' || 'marketing'.includes(searchTerm.toLowerCase())),
-      tech: tech && (searchTerm === '' || 'tech'.includes(searchTerm.toLowerCase())),
-      operations: operations && (searchTerm === '' || 'operations'.includes(searchTerm.toLowerCase())),
+      secondary: secondary && (searchTerm === '' || 'secondary'.includes(searchTerm.toLowerCase())),
+      subcategory: subcategory && (searchTerm === '' || 'subcategory'.includes(searchTerm.toLowerCase())),
     });
   }, [activeCategory, searchTerm]);
 
@@ -73,59 +66,46 @@ const DashboardModules: React.FC = () => {
       />
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {/* Developer Access Hub - positioned at the start for easy access */}
-        {showDevAccess && (
-          <DeveloperAccess />
-        )}
-        
-        {/* Primary modules */}
+        {/* Primary System Modules - Main Dashboard Area */}
         {(activeCategory === 'all' || activeCategory === 'primary') && 
           filteredModules.primary && (
-            <PrimaryModules />
-          )
-        }
-        
-        {/* Data modules */}
-        {(activeCategory === 'all' || activeCategory === 'data') && 
-          filteredModules.data && (
             <>
+              {/* Developer Access Hub - positioned at the start for easy access */}
+              {showDevAccess && (
+                <DeveloperAccess />
+              )}
+              
+              {/* Primary System Modules */}
               <DataManagement />
-              <SupplierManagement />
-              <CustomerManagement />
-            </>
-          )
-        }
-        
-        {/* Marketing modules */}
-        {(activeCategory === 'all' || activeCategory === 'marketing') && 
-          filteredModules.marketing && (
-            <>
-              <BrandMarketing />
-              <SocialMediaMarketing />
               <LoyaltyProgram />
-            </>
-          )
-        }
-        
-        {/* Tech modules */}
-        {(activeCategory === 'all' || activeCategory === 'tech') && 
-          filteredModules.tech && (
-            <>
-              <TechHub />
-              <DotX />
-              <AiArmy />
-              <SystemTechnicalConfig />
-            </>
-          )
-        }
-        
-        {/* Operations modules */}
-        {(activeCategory === 'all' || activeCategory === 'operations') && 
-          filteredModules.operations && (
-            <>
-              <ProjectManagement />
+              <SocialMediaMarketing />
+              <BrandMarketing />
               <TradingSystem />
+              <ProjectManagement />
+              <DotX /> {/* Intelligence Management (DOT-X) */}
+              <TechHub />
+            </>
+          )
+        }
+        
+        {/* Secondary System Modules - for sidebars */}
+        {(activeCategory === 'all' || activeCategory === 'secondary') && 
+          filteredModules.secondary && (
+            <>
+              <CustomerManagement />
+              <SupplierManagement />
+              <SystemTechnicalConfig />
               <Administration />
+            </>
+          )
+        }
+        
+        {/* Sub Category Menu Modules - for sidebars */}
+        {(activeCategory === 'all' || activeCategory === 'subcategory') && 
+          filteredModules.subcategory && (
+            <>
+              <AiArmy />
+              {/* Additional sub category modules would go here */}
             </>
           )
         }

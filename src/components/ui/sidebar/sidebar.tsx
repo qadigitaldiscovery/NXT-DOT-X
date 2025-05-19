@@ -2,7 +2,6 @@
 import * as React from "react"
 import { cva } from "class-variance-authority"
 import { cn } from "@/lib/utils"
-import { ChevronLeft, Menu } from "lucide-react"
 import { useSidebar } from "./sidebar-context"
 
 const sidebarVariants = cva(

@@ -3,8 +3,8 @@ import { useState, useEffect } from "react";
 import { ModuleCard } from "../ModuleCard";
 import { Card } from "@/components/ui/card";
 import { 
-  Database, Users, LineChart, Code, Briefcase, Share2, Award, Layers, 
-  BarChart3, Building, Shield, Settings, Activity, Zap
+  Database, Users, LineChart, Brain, Briefcase, Share2, Award, Layers, 
+  BarChart3, Building, Shield, Settings, Activity, Cpu
 } from "lucide-react";
 
 interface PrimaryModulesProps {
@@ -13,117 +13,75 @@ interface PrimaryModulesProps {
 }
 
 export default function PrimaryModules({ activeTab = "all", searchQuery = "" }: PrimaryModulesProps) {
-  // Define all modules with their metadata
-  const allModules = [
+  // Define primary system modules
+  const primaryModules = [
     { 
-      category: "data", 
+      category: "primary", 
       path: "/data-management", 
       name: "Data Management",
       icon: <Database className="h-8 w-8" />,
       variant: "default" as const,
     },
     { 
-      category: "marketing", 
+      category: "primary", 
       path: "/loyalty-rewards", 
       name: "Loyalty Program",
       icon: <Award className="h-8 w-8" />,
       variant: "default" as const,
     },
     { 
-      category: "operations", 
-      path: "/trading-system", 
-      name: "Trading System",
-      icon: <LineChart className="h-8 w-8" />,
-      variant: "default" as const,
-    },
-    { 
-      category: "marketing", 
+      category: "primary", 
       path: "/social-media", 
-      name: "Social Media",
+      name: "Social Media Marketing",
       icon: <Share2 className="h-8 w-8" />,
       variant: "default" as const,
     },
     { 
-      category: "tech", 
-      path: "/tech-hub", 
-      name: "Tech Hub",
-      icon: <Code className="h-8 w-8" />,
-      variant: "default" as const,
-    },
-    { 
-      category: "tech", 
-      path: "/dot-x", 
-      name: "DOT-X Platform",
-      icon: <Layers className="h-8 w-8" />,
-      variant: "default" as const,
-    },
-    { 
-      category: "marketing", 
+      category: "primary", 
       path: "/brand-marketing", 
       name: "Brand Marketing",
       icon: <Briefcase className="h-8 w-8" />,
       variant: "default" as const,
     },
     { 
-      category: "operations", 
+      category: "primary", 
+      path: "/trading-system", 
+      name: "Trading System",
+      icon: <LineChart className="h-8 w-8" />,
+      variant: "default" as const,
+    },
+    { 
+      category: "primary", 
       path: "/projects", 
       name: "Project Management",
       icon: <Users className="h-8 w-8" />,
       variant: "default" as const,
     },
     { 
-      category: "analytics", 
-      path: "/dashboard/rag", 
-      name: "System Monitor",
-      icon: <Activity className="h-8 w-8" />,
+      category: "primary", 
+      path: "/dot-x", 
+      name: "Intelligence Management (DOT-X)",
+      icon: <Brain className="h-8 w-8" />,
       variant: "default" as const,
     },
-    {
-      category: "operations",
-      path: "/customer-management",
-      name: "Customer Management",
-      icon: <Building className="h-8 w-8" />,
-      variant: "default" as const,
-    },
-    {
-      category: "analytics",
-      path: "/data-management/cost-analysis",
-      name: "Analytics",
-      icon: <BarChart3 className="h-8 w-8" />,
-      variant: "default" as const,
-    },
-    {
-      category: "admin",
-      path: "/admin/security",
-      name: "Security",
-      icon: <Shield className="h-8 w-8" />,
-      variant: "default" as const,
-    },
-    {
-      category: "admin",
-      path: "/admin/system-settings",
-      name: "System Settings",
-      icon: <Settings className="h-8 w-8" />,
-      variant: "default" as const,
-    },
-    {
-      category: "tech",
-      path: "/tech-hub/integrations",
-      name: "Integrations",
-      icon: <Zap className="h-8 w-8" />,
+    { 
+      category: "primary", 
+      path: "/tech-hub", 
+      name: "Tech Hub",
+      icon: <Cpu className="h-8 w-8" />,
       variant: "default" as const,
     }
   ];
   
-  const [filteredModules, setFilteredModules] = useState(allModules);
+  const [filteredModules, setFilteredModules] = useState(primaryModules);
   
   // Filter modules based on activeTab and searchQuery
   useEffect(() => {
-    let filtered = allModules;
+    let filtered = primaryModules;
     
-    // Filter by category
-    if (activeTab && activeTab.toLowerCase() !== "all") {
-      filtered = filtered.filter(module => module.category.toLowerCase() === activeTab.toLowerCase());
+    // Filter by category if not "all"
+    if (activeTab && activeTab.toLowerCase() !== "all" && activeTab.toLowerCase() !== "primary") {
+      filtered = [];
     }
     
     // Filter by search query if provided
@@ -141,16 +99,16 @@ export default function PrimaryModules({ activeTab = "all", searchQuery = "" }: 
 
   if (filteredModules.length === 0) {
     return (
-      <Card className="p-8 text-center bg-white border border-gray-200 shadow-sm rounded-lg">
-        <p className="text-gray-600 font-medium">No modules found matching your search criteria.</p>
+      <Card className="p-8 text-center bg-white border border-gray-200 shadow-sm rounded-lg col-span-full">
+        <p className="text-gray-600 font-medium">No primary modules found matching your search criteria.</p>
       </Card>
     );
   }
   
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 col-span-full gap-6">
       {filteredModules.map((module, index) => (
-        <div key={`${module.path}-${index}`}>
+        <div key={`${module.path}-${index}`} className="col-span-1">
           <ModuleCard 
             title={module.name}
             icon={module.icon}
