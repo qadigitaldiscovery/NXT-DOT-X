@@ -7,37 +7,73 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Textarea } from '@/components/ui/textarea';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
-import { z } from 'zod';
-import { EndpointFormValues, endpointSchema } from './types';
+import { EndpointFormValues, endpointSchema, ApiEndpoint } from './types';
+import { useState, useEffect } from 'react';
 
 interface AddEndpointDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onSubmit: (values: EndpointFormValues) => void;
+  endpoint?: ApiEndpoint | null;
+  onClose?: () => void;
 }
 
-export function AddEndpointDialog({ open, onOpenChange, onSubmit }: AddEndpointDialogProps) {
-  const form = useForm<z.infer<typeof endpointSchema>>({
+export function AddEndpointDialog({ open, onOpenChange, onSubmit, endpoint, onClose }: AddEndpointDialogProps) {
+  const isEditMode = Boolean(endpoint);
+  
+  const form = useForm<EndpointFormValues>({
     resolver: zodResolver(endpointSchema),
     defaultValues: {
       name: '',
       url: '',
-      method: 'GET',
+      method: 'POST',
       apiKey: '',
       status: 'active',
       description: '',
-    },
+    }
   });
 
-  const handleSubmit = (values: z.infer<typeof endpointSchema>) => {
+  useEffect(() => {
+    // When editing, populate form with endpoint data
+    if (endpoint) {
+      form.reset({
+        name: endpoint.name,
+        url: endpoint.url,
+        method: endpoint.method,
+        apiKey: endpoint.apiKey,
+        status: endpoint.status,
+        description: endpoint.description || ''
+      });
+    } else {
+      form.reset({
+        name: '',
+        url: '',
+        method: 'POST',
+        apiKey: '',
+        status: 'active',
+        description: ''
+      });
+    }
+  }, [endpoint, form]);
+
+  const handleSubmit = (values: EndpointFormValues) => {
     onSubmit(values);
+    form.reset();
+    if (onClose) onClose();
+  };
+
+  const handleDialogChange = (open: boolean) => {
+    onOpenChange(open);
+    if (!open && onClose) {
+      onClose();
+    }
   };
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={open} onOpenChange={handleDialogChange}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Add New Endpoint</DialogTitle>
+          <DialogTitle>{isEditMode ? 'Edit Endpoint' : 'Add New Endpoint'}</DialogTitle>
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
@@ -83,7 +119,7 @@ export function AddEndpointDialog({ open, onOpenChange, onSubmit }: AddEndpointD
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
-                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <Select onValueChange={field.onChange} value={field.value}>
                       <SelectTrigger>
                         <SelectValue placeholder="Select Method" />
                       </SelectTrigger>
@@ -112,7 +148,7 @@ export function AddEndpointDialog({ open, onOpenChange, onSubmit }: AddEndpointD
               )}
             />
             <DialogFooter>
-              <Button type="submit">Add Endpoint</Button>
+              <Button type="submit">{isEditMode ? 'Update' : 'Add'} Endpoint</Button>
             </DialogFooter>
           </form>
         </Form>

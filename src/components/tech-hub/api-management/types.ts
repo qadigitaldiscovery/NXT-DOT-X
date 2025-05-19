@@ -1,4 +1,6 @@
 
+import { z } from 'zod';
+
 export interface ApiProvider {
   id: string;
   name: string;
@@ -15,6 +17,7 @@ export interface ApiEndpoint {
   method: 'POST' | 'GET' | 'PUT' | 'DELETE';
   status: 'active' | 'inactive';
   lastUsed: string;
+  description?: string;
 }
 
 export interface EndpointFormValues {
@@ -23,7 +26,17 @@ export interface EndpointFormValues {
   apiKey: string;
   method: 'POST' | 'GET' | 'PUT' | 'DELETE';
   status: 'active' | 'inactive';
+  description?: string;
 }
+
+export const endpointSchema = z.object({
+  name: z.string().min(1, { message: "Name is required" }),
+  url: z.string().url({ message: "Must be a valid URL" }),
+  apiKey: z.string().min(1, { message: "API Key is required" }),
+  method: z.enum(['GET', 'POST', 'PUT', 'DELETE']),
+  status: z.enum(['active', 'inactive']).default('active'),
+  description: z.string().optional()
+});
 
 export interface ApiKeyFormProps {
   providerName: string;
