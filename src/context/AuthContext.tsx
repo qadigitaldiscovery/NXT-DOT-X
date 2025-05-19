@@ -1,6 +1,6 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { toast } from '../components/ui/toast';
+import { toast } from 'sonner';
 import { supabase } from '../integrations/supabase/client';
 
 interface User {

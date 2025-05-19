@@ -1,19 +1,10 @@
+
 import { useState, useEffect } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { FileTypeIcon } from "../FileTypeIcon";
 import { FileSize } from "../FileSize";
-
-// @ts-ignore
-const XLSX = require('xlsx') as {
-  read(data: Uint8Array, opts?: { type: string }): {
-    SheetNames: string[];
-    Sheets: { [key: string]: any };
-  };
-  utils: {
-    sheet_to_json<T>(worksheet: any, opts?: { header: number }): T[];
-  };
-};
+import * as XLSX from 'xlsx';
 
 type FilePreviewProps = {
   file: File | null;
