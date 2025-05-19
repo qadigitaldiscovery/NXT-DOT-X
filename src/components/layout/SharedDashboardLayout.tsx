@@ -81,8 +81,8 @@ const SharedDashboardLayout: React.FC<SharedDashboardLayoutProps> = ({
       {/* Main Content */}
       <div className="flex flex-col flex-1 overflow-hidden">
         {/* Top navigation */}
-        <header className="border-b border-zinc-700 p-4 flex items-center justify-between bg-transparent">
-          <h1 className="text-xl font-medium">{moduleTitle}</h1>
+        <header className="border-b border-zinc-700 p-4 flex items-center justify-between py-[9px] bg-slate-100">
+          <h1 className="text-xl text-gray-500 font-extrabold">{moduleTitle}</h1>
           <div className="flex items-center space-x-4">
             <ThemeToggle />
             <UserMenu />
