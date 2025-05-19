@@ -1,3 +1,4 @@
+
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { ChevronDown, ChevronUp, ExternalLink } from 'lucide-react';
@@ -22,7 +23,6 @@ export const ModuleCard: React.FC<ModuleCardProps> = ({
   icon,
   path,
   className,
-  variant = 'default',
   features = [],
   allAccess = false
 }) => {
@@ -47,40 +47,40 @@ export const ModuleCard: React.FC<ModuleCardProps> = ({
     return "relative cursor-pointer rounded-lg shadow-sm border bg-white text-gray-800 border-gray-200";
   };
   return <div className={`${getCardStyle()} ${className}`} onClick={handleClick}>
-      {/* Content container */}
-      <div className="flex flex-col p-6 bg-zinc-100">
-        {/* Title */}
-        <h3 className="text-xl mb-6 text-center font-bold text-slate-500">
+      {/* Content container - reduced height with more compact spacing */}
+      <div className="flex flex-col p-3 bg-zinc-100">
+        {/* Title - smaller text and margins */}
+        <h3 className="text-lg mb-2 text-center font-bold text-slate-500">
           {title}
         </h3>
         
-        {/* Icon container - centered */}
-        <div className="mx-auto rounded-full p-4 mb-4 bg-gray-100 text-gray-600">
+        {/* Icon container - smaller padding and margin */}
+        <div className="mx-auto rounded-full p-2 mb-2 bg-gray-100 text-gray-600">
           {icon}
         </div>
 
-        {/* All Access Tag */}
-        {allAccess && <span className="absolute top-3 right-3 bg-amber-600 text-white text-xs font-semibold px-2 py-1 rounded-full">
+        {/* All Access Tag - positioned to fit reduced height */}
+        {allAccess && <span className="absolute top-2 right-2 bg-amber-600 text-white text-xs font-semibold px-2 py-0.5 rounded-full">
             All Access
           </span>}
         
-        {/* Toggle button for features */}
-        {features.length > 0 && <Button variant="outline" size="sm" className="mt-4" onClick={e => {
+        {/* Toggle button for features - smaller with less margin */}
+        {features.length > 0 && <Button variant="outline" size="sm" className="mt-2 py-1 text-xs" onClick={e => {
         e.stopPropagation();
         setShowFeatures(!showFeatures);
       }}>
-            {showFeatures ? <>Hide Features <ChevronUp className="ml-2 h-4 w-4" /></> : <>Show Features <ChevronDown className="ml-2 h-4 w-4" /></>}
+            {showFeatures ? <>Hide Features <ChevronUp className="ml-1 h-3 w-3" /></> : <>Show Features <ChevronDown className="ml-1 h-3 w-3" /></>}
           </Button>}
       </div>
 
       {/* Feature list - shown only when expanded */}
-      {showFeatures && features.length > 0 && <div className="relative px-4 pt-2 pb-4">
-          <div className="bg-gray-50 rounded-lg p-3 border border-gray-200">
-            <p className="text-sm text-gray-600 mb-3 font-medium">Available Features:</p>
-            <div className="grid grid-cols-1 gap-2 max-h-60 overflow-y-auto pr-1">
-              {features.map((feature, index) => <Button key={index} variant="ghost" size="sm" className="justify-start text-gray-700 hover:bg-gray-100 font-normal" onClick={e => handleFeatureClick(feature.path, e)}>
+      {showFeatures && features.length > 0 && <div className="relative px-3 pt-1 pb-2">
+          <div className="bg-gray-50 rounded-lg p-2 border border-gray-200">
+            <p className="text-xs text-gray-600 mb-1 font-medium">Available Features:</p>
+            <div className="grid grid-cols-1 gap-1 max-h-40 overflow-y-auto pr-1">
+              {features.map((feature, index) => <Button key={index} variant="ghost" size="sm" className="justify-start text-gray-700 hover:bg-gray-100 font-normal text-xs py-1" onClick={e => handleFeatureClick(feature.path, e)}>
                   <span className="truncate">{feature.name}</span>
-                  <ExternalLink className="ml-auto h-3.5 w-3.5 text-gray-400" />
+                  <ExternalLink className="ml-auto h-3 w-3 text-gray-400" />
                 </Button>)}
             </div>
           </div>
