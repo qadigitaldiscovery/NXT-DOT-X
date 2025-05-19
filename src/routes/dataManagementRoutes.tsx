@@ -1,8 +1,7 @@
-
 import React from 'react';
 import { Route } from "react-router-dom";
 import { PlatformLayout } from "@/components/layouts/PlatformLayout";
-import { Users, Settings, BarChart3, FileUp, Home, Database, Building, Calculator, LineChart, ArrowDownUp, FileDown, FileArchive, BrainCircuit, Server } from 'lucide-react';
+import { Users, Settings, BarChart3, FileUp, Database, Building, Calculator, LineChart, ArrowDownUp, FileDown, FileArchive, BrainCircuit, Server } from 'lucide-react';
 import type { NavCategory } from "@/components/layout/sidebar/types";
 import { navCategories as globalNavCategories } from "@/components/layout/sidebar/NavigationConfig";
 
