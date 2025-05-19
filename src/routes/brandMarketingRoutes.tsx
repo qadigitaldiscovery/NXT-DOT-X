@@ -13,17 +13,15 @@ import SEOKeywords from "@/pages/brand-marketing/SEOKeywords";
 import RequestyPage from "@/pages/brand-marketing/RequestyPage";
 
 export const BrandMarketingRoutes = () => {
-  return (
-    <>
-      <Route path="/brand-marketing" element={<BrandMarketingLayout />}>
-        <Route index element={<BrandDashboard />} />
-        <Route path="analytics" element={<BrandAnalytics />} />
-        <Route path="trust-analysis" element={<BrandTrust />} />
-        <Route path="market-perception" element={<MarketPerception />} />
-        <Route path="settings" element={<BrandSettings />} />
-        <Route path="seo" element={<SEOKeywords />} />
-        <Route path="requesty" element={<RequestyPage />} />
-      </Route>
-    </>
-  );
+  return [
+    <Route key="brand-marketing" path="/brand-marketing" element={<BrandMarketingLayout />}>
+      <Route index element={<BrandDashboard />} />
+      <Route path="analytics" element={<BrandAnalytics />} />
+      <Route path="trust-analysis" element={<BrandTrust />} />
+      <Route path="market-perception" element={<MarketPerception />} />
+      <Route path="settings" element={<BrandSettings />} />
+      <Route path="seo" element={<SEOKeywords />} />
+      <Route path="requesty" element={<RequestyPage />} />
+    </Route>
+  ];
 };

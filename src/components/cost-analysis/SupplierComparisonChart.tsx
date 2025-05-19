@@ -1,3 +1,4 @@
+
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
 
@@ -51,4 +52,4 @@ export const SupplierComparisonChart = ({ data, title, description }: SupplierCo
   );
 };
 
-export default SupplierComparisonChart; 
+export default SupplierComparisonChart;

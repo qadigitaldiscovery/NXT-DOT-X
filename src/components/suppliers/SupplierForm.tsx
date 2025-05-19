@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -29,11 +30,8 @@ type SupplierFormProps = {
 
 export function SupplierForm({ initialData, isEditing = false, onDelete }: SupplierFormProps) {
   const navigate = useNavigate();
-  const { mutate: createSupplier, status: createStatus } = useCreateSupplier();
-  const { mutate: updateSupplier, status: updateStatus } = useUpdateSupplier();
-  
-  const isCreating = createStatus === 'pending';
-  const isUpdating = updateStatus === 'pending';
+  const { mutate: createSupplier, isPending: isCreating } = useCreateSupplier();
+  const { mutate: updateSupplier, isPending: isUpdating } = useUpdateSupplier();
   
   const [formData, setFormData] = React.useState<Partial<Supplier>>({
     name: initialData?.name || '',

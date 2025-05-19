@@ -88,30 +88,76 @@ export const AppRoutes = () => {
       {/* Shared Document Route */}
       <Route path="/shared-document/:shareId" element={<SharedDocumentPage />} />
       
-      {/* Include Module Routes - Each module should return an array of Route elements */}
-      {AdminRoutes()}
-      {DataManagementRoutes()}
-      {LoyaltyRoutes()}
-      {TradingSystemRoutes()}
-      {TechHubRoutes()}
-      {DotXRoutes()}
-      {SupplierManagementRoutes()}
-      {CustomerManagementRoutes()}
-      {BrandMarketingRoutes()}
-      {SocialMediaRoutes()}
-      {ProjectManagementRoutes()}
-      {RAGDashboardRoutes()}
-      {VendorRoutes()}
-      {ContractsRoutes()}
-      {CategoriesRoutes()}
-      {EntitiesRoutes()}
-      {ScorecardsRoutes()}
-      {WorkflowsRoutes()}
-      {AIExtractRoutes()}
-      {FilesRoutes()}
-      {EventsRoutes()}
-      {RiskRegisterRoutes()}
-      {RequestsRoutes()}
+      {/* Include Module Routes - Each module returns an array of Route elements */}
+      {AdminRoutes().map((route, index) => (
+        <React.Fragment key={`admin-route-${index}`}>{route}</React.Fragment>
+      ))}
+      {DataManagementRoutes().map((route, index) => (
+        <React.Fragment key={`data-route-${index}`}>{route}</React.Fragment>
+      ))}
+      {LoyaltyRoutes().map((route, index) => (
+        <React.Fragment key={`loyalty-route-${index}`}>{route}</React.Fragment>
+      ))}
+      {TradingSystemRoutes().map((route, index) => (
+        <React.Fragment key={`trading-route-${index}`}>{route}</React.Fragment>
+      ))}
+      {TechHubRoutes().map((route, index) => (
+        <React.Fragment key={`tech-route-${index}`}>{route}</React.Fragment>
+      ))}
+      {DotXRoutes().map((route, index) => (
+        <React.Fragment key={`dotx-route-${index}`}>{route}</React.Fragment>
+      ))}
+      {SupplierManagementRoutes().map((route, index) => (
+        <React.Fragment key={`supplier-route-${index}`}>{route}</React.Fragment>
+      ))}
+      {CustomerManagementRoutes().map((route, index) => (
+        <React.Fragment key={`customer-route-${index}`}>{route}</React.Fragment>
+      ))}
+      {BrandMarketingRoutes().map((route, index) => (
+        <React.Fragment key={`brand-route-${index}`}>{route}</React.Fragment>
+      ))}
+      {SocialMediaRoutes().map((route, index) => (
+        <React.Fragment key={`social-route-${index}`}>{route}</React.Fragment>
+      ))}
+      {ProjectManagementRoutes().map((route, index) => (
+        <React.Fragment key={`project-route-${index}`}>{route}</React.Fragment>
+      ))}
+      {RAGDashboardRoutes().map((route, index) => (
+        <React.Fragment key={`rag-route-${index}`}>{route}</React.Fragment>
+      ))}
+      {VendorRoutes().map((route, index) => (
+        <React.Fragment key={`vendor-route-${index}`}>{route}</React.Fragment>
+      ))}
+      {ContractsRoutes().map((route, index) => (
+        <React.Fragment key={`contract-route-${index}`}>{route}</React.Fragment>
+      ))}
+      {CategoriesRoutes().map((route, index) => (
+        <React.Fragment key={`category-route-${index}`}>{route}</React.Fragment>
+      ))}
+      {EntitiesRoutes().map((route, index) => (
+        <React.Fragment key={`entity-route-${index}`}>{route}</React.Fragment>
+      ))}
+      {ScorecardsRoutes().map((route, index) => (
+        <React.Fragment key={`scorecard-route-${index}`}>{route}</React.Fragment>
+      ))}
+      {WorkflowsRoutes().map((route, index) => (
+        <React.Fragment key={`workflow-route-${index}`}>{route}</React.Fragment>
+      ))}
+      {AIExtractRoutes().map((route, index) => (
+        <React.Fragment key={`ai-extract-route-${index}`}>{route}</React.Fragment>
+      ))}
+      {FilesRoutes().map((route, index) => (
+        <React.Fragment key={`file-route-${index}`}>{route}</React.Fragment>
+      ))}
+      {EventsRoutes().map((route, index) => (
+        <React.Fragment key={`event-route-${index}`}>{route}</React.Fragment>
+      ))}
+      {RiskRegisterRoutes().map((route, index) => (
+        <React.Fragment key={`risk-route-${index}`}>{route}</React.Fragment>
+      ))}
+      {RequestsRoutes().map((route, index) => (
+        <React.Fragment key={`request-route-${index}`}>{route}</React.Fragment>
+      ))}
       
       {/* Legacy route redirects */}
       <Route path="/beta1/*" element={<Navigate to="/data-management" replace />} />
