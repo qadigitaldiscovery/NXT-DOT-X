@@ -1,12 +1,9 @@
-import React, { useState } from 'react';
-import { Button } from '../../../components/ui/button';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../../../components/ui/table';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../../components/ui/card';
-import { Edit, Trash2 } from 'lucide-react';
-import { AddUserDialog } from './AddUserDialog';
+import { useState } from 'react';
+import { Button } from '@/components/ui/button';
 import { EditUserDialog } from './EditUserDialog';
+import { useAuth } from '@/context/AuthContext';
+import { toast } from '@/components/ui/toast';
 
-// Define a type for users
 interface User {
   id: string;
   username: string;
@@ -15,104 +12,71 @@ interface User {
   status: string;
 }
 
-const mockUsers: User[] = [
-  { id: '1', username: 'admin', email: 'admin@example.com', role: 'Administrator', status: 'Active' },
-  { id: '2', username: 'johndoe', email: 'john@example.com', role: 'Editor', status: 'Active' },
-  { id: '3', username: 'janesmith', email: 'jane@example.com', role: 'Viewer', status: 'Inactive' },
-];
-
 export function UsersTab() {
-  const [users, setUsers] = useState<User[]>(mockUsers);
-  const [isAddingUser, setIsAddingUser] = useState(false);
-  const [editingUser, setEditingUser] = useState<User | undefined>();
+  const [selectedUser, setSelectedUser] = useState<User | undefined>(undefined);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const { user: currentUser } = useAuth();
 
-  const handleAddUser = (user: { username: string; email: string; role: string }) => {
-    const newUser: User = {
-      id: Date.now().toString(),
-      ...user,
-      status: 'Active',
-    };
-    setUsers([...users, newUser]);
-    setIsAddingUser(false);
+  const handleEditUser = (user: User) => {
+    setSelectedUser(user);
+    setIsEditDialogOpen(true);
   };
 
-  const handleEditUser = (id: string) => {
-    const userToEdit = users.find(user => user.id === id);
-    setEditingUser(userToEdit);
-  };
+  const handleUserUpdated = async (
+    id: string,
+    updatedUser: { username: string; email: string; role: string; status: string }
+  ) => {
+    try {
+      // Update user logic here
+      const response = await fetch(`/api/users/${id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(updatedUser),
+      });
 
-  const handleUserUpdated = (id: string, updatedUser: { username: string; email: string; role: string; status: string }) => {
-    setUsers(users.map(user => 
-      user.id === id 
-        ? { ...user, ...updatedUser }
-        : user
-    ));
-    setEditingUser(undefined);
-  };
+      if (!response.ok) {
+        throw new Error('Failed to update user');
+      }
 
-  const handleDeleteUser = (id: string, username: string) => {
-    if (window.confirm(`Are you sure you want to delete the user "${username}"?`)) {
-      setUsers(users.filter(user => user.id !== id));
+      toast.success('User updated successfully');
+      setIsEditDialogOpen(false);
+      setSelectedUser(undefined);
+    } catch (error) {
+      toast.error('Failed to update user');
     }
   };
 
   return (
-    <Card>
-      <CardHeader className="flex flex-row items-center justify-between">
-        <div>
-          <CardTitle>Users</CardTitle>
-          <CardDescription>Manage user accounts and permissions</CardDescription>
-        </div>
-        <AddUserDialog open={isAddingUser} onOpenChange={setIsAddingUser} onUserAdded={handleAddUser} />
-      </CardHeader>
-      <CardContent>
-        <EditUserDialog 
-          user={editingUser}
-          open={!!editingUser}
-          onOpenChange={(open: boolean) => !open && setEditingUser(undefined)}
-          onUserUpdated={handleUserUpdated}
-        />
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Username</TableHead>
-              <TableHead>Email</TableHead>
-              <TableHead>Role</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead className="w-[100px]">Actions</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {users.length === 0 ? (
-              <TableRow>
-                <TableCell colSpan={5} className="h-24 text-center">
-                  No users found
-                </TableCell>
-              </TableRow>
-            ) : (
-              users.map((user) => (
-                <TableRow key={user.id}>
-                  <TableCell className="font-medium">{user.username}</TableCell>
-                  <TableCell>{user.email}</TableCell>
-                  <TableCell>{user.role}</TableCell>
-                  <TableCell>{user.status}</TableCell>
-                  <TableCell className="flex items-center gap-2">
-                    <Button variant="ghost" size="icon" onClick={() => handleEditUser(user.id)}>
-                      <Edit className="h-4 w-4" />
-                    </Button>
-                    <Button variant="ghost" size="icon" onClick={() => handleDeleteUser(user.id, user.username)}>
-                      <Trash2 className="h-4 w-4 text-red-500" />
-                    </Button>
-                  </TableCell>
-                </TableRow>
-              ))
-            )}
-          </TableBody>
-        </Table>
-      </CardContent>
-    </Card>
+    <div className="space-y-4">
+      <div className="flex justify-between items-center">
+        <h2 className="text-2xl font-bold">Users Management</h2>
+        {currentUser?.role === 'admin' && (
+          <Button
+            onClick={() =>
+              handleEditUser({
+                id: 'new',
+                username: '',
+                email: '',
+                role: 'viewer',
+                status: 'Active'
+              })
+            }
+          >
+            Add User
+          </Button>
+        )}
+      </div>
+
+      {/* User list would go here */}
+      
+      <EditUserDialog
+        user={selectedUser}
+        open={isEditDialogOpen}
+        onOpenChange={setIsEditDialogOpen}
+        onUserUpdated={handleUserUpdated}
+      />
+    </div>
   );
 }
-
-// We maintain both named and default exports for compatibility
-export default UsersTab;

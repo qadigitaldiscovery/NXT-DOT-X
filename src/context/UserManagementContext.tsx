@@ -1,6 +1,5 @@
-import React, { createContext, useState, useContext, ReactNode } from 'react';
+import { createContext, useContext, useState } from 'react';
 
-// Define the types for our data
 interface User {
   id: string;
   username: string;
@@ -23,7 +22,20 @@ interface Permission {
   category: string;
 }
 
-// Sample data
+interface UserManagementContextType {
+  users: User[];
+  setUsers: (users: User[]) => void;
+  roles: Role[];
+  setRoles: (roles: Role[]) => void;
+  permissions: Permission[];
+  addUser: (user: User) => void;
+  addRole: (role: Role) => void;
+  updateUser: (id: string, userData: Partial<User>) => void;
+  updateRole: (id: string, roleData: Partial<Role>) => void;
+  deleteUser: (id: string) => void;
+  deleteRole: (id: string) => void;
+}
+
 const initialUsers: User[] = [
   {
     id: '1',
@@ -40,14 +52,6 @@ const initialUsers: User[] = [
     role: 'manager',
     status: 'active',
     created: '2023-02-15'
-  },
-  {
-    id: '3',
-    username: 'user',
-    email: 'user@example.com',
-    role: 'user',
-    status: 'active',
-    created: '2023-03-20'
   }
 ];
 
@@ -56,19 +60,13 @@ const initialRoles: Role[] = [
     id: '1',
     name: 'admin',
     description: 'Full access to all system functions',
-    permissions: ['users.view', 'users.create', 'users.edit', 'users.delete', 'settings.access', 'modules.all']
+    permissions: ['users.view', 'users.create', 'users.edit', 'users.delete']
   },
   {
     id: '2',
     name: 'manager',
     description: 'Access to manage specific modules',
-    permissions: ['users.view', 'settings.access', 'modules.data', 'modules.loyalty']
-  },
-  {
-    id: '3',
-    name: 'user',
-    description: 'Limited access to basic functions',
-    permissions: ['modules.data']
+    permissions: ['users.view', 'modules.data']
   }
 ];
 
@@ -77,109 +75,71 @@ const initialPermissions: Permission[] = [
   { id: 'users.create', name: 'Create Users', category: 'Users' },
   { id: 'users.edit', name: 'Edit Users', category: 'Users' },
   { id: 'users.delete', name: 'Delete Users', category: 'Users' },
-  { id: 'settings.access', name: 'Access Settings', category: 'Settings' },
-  { id: 'modules.all', name: 'Access All Modules', category: 'Modules' },
-  { id: 'modules.data', name: 'Access Data Module', category: 'Modules' },
-  { id: 'modules.loyalty', name: 'Access Loyalty Module', category: 'Modules' }
+  { id: 'modules.data', name: 'Access Data Module', category: 'Modules' }
 ];
 
-// Define the context type
-interface UserManagementContextType {
-  users: User[];
-  setUsers: React.Dispatch<React.SetStateAction<User[]>>;
-  roles: Role[];
-  setRoles: React.Dispatch<React.SetStateAction<Role[]>>;
-  permissions: Permission[];
-  addUser: (user: User) => void;
-  addRole: (role: Role) => void;
-  updateUser: (id: string, userData: Partial<User>) => void;
-  updateRole: (id: string, roleData: Partial<Role>) => void;
-  deleteUser: (id: string) => void;
-  deleteRole: (id: string) => void;
-}
+const UserManagementContext = createContext<UserManagementContextType | undefined>(undefined);
 
-// Create the context
-const UserManagementContext = createContext<UserManagementContextType>(undefined as any);
-
-// Create the provider component
-export const UserManagementProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+export function UserManagementProvider({ children }: { children: React.ReactNode }) {
   const [users, setUsers] = useState<User[]>(initialUsers);
   const [roles, setRoles] = useState<Role[]>(initialRoles);
   const [permissions] = useState<Permission[]>(initialPermissions);
-  
-  // Function to add a new user
+
   const addUser = (user: User) => {
-    setUsers((prevUsers) => [...prevUsers, user]);
-    console.log('User added:', user);
+    setUsers(prev => [...prev, user]);
   };
 
-  // Function to add a new role
   const addRole = (role: Role) => {
-    setRoles((prevRoles) => [...prevRoles, role]);
-    console.log('Role added:', role);
+    setRoles(prev => [...prev, role]);
   };
 
-  // Function to update an existing user
   const updateUser = (id: string, userData: Partial<User>) => {
-    setUsers((prevUsers) =>
-      prevUsers.map((user) =>
-        user.id === id ? { ...user, ...userData } : user
-      )
-    );
-    console.log('User updated:', { id, userData });
+    setUsers(prev => prev.map(user => 
+      user.id === id ? { ...user, ...userData } : user
+    ));
   };
 
-  // Function to update an existing role
   const updateRole = (id: string, roleData: Partial<Role>) => {
-    setRoles((prevRoles) =>
-      prevRoles.map((role) =>
-        role.id === id ? { ...role, ...roleData } : role
-      )
-    );
-    console.log('Role updated:', { id, roleData });
+    setRoles(prev => prev.map(role => 
+      role.id === id ? { ...role, ...roleData } : role
+    ));
   };
 
-  // Function to delete a user
   const deleteUser = (id: string) => {
-    setUsers((prevUsers) => prevUsers.filter((user) => user.id !== id));
-    console.log('User deleted:', id);
+    setUsers(prev => prev.filter(user => user.id !== id));
   };
 
-  // Function to delete a role
   const deleteRole = (id: string) => {
-    setRoles((prevRoles) => prevRoles.filter((role) => role.id !== id));
-    console.log('Role deleted:', id);
+    setRoles(prev => prev.filter(role => role.id !== id));
+  };
+
+  const value: UserManagementContextType = {
+    users,
+    setUsers,
+    roles,
+    setRoles,
+    permissions,
+    addUser,
+    addRole,
+    updateUser,
+    updateRole,
+    deleteUser,
+    deleteRole
   };
 
   return (
-    <UserManagementContext.Provider 
-      value={{ 
-        users, 
-        setUsers, 
-        roles, 
-        setRoles, 
-        permissions,
-        addUser,
-        addRole,
-        updateUser,
-        updateRole,
-        deleteUser,
-        deleteRole
-      }}
-    >
+    <UserManagementContext.Provider value={value}>
       {children}
     </UserManagementContext.Provider>
   );
-};
+}
 
-// Create a hook to use the context
-export const useUserManagement = () => {
+export function useUserManagement() {
   const context = useContext(UserManagementContext);
   if (context === undefined) {
     throw new Error('useUserManagement must be used within a UserManagementProvider');
   }
   return context;
-};
+}
 
-// Export the types for use in other files
 export type { User, Role, Permission };

@@ -1,5 +1,5 @@
-import React, { useState, useEffect, JSX } from 'react';
-import { toast } from 'sonner';
+import React, { useState, useEffect } from 'react';
+import { toast } from '@/components/ui/toast';
 import { useModules } from '@/context/ModulesContext';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
@@ -12,21 +12,36 @@ import { useAuth } from '@/context/AuthContext';
 
 interface User {
   id: string;
-  username: string;
+  email?: string;
+  username?: string;
 }
 
 interface ModuleTogglePanelProps {
   userId: string;
 }
 
-const ModuleTogglePanel: React.FC<ModuleTogglePanelProps> = ({ userId }): JSX.Element => {
-  const { modules, moduleAccess, loading, error, toggleAccess, addModuleAccess, refreshAccess } = useModules();
+interface ModuleAccess {
+  id: string;
+  module_slug: string;
+  is_enabled: boolean;
+  submenu_slug?: string;
+  category?: string;
+}
+
+const ModuleTogglePanel: React.FC<ModuleTogglePanelProps> = ({ userId }) => {
+  const { modules, loading, toggleModule, refreshModules } = useModules();
   const [selectedUser, setSelectedUser] = useState<string>(userId);
   const [users, setUsers] = useState<User[]>([]);
   const { user } = useAuth();
 
-  // Filter access list for the selected user
-  const userAccessList = moduleAccess.filter(access => access.user_id === selectedUser);
+  // Convert modules to module access format
+  const userAccessList: ModuleAccess[] = modules.map(module => ({
+    id: module.id,
+    module_slug: module.name,
+    is_enabled: module.enabled,
+    submenu_slug: undefined,
+    category: undefined
+  }));
 
   const handleUserChange = (uid: string) => {
     setSelectedUser(uid);
@@ -34,8 +49,9 @@ const ModuleTogglePanel: React.FC<ModuleTogglePanelProps> = ({ userId }): JSX.El
 
   const handleToggleAccess = async (id: string, currentValue: boolean) => {
     try {
-      await toggleAccess(id, !currentValue);
+      await toggleModule(id, !currentValue);
       toast.success(`Module access ${!currentValue ? 'enabled' : 'disabled'}`);
+      await refreshModules();
     } catch (err) {
       console.error('Error toggling access:', err);
       toast.error('Failed to update module access');
@@ -44,57 +60,20 @@ const ModuleTogglePanel: React.FC<ModuleTogglePanelProps> = ({ userId }): JSX.El
 
   const handleAddModuleAccess = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const formData = new FormData(event.currentTarget);
-    const moduleSlug = formData.get('moduleSlug') as string;
-    const submenuSlug = formData.get('submenuSlug') as string;
-    const category = formData.get('category') as string;
-
-    if (!moduleSlug) {
-      toast.error('Module slug is required');
-      return;
-    }
-
-    try {
-      await addModuleAccess({
-        user_id: selectedUser,
-        module_slug: moduleSlug,
-        submenu_slug: submenuSlug || undefined,
-        category: category || undefined,
-        is_enabled: true
-      });
-
-      // Refresh the access list
-      await refreshAccess();
-
-      // Reset the form
-      (event.target as HTMLFormElement).reset();
-      toast.success('Module access added successfully');
-    } catch (err) {
-      console.error('Error adding module access:', err);
-      toast.error('Failed to add module access');
-    }
+    toast.error('Adding module access is not supported in current context');
   };
 
   useEffect(() => {
-    // For demonstration, we'll just use the current user
-    // In a real app, you'd fetch the list of users from your backend
     if (user) {
       setUsers([
         {
           id: user.id,
+          email: user.email,
           username: user.email || user.id
         }
       ]);
     }
   }, [user]);
-
-  if (error) {
-    return (
-      <div className="p-4 text-red-500">
-        Error loading module access: {error.message}
-      </div>
-    );
-  }
 
   return (
     <div className="space-y-8">

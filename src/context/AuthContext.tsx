@@ -1,6 +1,6 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { createClient, User as SupabaseUser } from '@supabase/supabase-js';
+import { createClient } from '@supabase/supabase-js';
 import { toast } from '@/components/ui/toast';
 
 const supabase = createClient(

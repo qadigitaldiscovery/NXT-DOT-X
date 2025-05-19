@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Outlet } from 'react-router-dom';
 import { sidebarMenu } from '@/config/sidebarMenu';
@@ -37,6 +36,8 @@ export const VendorLayout = () => {
           <button
             onClick={() => setSidebarOpen(!sidebarOpen)}
             className="md:block hidden text-gray-400 hover:text-white"
+            aria-label={sidebarOpen ? "Collapse sidebar" : "Expand sidebar"}
+            title={sidebarOpen ? "Collapse sidebar" : "Expand sidebar"}
           >
             <ChevronRight className={cn("h-5 w-5 transition-transform", !sidebarOpen && "rotate-180")} />
           </button>
@@ -51,8 +52,9 @@ export const VendorLayout = () => {
                   <a
                     href={item.path}
                     className="flex items-center py-2 px-3 text-sm rounded hover:bg-gray-800"
+                    aria-label={item.label}
                   >
-                    {<item.icon className="h-5 w-5 mr-3" />}
+                    {<item.icon className="h-5 w-5 mr-3" aria-hidden="true" />}
                     {sidebarOpen && <span>{item.label}</span>}
                   </a>
                 </li>
@@ -69,8 +71,13 @@ export const VendorLayout = () => {
           <button
             onClick={() => setSidebarOpen(!sidebarOpen)}
             className="md:hidden text-gray-500 hover:text-gray-700 mr-4"
+            aria-label={sidebarOpen ? "Close menu" : "Open menu"}
+            title={sidebarOpen ? "Close menu" : "Open menu"}
           >
-            {sidebarOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+            {sidebarOpen ? 
+              <X className="h-6 w-6" aria-hidden="true" /> : 
+              <Menu className="h-6 w-6" aria-hidden="true" />
+            }
           </button>
           <h1 className="text-xl font-semibold">Healthcare Supplier Dashboard</h1>
         </header>

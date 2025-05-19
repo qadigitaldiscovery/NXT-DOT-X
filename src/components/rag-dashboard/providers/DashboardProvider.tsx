@@ -1,8 +1,27 @@
 import { createContext, useContext, useState, useEffect } from 'react';
-import { useModules } from '@/hooks/useModules';
+import { toast } from '@/components/ui/toast';
+
+interface DashboardMetrics {
+  totalUsers: number;
+  activeUsers: number;
+  totalDocuments: number;
+  processedQueries: number;
+}
+
+interface DashboardQuery {
+  id: string;
+  query: string;
+  timestamp: string;
+  status: 'completed' | 'failed' | 'processing';
+}
+
+interface DashboardData {
+  metrics: DashboardMetrics;
+  recentQueries: DashboardQuery[];
+}
 
 interface DashboardContextType {
-  result: any; // TODO: Define proper type
+  result: DashboardData | null;
   loading: boolean;
   error: Error | null;
   refreshData: () => Promise<void>;
@@ -15,17 +34,15 @@ interface DashboardProviderProps {
 }
 
 export function DashboardProvider({ children }: DashboardProviderProps) {
-  const [result, setResult] = useState<any>(null);
+  const [result, setResult] = useState<DashboardData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
-  const { modules } = useModules();
 
   const fetchDashboardData = async () => {
     try {
       setLoading(true);
       setError(null);
 
-      // Fetch dashboard data here
       const response = await fetch('/api/dashboard');
       if (!response.ok) {
         throw new Error('Failed to fetch dashboard data');
@@ -34,7 +51,12 @@ export function DashboardProvider({ children }: DashboardProviderProps) {
       const data = await response.json();
       setResult(data);
     } catch (err) {
-      setError(err instanceof Error ? err : new Error('An error occurred'));
+      const errorMessage = err instanceof Error ? err.message : 'An unknown error occurred';
+      setError(new Error(errorMessage));
+      toast.error({
+        title: 'Error',
+        description: errorMessage
+      });
     } finally {
       setLoading(false);
     }
@@ -48,15 +70,8 @@ export function DashboardProvider({ children }: DashboardProviderProps) {
     await fetchDashboardData();
   };
 
-  const value = {
-    result,
-    loading,
-    error,
-    refreshData
-  };
-
   return (
-    <DashboardContext.Provider value={value}>
+    <DashboardContext.Provider value={{ result, loading, error, refreshData }}>
       {children}
     </DashboardContext.Provider>
   );
@@ -69,3 +84,5 @@ export function useDashboard() {
   }
   return context;
 }
+
+export type { DashboardData, DashboardMetrics, DashboardQuery };
