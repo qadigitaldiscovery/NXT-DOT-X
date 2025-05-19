@@ -1,17 +1,18 @@
 import React from 'react';
-import { cn } from '@/lib/utils';
 import { SidebarNavigation } from '@/components/layout/sidebar/SidebarNavigation';
 import { NavCategory } from '@/components/layout/sidebar/types';
 import { useLocation } from 'react-router-dom';
 import { navCategories as globalNavCategories } from '@/components/layout/sidebar/NavigationConfig';
+
 interface MainSidebarContentProps {
   isOpen: boolean;
   navCategories: NavCategory[];
-  navItems: any[];
-  items: any[];
-  user: any;
+  navItems: unknown[];
+  items: unknown[];
+  user: unknown;
   useGlobalNavigation: boolean;
 }
+
 export const MainSidebarContent: React.FC<MainSidebarContentProps> = ({
   isOpen,
   navCategories,
@@ -41,14 +42,14 @@ export const MainSidebarContent: React.FC<MainSidebarContentProps> = ({
     console.log('MainSidebarContent - Using Provided Nav Categories');
   } else if (items && items.length > 0) {
     // Use provided items (legacy support)
-    effectiveNavCategories = items;
+    effectiveNavCategories = items as NavCategory[];
     console.log('MainSidebarContent - Using Legacy Items');
   } else if (navItems && navItems.length > 0) {
     // Create a category from navItems
     effectiveNavCategories = [{
       name: 'Navigation',
       label: 'Navigation',
-      items: navItems
+      items: navItems as unknown[]
     }];
     console.log('MainSidebarContent - Using Nav Items');
   }

@@ -7,9 +7,9 @@ interface DashboardContextType {
   setIsRefreshing: (value: boolean) => void;
   handleRefresh: () => Promise<void>;
   refreshModules: () => Promise<{ success: boolean }>;
-  handleResolveAlert: (id: string) => Promise<any>;
-  handleAddRule: (rule: any) => Promise<any>;
-  handleDeleteRule: (id: string) => Promise<any>;
+  handleResolveAlert: (id: string) => Promise<unknown>;
+  handleAddRule: (rule: unknown) => Promise<unknown>;
+  handleDeleteRule: (id: string) => Promise<unknown>;
 }
 
 const DashboardContext = createContext<DashboardContextType | undefined>(undefined);
@@ -25,9 +25,9 @@ export const useDashboardContext = () => {
 interface DashboardProviderProps {
   children: React.ReactNode;
   refreshModules: () => Promise<{ success: boolean }>;
-  resolveAlert: (id: string) => Promise<any>;
-  addRule: (rule: any) => Promise<any>;
-  deleteRule: (id: string) => Promise<any>;
+  resolveAlert: (id: string) => Promise<unknown>;
+  addRule: (rule: unknown) => Promise<unknown>;
+  deleteRule: (id: string) => Promise<unknown>;
 }
 
 export const DashboardProvider: React.FC<DashboardProviderProps> = ({ 
@@ -71,7 +71,7 @@ export const DashboardProvider: React.FC<DashboardProviderProps> = ({
     return result;
   }, [resolveAlert]);
   
-  const handleAddRule = useCallback(async (rule: any) => {
+  const handleAddRule = useCallback(async (rule: unknown) => {
     try {
       const result = await addRule(rule);
       
