@@ -1,11 +1,25 @@
 
-import React from 'react';
+import { useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Bot, Shield, Zap, Brain, BarChart2, Users, Code, Database } from 'lucide-react';
+import { toast } from 'sonner';
+import { useModules } from '@/context/ModulesContext';
 
 const DotXDashboard2 = () => {
+  const { hasAccess } = useModules();
+
+  useEffect(() => {
+    // Check module access
+    const hasModuleAccess = hasAccess('dot-x', 'dot-x-2');
+    if (!hasModuleAccess) {
+      toast.error('Access denied', {
+        description: 'You do not have access to the DOT-X-2 module'
+      });
+    }
+  }, [hasAccess]);
+
   return (
     <div className="space-y-8">
       <div>

@@ -1,3 +1,4 @@
+
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { supabase } from '../integrations/supabase/client';
@@ -162,6 +163,24 @@ export function ModulesProvider({ children }: { children: React.ReactNode }) {
   const hasAccess = (moduleSlug: string, submenuSlug?: string): boolean => {
     if (isAdmin) return true;
 
+    // Special case for DOT-X module: check parent access first
+    if (moduleSlug === 'dot-x' && submenuSlug) {
+      const parentAccess = moduleAccess.some(access => 
+        access.module_slug === moduleSlug && 
+        access.is_enabled &&
+        !access.submenu_slug
+      );
+
+      if (parentAccess) return true;
+
+      return moduleAccess.some(access => 
+        access.module_slug === moduleSlug && 
+        access.is_enabled &&
+        access.submenu_slug === submenuSlug
+      );
+    }
+
+    // Regular module access check
     return moduleAccess.some(access => 
       access.module_slug === moduleSlug && 
       access.is_enabled &&
