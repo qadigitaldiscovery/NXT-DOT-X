@@ -7,23 +7,36 @@ import { AdvancedConfigSection } from './components/AdvancedConfigSection';
 
 export interface ApiKeyFormProps {
   providerName: string;
-  apiKey: string;
-  isKeySet: boolean;
-  isVisible: boolean;
-  config: Record<string, any>;
-  onApiKeyChange: (apiKey: string) => void;
-  onVisibilityToggle: () => void;
-  onConfigUpdate: (key: string, value: any) => void;
+  apiKey?: string;
+  isKeySet?: boolean;
+  isVisible?: boolean;
+  config?: Record<string, any>;
+  onApiKeyChange?: (apiKey: string) => void;
+  onVisibilityToggle?: () => void;
+  onConfigUpdate?: (key: string, value: any) => void;
+  // Added props that were missing but being used in other components
+  apiKeyPlaceholder?: string;
+  docsLink?: { text: string; url: string };
+  onVerify?: (apiKey: string) => Promise<boolean>;
+  preferredModelOptions?: { value: string; label: string }[];
+  initialModel?: string;
+  footerText?: string;
+  additionalConfig?: Record<string, any>;
 }
 
 export const ApiKeyForm: React.FC<ApiKeyFormProps> = ({
   providerName,
-  apiKey,
-  isVisible,
-  config,
-  onApiKeyChange,
-  onVisibilityToggle,
-  onConfigUpdate
+  apiKey = '',
+  isVisible = false,
+  config = {},
+  onApiKeyChange = () => {},
+  onVisibilityToggle = () => {},
+  onConfigUpdate = () => {},
+  apiKeyPlaceholder,
+  docsLink,
+  onVerify,
+  preferredModelOptions,
+  footerText,
 }) => {
   const [showAdvancedConfig, setShowAdvancedConfig] = React.useState(false);
 
@@ -45,7 +58,7 @@ export const ApiKeyForm: React.FC<ApiKeyFormProps> = ({
           <Input
             id="api-key"
             type={isVisible ? "text" : "password"}
-            placeholder="Enter your API key"
+            placeholder={apiKeyPlaceholder || "Enter your API key"}
             value={apiKey}
             onChange={(e) => onApiKeyChange(e.target.value)}
           />
@@ -53,9 +66,13 @@ export const ApiKeyForm: React.FC<ApiKeyFormProps> = ({
             {isVisible ? "Hide" : "Show"}
           </Button>
         </div>
+        {docsLink && (
+          <p className="text-xs mt-1 text-gray-500">
+            Need a key? Visit <a href={docsLink.url} target="_blank" rel="noreferrer" className="text-blue-500 hover:underline">{docsLink.text}</a>
+          </p>
+        )}
       </div>
       
-      {/* Advanced configuration section with fixed props */}
       {showAdvancedConfig && (
         <AdvancedConfigSection
           title="Advanced Configuration"
@@ -68,6 +85,12 @@ export const ApiKeyForm: React.FC<ApiKeyFormProps> = ({
       <Button variant="link" onClick={() => setShowAdvancedConfig(!showAdvancedConfig)}>
         {showAdvancedConfig ? "Hide Advanced Configuration" : "Show Advanced Configuration"}
       </Button>
+
+      {footerText && (
+        <p className="text-xs text-gray-500 border-t pt-4">
+          {footerText}
+        </p>
+      )}
     </div>
   );
 };

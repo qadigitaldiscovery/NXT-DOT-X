@@ -1,13 +1,48 @@
 
-import React from 'react';
+import { useState, useEffect } from 'react';
+import { toast } from 'sonner';
 import ApiKeyForm from '../core/ApiKeyForm';
 import { callOpenAI } from '@/utils/api-clients/openai/client';
 import { ChatCompletionResponse } from '@/utils/api-clients/openai/types';
 
 const OpenAIKeyForm: React.FC = () => {
+  const [apiKey, setApiKey] = useState('');
+  const [isVerifying, setIsVerifying] = useState(false);
+  const [keyStatus, setKeyStatus] = useState<'unknown' | 'valid' | 'invalid' | 'quota_exceeded'>('unknown');
+  const [isVisible, setIsVisible] = useState(false);
+  const [config, setConfig] = useState({
+    model: 'gpt-4o-mini',
+    temperature: 0.7,
+    max_tokens: 2048,
+    organization_id: ''
+  });
+  
+  // Load saved key and config on mount
+  useEffect(() => {
+    const savedKey = localStorage.getItem('openai_api_key');
+    const savedConfig = localStorage.getItem('openai_config');
+    
+    if (savedKey) {
+      setApiKey(savedKey);
+      setKeyStatus('valid'); // Assume valid if saved
+    }
+    
+    if (savedConfig) {
+      try {
+        const parsedConfig = JSON.parse(savedConfig);
+        setConfig(prev => ({ ...prev, ...parsedConfig }));
+      } catch (e) {
+        console.error("Failed to parse saved config", e);
+      }
+    }
+  }, []);
+
   // Verify API key by making a simple call
   const verifyOpenAIKey = async (apiKey: string): Promise<boolean> => {
     try {
+      setIsVerifying(true);
+      setKeyStatus('unknown');
+      
       await callOpenAI<ChatCompletionResponse>({
         endpoint: 'chat',
         payload: {
@@ -19,6 +54,13 @@ const OpenAIKeyForm: React.FC = () => {
       });
       
       // If no error was thrown, the key is valid
+      setKeyStatus('valid');
+      toast.success("API key validated successfully");
+      
+      // Save the key and config
+      localStorage.setItem('openai_api_key', apiKey);
+      localStorage.setItem('openai_config', JSON.stringify(config));
+      
       return true;
     } catch (error: any) {
       console.error("API key verification failed:", error);
@@ -27,11 +69,25 @@ const OpenAIKeyForm: React.FC = () => {
       if (error.message?.includes('quota') || 
           error.message?.includes('rate_limit') || 
           error.message?.includes('insufficient_quota')) {
-        throw new Error('quota_exceeded');
+        setKeyStatus('quota_exceeded');
+        toast.warning("API key valid but quota exceeded");
+        return false;
       }
       
+      setKeyStatus('invalid');
+      toast.error("Invalid API key");
       return false;
+    } finally {
+      setIsVerifying(false);
     }
+  };
+  
+  const handleConfigUpdate = (key: string, value: any) => {
+    setConfig(prev => {
+      const updated = { ...prev, [key]: value };
+      localStorage.setItem('openai_config', JSON.stringify(updated));
+      return updated;
+    });
   };
 
   const modelOptions = [
@@ -43,17 +99,15 @@ const OpenAIKeyForm: React.FC = () => {
     { value: 'text-embedding-3-small', label: 'Text Embedding 3 Small' }
   ];
 
-  const additionalConfig = {
-    organization_id: '',
-    max_tokens_default: 2048,
-    temperature_default: 0.7,
-    frequency_penalty_default: 0,
-    presence_penalty_default: 0,
-  };
-
   return (
     <ApiKeyForm
       providerName="OpenAI"
+      apiKey={apiKey}
+      isVisible={isVisible}
+      config={config}
+      onApiKeyChange={setApiKey}
+      onVisibilityToggle={() => setIsVisible(!isVisible)}
+      onConfigUpdate={handleConfigUpdate}
       apiKeyPlaceholder="sk-..."
       docsLink={{
         text: "OpenAI API Keys page",
@@ -63,7 +117,6 @@ const OpenAIKeyForm: React.FC = () => {
       preferredModelOptions={modelOptions}
       initialModel="gpt-4o-mini"
       footerText="Your API key is stored securely and never exposed to the browser. Visit the OpenAI API Keys page to create a new key if needed."
-      additionalConfig={additionalConfig}
     />
   );
 };

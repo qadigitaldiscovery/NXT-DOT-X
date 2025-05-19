@@ -28,4 +28,5 @@ export function BrandMarketingLayout() {
   );
 }
 
+// Make sure we have both named and default exports
 export default BrandMarketingLayout;

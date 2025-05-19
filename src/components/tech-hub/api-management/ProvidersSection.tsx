@@ -12,6 +12,26 @@ import { Card } from '@/components/ui/card';
 const ProvidersSection: React.FC = () => {
   const [activeProvider, setActiveProvider] = useState("openai");
   const [activeTab, setActiveTab] = useState("config");
+  
+  // Check if API keys are set
+  const [openAIKeyExists, setOpenAIKeyExists] = useState(!!localStorage.getItem('openai_api_key'));
+  const [requestyKeyExists, setRequestyKeyExists] = useState(!!localStorage.getItem('requesty_api_key'));
+  
+  React.useEffect(() => {
+    // Listen for storage changes to update key status
+    const handleStorageChange = () => {
+      setOpenAIKeyExists(!!localStorage.getItem('openai_api_key'));
+      setRequestyKeyExists(!!localStorage.getItem('requesty_api_key'));
+    };
+    
+    window.addEventListener('storage', handleStorageChange);
+    // Also check on mount
+    handleStorageChange();
+    
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+    };
+  }, []);
 
   const providerItems: TabItem[] = [
     { value: "openai", label: "OpenAI", icon: Terminal },
@@ -49,9 +69,13 @@ const ProvidersSection: React.FC = () => {
             </TabsContent>
             <TabsContent value="test">
               <Card className="p-6">
-                <div className="text-center p-4">
-                  OpenAI Chat Tester - Configure API key first
-                </div>
+                {openAIKeyExists ? (
+                  <OpenAIChatTester />
+                ) : (
+                  <div className="text-center p-4">
+                    Please configure your OpenAI API key first
+                  </div>
+                )}
               </Card>
             </TabsContent>
           </>
@@ -66,9 +90,13 @@ const ProvidersSection: React.FC = () => {
             </TabsContent>
             <TabsContent value="test">
               <Card className="p-6">
-                <div className="text-center p-4">
-                  Requesty Chat Tester - Configure API key first
-                </div>
+                {requestyKeyExists ? (
+                  <RequestyChatTester />
+                ) : (
+                  <div className="text-center p-4">
+                    Please configure your Requesty API key first
+                  </div>
+                )}
               </Card>
             </TabsContent>
           </>

@@ -1,11 +1,26 @@
 
-import React from 'react';
+import { useState } from 'react';
 import ApiKeyForm from '../core/ApiKeyForm';
+import { toast } from 'sonner';
 
 const RequestyKeyForm: React.FC = () => {
+  const [apiKey, setApiKey] = useState('');
+  const [isVerifying, setIsVerifying] = useState(false);
+  const [keyStatus, setKeyStatus] = useState<'unknown' | 'valid' | 'invalid' | 'quota_exceeded'>('unknown');
+  const [isVisible, setIsVisible] = useState(false);
+  const [config, setConfig] = useState({
+    model: 'openai/gpt-4o-mini',
+    temperature: 0.7,
+    max_tokens: 2048,
+    streaming: true
+  });
+
   // Verify API key by making a simple call
   const verifyRequestyKey = async (apiKey: string): Promise<boolean> => {
     try {
+      setIsVerifying(true);
+      setKeyStatus('unknown');
+      
       const response = await fetch("https://router.requesty.ai/v1/chat/completions", {
         method: "POST",
         headers: {
@@ -22,20 +37,67 @@ const RequestyKeyForm: React.FC = () => {
       if (!response.ok) {
         const errorData = await response.json();
         if (errorData.error?.code === 'insufficient_quota' || errorData.error?.type === 'insufficient_quota') {
-          throw new Error('quota_exceeded');
+          setKeyStatus('quota_exceeded');
+          toast.warning("API key valid but quota exceeded");
+          return false;
         }
+        setKeyStatus('invalid');
+        toast.error("Invalid API key");
         return false;
       }
       
+      setKeyStatus('valid');
+      toast.success("API key validated successfully");
+      // Save the key locally
+      localStorage.setItem('requesty_api_key', apiKey);
+      localStorage.setItem('requesty_config', JSON.stringify(config));
       return true;
     } catch (error: any) {
       console.error("API key verification failed:", error);
       if (error.message === 'quota_exceeded') {
-        throw error; // Let the parent component handle this specific error
+        setKeyStatus('quota_exceeded');
+        toast.warning("API key valid but quota exceeded");
+      } else {
+        setKeyStatus('invalid');
+        toast.error("Failed to verify API key");
       }
       return false;
+    } finally {
+      setIsVerifying(false);
     }
   };
+
+  const handleVerifyClick = async () => {
+    await verifyRequestyKey(apiKey);
+  };
+
+  const handleConfigUpdate = (key: string, value: any) => {
+    setConfig(prev => {
+      const updated = { ...prev, [key]: value };
+      localStorage.setItem('requesty_config', JSON.stringify(updated));
+      return updated;
+    });
+  };
+
+  // Initialize from localStorage if available
+  useState(() => {
+    const savedKey = localStorage.getItem('requesty_api_key');
+    const savedConfig = localStorage.getItem('requesty_config');
+    
+    if (savedKey) {
+      setApiKey(savedKey);
+      setKeyStatus('valid'); // Assume valid if saved
+    }
+    
+    if (savedConfig) {
+      try {
+        const parsedConfig = JSON.parse(savedConfig);
+        setConfig(prev => ({ ...prev, ...parsedConfig }));
+      } catch (e) {
+        console.error("Failed to parse saved config", e);
+      }
+    }
+  });
 
   const modelOptions = [
     { value: 'openai/gpt-4o-mini', label: 'OpenAI GPT-4o Mini (Default)' },
@@ -49,16 +111,15 @@ const RequestyKeyForm: React.FC = () => {
     { value: 'meta/llama-3-8b', label: 'Llama 3 8B' }
   ];
 
-  const additionalConfig = {
-    streaming_default: true,
-    max_tokens_default: 2048,
-    temperature_default: 0.7,
-    response_format: 'text'
-  };
-
   return (
     <ApiKeyForm
       providerName="Requesty"
+      apiKey={apiKey}
+      isVisible={isVisible}
+      config={config}
+      onApiKeyChange={setApiKey}
+      onVisibilityToggle={() => setIsVisible(!isVisible)}
+      onConfigUpdate={handleConfigUpdate}
       apiKeyPlaceholder="rty-..."
       docsLink={{
         text: "Requesty API Keys page",
@@ -68,7 +129,6 @@ const RequestyKeyForm: React.FC = () => {
       preferredModelOptions={modelOptions}
       initialModel="openai/gpt-4o-mini"
       footerText="Your API key is stored securely and never exposed to the browser. Visit the Requesty API Keys page to create a new key if needed."
-      additionalConfig={additionalConfig}
     />
   );
 };
