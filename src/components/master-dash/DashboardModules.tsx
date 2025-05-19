@@ -1,52 +1,137 @@
+import React, { useEffect, useState } from 'react';
+import { PrimaryModules } from './modules/PrimaryModules';
+import { BrandMarketing } from './modules/BrandMarketing';
+import { AiArmy } from './modules/AiArmy';
+import { Administration } from './modules/Administration';
+import { TechHub } from './modules/TechHub';
+import { CustomerManagement } from './modules/CustomerManagement';
+import { SupplierManagement } from './modules/SupplierManagement';
+import { ProjectManagement } from './modules/ProjectManagement';
+import { DataManagement } from './modules/DataManagement';
+import { SystemTechnicalConfig } from './modules/SystemTechnicalConfig';
+import { LoyaltyProgram } from './modules/LoyaltyProgram';
+import { TradingSystem } from './modules/TradingSystem';
+import { SocialMediaMarketing } from './modules/SocialMediaMarketing';
+import { DotX } from './modules/DotX';
+import { SearchAndFilter } from './SearchAndFilter';
+import { DeveloperAccess } from './modules/DeveloperAccess';
 
-import { useState } from 'react';
-import PrimaryModules from './modules/PrimaryModules';
-import { SetupTestUser } from '@/components/SetupTestUser';
-import SearchAndFilter from './SearchAndFilter';
-import { motion } from 'framer-motion';
+const DashboardModules: React.FC = () => {
+  const [activeCategory, setActiveCategory] = useState('all');
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filteredModules, setFilteredModules] = useState({
+    primary: true,
+    data: true,
+    marketing: true,
+    tech: true,
+    operations: true,
+  });
+  
+  // Add a state to show/hide the developer access
+  const [showDevAccess, setShowDevAccess] = useState(true);
 
-export default function DashboardModules() {
-  const [activeTab, setActiveTab] = useState("all");
-  const [searchQuery, setSearchQuery] = useState("");
-  
-  const categories = ["All", "Data", "Marketing", "Tech", "Operations", "Analytics", "Admin"];
-  
+  useEffect(() => {
+    // Filter modules based on active category and search term
+    let primary = true;
+    let data = true;
+    let marketing = true;
+    let tech = true;
+    let operations = true;
+
+    if (activeCategory !== 'all') {
+      primary = activeCategory === 'primary';
+      data = activeCategory === 'data';
+      marketing = activeCategory === 'marketing';
+      tech = activeCategory === 'tech';
+      operations = activeCategory === 'operations';
+    }
+
+    setFilteredModules({
+      primary: primary && (searchTerm === '' || 'primary'.includes(searchTerm.toLowerCase())),
+      data: data && (searchTerm === '' || 'data'.includes(searchTerm.toLowerCase())),
+      marketing: marketing && (searchTerm === '' || 'marketing'.includes(searchTerm.toLowerCase())),
+      tech: tech && (searchTerm === '' || 'tech'.includes(searchTerm.toLowerCase())),
+      operations: operations && (searchTerm === '' || 'operations'.includes(searchTerm.toLowerCase())),
+    });
+  }, [activeCategory, searchTerm]);
+
+  const handleCategoryChange = (category: string) => {
+    setActiveCategory(category);
+  };
+
+  const handleSearchChange = (term: string) => {
+    setSearchTerm(term.toLowerCase());
+  };
+
   return (
-    <motion.div 
-      className="container mx-auto px-4 py-8"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.7 }}
-    >
-      <motion.div 
-        className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8"
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, delay: 0.2 }}
-      >
-        <div>
-          <h1 className="text-3xl font-bold mb-2 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-            Platform Modules
-          </h1>
-          <p className="text-muted-foreground">Access and manage your platform modules</p>
-        </div>
-        
-        <div className="flex flex-col md:flex-row gap-4 items-end mt-4 md:mt-0">
-          <SetupTestUser />
-        </div>
-      </motion.div>
-      
-      {/* Search and Filter Section */}
+    <div className="space-y-6">
       <SearchAndFilter 
-        searchQuery={searchQuery}
-        setSearchQuery={setSearchQuery}
-        categories={categories}
-        activeCategory={activeTab}
-        setActiveCategory={setActiveTab}
+        activeCategory={activeCategory} 
+        onCategoryChange={handleCategoryChange}
+        searchTerm={searchTerm}
+        onSearchChange={handleSearchChange}
       />
-      
-      {/* Module Grid */}
-      <PrimaryModules activeTab={activeTab.toLowerCase()} searchQuery={searchQuery} />
-    </motion.div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {/* Developer Access Hub - positioned at the start for easy access */}
+        {showDevAccess && (
+          <DeveloperAccess />
+        )}
+        
+        {/* Primary modules */}
+        {(activeCategory === 'all' || activeCategory === 'primary') && 
+          filteredModules.primary && (
+            <PrimaryModules />
+          )
+        }
+        
+        {/* Data modules */}
+        {(activeCategory === 'all' || activeCategory === 'data') && 
+          filteredModules.data && (
+            <>
+              <DataManagement />
+              <SupplierManagement />
+              <CustomerManagement />
+            </>
+          )
+        }
+        
+        {/* Marketing modules */}
+        {(activeCategory === 'all' || activeCategory === 'marketing') && 
+          filteredModules.marketing && (
+            <>
+              <BrandMarketing />
+              <SocialMediaMarketing />
+              <LoyaltyProgram />
+            </>
+          )
+        }
+        
+        {/* Tech modules */}
+        {(activeCategory === 'all' || activeCategory === 'tech') && 
+          filteredModules.tech && (
+            <>
+              <TechHub />
+              <DotX />
+              <AiArmy />
+              <SystemTechnicalConfig />
+            </>
+          )
+        }
+        
+        {/* Operations modules */}
+        {(activeCategory === 'all' || activeCategory === 'operations') && 
+          filteredModules.operations && (
+            <>
+              <ProjectManagement />
+              <TradingSystem />
+              <Administration />
+            </>
+          )
+        }
+      </div>
+    </div>
   );
-}
+};
+
+export default DashboardModules;

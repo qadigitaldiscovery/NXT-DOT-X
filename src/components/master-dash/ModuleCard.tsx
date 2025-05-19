@@ -1,15 +1,25 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { cn } from '@/lib/utils';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import { Button } from '@/components/ui/button';
+import { ChevronDown, ChevronUp, ExternalLink } from 'lucide-react';
+
+interface Feature {
+  name: string;
+  path: string;
+  description?: string;
+}
 
 interface ModuleCardProps {
   title: string;
   icon: React.ReactNode;
-  path: string;
+  path?: string;
   className?: string;
   variant?: 'default' | 'red' | 'dark' | 'light' | 'accent';
+  features?: Feature[];
+  allAccess?: boolean;
 }
 
 export const ModuleCard: React.FC<ModuleCardProps> = ({
@@ -17,15 +27,26 @@ export const ModuleCard: React.FC<ModuleCardProps> = ({
   icon,
   path,
   className,
-  variant = 'default'
+  variant = 'default',
+  features = [],
+  allAccess = false
 }) => {
   const navigate = useNavigate();
+  const [showFeatures, setShowFeatures] = useState(false);
+
   const handleClick = () => {
-    if (path) {
+    if (path && features.length === 0) {
       navigate(path);
+    } else if (features.length > 0) {
+      setShowFeatures(!showFeatures);
     } else {
-      console.warn(`No path defined for module: ${title}`);
+      console.warn(`No path or features defined for module: ${title}`);
     }
+  };
+
+  const handleFeatureClick = (featurePath: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    navigate(featurePath);
   };
 
   // Design variants based on the reference image
@@ -66,11 +87,12 @@ export const ModuleCard: React.FC<ModuleCardProps> = ({
         "relative overflow-hidden cursor-pointer", 
         "rounded-xl shadow-lg border", 
         getVariantClasses(), 
-        className
+        className,
+        showFeatures && "pb-4"
       )} 
       onClick={handleClick} 
       whileHover={{
-        scale: 1.03
+        scale: 1.02
       }} 
       transition={{
         duration: 0.3
@@ -103,12 +125,66 @@ export const ModuleCard: React.FC<ModuleCardProps> = ({
         
         {/* Icon container - centered like in the reference */}
         <div className={cn(
-          "mx-auto rounded-full p-4", 
+          "mx-auto rounded-full p-4 mb-4", 
           getIconContainerClasses()
         )}>
           {icon}
         </div>
+
+        {/* All Access Tag */}
+        {allAccess && (
+          <span className="absolute top-3 right-3 bg-amber-600 text-white text-xs font-semibold px-2 py-1 rounded-full">
+            All Access
+          </span>
+        )}
+        
+        {/* Toggle button for features */}
+        {features.length > 0 && (
+          <Button 
+            variant="outline" 
+            size="sm"
+            className="mt-4 text-white border border-gray-600 bg-black/40 hover:bg-black/60"
+            onClick={(e) => {
+              e.stopPropagation();
+              setShowFeatures(!showFeatures);
+            }}
+          >
+            {showFeatures ? (
+              <>Hide Features <ChevronUp className="ml-2 h-4 w-4" /></>
+            ) : (
+              <>Show Features <ChevronDown className="ml-2 h-4 w-4" /></>
+            )}
+          </Button>
+        )}
       </div>
+
+      {/* Feature list - shown only when expanded */}
+      {showFeatures && features.length > 0 && (
+        <motion.div 
+          className="relative z-10 px-4 pt-2"
+          initial={{ opacity: 0, height: 0 }}
+          animate={{ opacity: 1, height: 'auto' }}
+          transition={{ duration: 0.3 }}
+        >
+          <div className="bg-black/50 rounded-lg p-3 border border-gray-700">
+            <p className="text-sm text-gray-300 mb-3 font-medium">Available Features:</p>
+            <div className="grid grid-cols-1 gap-2 max-h-60 overflow-y-auto custom-scrollbar pr-1">
+              {features.map((feature, index) => (
+                <Button
+                  key={index}
+                  variant="ghost"
+                  size="sm"
+                  className="justify-start text-white hover:bg-white/10 font-normal"
+                  onClick={(e) => handleFeatureClick(feature.path, e)}
+                >
+                  <span className="truncate">{feature.name}</span>
+                  <ExternalLink className="ml-auto h-3.5 w-3.5 text-blue-400" />
+                </Button>
+              ))}
+            </div>
+          </div>
+        </motion.div>
+      )}
     </motion.div>
   );
 };
