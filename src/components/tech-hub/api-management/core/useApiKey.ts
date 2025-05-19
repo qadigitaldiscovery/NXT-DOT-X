@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useToast } from '@/components/ui/use-toast';
 import { 
@@ -11,34 +10,38 @@ interface ApiKeyState {
   apiKey: string;
   isKeySet: boolean;
   isVisible: boolean;
+  model: string;
   config: Record<string, any>;
 }
 
 export function useApiKey(provider: string, initialConfig: Record<string, any> = {}) {
   const { toast } = useToast();
+  const defaultModel = 'default'; // Default model if none is provided
   
   const [state, setState] = useState<ApiKeyState>({
     apiKey: '',
     isKeySet: false,
     isVisible: false,
+    model: defaultModel,
     config: initialConfig,
   });
 
   useEffect(() => {
-    const storedData = retrieveApiKey(provider);
-    if (storedData) {
+    const storedData = retrieveApiKey(provider, defaultModel, initialConfig);
+    if (storedData && storedData.key) {
       setState(prev => ({
         ...prev,
         apiKey: storedData.key,
         isKeySet: true,
-        config: { ...initialConfig, ...(storedData.options || {}) }
+        model: storedData.model || defaultModel,
+        config: storedData.config || initialConfig
       }));
     }
-  }, [provider, initialConfig]);
+  }, [provider, initialConfig, defaultModel]);
 
   const setApiKey = (key: string) => {
     if (key) {
-      storeApiKey(provider, key, state.config);
+      storeApiKey(provider, key, state.model, state.config);
       setState(prev => ({ ...prev, apiKey: key, isKeySet: true }));
       toast({
         title: 'API Key Saved',
@@ -64,7 +67,16 @@ export function useApiKey(provider: string, initialConfig: Record<string, any> =
     
     // If key is set, update it in storage with the new config
     if (state.isKeySet) {
-      storeApiKey(provider, state.apiKey, updatedConfig);
+      storeApiKey(provider, state.apiKey, state.model, updatedConfig);
+    }
+  };
+
+  const updateModel = (model: string) => {
+    setState(prev => ({ ...prev, model }));
+    
+    // If key is set, update it in storage with the new model
+    if (state.isKeySet) {
+      storeApiKey(provider, state.apiKey, model, state.config);
     }
   };
 
@@ -72,9 +84,11 @@ export function useApiKey(provider: string, initialConfig: Record<string, any> =
     apiKey: state.apiKey,
     isKeySet: state.isKeySet,
     isVisible: state.isVisible,
+    model: state.model,
     config: state.config,
     setApiKey,
     toggleVisibility,
     updateConfig,
+    updateModel,
   };
 }

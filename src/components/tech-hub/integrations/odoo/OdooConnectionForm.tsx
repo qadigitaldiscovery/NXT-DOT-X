@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -76,12 +75,12 @@ const OdooConnectionForm: React.FC<OdooConnectionFormProps> = ({
         requestData.password = data.password;
       }
       
-      let result;
+      let result: { success?: boolean; message?: string } | null;
       
       // Using tryUseEdgeFunction with API key when applicable
       if (data.auth_method === 'api_key' && data.api_key) {
         console.log("Testing with API key authentication");
-        result = await tryUseEdgeFunction('api-integrations', {
+        result = await tryUseEdgeFunction<{ success?: boolean; message?: string }>('api-integrations', {
           endpoint: 'odoo',
           action: 'test_connection',
           url: data.url,
@@ -92,7 +91,7 @@ const OdooConnectionForm: React.FC<OdooConnectionFormProps> = ({
         });
       } else {
         console.log("Testing with credentials authentication");
-        result = await tryUseEdgeFunction('api-integrations', {
+        result = await tryUseEdgeFunction<{ success?: boolean; message?: string }>('api-integrations', {
           endpoint: 'odoo',
           action: 'test_connection',
           url: data.url,

@@ -11,7 +11,6 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import {
   Select,
   SelectContent,
@@ -19,7 +18,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { ArrowLeft, Save, Trash2 } from "lucide-react";
+import { ArrowLeft, Trash2 } from "lucide-react";
 import { Supplier, useCreateSupplier, useUpdateSupplier } from '@/hooks/use-suppliers';
 
 type SupplierFormProps = {
@@ -30,8 +29,11 @@ type SupplierFormProps = {
 
 export function SupplierForm({ initialData, isEditing = false, onDelete }: SupplierFormProps) {
   const navigate = useNavigate();
-  const { mutate: createSupplier, isLoading: isCreating } = useCreateSupplier();
-  const { mutate: updateSupplier, isLoading: isUpdating } = useUpdateSupplier();
+  const { mutate: createSupplier, status: createStatus } = useCreateSupplier();
+  const { mutate: updateSupplier, status: updateStatus } = useUpdateSupplier();
+  
+  const isCreating = createStatus === 'loading';
+  const isUpdating = updateStatus === 'loading';
   
   const [formData, setFormData] = React.useState<Partial<Supplier>>({
     name: initialData?.name || '',
