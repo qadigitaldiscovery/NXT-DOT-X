@@ -1,12 +1,21 @@
 
-import React from 'react';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Zap } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useModules } from "@/context/ModulesContext";
 
 export default function DotX() {
   const navigate = useNavigate();
+  const { hasAccess } = useModules();
+
+  const handleNavigateToDotX = () => {
+    navigate('/dot-x');
+  };
+
+  const handleNavigateToDotX2 = () => {
+    navigate('/dot-x/dot-x-2');
+  };
 
   return (
     <Card className="col-span-1">
@@ -27,7 +36,7 @@ export default function DotX() {
           </div>
           <div className="flex items-center gap-2">
             <div className="w-2 h-2 rounded-full bg-green-500"></div>
-            <span className="text-sm">AI agents</span>
+            <span className="text-sm">AI commandos</span>
           </div>
           <div className="flex items-center gap-2">
             <div className="w-2 h-2 rounded-full bg-green-500"></div>
@@ -41,15 +50,17 @@ export default function DotX() {
       </CardContent>
       <CardFooter className="flex flex-col space-y-2">
         <Button 
-          onClick={() => navigate('/dot-x')} 
+          onClick={handleNavigateToDotX} 
           className="w-full"
+          disabled={!hasAccess('dot-x')}
         >
           Open DOT-X
         </Button>
         <Button 
-          onClick={() => navigate('/dot-x/dot-x-2')} 
+          onClick={handleNavigateToDotX2} 
           variant="outline"
           className="w-full border-blue-500/30 text-blue-500 hover:bg-blue-500/10"
+          disabled={!hasAccess('dot-x', 'dot-x-2')}
         >
           Open DOT-X-2
         </Button>
