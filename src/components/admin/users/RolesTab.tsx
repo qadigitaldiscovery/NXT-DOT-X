@@ -1,8 +1,9 @@
-import React from 'react';
+
+import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { PlusCircle, Edit, Trash2 } from 'lucide-react';
+import { Edit, Trash2 } from 'lucide-react';
 import { AddRoleDialog } from './AddRoleDialog';
 
 const mockRoles = [
@@ -11,13 +12,14 @@ const mockRoles = [
   { id: '3', name: 'Viewer', description: 'Read-only access', permissions: ['read'] },
 ];
 
+// Available permissions
+const availablePermissions = ['read', 'write', 'delete', 'admin', 'export', 'import', 'manage-users'];
+
 export function RolesTab() {
   const [roles, setRoles] = React.useState(mockRoles);
-  const [isAddingRole, setIsAddingRole] = React.useState(false);
 
-  const handleAddRole = (role: { name: string; description?: string; permissions?: string[] }) => {
-    setRoles([...roles, { id: Date.now().toString(), name: role.name, description: role.description || '', permissions: role.permissions || [] }]);
-    setIsAddingRole(false);
+  const handleAddRole = (role: { name: string; description: string; permissions: string[] }) => {
+    setRoles([...roles, { id: Date.now().toString(), ...role }]);
   };
 
   const handleEditRole = (id: string) => {
@@ -38,7 +40,7 @@ export function RolesTab() {
           <CardTitle>Roles</CardTitle>
           <CardDescription>Manage system roles and permissions</CardDescription>
         </div>
-        <AddRoleDialog open={isAddingRole} onOpenChange={setIsAddingRole} onRoleAdded={handleAddRole} />
+        <AddRoleDialog onAddRole={handleAddRole} permissions={availablePermissions} />
       </CardHeader>
       <CardContent>
         <Table>
@@ -80,3 +82,5 @@ export function RolesTab() {
     </Card>
   );
 }
+
+export default RolesTab;
