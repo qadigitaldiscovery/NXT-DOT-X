@@ -1,28 +1,18 @@
 import React from 'react';
-import { cn } from '@/lib/utils';
-import { useIsMobile } from '@/hooks/use-mobile';
-import { useAuth } from '@/context/AuthContext';
-import { NavCategory, NavItem } from '@/components/layout/sidebar/types';
+import { cn } from '../../../../lib/utils';
+import { useIsMobile } from '../../../../hooks/use-mobile';
+import { useAuth } from '../../../../context/AuthContext';
+import { NavCategory, NavItem, SidebarProps } from '../types';
 import { MainSidebarContent } from './MainSidebarContent';
 import { MainSidebarBackdrop } from './MainSidebarBackdrop';
 import { MainSidebarCollapsed } from './MainSidebarCollapsed';
 import { MainSidebarFooter } from './MainSidebarFooter';
-import { SidebarToggleButton } from '@/components/layout/sidebar/SidebarToggleButton';
+import { SidebarToggleButton } from '../SidebarToggleButton';
 
-interface MainSidebarProps {
-  open?: boolean;
-  onToggle?: () => void;
-  navItems?: NavItem[];
-  navCategories?: NavCategory[];
-  items?: NavCategory[];
-  homeItem?: NavItem;
-  className?: string;
-  removeBottomToggle?: boolean;
-  showToggleButton?: boolean;
+type MainSidebarProps = Omit<SidebarProps, 'initialState' | 'onStateChange'> & {
   initialState?: 'expanded' | 'collapsed';
   onStateChange?: (state: 'expanded' | 'collapsed') => void;
-  useGlobalNavigation?: boolean;
-}
+};
 
 export const MainSidebar: React.FC<MainSidebarProps> = ({
   open,
@@ -41,9 +31,7 @@ export const MainSidebar: React.FC<MainSidebarProps> = ({
   const isMobile = useIsMobile();
   const { user } = useAuth();
   
-  // Use provided open/onToggle or internal state
   const [internalOpen, setInternalOpen] = React.useState(() => {
-    // Initialize with initialState if provided
     if (initialState) {
       return initialState === 'expanded';
     }
@@ -53,25 +41,21 @@ export const MainSidebar: React.FC<MainSidebarProps> = ({
   const isOpen = open !== undefined ? open : internalOpen;
   
   const toggleSidebar = () => {
-    // Call the provided onToggle without arguments
     if (onToggle) {
       onToggle();
     } else {
       setInternalOpen(!internalOpen);
     }
     
-    // Call onStateChange with the new state if provided
     if (onStateChange) {
       onStateChange(isOpen ? 'collapsed' : 'expanded');
     }
   };
 
-  // Dark blue sidebar styling
   const sidebarBgColor = className || 'bg-gradient-to-b from-indigo-950 via-blue-950 to-slate-950';
   
   return (
     <>
-      {/* Mobile backdrop */}
       {isOpen && isMobile && (
         <MainSidebarBackdrop onToggle={toggleSidebar} />
       )}
@@ -85,7 +69,6 @@ export const MainSidebar: React.FC<MainSidebarProps> = ({
           isMobile && isOpen && "translate-x-0"
         )}
       >
-        {/* Full Navigation List (Visible when open) */}
         <MainSidebarContent 
           isOpen={isOpen} 
           navCategories={navCategories}
@@ -95,7 +78,6 @@ export const MainSidebar: React.FC<MainSidebarProps> = ({
           useGlobalNavigation={useGlobalNavigation}
         />
 
-        {/* Icon-Only Navigation (Visible when collapsed on desktop) */}
         {!isOpen && !isMobile && (
           <MainSidebarCollapsed 
             navCategories={navCategories}
@@ -106,11 +88,9 @@ export const MainSidebar: React.FC<MainSidebarProps> = ({
           />
         )}
 
-        {/* Quick access buttons at bottom */}
         <MainSidebarFooter />
       </aside>
 
-      {/* Bottom sidebar toggle button (if not removed) */}
       {!removeBottomToggle && showToggleButton && (
         <SidebarToggleButton 
           open={isOpen} 

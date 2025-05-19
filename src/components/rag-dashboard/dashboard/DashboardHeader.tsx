@@ -1,7 +1,7 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { RefreshCw, Settings } from 'lucide-react';
-import { useDashboardContext } from '../providers/DashboardProvider';
+import { useDashboard } from '../providers/DashboardProvider';
 
 interface DashboardHeaderProps {
   onBatchOperationsOpen: () => void;
@@ -11,7 +11,7 @@ interface DashboardHeaderProps {
 export const DashboardHeader: React.FC<DashboardHeaderProps> = ({
   onBatchOperationsOpen
 }) => {
-  const { handleRefresh, isRefreshing } = useDashboardContext();
+  const { refreshData: handleRefresh, loading: isRefreshing } = useDashboard();
 
   return (
     <div className="flex items-center justify-between mb-8">
