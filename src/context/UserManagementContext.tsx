@@ -1,4 +1,5 @@
-import { createContext, useContext, useState } from 'react';
+import { createContext, useContext, useState, useEffect } from 'react';
+import { supabase } from '../integrations/supabase/client';
 
 interface User {
   id: string;
@@ -36,81 +37,98 @@ interface UserManagementContextType {
   deleteRole: (id: string) => void;
 }
 
-const initialUsers: User[] = [
-  {
-    id: '1',
-    username: 'admin',
-    email: 'admin@example.com',
-    role: 'admin',
-    status: 'active',
-    created: '2023-01-10'
-  },
-  {
-    id: '2',
-    username: 'manager',
-    email: 'manager@example.com',
-    role: 'manager',
-    status: 'active',
-    created: '2023-02-15'
-  }
-];
-
-const initialRoles: Role[] = [
-  {
-    id: '1',
-    name: 'admin',
-    description: 'Full access to all system functions',
-    permissions: ['users.view', 'users.create', 'users.edit', 'users.delete']
-  },
-  {
-    id: '2',
-    name: 'manager',
-    description: 'Access to manage specific modules',
-    permissions: ['users.view', 'modules.data']
-  }
-];
-
-const initialPermissions: Permission[] = [
-  { id: 'users.view', name: 'View Users', category: 'Users' },
-  { id: 'users.create', name: 'Create Users', category: 'Users' },
-  { id: 'users.edit', name: 'Edit Users', category: 'Users' },
-  { id: 'users.delete', name: 'Delete Users', category: 'Users' },
-  { id: 'modules.data', name: 'Access Data Module', category: 'Modules' }
-];
-
 const UserManagementContext = createContext<UserManagementContextType | undefined>(undefined);
 
 export function UserManagementProvider({ children }: { children: React.ReactNode }) {
-  const [users, setUsers] = useState<User[]>(initialUsers);
-  const [roles, setRoles] = useState<Role[]>(initialRoles);
-  const [permissions] = useState<Permission[]>(initialPermissions);
+  const [users, setUsers] = useState<User[]>([]);
+  const [roles, setRoles] = useState<Role[]>([]);
+  const [permissions, setPermissions] = useState<Permission[]>([]);
 
-  const addUser = (user: User) => {
-    setUsers(prev => [...prev, user]);
+  useEffect(() => {
+    async function fetchUsers() {
+      const { data, error } = await supabase.from('users').select('*');
+      if (error) {
+        console.error('Error fetching users:', error);
+      } else {
+        setUsers(data || []);
+      }
+    }
+
+    async function fetchRoles() {
+      const { data, error } = await supabase.from('roles').select('*');
+      if (error) {
+        console.error('Error fetching roles:', error);
+      } else {
+        setRoles(data || []);
+      }
+    }
+
+    async function fetchPermissions() {
+      const { data, error } = await supabase.from('permissions').select('*');
+      if (error) {
+        console.error('Error fetching permissions:', error);
+      } else {
+        setPermissions(data || []);
+      }
+    }
+
+    fetchUsers();
+    fetchRoles();
+    fetchPermissions();
+  }, []);
+
+  const addUser = async (user: User) => {
+    const { data, error } = await supabase.from('users').insert(user);
+    if (error) {
+      console.error('Error adding user:', error);
+    } else if (data) {
+      setUsers(prev => [...prev, data[0]]);
+    }
   };
 
-  const addRole = (role: Role) => {
-    setRoles(prev => [...prev, role]);
+  const addRole = async (role: Role) => {
+    const { data, error } = await supabase.from('roles').insert(role);
+    if (error) {
+      console.error('Error adding role:', error);
+    } else if (data) {
+      setRoles(prev => [...prev, data[0]]);
+    }
   };
 
-  const updateUser = (id: string, userData: Partial<User>) => {
-    setUsers(prev => prev.map(user => 
-      user.id === id ? { ...user, ...userData } : user
-    ));
+  const updateUser = async (id: string, userData: Partial<User>) => {
+    const { data, error } = await supabase.from('users').update(userData).eq('id', id);
+    if (error) {
+      console.error('Error updating user:', error);
+    } else if (data) {
+      setUsers(prev => prev.map(user => (user.id === id ? { ...user, ...userData } : user)));
+    }
   };
 
-  const updateRole = (id: string, roleData: Partial<Role>) => {
-    setRoles(prev => prev.map(role => 
-      role.id === id ? { ...role, ...roleData } : role
-    ));
+  const updateRole = async (id: string, roleData: Partial<Role>) => {
+    const { data, error } = await supabase.from('roles').update(roleData).eq('id', id);
+    if (error) {
+      console.error('Error updating role:', error);
+    } else if (data) {
+      setRoles(prev => prev.map(role => (role.id === id ? { ...role, ...roleData } : role)));
+    }
   };
 
-  const deleteUser = (id: string) => {
-    setUsers(prev => prev.filter(user => user.id !== id));
+  const deleteUser = async (id: string) => {
+    const { error } = await supabase.from('users').delete().eq('id', id);
+    if (error) {
+      console.error('Error deleting user:', error);
+    } else {
+      setUsers(prev => prev.filter(user => user.id !== id));
+    }
   };
 
-  const deleteRole = (id: string) => {
-    setRoles(prev => prev.filter(role => role.id !== id));
+  const deleteRole = async (id: string) => {
+    const { error } = await supabase.from('roles').delete().eq('id', id);
+    if (error) {
+      console.error('Error deleting role:', error);
+    } else {
+      setRoles(prev => prev.filter(role => role.id !== id));
+    }
   };
 
   const value: UserManagementContextType = {
@@ -124,7 +142,7 @@ export function UserManagementProvider({ children }: { children: React.ReactNode
     updateUser,
     updateRole,
     deleteUser,
-    deleteRole
+    deleteRole,
   };
 
   return (
