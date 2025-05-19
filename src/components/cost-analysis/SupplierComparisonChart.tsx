@@ -51,4 +51,4 @@ export const SupplierComparisonChart = ({ data, title, description }: SupplierCo
   );
 };
 
-export default SupplierComparisonChart;
+export default SupplierComparisonChart; 
