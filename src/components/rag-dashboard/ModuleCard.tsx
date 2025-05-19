@@ -32,7 +32,7 @@ const ModuleCard: React.FC<ModuleCardProps> = ({ module, alertCount, onViewDetai
   };
   
   return (
-    <Card className="shadow-md hover:shadow-lg transition-shadow">
+    <Card className="shadow-md hover:shadow-lg transition-shadow rounded-xl overflow-hidden">
       <CardHeader className="pb-2">
         <div className="flex justify-between items-start">
           <CardTitle>{module.name}</CardTitle>
