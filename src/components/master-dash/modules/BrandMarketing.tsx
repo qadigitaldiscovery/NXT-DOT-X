@@ -1,48 +1,42 @@
+import { ModuleCard } from '../ModuleCard';
+import { useNavigate } from 'react-router-dom';
+import { Megaphone, TrendingUp } from 'lucide-react';
 
-import React from 'react';
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Globe } from "lucide-react";
-import { useNavigate } from "react-router-dom";
-
-export default function BrandMarketing() {
+const BrandMarketing = () => {
   const navigate = useNavigate();
 
+  const marketingModules = [
+    {
+      title: 'Campaign Analytics',
+      description: 'Track and analyze the performance of your brand marketing campaigns.',
+      icon: <TrendingUp className="h-8 w-8 text-orange-500" />,
+      onClick: () => navigate('/brand-marketing/campaigns')
+    },
+    {
+      title: 'Brand Awareness',
+      description: 'Enhance brand visibility and recognition through strategic marketing initiatives.',
+      icon: <Megaphone className="h-8 w-8 text-orange-500" />,
+      onClick: () => navigate('/brand-marketing/awareness')
+    }
+  ];
+
   return (
-    <Card className="col-span-1">
-      <CardHeader className="pb-2">
-        <CardTitle className="flex items-center space-x-2">
-          <Globe className="w-5 h-5 text-pink-500" />
-          <span>Brand Marketing</span>
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="pb-2">
-        <p className="text-sm text-gray-500">
-          Manage brand identity, marketing campaigns, and market perception analysis.
-        </p>
-        <div className="mt-4 space-y-3">
-          <div className="flex items-center gap-2">
-            <div className="w-2 h-2 rounded-full bg-green-500"></div>
-            <span className="text-sm">Brand analytics</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-2 h-2 rounded-full bg-green-500"></div>
-            <span className="text-sm">Trust analysis</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-2 h-2 rounded-full bg-green-500"></div>
-            <span className="text-sm">SEO & Keywords</span>
-          </div>
-        </div>
-      </CardContent>
-      <CardFooter>
-        <Button 
-          onClick={() => navigate('/brand-marketing')} 
-          className="w-full"
-        >
-          Open Brand Marketing
-        </Button>
-      </CardFooter>
-    </Card>
+    <div>
+      <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-6">Brand Marketing</h2>
+      
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {marketingModules.map((module, index) => (
+          <ModuleCard
+            key={index}
+            title={module.title}
+            description={module.description}
+            icon={module.icon}
+            onClick={module.onClick}
+          />
+        ))}
+      </div>
+    </div>
   );
-}
+};
+
+export default BrandMarketing;

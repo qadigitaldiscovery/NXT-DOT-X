@@ -26,10 +26,9 @@ export const MainSidebarCollapsed: React.FC<MainSidebarCollapsedProps> = ({
   let effectiveNavCategories: NavCategory[] = [];
   
   const isDataManagement = location.pathname.startsWith('/data-management');
-  const dataManagementCategory = globalNavCategories.find(category => category.label === "Data Management");
   
-  if (isDataManagement && dataManagementCategory) {
-    effectiveNavCategories = [dataManagementCategory];
+  if (isDataManagement && useGlobalNavigation) {
+    effectiveNavCategories = globalNavCategories;
   } else if (useGlobalNavigation) {
     effectiveNavCategories = globalNavCategories;
   } else if (navCategories && navCategories.length > 0) {

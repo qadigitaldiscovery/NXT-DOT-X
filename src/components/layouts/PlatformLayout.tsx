@@ -1,81 +1,60 @@
-import { ReactNode, useState } from 'react';
+
+import React from 'react';
 import { MainSidebar } from '@/components/layout/sidebar/MainSidebar';
-import Topbar from '@/components/layout/Topbar';
-import { cn } from '@/lib/utils';
-import { useIsMobile } from '@/hooks/use-mobile';
+import { NavCategory } from '@/components/layout/sidebar/types';
+import { masterDashItem } from '@/components/layout/sidebar/NavigationConfig';
+import { SharedNavbar } from '@/components/layout/SharedNavbar';
+import { useLocation } from 'react-router-dom';
 
 interface PlatformLayoutProps {
-  children: ReactNode;
-  hideNavigation?: boolean;
-  fullWidth?: boolean;
+  children: React.ReactNode;
+  navItems?: any[];
+  navCategories?: NavCategory[];
+  items?: any[];
   className?: string;
-  showSidebar?: boolean;
-  sidebarState?: 'expanded' | 'collapsed';
+  showTopLeftToggle?: boolean;
+  removeBottomToggle?: boolean;
+  initialSidebarState?: 'expanded' | 'collapsed';
+  onSidebarStateChange?: (state: 'expanded' | 'collapsed') => void;
   moduleTitle?: string;
-  navCategories?: any[];
+  useGlobalNavigation?: boolean;
 }
 
-export function PlatformLayout({ 
-  children, 
-  hideNavigation = false, 
-  fullWidth = false,
+export const PlatformLayout: React.FC<PlatformLayoutProps> = ({
+  children,
+  navItems = [],
+  navCategories = [],
+  items = [],
   className,
-  showSidebar = true,
-  sidebarState = 'expanded',
+  showTopLeftToggle = false,
+  removeBottomToggle = true,
+  initialSidebarState,
+  onSidebarStateChange,
   moduleTitle,
-  navCategories
-}: PlatformLayoutProps) {
-  const isMobile = useIsMobile();
-  const [sidebarOpen, setSidebarOpen] = useState(
-    // If we're on mobile, start with closed sidebar
-    // Otherwise use the prop or default to expanded
-    !isMobile && (sidebarState === 'expanded')
-  );
-
-  // Always hide the sidebar if hideNavigation is true
-  const shouldShowSidebar = !hideNavigation && showSidebar;
-
-  // Handle sidebar toggle
-  const handleSidebarToggle = () => {
-    setSidebarOpen(!sidebarOpen);
-  };
-
-  // Handle sidebar state changes from within the sidebar component
-  const handleSidebarStateChange = (state: 'expanded' | 'collapsed') => {
-    setSidebarOpen(state === 'expanded');
-  };
-
+  useGlobalNavigation = false
+}) => {
+  const location = useLocation();
+  
   return (
-    <div className={cn(
-      "flex min-h-screen bg-gray-100 dark:bg-gray-900",
-      className
-    )}>
-      {shouldShowSidebar && (
-        <MainSidebar 
-          open={sidebarOpen}
-          onToggle={handleSidebarToggle}
-          initialState={sidebarState}
-          onStateChange={handleSidebarStateChange}
+    <div className="flex h-screen flex-col">
+      <SharedNavbar onMenuClick={() => {}} moduleTitle={moduleTitle} />
+      <div className="flex flex-1 overflow-hidden">
+        <MainSidebar
+          navItems={navItems}
           navCategories={navCategories}
+          items={items}
+          className={className}
+          showToggleButton={showTopLeftToggle}
+          removeBottomToggle={removeBottomToggle}
+          initialState={initialSidebarState}
+          onStateChange={onSidebarStateChange}
+          homeItem={masterDashItem}
+          useGlobalNavigation={useGlobalNavigation}
         />
-      )}
-      
-      <div className={cn(
-        "flex flex-col w-full overflow-x-hidden",
-        shouldShowSidebar && !isMobile && sidebarOpen && "lg:ml-64"
-      )}>
-        {!hideNavigation && (
-          <Topbar onMenuClick={handleSidebarToggle} />
-        )}
-        
-        <main className={cn(
-          "flex-1",
-          !fullWidth && "container mx-auto",
-          !hideNavigation && "py-6"
-        )}>
+        <main className="flex-1 overflow-auto p-4">
           {children}
         </main>
       </div>
     </div>
   );
-}
+};

@@ -1,60 +1,35 @@
 
-import { ApiEndpoint, ApiProvider, ApiKeyStatus } from './types';
+// Fix imports for ApiProvider and ApiKeyStatus types
+import { ApiProviderConfig } from './types';
 
-// Sample API providers
-export const sampleProviders: ApiProvider[] = [
-  {
-    id: 'openai',
+// Sample data for API providers
+export const sampleApiProviders: Record<string, ApiProviderConfig> = {
+  'openai': {
     name: 'OpenAI',
-    description: 'Access GPT models and other AI capabilities',
-    status: 'active',
-    icon: 'OpenAIIcon',
-    docsUrl: 'https://platform.openai.com/docs/api-reference',
+    description: 'Access GPT models and AI capabilities',
+    apiKey: null,
+    status: 'unconfigured',
+    preferredModel: 'gpt-3.5-turbo',
+    models: [
+      'gpt-3.5-turbo',
+      'gpt-4'
+    ]
   },
-  {
-    id: 'requesty',
-    name: 'Requesty API',
-    description: 'Generate text, analyze data, and more',
-    status: 'active',
-    icon: 'RequestyIcon',
-    docsUrl: 'https://docs.requesty.io',
+  'requesty': {
+    name: 'Requesty',
+    description: 'Custom HTTP request integration',
+    apiKey: null,
+    status: 'unconfigured',
+    endpoint: 'https://api.example.com/v1'
   }
-];
+};
 
-// Sample API endpoints
-export const sampleEndpoints: ApiEndpoint[] = [
-  {
-    id: 'endpoint-1',
-    name: 'GPT-4 Completion',
-    url: 'https://api.openai.com/v1/chat/completions',
-    method: 'POST',
-    status: 'active',
-    lastUsed: '2025-04-15T10:30:00Z',
-    apiKey: 'sample-key-1'
-  },
-  {
-    id: 'endpoint-2',
-    name: 'Status Check',
-    url: 'https://api.requesty.io/v1/status',
-    method: 'GET',
-    status: 'inactive',
-    lastUsed: '2025-04-10T14:45:00Z',
-    apiKey: 'sample-key-2'
-  }
-];
-
-// Sample API key statuses
-export const apiKeyStatuses: ApiKeyStatus[] = [
-  {
-    providerId: 'openai',
-    status: 'valid',
-    lastChecked: '2025-04-15T11:20:00Z',
-    error: null
-  },
-  {
-    providerId: 'requesty',
-    status: 'invalid',
-    lastChecked: '2025-04-14T09:15:00Z',
-    error: 'API key expired'
-  }
-];
+// Sample function to simulate API key verification
+export const verifyApiKey = (provider: string, key: string): Promise<boolean> => {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      // Simple validation - in reality would make API call
+      resolve(key && key.length > 10);
+    }, 1000);
+  });
+};
