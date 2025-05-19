@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import { ModuleCard } from "../ModuleCard";
 import { Card } from "@/components/ui/card";
+import { motion } from "framer-motion";
 import { 
   Database, Users, LineChart, Code, Briefcase, Share2, Award, Layers, 
   BarChart3, Building, Shield, Settings, Activity, Zap
@@ -124,26 +125,57 @@ export default function PrimaryModules({ activeTab = "all", searchQuery = "" }: 
     
     setFilteredModules(filtered);
   }, [activeTab, searchQuery]);
+
+  // For the staggered animation effect
+  const container = {
+    hidden: { opacity: 0 },
+    show: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1
+      }
+    }
+  };
   
   if (filteredModules.length === 0) {
     return (
-      <Card className="p-8 text-center bg-gradient-to-br from-[#f7faff] to-[#e5effc] border-[#e5effc]">
-        <p className="text-[#005fea]/70">No modules found matching your search criteria.</p>
-      </Card>
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+      >
+        <Card className="p-8 text-center bg-gradient-to-br from-white/80 to-white/60 dark:from-slate-800/80 dark:to-slate-900/60 backdrop-blur-md border-white/20 dark:border-slate-700/30">
+          <p className="text-blue-500/70 dark:text-blue-400/70">No modules found matching your search criteria.</p>
+        </Card>
+      </motion.div>
     );
   }
   
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+    <motion.div 
+      className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6"
+      variants={container}
+      initial="hidden"
+      animate="show"
+    >
       {filteredModules.map((module, index) => (
-        <ModuleCard 
+        <motion.div
           key={`${module.path}-${index}`}
-          title={module.name}
-          icon={module.icon}
-          path={module.path}
-          className="h-44 w-full"
-        />
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ 
+            duration: 0.5,
+            delay: index * 0.05 
+          }}
+        >
+          <ModuleCard 
+            title={module.name}
+            icon={module.icon}
+            path={module.path}
+            className="h-44 w-full"
+          />
+        </motion.div>
       ))}
-    </div>
+    </motion.div>
   );
 }

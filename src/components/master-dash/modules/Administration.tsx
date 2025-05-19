@@ -1,11 +1,8 @@
 
-import { useNavigate } from 'react-router-dom';
 import { ModuleCard } from '../ModuleCard';
 import { Shield, Users } from 'lucide-react';
 
 const Administration = () => {
-  const navigate = useNavigate();
-
   const adminModules = [
     {
       title: 'User Management',

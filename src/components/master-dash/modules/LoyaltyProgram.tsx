@@ -1,11 +1,8 @@
 
-import { useNavigate } from 'react-router-dom';
 import { ModuleCard } from '../ModuleCard';
 import { Gem, Award } from 'lucide-react';
 
 const LoyaltyProgram = () => {
-  const navigate = useNavigate();
-
   const loyaltyModules = [
     {
       title: 'Loyalty Dashboard',

@@ -1,11 +1,8 @@
 
-import { useNavigate } from 'react-router-dom';
 import { ModuleCard } from '../ModuleCard';
 import { Bot, BrainCircuit } from 'lucide-react';
 
 const AiArmy = () => {
-  const navigate = useNavigate();
-
   const aiModules = [
     {
       title: 'AI Studio',

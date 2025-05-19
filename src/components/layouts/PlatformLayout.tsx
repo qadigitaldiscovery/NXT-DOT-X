@@ -4,7 +4,6 @@ import { MainSidebar } from '@/components/layout/sidebar/MainSidebar';
 import { NavCategory } from '@/components/layout/sidebar/types';
 import { masterDashItem } from '@/components/layout/sidebar/NavigationConfig';
 import { SharedNavbar } from '@/components/layout/SharedNavbar';
-import { useLocation } from 'react-router-dom';
 
 interface PlatformLayoutProps {
   children: React.ReactNode;
@@ -33,8 +32,6 @@ export const PlatformLayout: React.FC<PlatformLayoutProps> = ({
   moduleTitle,
   useGlobalNavigation = false
 }) => {
-  const location = useLocation();
-  
   return (
     <div className="flex h-screen flex-col">
       <SharedNavbar onMenuClick={() => {}} moduleTitle={moduleTitle} />

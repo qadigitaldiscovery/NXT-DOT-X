@@ -3,6 +3,7 @@ import { useState } from 'react';
 import PrimaryModules from './modules/PrimaryModules';
 import { SetupTestUser } from '@/components/SetupTestUser';
 import SearchAndFilter from './SearchAndFilter';
+import { motion } from 'framer-motion';
 
 export default function DashboardModules() {
   const [activeTab, setActiveTab] = useState("all");
@@ -11,8 +12,18 @@ export default function DashboardModules() {
   const categories = ["All", "Data", "Marketing", "Tech", "Operations", "Analytics", "Admin"];
   
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
+    <motion.div 
+      className="container mx-auto px-4 py-8"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.7 }}
+    >
+      <motion.div 
+        className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8"
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: 0.2 }}
+      >
         <div>
           <h1 className="text-3xl font-bold mb-2 text-transparent bg-clip-text bg-gradient-to-r from-[#005fea] to-[#4cacfe]">
             Platform Modules
@@ -23,7 +34,7 @@ export default function DashboardModules() {
         <div className="flex flex-col md:flex-row gap-4 items-end mt-4 md:mt-0">
           <SetupTestUser />
         </div>
-      </div>
+      </motion.div>
       
       {/* Search and Filter Section */}
       <SearchAndFilter 
@@ -36,6 +47,6 @@ export default function DashboardModules() {
       
       {/* Module Grid */}
       <PrimaryModules activeTab={activeTab.toLowerCase()} searchQuery={searchQuery} />
-    </div>
+    </motion.div>
   );
 }
