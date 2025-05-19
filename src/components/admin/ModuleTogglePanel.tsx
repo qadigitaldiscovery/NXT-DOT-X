@@ -10,9 +10,6 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { ModuleAccess } from '@/hooks/useModuleAccess';
 
-// Import the new component at the top of the file
-import NewComponent from '@/components/new/NewComponent';
-
 interface ModuleTogglePanelProps {
   userId: string;
 }

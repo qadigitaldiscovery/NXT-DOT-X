@@ -1,15 +1,14 @@
-
 import React from 'react';
 import { useLocation } from 'react-router-dom';
 import { CollapsedSidebar } from '@/components/layout/sidebar/CollapsedSidebar';
-import { NavCategory } from '@/components/layout/sidebar/types';
+import { NavCategory, NavItem } from '@/components/layout/sidebar/types';
 import { navCategories as globalNavCategories } from '@/components/layout/sidebar/NavigationConfig';
 
 interface MainSidebarCollapsedProps {
   navCategories: NavCategory[];
-  navItems: any[];
-  items: any[];
-  homeItem?: any;
+  navItems: NavItem[];
+  items: NavCategory[];
+  homeItem?: NavItem;
   useGlobalNavigation: boolean;
 }
 
