@@ -1,11 +1,12 @@
 
-import { useTheme } from "@/context/ThemeContext"
+import { useContext } from "react"
+import { ThemeContext } from "@/context/ThemeContext"
 import { Toaster as Sonner } from "sonner"
 
 type ToasterProps = React.ComponentProps<typeof Sonner>
 
 const Toaster = ({ ...props }: ToasterProps) => {
-  const { theme } = useTheme()
+  const { theme } = useContext(ThemeContext)
   const themeValue = theme === "dark" ? "dark" : "light"
 
   return (
