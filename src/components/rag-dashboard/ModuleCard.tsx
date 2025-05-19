@@ -33,10 +33,10 @@ const ModuleCard: React.FC<ModuleCardProps> = ({ module, alertCount, onViewDetai
   
   const getBackgroundGradient = (status: string) => {
     switch (status) {
-      case 'green': return 'from-gray-900 to-green-950';
-      case 'orange': return 'from-gray-900 to-orange-950';
-      case 'red': return 'from-gray-900 to-red-950';
-      default: return 'from-gray-900 to-gray-950';
+      case 'green': return 'from-redmetal-800 to-green-950';
+      case 'orange': return 'from-redmetal-800 to-orange-950';
+      case 'red': return 'from-redmetal-800 to-red-950';
+      default: return 'from-redmetal-800 to-black';
     }
   };
   
@@ -53,6 +53,14 @@ const ModuleCard: React.FC<ModuleCardProps> = ({ module, alertCount, onViewDetai
         style={{ 
           backgroundImage: "url('/lovable-uploads/f591cd6e-de49-44cf-bfb9-207fcd31b3ce.png')",
           backgroundSize: "cover",
+        }}
+      />
+      
+      {/* Neon blue splash */}
+      <div 
+        className="absolute -top-4 -right-4 w-24 h-24 rounded-full blur-xl z-0"
+        style={{
+          background: "radial-gradient(circle at center, rgba(56,189,248,0.6) 0%, rgba(59,130,246,0.3) 40%, transparent 70%)",
         }}
       />
       

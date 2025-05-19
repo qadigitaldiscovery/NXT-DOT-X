@@ -33,7 +33,7 @@ export const ModuleCard: React.FC<ModuleCardProps> = ({
   const getVariantClasses = () => {
     switch (variant) {
       case 'red':
-        return "bg-gradient-to-br from-red-900 to-red-950 text-white border-red-700";
+        return "bg-gradient-to-br from-redmetal-800 to-black text-white border-red-900";
       case 'dark':
         return "bg-gradient-to-br from-gray-900 to-black text-white border-gray-800";
       case 'light':
@@ -41,7 +41,7 @@ export const ModuleCard: React.FC<ModuleCardProps> = ({
       case 'accent':
         return "bg-gradient-to-br from-blue-900 to-blue-950 text-white border-blue-700";
       default:
-        return "bg-gradient-to-br from-gray-900 to-black text-white border-gray-800";
+        return "bg-gradient-to-br from-redmetal-800 to-black text-white border-gray-800";
     }
   };
 
@@ -49,7 +49,7 @@ export const ModuleCard: React.FC<ModuleCardProps> = ({
   const getIconContainerClasses = () => {
     switch (variant) {
       case 'red':
-        return "bg-red-800 text-white ring-2 ring-red-600";
+        return "bg-redmetal-600 text-white ring-2 ring-red-600";
       case 'dark':
         return "bg-gray-800 text-white ring-2 ring-gray-700";
       case 'light':
@@ -80,6 +80,14 @@ export const ModuleCard: React.FC<ModuleCardProps> = ({
           backgroundImage: "url('/lovable-uploads/f591cd6e-de49-44cf-bfb9-207fcd31b3ce.png')",
           backgroundSize: "cover",
           backgroundPosition: "center",
+        }}
+      />
+      
+      {/* Neon blue splash/accent */}
+      <div 
+        className="absolute -top-4 -right-4 w-24 h-24 rounded-full bg-blue-500/30 blur-xl animate-pulse-neon"
+        style={{
+          background: "radial-gradient(circle at center, rgba(56,189,248,0.6) 0%, rgba(59,130,246,0.3) 40%, transparent 70%)",
         }}
       />
       
