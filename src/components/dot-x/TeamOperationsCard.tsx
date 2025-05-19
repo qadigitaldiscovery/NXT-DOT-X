@@ -1,17 +1,14 @@
-
-import React from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Users } from 'lucide-react';
-import { TeamMember } from '@/pages/dot-x/types';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Users } from "lucide-react";
+import { TeamMember } from "../../pages/dot-x/types";
 
 interface TeamOperationsCardProps {
   members: TeamMember[];
 }
 
 export function TeamOperationsCard({ members }: TeamOperationsCardProps) {
-  const activeMembers = members.filter(m => m.status === 'active').length;
   const fieldMembers = members.filter(m => m.status === 'field').length;
   
   return (

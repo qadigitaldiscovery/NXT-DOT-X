@@ -1,6 +1,6 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 import { createClient } from '@supabase/supabase-js';
-import { toast } from '@/components/ui/toast';
+import { toast } from '../components/ui/toast';
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -19,6 +19,7 @@ interface ModulesContextType {
   loading: boolean;
   toggleModule: (moduleId: string, enabled: boolean) => Promise<void>;
   refreshModules: () => Promise<void>;
+  hasAccess: (moduleId: string, subModuleId?: string) => boolean;
 }
 
 const ModulesContext = createContext<ModulesContextType | undefined>(undefined);
@@ -71,8 +72,23 @@ export function ModulesProvider({ children }: { children: React.ReactNode }) {
     await fetchModules();
   };
 
+  const hasAccess = (moduleId: string, subModuleId?: string): boolean => {
+    const module = modules.find(m => m.id === moduleId);
+    if (!module?.enabled) return false;
+    
+    // If a subModuleId is provided, you might want to add additional logic here
+    // For now, if the main module is enabled, we'll allow access to submodules
+    return true;
+  };
+
   return (
-    <ModulesContext.Provider value={{ modules, loading, toggleModule, refreshModules }}>
+    <ModulesContext.Provider value={{ 
+      modules, 
+      loading, 
+      toggleModule, 
+      refreshModules,
+      hasAccess 
+    }}>
       {children}
     </ModulesContext.Provider>
   );

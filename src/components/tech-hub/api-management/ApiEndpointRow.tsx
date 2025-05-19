@@ -1,8 +1,7 @@
-
 import { useState } from 'react';
 import { ApiEndpoint } from './types';
 import { Button } from '@/components/ui/button';
-import { CheckCircle, Edit, Trash2, XCircle } from 'lucide-react';
+import { CheckCircle, Edit, Trash2, XCircle, MoreHorizontal } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { 
   DropdownMenu, 
@@ -11,8 +10,8 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator
 } from '@/components/ui/dropdown-menu';
-import { MoreHorizontal } from 'lucide-react';
-import { formatDistanceToNow } from 'date-fns';
+import { formatDistanceToNow, parseISO } from 'date-fns';
+import { cn } from '@/lib/utils';
 
 interface ApiEndpointRowProps {
   endpoint: ApiEndpoint;
@@ -31,7 +30,7 @@ export default function ApiEndpointRow({
 
   // Format time since last used
   const lastUsedText = endpoint.lastUsed
-    ? formatDistanceToNow(new Date(endpoint.lastUsed), { addSuffix: true })
+    ? formatDistanceToNow(parseISO(endpoint.lastUsed), { addSuffix: true })
     : 'Never';
 
   const maskedApiKey = endpoint.apiKey.substring(0, 3) + '•'.repeat(endpoint.apiKey.length - 6) + endpoint.apiKey.substring(endpoint.apiKey.length - 3);
@@ -41,7 +40,13 @@ export default function ApiEndpointRow({
       <div className="flex flex-col space-y-1 flex-grow">
         <div className="flex items-center space-x-2">
           <span className="font-medium">{endpoint.name}</span>
-          <Badge variant={endpoint.status === 'active' ? 'success' : 'secondary'} className="text-xs">
+          <Badge 
+            variant={endpoint.status === 'active' ? 'default' : 'secondary'} 
+            className={cn(
+              "text-xs",
+              endpoint.status === 'active' ? "bg-green-500 hover:bg-green-600" : ""
+            )}
+          >
             {endpoint.status === 'active' ? 'Active' : 'Inactive'}
           </Badge>
           <Badge variant="outline" className="text-xs">

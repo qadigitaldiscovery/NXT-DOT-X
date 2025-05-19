@@ -1,26 +1,20 @@
-
-import React from 'react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import ApiEndpointRow from './ApiEndpointRow';
 import { ApiEndpoint } from './types';
 
 interface EndpointsTableProps {
   endpoints: ApiEndpoint[];
-  showApiKeys: {[key: string]: boolean};
-  onToggleApiKey: (id: string) => void;
-  onCopyApiKey: (apiKey: string, name: string) => void;
-  onTestEndpoint: (id: string) => void;
-  onDeleteEndpoint: (id: string, name: string) => void;
+  onEdit: (endpoint: ApiEndpoint) => void;
+  onDelete: (id: string) => void;
+  onToggleStatus: (id: string) => void;
 }
 
-const EndpointsTable: React.FC<EndpointsTableProps> = ({ 
-  endpoints, 
-  showApiKeys, 
-  onToggleApiKey, 
-  onCopyApiKey, 
-  onTestEndpoint,
-  onDeleteEndpoint
-}) => {
+const EndpointsTable = ({ 
+  endpoints,
+  onEdit,
+  onDelete,
+  onToggleStatus
+}: EndpointsTableProps) => {
   return (
     <div className="rounded-md border">
       <Table>
@@ -28,7 +22,6 @@ const EndpointsTable: React.FC<EndpointsTableProps> = ({
           <TableRow>
             <TableHead>Name</TableHead>
             <TableHead>URL</TableHead>
-            <TableHead>API Key</TableHead>
             <TableHead>Method</TableHead>
             <TableHead>Status</TableHead>
             <TableHead>Last Used</TableHead>
@@ -41,16 +34,14 @@ const EndpointsTable: React.FC<EndpointsTableProps> = ({
               <ApiEndpointRow
                 key={endpoint.id}
                 endpoint={endpoint}
-                showApiKey={!!showApiKeys[endpoint.id]}
-                onToggleApiKey={() => onToggleApiKey(endpoint.id)}
-                onCopyApiKey={() => endpoint.apiKey && onCopyApiKey(endpoint.apiKey, endpoint.name)}
-                onTestEndpoint={() => onTestEndpoint(endpoint.id)}
-                onDeleteEndpoint={() => onDeleteEndpoint(endpoint.id, endpoint.name)}
+                onEdit={onEdit}
+                onDelete={onDelete}
+                onToggleStatus={onToggleStatus}
               />
             ))
           ) : (
             <TableRow>
-              <TableCell colSpan={7} className="text-center py-4 text-muted-foreground">
+              <TableCell colSpan={6} className="text-center py-4 text-muted-foreground">
                 No endpoints found matching your search.
               </TableCell>
             </TableRow>

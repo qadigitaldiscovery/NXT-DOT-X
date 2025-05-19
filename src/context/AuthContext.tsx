@@ -1,7 +1,7 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { toast } from '@/components/ui/toast';
-import { supabase } from '@/integrations/supabase/client';
+import { toast } from '../components/ui/toast';
+import { supabase } from '../integrations/supabase/client';
 
 interface User {
   id: string;
@@ -13,9 +13,11 @@ interface User {
 interface AuthContextType {
   user: User | null;
   loading: boolean;
+  isAuthenticated: boolean;
   signIn: (email: string, password: string) => Promise<void>;
   signOut: () => Promise<void>;
   updateUser: (data: Partial<User>) => Promise<void>;
+  hasPermission: (permission: string) => boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -24,6 +26,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+
+  const hasPermission = (permission: string): boolean => {
+    if (!user) return false;
+    if (user.role === 'admin') return true;
+    // Add your permission logic here
+    // This is a simple example - you might want to implement more complex permission checking
+    return false;
+  };
 
   useEffect(() => {
     // Check active sessions and sets the user
@@ -136,7 +146,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, signIn, signOut, updateUser }}>
+    <AuthContext.Provider value={{ 
+      user, 
+      loading, 
+      isAuthenticated: !!user,
+      signIn, 
+      signOut, 
+      updateUser,
+      hasPermission 
+    }}>
       {children}
     </AuthContext.Provider>
   );

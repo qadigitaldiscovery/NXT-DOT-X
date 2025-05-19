@@ -1,9 +1,8 @@
-
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Zap } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { useModules } from "@/context/ModulesContext";
+import { useModules } from "../../../context/ModulesContext";
 
 export default function DotX() {
   const navigate = useNavigate();
@@ -60,7 +59,7 @@ export default function DotX() {
           onClick={handleNavigateToDotX2} 
           variant="outline"
           className="w-full border-blue-500/30 text-blue-500 hover:bg-blue-500/10"
-          disabled={!hasAccess('dot-x', 'dot-x-2')}
+          disabled={!hasAccess('dot-x-2')}
         >
           Open DOT-X-2
         </Button>

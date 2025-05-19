@@ -1,9 +1,8 @@
-
-import React from 'react';
-import { SharedSidebar } from './SharedSidebar';
+import { useState, useEffect } from 'react';
+import { MainSidebar } from './sidebar/MainSidebar/MainSidebar';
 import { SharedNavbar } from './SharedNavbar';
-import { useIsMobile } from '@/hooks/use-mobile';
-import { cn } from '@/lib/utils';
+import { useIsMobile } from '../../hooks/use-mobile';
+import { cn } from '../../lib/utils';
 import { Outlet } from 'react-router-dom';
 import { Home, Users, Settings, Database, BarChart3, FileUp } from 'lucide-react';
 import { NavCategory, NavItem } from './sidebar/types';
@@ -26,14 +25,13 @@ const supplierNavItems: NavCategory[] = [
   }
 ];
 
-// Add home item that will be shown at the bottom of sidebar
 const homeNavItem: NavItem = { label: 'Master Dashboard', icon: Home, path: '/' };
 
 export const SupplierManagementLayout = ({ children }: SupplierManagementLayoutProps) => {
-  const [sidebarOpen, setSidebarOpen] = React.useState(true);
+  const [sidebarOpen, setSidebarOpen] = useState(true);
   const isMobile = useIsMobile();
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (isMobile) {
       setSidebarOpen(false);
     } else {
@@ -47,11 +45,12 @@ export const SupplierManagementLayout = ({ children }: SupplierManagementLayoutP
 
   return (
     <div className="flex h-screen overflow-hidden bg-gray-50">
-      <SharedSidebar 
+      <MainSidebar 
         open={sidebarOpen} 
         onToggle={toggleSidebar} 
-        navItems={supplierNavItems}
+        items={supplierNavItems}
         homeItem={homeNavItem}
+        useGlobalNavigation={false}
       />
       <div className={cn(
           "flex flex-col flex-1 overflow-hidden",
