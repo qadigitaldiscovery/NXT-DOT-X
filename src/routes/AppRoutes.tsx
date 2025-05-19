@@ -22,8 +22,15 @@ import WorkflowsPage from "@/pages/auto/WorkflowsPage";
 import VendorsPage from "@/pages/auto/VendorsPage";
 import ModuleAutoPage from "@/pages/auto/ModuleAutoPage";
 
-// Dashboard V2
-import DashboardV2Page from "@/pages/DashboardV2Page";
+// Beta Dashboards
+import Beta1Dashboard from "@/pages/Beta1Dashboard";
+import Beta2Dashboard from "@/pages/Beta2Dashboard";
+import Beta2Analytics from "@/pages/Beta2Analytics";
+
+// RAG Dashboard
+import RAGDashboard from "@/pages/RAGDashboard";
+import RAGAlerts from "@/pages/auto/RAGAlerts";
+import RAGSettings from "@/pages/auto/RAGSettings";
 
 export const AppRoutes = () => {
   return (
@@ -35,9 +42,16 @@ export const AppRoutes = () => {
       {/* Beta Routes */}
       {BetaRoutes()}
       
+      {/* Beta Dashboard Pages */}
+      <Route path="/beta1/dashboard" element={<Beta1Dashboard />} />
+      <Route path="/beta2/dashboard" element={<Beta2Dashboard />} />
+      <Route path="/beta2/analytics" element={<Beta2Analytics />} />
+      
       {/* Dashboard V2 */}
-      <Route path="/dashboard/v2" element={<DashboardV2Page />} />
-      <Route path="/dashboard/rag" element={<ModuleAutoPage />} />
+      <Route path="/dashboard/v2" element={<ModuleAutoPage />} />
+      <Route path="/dashboard/rag" element={<RAGDashboard />} />
+      <Route path="/dashboard/rag/alerts" element={<RAGAlerts />} />
+      <Route path="/dashboard/rag/settings" element={<RAGSettings />} />
       
       {/* Auto-generated page routes */}
       <Route path="/ai-extract" element={<AIExtractPage />} />
@@ -101,6 +115,7 @@ export const AppRoutes = () => {
       
       {/* Project Management Routes */}
       <Route path="/projects" element={<ModuleAutoPage />} />
+      <Route path="/projects/*" element={<ModuleAutoPage />} />
       
       {/* All module routes */}
       {VendorRoutes()}

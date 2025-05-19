@@ -1,16 +1,16 @@
 
 import { NavCategory } from '@/components/layout/sidebar/types';
-import { BarChart3, AlertTriangle, LineChart, Settings } from 'lucide-react';
+import { AlertTriangle, BarChart3, Bell, Settings } from 'lucide-react';
 
 export const ragDashboardNavigation: NavCategory[] = [
   {
     name: "RAG Dashboard",
-    label: "RAG Dashboard", 
+    label: "RAG Dashboard",
     items: [
-      { label: "Overview", path: "/dashboard/rag", icon: BarChart3 },
-      { label: "Analytics", path: "/dashboard/rag/analytics", icon: LineChart },
-      { label: "Alerts", path: "/dashboard/rag/alerts", icon: AlertTriangle },
-      { label: "Settings", path: "/dashboard/rag/settings", icon: Settings, roles: ["admin"] }
+      { label: "Overview", path: "/dashboard/rag", icon: AlertTriangle },
+      { label: "Alerts Center", path: "/dashboard/rag/alerts", icon: Bell },
+      { label: "Analytics", path: "/dashboard/rag/analytics", icon: BarChart3 },
+      { label: "Settings", path: "/dashboard/rag/settings", icon: Settings }
     ]
   }
 ];
