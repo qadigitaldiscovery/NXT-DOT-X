@@ -1,85 +1,99 @@
 
-import { useState, ChangeEvent } from 'react';
-import { Input } from '@/components/ui/input';
-import { Switch } from '@/components/ui/switch';
-import { Card } from '@/components/ui/card';
+import React from 'react';
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { cn } from "@/lib/utils";
 
-interface AdvancedConfigFieldProps {
+export interface AdvancedConfigFieldProps {
   configKey: string;
-  label: string;
-  type?: 'text' | 'number' | 'boolean' | 'select';
+  configLabel?: string;
+  type: "string" | "number" | "boolean" | "select";
   value: any;
-  onChange: (key: string, value: any) => void;
+  onUpdate: (key: string, value: any) => void;
   options?: string[];
-  description?: string;
+  className?: string;
 }
 
-export const AdvancedConfigField = ({
+export function AdvancedConfigField({
   configKey,
-  label,
-  type = 'text',
+  configLabel,
+  type,
   value,
-  onChange,
-  options,
-  description
-}: AdvancedConfigFieldProps) => {
-  const handleValueChange = (newValue: any) => {
-    onChange(configKey, newValue);
+  onUpdate,
+  options = [],
+  className
+}: AdvancedConfigFieldProps) {
+  const handleCheckboxChange = (checked: boolean) => {
+    onUpdate(configKey, checked);
   };
 
-  // Boolean toggle handler
-  const handleBooleanChange = (checked: boolean) => {
-    handleValueChange(checked);
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newValue = type === "number" ? Number(e.target.value) : e.target.value;
+    onUpdate(configKey, newValue);
   };
 
-  // Text/number input handler
-  const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const val = type === 'number' ? parseFloat(e.target.value) : e.target.value;
-    handleValueChange(val);
+  const handleSelectChange = (values: string) => {
+    onUpdate(configKey, values);
   };
 
-  // Select handler
-  const handleSelectChange = (e: ChangeEvent<HTMLSelectElement>) => {
-    handleValueChange(e.target.value);
-  };
+  const label = configLabel || configKey;
 
   return (
-    <Card className="p-3 mb-3">
-      <div className="flex flex-col space-y-2">
-        <div className="flex justify-between items-center">
-          <label className="text-sm font-medium">{label}</label>
-          
-          {type === 'boolean' ? (
-            <Switch 
-              checked={value} 
-              onCheckedChange={handleBooleanChange} 
-            />
-          ) : type === 'select' && options ? (
-            <select
-              id={configKey}
-              value={value}
-              onChange={handleSelectChange}
-              className="border rounded p-1 text-sm"
-            >
-              {options.map(opt => (
-                <option key={opt} value={opt}>{opt}</option>
-              ))}
-            </select>
-          ) : (
-            <Input
-              id={configKey}
-              value={value}
-              onChange={handleInputChange}
-              type={type}
-              className="w-40 text-sm"
-            />
-          )}
+    <div className={cn("space-y-1", className)}>
+      {type !== "boolean" && (
+        <Label htmlFor={`config-${configKey}`} className="text-sm">
+          {label}
+        </Label>
+      )}
+
+      {type === "boolean" && (
+        <div className="flex items-center space-x-2">
+          <Checkbox
+            id={`config-${configKey}`}
+            checked={value}
+            onCheckedChange={handleCheckboxChange}
+          />
+          <Label htmlFor={`config-${configKey}`} className="text-sm">
+            {label}
+          </Label>
         </div>
-        
-        {description && (
-          <p className="text-xs text-gray-500">{description}</p>
-        )}
-      </div>
-    </Card>
+      )}
+
+      {type === "string" && (
+        <Input
+          id={`config-${configKey}`}
+          value={value || ""}
+          onChange={handleInputChange}
+          className="h-8 text-sm"
+        />
+      )}
+
+      {type === "number" && (
+        <Input
+          id={`config-${configKey}`}
+          type="number"
+          value={value || 0}
+          onChange={handleInputChange}
+          className="h-8 text-sm"
+        />
+      )}
+
+      {type === "select" && options.length > 0 && (
+        <Select value={value} onValueChange={handleSelectChange}>
+          <SelectTrigger id={`config-${configKey}`} className="h-8 text-sm">
+            <SelectValue placeholder={`Select ${label}`} />
+          </SelectTrigger>
+          <SelectContent>
+            {options.map((option) => (
+              <SelectItem key={option} value={option}>
+                {option}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      )}
+    </div>
   );
-};
+}

@@ -1,44 +1,52 @@
 
-import React, { useState } from 'react';
-import { ChevronDown, ChevronUp } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import React from 'react';
+import { Label } from "@/components/ui/label";
+import { Separator } from "@/components/ui/separator";
 import { AdvancedConfigField } from "./AdvancedConfigField";
+import { cn } from "@/lib/utils";
 
-interface AdvancedConfigSectionProps {
+export interface AdvancedConfigSectionProps {
+  title: string;
+  description?: string;
   config: Record<string, any>;
-  onConfigUpdate: (key: string, value: any) => void;
+  onUpdate: (key: string, value: any) => void;
+  fieldDefinitions: Array<{
+    key: string;
+    label?: string;
+    type: "string" | "number" | "boolean" | "select";
+    options?: string[];
+  }>;
+  className?: string;
 }
 
-export const AdvancedConfigSection: React.FC<AdvancedConfigSectionProps> = ({
+export function AdvancedConfigSection({
+  title,
+  description,
   config,
-  onConfigUpdate
-}) => {
-  const [showAdvanced, setShowAdvanced] = useState(false);
-  
+  onUpdate,
+  fieldDefinitions,
+  className,
+}: AdvancedConfigSectionProps) {
   return (
-    <div className="space-y-4 pt-4">
-      <Collapsible open={showAdvanced} onOpenChange={setShowAdvanced}>
-        <div className="flex items-center justify-between">
-          <h4 className="text-sm font-medium">Advanced Configuration Options</h4>
-          <CollapsibleTrigger asChild>
-            <Button variant="ghost" size="sm">
-              {showAdvanced ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
-            </Button>
-          </CollapsibleTrigger>
-        </div>
-        <CollapsibleContent className="space-y-4 pt-4">
-          {Object.entries(config).map(([key, value]) => (
-            <div key={key}>
-              <AdvancedConfigField
-                configKey={key}
-                configValue={value}
-                onUpdate={onConfigUpdate}
-              />
-            </div>
-          ))}
-        </CollapsibleContent>
-      </Collapsible>
+    <div className={cn("space-y-3", className)}>
+      <div>
+        <Label className="text-base">{title}</Label>
+        {description && <p className="text-sm text-muted-foreground">{description}</p>}
+      </div>
+      <Separator />
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {fieldDefinitions.map((field) => (
+          <AdvancedConfigField
+            key={field.key}
+            configKey={field.key}
+            configLabel={field.label}
+            type={field.type}
+            value={config[field.key]}
+            onUpdate={onUpdate}
+            options={field.options}
+          />
+        ))}
+      </div>
     </div>
   );
-};
+}

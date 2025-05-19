@@ -1,40 +1,60 @@
 
-import { ApiEndpoint } from './types';
+import { ApiEndpoint, ApiProvider, ApiKeyStatus } from './types';
 
+// Sample API providers
+export const sampleProviders: ApiProvider[] = [
+  {
+    id: 'openai',
+    name: 'OpenAI',
+    description: 'Access GPT models and other AI capabilities',
+    status: 'active',
+    icon: 'OpenAIIcon',
+    docsUrl: 'https://platform.openai.com/docs/api-reference',
+  },
+  {
+    id: 'requesty',
+    name: 'Requesty API',
+    description: 'Generate text, analyze data, and more',
+    status: 'active',
+    icon: 'RequestyIcon',
+    docsUrl: 'https://docs.requesty.io',
+  }
+];
+
+// Sample API endpoints
 export const sampleEndpoints: ApiEndpoint[] = [
   {
-    id: '1',
-    name: 'Product Data API',
-    url: 'https://api.example.com/products',
-    apiKey: 'sk_prod_*************',
-    method: 'GET',
-    status: 'active',
-    lastUsed: '2025-05-07T14:32:11'
-  },
-  {
-    id: '2',
-    name: 'Order Processing',
-    url: 'https://api.example.com/orders',
-    apiKey: 'ord_api_*************',
+    id: 'endpoint-1',
+    name: 'GPT-4 Completion',
+    url: 'https://api.openai.com/v1/chat/completions',
     method: 'POST',
     status: 'active',
-    lastUsed: '2025-05-08T09:15:22'
+    lastUsed: '2025-04-15T10:30:00Z',
+    apiKey: 'sample-key-1'
   },
   {
-    id: '3',
-    name: 'Legacy Inventory System',
-    url: 'https://legacy.example.com/inventory',
+    id: 'endpoint-2',
+    name: 'Status Check',
+    url: 'https://api.requesty.io/v1/status',
     method: 'GET',
     status: 'inactive',
-    lastUsed: '2025-05-01T10:45:30'
+    lastUsed: '2025-04-10T14:45:00Z',
+    apiKey: 'sample-key-2'
+  }
+];
+
+// Sample API key statuses
+export const apiKeyStatuses: ApiKeyStatus[] = [
+  {
+    providerId: 'openai',
+    status: 'valid',
+    lastChecked: '2025-04-15T11:20:00Z',
+    error: null
   },
   {
-    id: '4',
-    name: 'Customer Analytics',
-    url: 'https://analytics.example.com/customers',
-    apiKey: 'ana_key_*************',
-    method: 'GET',
-    status: 'inactive',
-    lastUsed: '2025-04-28T16:20:00'
+    providerId: 'requesty',
+    status: 'invalid',
+    lastChecked: '2025-04-14T09:15:00Z',
+    error: 'API key expired'
   }
 ];

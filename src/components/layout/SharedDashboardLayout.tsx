@@ -89,10 +89,6 @@ const SharedDashboardLayout: React.FC<SharedDashboardLayoutProps> = ({
           ) : (
             <CompactSidebar 
               navItems={navCategories.flatMap(cat => cat.items)}
-              textColor="text-gray-300"
-              activeBgColor="bg-indigo-500"
-              activeTextColor="text-white"
-              hoverBgColor="hover:bg-indigo-900/50"
             />
           )}
         </div>
