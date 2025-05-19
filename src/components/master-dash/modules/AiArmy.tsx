@@ -12,7 +12,9 @@ const AiArmy = () => {
         variant="default"
         features={[
           { name: 'AI Studio', path: '/ai-army/studio' },
-          { name: 'Bot Management', path: '/ai-army/bots' }
+          { name: 'Bot Management', path: '/ai-army/bots' },
+          { name: 'Training Center', path: '/ai-army/training' },
+          { name: 'AI Metrics', path: '/ai-army/metrics' }
         ]}
       />
     </div>

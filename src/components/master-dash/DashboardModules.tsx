@@ -1,6 +1,5 @@
 
 import React, { useEffect, useState } from 'react';
-import PrimaryModules from './modules/PrimaryModules';
 import BrandMarketing from './modules/BrandMarketing';
 import TradingSystem from './modules/TradingSystem';
 import TechHub from './modules/TechHub';
@@ -77,7 +76,6 @@ const DashboardModules: React.FC = () => {
               
               {/* Primary System Modules */}
               <DataManagement />
-              <LoyaltyProgram />
               <SocialMediaMarketing />
               <BrandMarketing />
               <TradingSystem />
@@ -105,6 +103,7 @@ const DashboardModules: React.FC = () => {
           filteredModules.subcategory && (
             <>
               <AiArmy />
+              <LoyaltyProgram />
               {/* Additional sub category modules would go here */}
             </>
           )
