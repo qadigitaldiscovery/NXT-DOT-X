@@ -1,127 +1,90 @@
 
+import React from 'react';
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Checkbox } from '@/components/ui/checkbox';
 import { PlusCircle } from 'lucide-react';
-import { useState } from 'react';
 
-// Define the form data type for strong typing
-interface RoleFormData {
-  name: string;
-  description: string;
-  permissions: string[];
+export interface AddRoleDialogProps {
+  open?: boolean; 
+  onOpenChange?: (open: boolean) => void;
+  onRoleAdded: (role: { name: string; description: string }) => void;
 }
 
-interface AddRoleDialogProps {
-  onAddRole: (role: { name: string; description: string; permissions: string[] }) => void;
-  permissions: string[];
-}
+export function AddRoleDialog({ 
+  open, 
+  onOpenChange,
+  onRoleAdded 
+}: AddRoleDialogProps) {
+  const [name, setName] = React.useState('');
+  const [description, setDescription] = React.useState('');
 
-export function AddRoleDialog({ onAddRole, permissions }: AddRoleDialogProps) {
-  // Local state for form data
-  const [formData, setFormData] = useState<RoleFormData>({
-    name: '',
-    description: '',
-    permissions: [],
-  });
-  
-  // Local state for dialog open status
-  const [isOpen, setIsOpen] = useState(false);
-  
-  // Handle input changes
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
-  };
-  
-  // Handle checkbox changes
-  const handleCheckboxChange = (permission: string, checked: boolean) => {
-    setFormData(prev => {
-      if (checked) {
-        return { ...prev, permissions: [...prev.permissions, permission] };
-      } else {
-        return { ...prev, permissions: prev.permissions.filter(p => p !== permission) };
-      }
-    });
-  };
-  
-  // Handle form submission
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onAddRole({
-      name: formData.name,
-      description: formData.description,
-      permissions: formData.permissions,
-    });
-    // Reset form and close dialog
-    setFormData({ name: '', description: '', permissions: [] });
-    setIsOpen(false);
+    if (name.trim()) {
+      onRoleAdded({ name, description });
+      setName('');
+      setDescription('');
+    }
   };
 
+  const controlledProps = open !== undefined && onOpenChange !== undefined 
+    ? { open, onOpenChange } 
+    : {};
+
   return (
-    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+    <Dialog {...controlledProps}>
       <DialogTrigger asChild>
-        <Button variant="outline" size="sm">
-          <PlusCircle className="h-4 w-4 mr-2" />
+        <Button className="gap-2">
+          <PlusCircle className="h-4 w-4" />
           Add Role
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
-        <DialogHeader>
-          <DialogTitle>Add New Role</DialogTitle>
-        </DialogHeader>
-        <form onSubmit={handleSubmit} className="space-y-4 pt-4">
-          <div className="space-y-2">
-            <Label htmlFor="name">Role Name</Label>
-            <Input
-              id="name"
-              name="name"
-              placeholder="e.g., Editor"
-              value={formData.name}
-              onChange={handleInputChange}
-              required
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="description">Description</Label>
-            <Input
-              id="description"
-              name="description"
-              placeholder="Role description"
-              value={formData.description}
-              onChange={handleInputChange}
-              required
-            />
-          </div>
-          <div className="space-y-2">
-            <Label>Permissions</Label>
-            <div className="grid grid-cols-2 gap-2">
-              {permissions.map((permission) => (
-                <div key={permission} className="flex items-center space-x-2">
-                  <Checkbox
-                    id={`permission-${permission}`}
-                    checked={formData.permissions.includes(permission)}
-                    onCheckedChange={(checked) => 
-                      handleCheckboxChange(permission, checked === true)
-                    }
-                  />
-                  <Label
-                    htmlFor={`permission-${permission}`}
-                    className="text-sm cursor-pointer"
-                  >
-                    {permission}
-                  </Label>
-                </div>
-              ))}
+      <DialogContent>
+        <form onSubmit={handleSubmit}>
+          <DialogHeader>
+            <DialogTitle>Add New Role</DialogTitle>
+            <DialogDescription>
+              Create a new role to assign to users.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="grid gap-2">
+              <Label htmlFor="name">Role Name</Label>
+              <Input
+                id="name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="Admin, Editor, etc."
+                required
+              />
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="description">Description</Label>
+              <Input
+                id="description"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                placeholder="Describe the role's permissions and purpose"
+              />
             </div>
           </div>
-          <div className="flex justify-end">
+          <DialogFooter>
             <Button type="submit">Add Role</Button>
-          </div>
+          </DialogFooter>
         </form>
       </DialogContent>
     </Dialog>
   );
 }
+
+export default AddRoleDialog;

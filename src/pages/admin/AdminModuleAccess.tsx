@@ -3,7 +3,7 @@ import React from 'react';
 import { useAuth } from '@/context/AuthContext';
 import ModuleTogglePanel from '@/components/admin/ModuleTogglePanel';
 import PermissionGuard from '@/components/admin/PermissionGuard';
-import { Users, ShieldCheck } from 'lucide-react';
+import { ShieldCheck } from 'lucide-react';
 
 const AdminModuleAccess = () => {
   const { user } = useAuth();
