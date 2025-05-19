@@ -1,109 +1,45 @@
 
-import React, { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import TabsMenu, { TabItem } from '@/components/ui/tabs-menu';
-import { Terminal, MessageSquare } from 'lucide-react';
-import OpenAIKeyForm from "./openai/OpenAIKeyForm";
-import OpenAIChatTester from "./openai/OpenAIChatTester";
-import RequestyKeyForm from "./requesty/RequestyKeyForm";
-import RequestyChatTester from "./requesty/RequestyChatTester";
-import { Card } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { InfoIcon } from "lucide-react";
+import OpenAIKeyForm from './openai/OpenAIKeyForm';
+import RequestyKeyForm from './requesty/RequestyKeyForm';
+import { OpenAIChatTester } from './openai/OpenAIChatTester';
+import RequestyChatTester from './requesty/RequestyChatTester';
 
-const ProvidersSection: React.FC = () => {
-  const [activeProvider, setActiveProvider] = useState("openai");
-  const [activeTab, setActiveTab] = useState("config");
-  
-  // Check if API keys are set
-  const [openAIKeyExists, setOpenAIKeyExists] = useState(!!localStorage.getItem('openai_api_key'));
-  const [requestyKeyExists, setRequestyKeyExists] = useState(!!localStorage.getItem('requesty_api_key'));
-  
-  React.useEffect(() => {
-    // Listen for storage changes to update key status
-    const handleStorageChange = () => {
-      setOpenAIKeyExists(!!localStorage.getItem('openai_api_key'));
-      setRequestyKeyExists(!!localStorage.getItem('requesty_api_key'));
-    };
-    
-    window.addEventListener('storage', handleStorageChange);
-    // Also check on mount
-    handleStorageChange();
-    
-    return () => {
-      window.removeEventListener('storage', handleStorageChange);
-    };
-  }, []);
-
-  const providerItems: TabItem[] = [
-    { value: "openai", label: "OpenAI", icon: Terminal },
-    { value: "requesty", label: "Requesty", icon: MessageSquare },
-  ];
-
-  const tabItems: TabItem[] = [
-    { value: "config", label: "Configuration" },
-    { value: "test", label: "Test" },
-  ];
-
+export default function ProvidersSection() {
   return (
     <div className="space-y-6">
-      <TabsMenu 
-        items={providerItems} 
-        value={activeProvider} 
-        onChange={setActiveProvider} 
-      />
-
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="mb-4">
-          {tabItems.map((item) => (
-            <TabsTrigger key={item.value} value={item.value}>
-              {item.label}
-            </TabsTrigger>
-          ))}
-        </TabsList>
-
-        {activeProvider === "openai" && (
-          <>
-            <TabsContent value="config">
-              <Card className="p-6">
-                <OpenAIKeyForm />
-              </Card>
+      <Card>
+        <CardHeader>
+          <CardTitle>API Providers Configuration</CardTitle>
+          <CardDescription>Configure your API providers for use across the platform</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Alert className="mb-6">
+            <InfoIcon className="h-4 w-4" />
+            <AlertDescription>
+              API keys are stored securely in encrypted storage. You can update or remove keys at any time.
+            </AlertDescription>
+          </Alert>
+          
+          <Tabs defaultValue="openai" className="w-full">
+            <TabsList className="grid grid-cols-2 w-full max-w-md mb-4">
+              <TabsTrigger value="openai">OpenAI</TabsTrigger>
+              <TabsTrigger value="requesty">Requesty</TabsTrigger>
+            </TabsList>
+            <TabsContent value="openai" className="space-y-6">
+              <OpenAIKeyForm />
+              <OpenAIChatTester />
             </TabsContent>
-            <TabsContent value="test">
-              <Card className="p-6">
-                {openAIKeyExists ? (
-                  <OpenAIChatTester />
-                ) : (
-                  <div className="text-center p-4">
-                    Please configure your OpenAI API key first
-                  </div>
-                )}
-              </Card>
+            <TabsContent value="requesty" className="space-y-6">
+              <RequestyKeyForm />
+              <RequestyChatTester />
             </TabsContent>
-          </>
-        )}
-
-        {activeProvider === "requesty" && (
-          <>
-            <TabsContent value="config">
-              <Card className="p-6">
-                <RequestyKeyForm />
-              </Card>
-            </TabsContent>
-            <TabsContent value="test">
-              <Card className="p-6">
-                {requestyKeyExists ? (
-                  <RequestyChatTester />
-                ) : (
-                  <div className="text-center p-4">
-                    Please configure your Requesty API key first
-                  </div>
-                )}
-              </Card>
-            </TabsContent>
-          </>
-        )}
-      </Tabs>
+          </Tabs>
+        </CardContent>
+      </Card>
     </div>
   );
-};
-
-export default ProvidersSection;
+}

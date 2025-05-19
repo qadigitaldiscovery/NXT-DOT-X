@@ -1,36 +1,33 @@
 
-import { z } from 'zod';
+// API Provider Types
+export type ApiKeyStatus = 'active' | 'expired' | 'unconfigured' | 'invalid';
 
-// Define endpoint schema for form validation
-export const endpointSchema = z.object({
-  name: z.string().min(1, "Name is required"),
-  url: z.string().url("URL must be valid"),
-  method: z.enum(["GET", "POST", "PUT", "DELETE"]),
-  description: z.string().optional(),
-  apiKey: z.string().optional(),
-  status: z.enum(["active", "inactive", "testing"]).default("active")
-});
+export interface ApiProviderConfig {
+  name: string;
+  description: string;
+  apiKey: string | null;
+  status: ApiKeyStatus;
+  preferredModel?: string;
+  models?: string[];
+  endpoint?: string;
+}
 
-export type EndpointFormValues = z.infer<typeof endpointSchema>;
-
+// API Endpoint Types
 export interface ApiEndpoint {
   id: string;
   name: string;
   url: string;
-  apiKey?: string;
-  method: string;
-  status: string;
+  apiKey: string;
+  method: 'GET' | 'POST' | 'PUT' | 'DELETE';
+  status: 'active' | 'inactive' | 'error';
   lastUsed: string;
 }
 
-// Add ApiKeyFormProps interface to fix the errors in OpenAIKeyForm and RequestyKeyForm
-export interface ApiKeyFormProps {
-  providerName: string;
-  apiKeyPlaceholder: string;
-  docsLink: { text: string; url: string };
-  onVerify: (apiKey: string) => Promise<boolean>;
-  preferredModelOptions: { value: string; label: string }[];
-  initialModel: string;
-  footerText: string;
-  additionalConfig?: Record<string, any>;
+// Form types for endpoints
+export interface EndpointFormValues {
+  name: string;
+  url: string;
+  apiKey: string;
+  method: 'GET' | 'POST' | 'PUT' | 'DELETE';
+  status: 'active' | 'inactive' | 'error';
 }

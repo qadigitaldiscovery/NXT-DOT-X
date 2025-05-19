@@ -1,96 +1,110 @@
-import { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Textarea } from '@/components/ui/textarea';
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { AlertCircle, Send } from 'lucide-react';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { useOpenAI } from '@/hooks/use-openai';
-import { ChatMessage } from '@/types/ai';
 
-export function OpenAIChatTester() {
-  const [messages, setMessages] = useState<ChatMessage[]>([]);
-  const [input, setInput] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+import React, { useState } from 'react';
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Loader2, SendIcon } from "lucide-react";
+import { toast } from "sonner";
+import { ChatMessage } from "@/types/ai";
 
-  // Modified to handle API without stream property
+import { useOpenAI } from "@/hooks/use-openai";
+
+export const OpenAIChatTester: React.FC = () => {
+  const [prompt, setPrompt] = useState("");
+  const [response, setResponse] = useState("");
+  const [model, setModel] = useState("gpt-4o-mini");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  
   const openai = useOpenAI();
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!input.trim() || isLoading) return;
-
-    const userMessage = { role: 'user', content: input } as ChatMessage;
-    setMessages((prev) => [...prev, userMessage]);
-    setInput('');
-    setIsLoading(true);
-    setError(null);
-
+  
+  const handleSubmit = async () => {
+    if (!prompt.trim()) {
+      toast.error("Please enter a prompt");
+      return;
+    }
+    
     try {
-      const response = await openai.createChatCompletion({
-        messages: [...messages, userMessage],
-        model: 'gpt-3.5-turbo',
-      });
-
-      if (response && response.choices && response.choices[0]?.message) {
-        const assistantMessage = response.choices[0].message as ChatMessage;
-        setMessages((prev) => [...prev, assistantMessage]);
-      } else {
-        throw new Error('Invalid response format');
-      }
-    } catch (err) {
-      console.error('Error chatting with OpenAI:', err);
-      setError(err instanceof Error ? err.message : 'An error occurred while chatting with OpenAI');
+      setIsSubmitting(true);
+      setResponse(""); // Clear previous response
+      
+      const messages: ChatMessage[] = [
+        { role: "user", content: prompt }
+      ];
+      
+      // Use the openai hook to send the message
+      const completion = await openai.sendMessage(prompt, model);
+      setResponse(completion);
+    } catch (error) {
+      console.error("Error testing OpenAI API:", error);
+      toast.error("Failed to get a response from OpenAI");
+      setResponse("Error: Failed to get a response. Please check your API key configuration and try again.");
     } finally {
-      setIsLoading(false);
+      setIsSubmitting(false);
     }
   };
-
+  
   return (
     <Card>
       <CardHeader>
-        <CardTitle>OpenAI Chat Tester</CardTitle>
+        <CardTitle>Test OpenAI API</CardTitle>
       </CardHeader>
-      <CardContent>
-        <ScrollArea className="h-[400px] mb-4">
-          <div className="flex flex-col space-y-2">
-            {messages.map((message, index) => (
-              <div
-                key={index}
-                className={`p-3 rounded-md ${message.role === 'user' ? 'bg-blue-100 text-blue-800 self-end' : 'bg-gray-100 text-gray-800 self-start'
-                  }`}
-              >
-                <p className="text-sm">{message.content}</p>
-              </div>
-            ))}
-            {isLoading && <div className="text-gray-500">Thinking...</div>}
-          </div>
-        </ScrollArea>
-        {error && (
-          <Alert variant="destructive">
-            <AlertCircle className="h-4 w-4" />
-            <AlertTitle>Error</AlertTitle>
-            <AlertDescription>{error}</AlertDescription>
-          </Alert>
-        )}
-        <form onSubmit={handleSubmit} className="flex flex-col space-y-2">
-          <Textarea
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            placeholder="Enter your message..."
-            disabled={isLoading}
+      <CardContent className="space-y-4">
+        <div className="space-y-2">
+          <label htmlFor="model-select" className="text-sm font-medium">Model</label>
+          <Select value={model} onValueChange={setModel}>
+            <SelectTrigger id="model-select">
+              <SelectValue placeholder="Select a model" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="gpt-4o-mini">GPT-4o Mini</SelectItem>
+              <SelectItem value="gpt-4o">GPT-4o</SelectItem>
+              <SelectItem value="gpt-3.5-turbo">GPT-3.5 Turbo</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+        
+        <div className="space-y-2">
+          <label htmlFor="prompt" className="text-sm font-medium">Prompt</label>
+          <Textarea 
+            id="prompt"
+            placeholder="Enter your prompt here..."
+            value={prompt}
+            onChange={(e) => setPrompt(e.target.value)}
+            rows={4}
           />
-          <Button type="submit" disabled={isLoading}>
-            Send <Send className="ml-2 h-4 w-4" />
-          </Button>
-        </form>
+        </div>
+        
+        {response && (
+          <div className="space-y-2">
+            <label className="text-sm font-medium">Response</label>
+            <div className="p-3 bg-muted rounded-md overflow-auto max-h-64">
+              <pre className="whitespace-pre-wrap text-sm">{response}</pre>
+            </div>
+          </div>
+        )}
       </CardContent>
-      <CardFooter className="text-muted-foreground text-sm">
-        <p>
-          This is a simple chat interface to test the OpenAI API.
-        </p>
+      <CardFooter>
+        <Button 
+          onClick={handleSubmit} 
+          disabled={isSubmitting || !prompt.trim()}
+          className="w-full"
+        >
+          {isSubmitting ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Processing...
+            </>
+          ) : (
+            <>
+              <SendIcon className="mr-2 h-4 w-4" />
+              Send Prompt
+            </>
+          )}
+        </Button>
       </CardFooter>
     </Card>
   );
-}
+};
+
+export default OpenAIChatTester;
