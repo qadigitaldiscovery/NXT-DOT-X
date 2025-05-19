@@ -1,4 +1,3 @@
-
 import React, { createContext, useState, useContext, ReactNode } from 'react';
 
 // Define the types for our data

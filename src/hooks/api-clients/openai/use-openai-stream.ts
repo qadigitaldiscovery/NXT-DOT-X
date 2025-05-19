@@ -1,4 +1,3 @@
-
 import { useState, useCallback } from 'react';
 import { processStream } from '@/utils/api-clients/openai/client';
 
