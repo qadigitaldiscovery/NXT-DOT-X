@@ -1,7 +1,6 @@
 import { NavCategory, NavItem } from './types';
 import { SidebarItem } from './SidebarItem';
 import { cn } from '../../../lib/utils';
-
 interface SidebarNavListProps {
   categories?: NavCategory[];
   items?: NavItem[];
@@ -19,7 +18,6 @@ interface SidebarNavListProps {
   expandedItems?: string[];
   onToggleExpand?: (label: string) => void;
 }
-
 export function SidebarNavList({
   categories = [],
   items = [],
@@ -37,7 +35,6 @@ export function SidebarNavList({
   expandedItems,
   onToggleExpand
 }: SidebarNavListProps) {
-
   // Check if an item or any of its children has the active path
   const isItemActive = (item: NavItem): boolean => {
     if (activeItemKey === item.path || activeItemKey === item.href) {
@@ -48,94 +45,59 @@ export function SidebarNavList({
     if (item.children && item.children.length > 0) {
       return item.children.some(child => isItemActive(child));
     }
-
     return false;
   };
 
   // If items are provided but no categories, create a default category
-  const allCategories = categories.length > 0 ? categories : 
-    items.length > 0 ? [{
-      name: 'default',
-      label: 'Navigation',
-      items: items
-    }] : [];
-  
+  const allCategories = categories.length > 0 ? categories : items.length > 0 ? [{
+    name: 'default',
+    label: 'Navigation',
+    items: items
+  }] : [];
+
   // Filter items that the user has access to based on their role
   const filterItemsByRole = (items: NavItem[], role?: string): NavItem[] => {
     if (!role) return items;
-    
     return items.filter(item => {
       // If no roles specified, everyone can see it
       if (!item.roles || item.roles.length === 0) return true;
-      
+
       // Otherwise, check if user role is in the allowed roles
       return item.roles.includes(role);
     });
   };
-  
+
   // Process categories to filter items based on user role
   const processedCategories = allCategories.map(category => ({
     ...category,
     items: filterItemsByRole(category.items, userRole)
   })).filter(category => category.items.length > 0); // Remove empty categories
-  
+
   if (processedCategories.length === 0) {
     return null;
   }
-  
-  return (
-    <div className={cn("space-y-6", isCollapsed && "items-center")}>
-      {processedCategories.map((category) => {
-        const isExpanded = expandedCategories.includes(category.name || '') || 
-                          (expandedItems && category.label && expandedItems.includes(category.label));
-        
-        return (
-          <div key={category.name || category.label} className="space-y-2">
-            {!isCollapsed && (
-              <h3 
-                className={cn(
-                  "flex items-center justify-between text-sm font-semibold px-3 py-2 text-gray-900 uppercase tracking-wider",
-                  "border-b border-gray-200"
-                )}
-                onClick={() => {
-                  if (onCategoryToggle && category.name) {
-                    onCategoryToggle(category.name);
-                  } else if (onToggleExpand && category.label) {
-                    onToggleExpand(category.label);
-                  }
-                }}
-              >
+  return <div className={cn("space-y-6", isCollapsed && "items-center")}>
+      {processedCategories.map(category => {
+      const isExpanded = expandedCategories.includes(category.name || '') || expandedItems && category.label && expandedItems.includes(category.label);
+      return <div key={category.name || category.label} className="space-y-2">
+            {!isCollapsed && <h3 onClick={() => {
+          if (onCategoryToggle && category.name) {
+            onCategoryToggle(category.name);
+          } else if (onToggleExpand && category.label) {
+            onToggleExpand(category.label);
+          }
+        }} className="px-[21px] font-light">
                 {category.label || category.name}
-              </h3>
-            )}
+              </h3>}
             
-            {(!isCollapsed || !onCategoryToggle) && (isExpanded || !onCategoryToggle) && category.items && (
-              <div className="pl-3 space-y-1">
-                {category.items.map((item) => {
-                  const isActive = isItemActive(item);
-                  const itemIcon = item.icon ? <item.icon className="w-5 h-5" /> : undefined;
-                  
-                  return (
-                    <SidebarItem
-                      key={item.label}
-                      label={item.label}
-                      path={item.path}
-                      icon={itemIcon}
-                      isActive={isActive}
-                      textColor={textColor}
-                      textHoverColor={textHoverColor}
-                      activeBgColor={activeBgColor}
-                      activeTextColor={activeTextColor}
-                      hoverBgColor={hoverBgColor}
-                      onClick={() => onItemClick && onItemClick(item.path || item.href || item.label)}
-                    />
-                  );
-                })}
-              </div>
-            )}
-          </div>
-        );
-      })}
-    </div>
-  );
+            {(!isCollapsed || !onCategoryToggle) && (isExpanded || !onCategoryToggle) && category.items && <div className="pl-3 space-y-1">
+                {category.items.map(item => {
+            const isActive = isItemActive(item);
+            const itemIcon = item.icon ? <item.icon className="w-5 h-5" /> : undefined;
+            return <SidebarItem key={item.label} label={item.label} path={item.path} icon={itemIcon} isActive={isActive} textColor={textColor} textHoverColor={textHoverColor} activeBgColor={activeBgColor} activeTextColor={activeTextColor} hoverBgColor={hoverBgColor} onClick={() => onItemClick && onItemClick(item.path || item.href || item.label)} />;
+          })}
+              </div>}
+          </div>;
+    })}
+    </div>;
 }
