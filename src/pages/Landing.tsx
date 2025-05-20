@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '../components/ui/button';
@@ -98,7 +99,7 @@ const Landing = () => {
         className="absolute inset-0 z-0" 
         style={{
           backgroundColor: '#111', /* Dark fallback */
-          backgroundImage: `url('/lovable-uploads/dd9a3d70-4548-4803-8d6e-3d5044d79549.png')`,
+          backgroundImage: `url('/lovable-uploads/3f15bacb-8659-4016-be81-b79d6a1d1b71.png')`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           backgroundRepeat: 'no-repeat'
@@ -174,6 +175,13 @@ const Landing = () => {
               <SetupTestUser />
             </div>
           </div>
+        </div>
+
+        {/* Partner section at the bottom */}
+        <div className="absolute bottom-8 text-center text-white/80 z-20">
+          <p className="text-xs mb-1 text-gray-400">IN PARTNERSHIP WITH</p>
+          <h3 className="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-teal-300 via-purple-500 to-pink-500">QUANTUM ANALYTICA</h3>
+          <p className="text-xs text-gray-400 mt-1">AI Powered Insights, Human-Centric Impacts</p>
         </div>
       </div>
     </div>
