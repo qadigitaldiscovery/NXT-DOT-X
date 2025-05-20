@@ -1,37 +1,25 @@
-
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
-import { useAuth } from '@/context/AuthContext';
-import DashboardModules from '@/components/master-dash/DashboardModules';
-import SharedDashboardLayout from '@/components/layout/SharedDashboardLayout';
-import { Layout, Key, Users, Settings, FileText, CreditCard, Database, Shield, Globe, BarChart3, Building, UserCog, ClipboardList, Home, ChevronLeft, ChevronRight, AlertTriangle } from 'lucide-react';
-import { Button } from "@/components/ui/button";
-import { useUserPreferences } from '@/hooks/useUserPreferences';
-import { NavCategory } from '@/components/layout/sidebar/types';
+import { useAuth } from '../context/AuthContext';
+import DashboardModules from '../components/master-dash/DashboardModules';
+import SharedDashboardLayout from '../components/layout/SharedDashboardLayout';
+import { ChevronLeft, ChevronRight, Home } from 'lucide-react';
+import { Button } from '../components/ui/button';
 
-const MasterDash = () => {
+/**
+ * Removed "All Modules," "Project Management," etc. references to better align 
+ * with the new “Secondary Systems Module” sidebar changes.
+ */
+
+const MasterDash: React.FC = () => {
   console.log("⭐ MasterDash component being rendered");
   const navigate = useNavigate();
-  const location = useLocation();
-  const {
-    user
-  } = useAuth();
-  console.log("⭐ User auth state:", user ? "Logged in" : "Not logged in");
-  
-  const {
-    preferences,
-    setPreferences,
-    loading: prefsLoading,
-    error
-  } = useUserPreferences({
-    module: 'dashboard',
-    key: 'layout_state',
-    defaultValue: {
-      sidebar: "expanded",
-      theme: "dark"
-    }
-  });
+  const { user } = useAuth() || { user: null };
+
+  // Example user preference states (placeholder)
+  const [loadingPrefs, setLoadingPrefs] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   // Check if user is authenticated
   useEffect(() => {
@@ -43,123 +31,53 @@ const MasterDash = () => {
     }
   }, [navigate, user]);
 
-  // Update sidebar state handler
-  const updateSidebarState = (state: string) => {
-    if (user) {
-      setPreferences({
-        ...preferences,
-        sidebar: state
-      });
-    }
-  };
-
-  // Define navigation categories for the sidebar
-  const navCategories: NavCategory[] = [{
-    name: "Main",
-    label: "Main",
-    items: [{
-      label: "All Modules",
-      path: "/master",
-      icon: Layout
-    }, {
-      label: "API Keys",
-      path: "/tech-hub/api-management",
-      icon: Key
-    }, {
-      label: "Project Management",
-      path: "/projects",
-      icon: ClipboardList
-    }, {
-      label: "RAG Dashboard",
-      path: "/dashboard/rag",
-      icon: AlertTriangle
-    }]
-  }, {
-    name: "Administration",
-    label: "Administration",
-    items: [{
-      label: "User Management",
-      path: "/admin/users",
-      icon: Users
-    }, {
-      label: "Customer Management",
-      path: "/customer-management",
-      icon: Building
-    }, {
-      label: "Roles & Permissions",
-      path: "/admin/roles",
-      icon: UserCog
-    }, {
-      label: "Security",
-      path: "/admin/security",
-      icon: Shield
-    }, {
-      label: "Reporting",
-      path: "/admin/reporting",
-      icon: BarChart3
-    }, {
-      label: "Localization",
-      path: "/admin/localization",
-      icon: Globe
-    }, {
-      label: "Documentation",
-      path: "/admin/documentation",
-      icon: FileText
-    }, {
-      label: "Database Admin",
-      path: "/admin/database",
-      icon: Database
-    }, {
-      label: "System Settings",
-      path: "/admin/system-settings",
-      icon: Settings
-    }]
-  }, {
-    name: "Account",
-    label: "Account",
-    items: [{
-      label: "Billing",
-      path: "/settings/billing",
-      icon: CreditCard
-    }]
-  }];
-
-  // Custom footer with navigation controls
+  // Navigation footer with basic forward/back/home
   const navigationFooter = (
     <div className="flex items-center justify-between p-2 border-t border-gray-700/50 mt-auto bg-gray-900">
-      <Button variant="ghost" size="icon" onClick={() => navigate(-1)} className="text-gray-300 hover:text-white hover:bg-gray-800 rounded-lg">
+      <Button
+        variant="ghost"
+        size="icon"
+        onClick={() => navigate(-1)}
+        className="text-gray-300 hover:text-white hover:bg-gray-800 rounded-lg"
+      >
         <ChevronLeft className="h-5 w-5" />
       </Button>
-      
-      <Button variant="ghost" size="icon" onClick={() => navigate('/master')} className="text-gray-300 hover:text-white hover:bg-gray-800 rounded-lg">
+      <Button
+        variant="ghost"
+        size="icon"
+        onClick={() => navigate('/master')}
+        className="text-gray-300 hover:text-white hover:bg-gray-800 rounded-lg"
+      >
         <Home className="h-5 w-5" />
       </Button>
-      
-      <Button variant="ghost" size="icon" onClick={() => navigate(1)} className="text-gray-300 hover:text-white hover:bg-gray-800 rounded-lg">
+      <Button
+        variant="ghost"
+        size="icon"
+        onClick={() => navigate(1)}
+        className="text-gray-300 hover:text-white hover:bg-gray-800 rounded-lg"
+      >
         <ChevronRight className="h-5 w-5" />
       </Button>
     </div>
   );
 
-  // If there's an error loading preferences, show fallback
+  // Error or loading states for user preferences
   if (error) {
     console.error("❌ Error loading preferences:", error);
     return (
       <SharedDashboardLayout 
         moduleTitle="Business Management Platform" 
-        navCategories={navCategories} 
+        navCategories={[]} 
         customFooterContent={navigationFooter} 
         showTopLeftToggle={true} 
         removeBottomToggle={false} 
-        onSidebarStateChange={updateSidebarState}
       >
         <DashboardModules />
       </SharedDashboardLayout>
     );
   }
 
-  // If preferences are loading, render a more stable loading state
-  if (prefsLoading) {
+  if (loadingPrefs) {
     console.log("⭐ Preferences loading");
     return (
       <div className="flex h-screen w-full items-center justify-center bg-gray-900">
@@ -171,21 +89,15 @@ const MasterDash = () => {
     );
   }
 
-  console.log("⭐ Rendering MasterDash with preferences:", preferences);
+  console.log("⭐ Rendering MasterDash without the old 'All Modules' & co. to avoid duplication with the 'Secondary Systems Module' sidebar");
 
-  // Safely access preferences with proper type handling and fallbacks
-  const prefsObject = typeof preferences === 'object' && preferences ? preferences : {};
-  const sidebarState = prefsObject.sidebar || "expanded";
-  
   return (
     <SharedDashboardLayout 
       moduleTitle="Business Management Platform" 
-      navCategories={navCategories} 
+      navCategories={[]} 
       customFooterContent={navigationFooter} 
-      showTopLeftToggle={sidebarState !== "collapsed"} 
+      showTopLeftToggle={true} 
       removeBottomToggle={false} 
-      initialSidebarState={sidebarState} 
-      onSidebarStateChange={updateSidebarState}
       sidebarClassName="bg-gray-900"
     >
       <DashboardModules />
