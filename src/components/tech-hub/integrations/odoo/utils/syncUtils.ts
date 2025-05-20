@@ -1,6 +1,5 @@
-
 import { toast } from "sonner";
-import { supabase } from "@/integrations/supabase/client";
+import { supabase } from "../../../../../../integrations/supabase/client";
 import { SyncSetting } from '../types';
 
 /**
@@ -84,39 +83,39 @@ export const fetchSyncSettings = async (integrationId: string): Promise<SyncSett
 };
 
 /**
- * Start synchronization with the Odoo instance
+ * Start synchronization with the Odoo instance, including a simple retry mechanism
  */
 export const startSynchronization = async (
   odooConfigId: string,
   apiKey: string | undefined,
-  enabledSettings: SyncSetting[]
+  enabledSettings: SyncSetting[],
+  retryCount = 3
 ): Promise<boolean> => {
-  try {
-    // Use the API key if available in the config
-    const apiKeyOption = apiKey ? { apiKey } : undefined;
-    
-    // Call the edge function
-    const response = await fetch('/api/edge/integrations/odoo/sync', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        ...(apiKey ? { 'Authorization': `Bearer ${apiKey}` } : {})
-      },
-      body: JSON.stringify({
-        integration_id: odooConfigId,
-        entities: enabledSettings.map(s => s.entity_type)
-      })
-    });
-    
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.message || "Synchronization failed");
-    }
-    
-    const result = await response.json();
-    
-    if (result && typeof result === 'object' && 'success' in result) {
-      if (result.success) {
+  let attempts = 0;
+  let lastError: unknown;
+
+  while (attempts < retryCount) {
+    try {
+      const response = await fetch('/api/edge/integrations/odoo/sync', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(apiKey ? { 'Authorization': `Bearer ${apiKey}` } : {})
+        },
+        body: JSON.stringify({
+          integration_id: odooConfigId,
+          entities: enabledSettings.map(s => s.entity_type)
+        })
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Synchronization failed");
+      }
+      
+      const result = await response.json();
+      
+      if (result && typeof result === 'object' && 'success' in result && result.success === true) {
         // Update last_synced_at for the settings
         for (const setting of enabledSettings) {
           if (setting.id) {
@@ -128,18 +127,26 @@ export const startSynchronization = async (
         }
         return true;
       }
+      
+      throw new Error(
+        typeof result === 'object' &&
+        result !== null &&
+        'message' in result &&
+        typeof result.message === 'string'
+          ? result.message
+          : "Synchronization failed"
+      );
+    } catch (error) {
+      attempts++;
+      lastError = error;
+      console.error(`Synchronization attempt #${attempts} failed:`, error);
+      
+      if (attempts < retryCount) {
+        console.info("Retrying synchronization...");
+      }
     }
-    
-    throw new Error(
-      typeof result === 'object' && 
-      result !== null && 
-      'message' in result && 
-      typeof result.message === 'string' 
-        ? result.message 
-        : "Synchronization failed"
-    );
-  } catch (error) {
-    console.error("Synchronization failed:", error);
-    throw error;
   }
+
+  toast.error(`Synchronization failed after ${retryCount} attempts: ${(lastError as Error)?.message}`);
+  throw lastError;
 };
