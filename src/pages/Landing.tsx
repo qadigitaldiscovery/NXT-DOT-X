@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '../components/ui/button';
@@ -6,7 +5,6 @@ import { Input } from '../components/ui/input';
 import { toast } from 'sonner';
 import { useAuth } from '../context/AuthContext';
 import { SetupTestUser } from '../components/SetupTestUser';
-
 const Landing = () => {
   const [email, setEmail] = useState('admin@example.com'); // Pre-fill with test credentials
   const [password, setPassword] = useState('Pass1'); // Pre-fill with test credentials
@@ -17,21 +15,18 @@ const Landing = () => {
     isAuthenticated,
     loading
   } = useAuth();
-  
   useEffect(() => {
     if (isAuthenticated) {
       console.log("Landing: User is authenticated, redirecting to master");
       navigate('/master');
     }
   }, [navigate, isAuthenticated]);
-  
   const validateEmail = (email: string): boolean => {
     const trimmedEmail = email.trim();
     // Enhanced email validation
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     return emailRegex.test(trimmedEmail);
   };
-  
   const validatePassword = (password: string): {
     valid: boolean;
     message?: string;
@@ -55,7 +50,6 @@ const Landing = () => {
       valid: true
     };
   };
-  
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -91,36 +85,28 @@ const Landing = () => {
       setIsLoading(false);
     }
   };
-  
-  return (
-    <div className="h-screen w-full flex flex-col items-center justify-center relative overflow-hidden">
+  return <div className="h-screen w-full flex flex-col items-center justify-center relative overflow-hidden">
       {/* Full-screen background */}
-      <div 
-        className="absolute inset-0 z-0" 
-        style={{
-          backgroundColor: '#111', /* Dark fallback */
-          backgroundImage: `url('/lovable-uploads/2e3907f2-88a5-400f-a09d-cd865295f449.png')`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          backgroundRepeat: 'no-repeat'
-        }} 
-      />
+      <div className="absolute inset-0 z-0" style={{
+      backgroundColor: '#111',
+      /* Dark fallback */
+      backgroundImage: `url('/lovable-uploads/2e3907f2-88a5-400f-a09d-cd865295f449.png')`,
+      backgroundSize: 'cover',
+      backgroundPosition: 'center',
+      backgroundRepeat: 'no-repeat'
+    }} />
       
       {/* Overlay for background opacity (25%) */}
       <div className="absolute inset-0 z-10 bg-black bg-opacity-25" />
 
       {/* NXT DOT X Logo at the top */}
       <div className="relative z-20 mb-10 mt-10">
-        <img 
-          src="/lovable-uploads/2e3907f2-88a5-400f-a09d-cd865295f449.png" 
-          alt="NXT DOT X Logo" 
-          className="w-64 h-auto"
-        />
+        
       </div>
 
       {/* Login box container - frosted black effect */}
       <div className="relative z-20 flex flex-col items-center justify-center">
-        <div className="w-[340px] rounded-2xl bg-black/70 backdrop-blur-md border border-white/10 shadow-xl p-5">
+        <div className="w-[340px] rounded-2xl bg-black/70 backdrop-blur-md border border-white/10 shadow-xl p-5 py-[13px]">
           {/* Logo and form container */}
           <div className="flex flex-col items-center justify-center">
             {/* Logo */}
@@ -133,17 +119,7 @@ const Landing = () => {
             <form onSubmit={handleLogin} className="w-full space-y-3 mt-2">
               <div className="space-y-1">
                 <div className="relative">
-                  <Input 
-                    id="email" 
-                    type="email" 
-                    placeholder="Email" 
-                    value={email} 
-                    onChange={e => setEmail(e.target.value)} 
-                    required 
-                    className="bg-black/50 border-gray-600 focus:border-purple-400 h-8 pl-8 text-white text-sm rounded-lg" 
-                    autoComplete="email" 
-                    disabled={isLoading || loading} 
-                  />
+                  <Input id="email" type="email" placeholder="Email" value={email} onChange={e => setEmail(e.target.value)} required className="bg-black/50 border-gray-600 focus:border-purple-400 h-8 pl-8 text-white text-sm rounded-lg" autoComplete="email" disabled={isLoading || loading} />
                   <div className="absolute inset-y-0 left-0 pl-2.5 flex items-center pointer-events-none">
                     <span className="text-gray-400 text-xs">👤</span>
                   </div>
@@ -152,29 +128,15 @@ const Landing = () => {
               
               <div className="space-y-1">
                 <div className="relative">
-                  <Input 
-                    id="password" 
-                    type="password" 
-                    placeholder="Password" 
-                    value={password} 
-                    onChange={e => setPassword(e.target.value)} 
-                    required 
-                    className="bg-black/50 border-gray-600 focus:border-purple-400 h-8 pl-8 text-white text-sm rounded-lg" 
-                    autoComplete="current-password" 
-                    disabled={isLoading || loading} 
-                  />
+                  <Input id="password" type="password" placeholder="Password" value={password} onChange={e => setPassword(e.target.value)} required className="bg-black/50 border-gray-600 focus:border-purple-400 h-8 pl-8 text-white text-sm rounded-lg" autoComplete="current-password" disabled={isLoading || loading} />
                   <div className="absolute inset-y-0 left-0 pl-2.5 flex items-center pointer-events-none">
                     <span className="text-gray-400 text-xs">🔒</span>
                   </div>
                 </div>
               </div>
               
-              <Button 
-                type="submit" 
-                disabled={isLoading || loading} 
-                className="w-full bg-gradient-to-r from-red-600 to-red-800 hover:from-red-700 hover:to-red-900 
-                h-8 text-white text-sm font-bold uppercase tracking-wider rounded-lg transition-all duration-300 shadow-md hover:shadow-lg"
-              >
+              <Button type="submit" disabled={isLoading || loading} className="w-full bg-gradient-to-r from-red-600 to-red-800 hover:from-red-700 hover:to-red-900 
+                h-8 text-white text-sm font-bold uppercase tracking-wider rounded-lg transition-all duration-300 shadow-md hover:shadow-lg">
                 {isLoading || loading ? 'SIGNING IN...' : 'LOGIN'}
               </Button>
             </form>
@@ -188,13 +150,11 @@ const Landing = () => {
 
         {/* Partner section at the bottom */}
         <div className="absolute bottom-8 text-center text-white/80 z-20">
-          <p className="text-xs mb-1 text-gray-400">IN PARTNERSHIP WITH</p>
-          <h3 className="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-teal-300 via-purple-500 to-pink-500">QUANTUM ANALYTICA</h3>
-          <p className="text-xs text-gray-400 mt-1">AI Powered Insights, Human-Centric Impacts</p>
+          
+          
+          
         </div>
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default Landing;
