@@ -46,7 +46,18 @@ const SidebarMenuButton = React.forwardRef<
     ref
   ) => {
     const Comp = asChild ? Slot : "button"
-    const { isMobile, state } = useSidebar()
+    
+    // Safely access sidebar context, providing fallback values if not in a SidebarProvider
+    let sidebarContext;
+    try {
+      sidebarContext = useSidebar();
+    } catch (error) {
+      // If the context isn't available, provide default values
+      sidebarContext = { isMobile: false, state: "expanded" };
+      console.warn("SidebarMenuButton used outside of SidebarProvider - using default values");
+    }
+    
+    const { isMobile, state } = sidebarContext;
 
     const button = (
       <Comp
@@ -69,17 +80,23 @@ const SidebarMenuButton = React.forwardRef<
       }
     }
 
-    return (
-      <Tooltip>
-        <TooltipTrigger asChild>{button}</TooltipTrigger>
-        <TooltipContent
-          side="right"
-          align="center"
-          hidden={state !== "collapsed" || isMobile}
-          {...tooltip}
-        />
-      </Tooltip>
-    )
+    // Only show tooltip if we have it and the sidebar is collapsed
+    const showTooltip = tooltip && state === "collapsed" && !isMobile;
+
+    if (showTooltip) {
+      return (
+        <Tooltip>
+          <TooltipTrigger asChild>{button}</TooltipTrigger>
+          <TooltipContent
+            side="right"
+            align="center"
+            {...tooltip}
+          />
+        </Tooltip>
+      );
+    }
+
+    return button;
   }
 )
 SidebarMenuButton.displayName = "SidebarMenuButton"

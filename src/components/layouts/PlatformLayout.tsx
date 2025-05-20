@@ -6,6 +6,7 @@ import { masterDashItem } from '@/components/layout/sidebar/NavigationConfig';
 import { SharedNavbar } from '@/components/layout/SharedNavbar';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { cn } from '@/lib/utils';
+import { SidebarProvider } from '@/components/ui/sidebar';
 
 interface PlatformLayoutProps {
   children: React.ReactNode;
@@ -21,7 +22,8 @@ interface PlatformLayoutProps {
   useGlobalNavigation?: boolean;
 }
 
-export const PlatformLayout: React.FC<PlatformLayoutProps> = ({
+// Separate inner content component that uses sidebar hooks
+const PlatformLayoutContent: React.FC<PlatformLayoutProps> = ({
   children,
   navItems = [],
   navCategories = [],
@@ -79,5 +81,13 @@ export const PlatformLayout: React.FC<PlatformLayoutProps> = ({
         </main>
       </div>
     </div>
+  );
+};
+
+export const PlatformLayout: React.FC<PlatformLayoutProps> = (props) => {
+  return (
+    <SidebarProvider defaultOpen={true}>
+      <PlatformLayoutContent {...props} />
+    </SidebarProvider>
   );
 };
