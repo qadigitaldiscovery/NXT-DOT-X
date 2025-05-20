@@ -1,14 +1,15 @@
+
 import React from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from "../../ui/card";
-import { formatDate } from "../../../lib/utils";
+import { Card, CardContent, CardHeader, CardTitle } from '../../ui/card';
+import { Button } from '../../ui/button';
+import { FileText, Download, Eye } from 'lucide-react';
 
 interface Report {
   id: string;
   title: string;
-  type: string;
   date: string;
-  size: string;
   url: string;
+  type: string;
 }
 
 interface ReportViewerProps {
@@ -20,31 +21,26 @@ interface ReportViewerProps {
 export const ReportViewer: React.FC<ReportViewerProps> = ({
   reports,
   onView,
-  onDownload
+  onDownload,
 }) => {
-  const getFileIcon = (type: string) => {
-    switch (type.toLowerCase()) {
-      case 'pdf':
-        return (
-          <svg className="w-6 h-6 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
-          </svg>
-        );
-      case 'excel':
-      case 'xlsx':
-        return (
-          <svg className="w-6 h-6 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-          </svg>
-        );
-      default:
-        return (
-          <svg className="w-6 h-6 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
-          </svg>
-        );
-    }
-  };
+  if (!reports || reports.length === 0) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle>Reports</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="flex flex-col items-center justify-center p-8 text-center">
+            <FileText className="h-16 w-16 text-gray-300 mb-4" />
+            <p className="text-lg font-medium text-gray-500">No reports available</p>
+            <p className="text-sm text-gray-400 mt-2">
+              Reports will be displayed here once they are available
+            </p>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
 
   return (
     <Card>
@@ -52,49 +48,53 @@ export const ReportViewer: React.FC<ReportViewerProps> = ({
         <CardTitle>Reports</CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="divide-y divide-gray-200">
-          {reports.map((report) => (
-            <div
-              key={report.id}
-              className="py-4 first:pt-0 last:pb-0"
-            >
-              <div className="flex items-start space-x-4">
-                {getFileIcon(report.type)}
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-gray-900 truncate">
-                    {report.title}
-                  </p>
-                  <div className="flex items-center space-x-4 text-sm text-gray-500">
-                    <span>{report.type.toUpperCase()}</span>
-                    <span>•</span>
-                    <span>{report.size}</span>
-                    <span>•</span>
-                    <span>{formatDate(report.date)}</span>
-                  </div>
-                </div>
-                <div className="flex space-x-2">
-                  <button
-                    onClick={() => onView(report)}
-                    className="inline-flex items-center px-2.5 py-1.5 border border-transparent text-xs font-medium rounded text-blue-700 bg-blue-100 hover:bg-blue-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-                  >
-                    View
-                  </button>
-                  <button
-                    onClick={() => onDownload(report)}
-                    className="inline-flex items-center px-2.5 py-1.5 border border-gray-300 text-xs font-medium rounded text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-                  >
-                    Download
-                  </button>
-                </div>
-              </div>
-            </div>
-          ))}
+        <div className="overflow-auto">
+          <table className="w-full">
+            <thead>
+              <tr className="border-b">
+                <th className="text-left p-2 font-medium">Report Title</th>
+                <th className="text-left p-2 font-medium">Date</th>
+                <th className="text-left p-2 font-medium">Type</th>
+                <th className="text-right p-2 font-medium">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {reports.map((report) => (
+                <tr key={report.id} className="border-b hover:bg-gray-50">
+                  <td className="p-2">
+                    <div className="flex items-center">
+                      <FileText className="h-4 w-4 mr-2 text-blue-500" />
+                      <span>{report.title}</span>
+                    </div>
+                  </td>
+                  <td className="p-2">{report.date}</td>
+                  <td className="p-2">{report.type}</td>
+                  <td className="p-2 text-right">
+                    <div className="flex justify-end gap-2">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => onView(report)}
+                        title="View"
+                      >
+                        <Eye className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => onDownload(report)}
+                        title="Download"
+                      >
+                        <Download className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
-        {reports.length === 0 && (
-          <div className="text-center py-6 text-gray-500">
-            No reports available
-          </div>
-        )}
       </CardContent>
     </Card>
   );
+};

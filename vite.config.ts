@@ -7,10 +7,7 @@ import { componentTagger } from 'lovable-tagger';
 export default defineConfig(({ mode }) => ({
   plugins: [
     react(),
-    mode === 'development' && componentTagger({
-      mode: 'development',
-      tagPrefix: 'lovable'
-    })
+    mode === 'development' && componentTagger()
   ].filter(Boolean),
   build: {
     outDir: 'dist',

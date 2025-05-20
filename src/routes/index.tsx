@@ -7,6 +7,7 @@ import ProtectedRoute from "../components/ProtectedRoute";
 import PrototypeSelector from "../pages/PrototypeSelector";
 import RAGDashboardPage from "../pages/rag-dashboard/RAGDashboardPage";
 import { CustomerForm } from "../components/customers/CustomerForm";
+import Landing from "../pages/Landing";
 
 export function AppRoutes() {
   console.log("🚗 Rendering AppRoutes");
@@ -14,6 +15,9 @@ export function AppRoutes() {
     <Routes>
       {/* Root Route - redirects based on auth state */}
       <Route path="/" element={<RootHandler />} />
+      
+      {/* Landing Page */}
+      <Route path="/landing" element={<Landing />} />
       
       {/* Master Dashboard */}
       <Route path="/master" element={

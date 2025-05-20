@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { useSupplier } from '../../hooks/suppliers';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
@@ -126,6 +127,7 @@ export const SupplierDetail: React.FC<SupplierDetailProps> = ({ supplierId }) =>
               link.click();
               document.body.removeChild(link);
             }}
+          />
         </TabsContent>
       </Tabs>
     </div>
