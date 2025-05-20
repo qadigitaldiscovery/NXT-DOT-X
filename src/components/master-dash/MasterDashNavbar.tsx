@@ -1,17 +1,15 @@
-
 import React from 'react';
 import { ThemeToggle } from '@/components/ui/theme-toggle';
-
 interface MasterDashNavbarProps {
   user?: {
     email?: string;
     role?: string;
   } | null;
 }
-
-const MasterDashNavbar: React.FC<MasterDashNavbarProps> = ({ user }) => {
-  return (
-    <header className="flex items-center justify-between p-4 border-b border-slate-800">
+const MasterDashNavbar: React.FC<MasterDashNavbarProps> = ({
+  user
+}) => {
+  return <header className="flex items-center justify-between p-4 border-b border-slate-800 bg-gray-200">
       <h1 className="text-xl font-semibold text-white">Business</h1>
       <div className="flex items-center gap-4">
         <div className="flex gap-2">
@@ -53,8 +51,6 @@ const MasterDashNavbar: React.FC<MasterDashNavbarProps> = ({ user }) => {
           </div>
         </div>
       </div>
-    </header>
-  );
+    </header>;
 };
-
 export default MasterDashNavbar;
