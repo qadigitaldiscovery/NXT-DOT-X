@@ -7,7 +7,7 @@ import { Label } from "../../../../components/ui/label";
 import { ShoppingCart } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
-import { fetchWooConfig, saveWooConfig, testWooConnection } from '../wooUtils';
+import { fetchWooConfig, saveWooConfig, testWooConnection } from './wooUtils';
 import ConnectionStatus from './ConnectionStatus';
 
 interface WooCommerceFormData {
