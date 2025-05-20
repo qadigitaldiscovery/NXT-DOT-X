@@ -1,5 +1,4 @@
 
-import { Card } from "@/components/ui/card";
 import { Users } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 

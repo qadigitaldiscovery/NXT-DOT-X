@@ -1,5 +1,4 @@
 
-import { Card } from "@/components/ui/card";
 import { Bot, Shield } from "lucide-react";
 import { Button } from "@/components/ui/button";
 

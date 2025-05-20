@@ -1,5 +1,4 @@
 
-import { Card } from "@/components/ui/card";
 
 interface DataCoreProps {
   core?: {

@@ -43,16 +43,35 @@ export const useModules = () => {
   const refreshModules = async () => {
     try {
       await fetchModules();
-      return { success: true };
+      const isFeatureEnabled = (featureId: string): boolean => {
+    return modules.some((module) => module.id === featureId && module.isEnabled && module.isVisible);
+  };
+
+  return { success: true };
     } catch (err) {
-      return { success: false, error: err };
+      const isFeatureEnabled = (featureId: string): boolean => {
+    return modules.some((module) => module.id === featureId && module.isEnabled && module.isVisible);
+  };
+
+  return { success: false, error: err };
     }
+  };
+
+:start_line:52
+-------
+  const isFeatureEnabled = (featureId: string): boolean => {
+    return modules.some((module) => module.id === featureId && module.isEnabled && module.isVisible);
+  };
+
+  const isFeatureEnabled = (featureId: string): boolean => {
+    return modules.some((module) => module.id === featureId && module.isEnabled && module.isVisible);
   };
 
   return {
     modules,
     loading,
     error,
-    refreshModules
+    refreshModules,
+    isFeatureEnabled,
   };
 };

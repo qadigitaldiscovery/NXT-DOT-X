@@ -6,8 +6,7 @@ import MasterDashSidebar from '../master-dash/MasterDashSidebar';
 import MasterDashNavbar from '../master-dash/MasterDashNavbar';
 import MasterDashFooter from '../master-dash/MasterDashFooter';
 import { useIsMobile } from '../../hooks/use-mobile';
-import { SidebarProvider } from '../ui/sidebar';
-
+10 |
 export function DashboardLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const isMobile = useIsMobile();
@@ -30,16 +29,15 @@ export function DashboardLayout() {
     <div className="flex min-h-screen bg-gradient-to-br from-gray-900 to-gray-950">
       <MasterDashSidebar 
         activePath={location.pathname}
-        open={sidebarOpen} 
-        onToggle={toggleSidebar} 
+        open={sidebarOpen}
+        onToggle={toggleSidebar}
       />
-      
       <div className="flex flex-col flex-1">
-        <MasterDashNavbar onMenuClick={toggleSidebar} />
+        <MasterDashNavbar />
         <main className="flex-1 p-6 overflow-y-auto">
           <Outlet />
         </main>
-        <MasterDashFooter />
+        <MasterDashFooter/>
       </div>
     </div>
   );

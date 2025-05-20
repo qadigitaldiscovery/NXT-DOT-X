@@ -7,8 +7,7 @@ import { cn } from '../../lib/utils';
 import { Outlet } from 'react-router-dom';
 import { Home, Users, Settings, Clock, BarChart3, UserPlus } from 'lucide-react';
 import { NavCategory, NavItem } from './sidebar/types';
-import { SidebarProvider } from '@/components/ui/sidebar'; 
-
+11 |
 const customerNavItems: NavCategory[] = [
   {
     name: "CUSTOMER MANAGEMENT",
@@ -42,17 +41,17 @@ export const CustomerManagementLayout = () => {
   };
 
   return (
-    <div className="flex h-screen overflow-hidden bg-gray-900">
-      <MainSidebar 
-        open={sidebarOpen} 
-        onToggle={toggleSidebar} 
+   <div className="flex h-screen overflow-hidden bg-gray-900">
+      <MainSidebar
+        open={sidebarOpen}
+        onToggle={toggleSidebar}
         items={customerNavItems}
         homeItem={homeNavItem}
         useGlobalNavigation={false}
       />
       <div className="flex flex-col flex-1 overflow-hidden">
-        <SharedNavbar 
-          onMenuClick={toggleSidebar} 
+        <SharedNavbar
+          onMenuClick={toggleSidebar}
           moduleTitle="Customer Management"
         />
         <main className={cn(
