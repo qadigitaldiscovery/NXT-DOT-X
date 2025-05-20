@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "../../ui/card";
 
@@ -67,8 +68,7 @@ export const GaugeRating: React.FC<GaugeRatingProps> = ({
             </svg>
             {/* Value display */}
             <div className="absolute inset-0 flex items-center justify-center">
-              <span className={`text-4xl font-bold text-[${color}]`}>
-
+              <span className="text-4xl font-bold" style={{ color }}>
                 {value}
               </span>
             </div>

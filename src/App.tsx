@@ -1,3 +1,4 @@
+
 import "./styles/globals.css";
 import { Toaster } from "sonner";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -8,7 +9,6 @@ import { ThemeProvider } from "./context/ThemeContext";
 import { ModulesProvider } from "./context/ModulesContext";
 import { AppRoutes } from "./routes";
 import ErrorBoundary from "./components/ErrorBoundary";
-
 
 // Create a client
 const queryClient = new QueryClient({

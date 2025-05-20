@@ -138,6 +138,7 @@ const MasterDash = () => {
 
   // If there's an error loading preferences, show fallback
   if (error) {
+    console.error("Error loading preferences:", error);
     return (
       <SharedDashboardLayout 
         moduleTitle="Business Management Platform" 
@@ -163,6 +164,8 @@ const MasterDash = () => {
       </div>
     );
   }
+
+  console.log("Rendering MasterDash with preferences:", preferences);
 
   // Safely access preferences with proper type handling and fallbacks
   const prefsObject = typeof preferences === 'object' && preferences ? preferences : {};
