@@ -5,30 +5,26 @@ import { SharedNavbar } from './SharedNavbar';
 import { useIsMobile } from '../../hooks/use-mobile';
 import { cn } from '../../lib/utils';
 import { Outlet } from 'react-router-dom';
-import { Home, Users, Settings, Database, BarChart3, FileUp } from 'lucide-react';
+import { Home, Users, Settings, Clock, BarChart3, UserPlus } from 'lucide-react';
 import { NavCategory, NavItem } from './sidebar/types';
-
-interface CustomerManagementLayoutProps {
-  children?: React.ReactNode;
-}
 
 const customerNavItems: NavCategory[] = [
   {
     name: "CUSTOMER MANAGEMENT",
     label: "CUSTOMER MANAGEMENT",
     items: [
-      { label: 'Dashboard', icon: Database, path: '/customer-management' },
       { label: 'Customer Directory', icon: Users, path: '/customer-management/directory' },
+      { label: 'Add New Customer', icon: UserPlus, path: '/customer-management/new' },
+      { label: 'Interaction History', icon: Clock, path: '/customer-management/history' },
+      { label: 'Customer Analytics', icon: BarChart3, path: '/customer-management/analytics' },
       { label: 'Customer Settings', icon: Settings, path: '/customer-management/settings' },
-      { label: 'Customer Analytics', icon: BarChart3, path: '/customer-analytics' },
-      { label: 'Upload Files', icon: FileUp, path: '/data-management/uploads' }
     ]
   }
 ];
 
-const homeNavItem: NavItem = { label: 'Master Dashboard', icon: Home, path: '/' };
+const homeNavItem: NavItem = { label: 'Back to Dashboard', icon: Home, path: '/master' };
 
-export const CustomerManagementLayout = ({ children }: CustomerManagementLayoutProps) => {
+export const CustomerManagementLayout = () => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const isMobile = useIsMobile();
 
@@ -45,7 +41,7 @@ export const CustomerManagementLayout = ({ children }: CustomerManagementLayoutP
   };
 
   return (
-    <div className="flex h-screen overflow-hidden">
+    <div className="flex h-screen overflow-hidden bg-gray-900">
       <MainSidebar 
         open={sidebarOpen} 
         onToggle={toggleSidebar} 
@@ -60,11 +56,13 @@ export const CustomerManagementLayout = ({ children }: CustomerManagementLayoutP
         />
         <main className={cn(
           "flex-1 overflow-y-auto p-4 md:p-6",
-          "bg-gradient-to-b from-gray-50 to-gray-100 dark:from-gray-900 dark:to-black"
+          "bg-gradient-to-b from-gray-800 to-gray-900"
         )}>
-          {children || <Outlet />}
+          <Outlet />
         </main>
       </div>
     </div>
   );
 };
+
+export default CustomerManagementLayout;

@@ -25,6 +25,10 @@ const MasterDash: React.FC = () => {
     }
   }, [navigate, user]);
 
+  const toggleSidebar = () => {
+    setSidebarOpen(!sidebarOpen);
+  };
+
   // Navigation footer with basic forward/back/home
   const navigationFooter = (
     <div className="flex items-center justify-between p-2 border-t border-gray-700/50 mt-auto bg-gray-900">
@@ -58,7 +62,11 @@ const MasterDash: React.FC = () => {
   return (
     <div className="flex h-screen bg-gray-900">
       {/* Sidebar */}
-      <MasterDashSidebar activePath={location.pathname} />
+      <MasterDashSidebar 
+        activePath={location.pathname} 
+        open={sidebarOpen}
+        onToggle={toggleSidebar}
+      />
       
       {/* Main content */}
       <div className="flex-1 flex flex-col overflow-auto">

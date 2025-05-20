@@ -15,8 +15,10 @@ import {
   Building,
   UserCog,
   ClipboardList,
-  CalendarClock
+  CalendarClock,
+  Menu
 } from 'lucide-react';
+import { Button } from '../ui/button';
 
 // Sidebar Item Component
 interface SidebarIconProps {
@@ -49,9 +51,11 @@ const SidebarItem: React.FC<SidebarIconProps> = ({ icon, label, active = false, 
 
 interface MasterDashSidebarProps {
   activePath: string;
+  open?: boolean;
+  onToggle?: () => void;
 }
 
-const MasterDashSidebar: React.FC<MasterDashSidebarProps> = ({ activePath }) => {
+const MasterDashSidebar: React.FC<MasterDashSidebarProps> = ({ activePath, open = true, onToggle }) => {
   const navigate = useNavigate();
   const location = useLocation();
   
@@ -67,12 +71,21 @@ const MasterDashSidebar: React.FC<MasterDashSidebarProps> = ({ activePath }) => 
   };
 
   return (
-    <div className="h-full bg-[#15171f] dark:bg-[#12141d] w-64 p-4 flex flex-col">
-      <div className="py-4 border-b border-slate-800">
-        <h2 className="text-lg font-semibold text-white">Secondary Systems Module</h2>
+    <div className={`h-full bg-[#15171f] dark:bg-[#12141d] transition-all duration-300 ${open ? 'w-64' : 'w-0 md:w-16'} overflow-hidden`}>
+      <div className="h-14 flex items-center justify-between border-b border-slate-800 px-4">
+        <h2 className={`text-lg font-semibold text-white ${!open && 'hidden md:hidden'}`}>Business Platform</h2>
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={onToggle}
+          className="h-8 w-8 p-0 text-white hover:bg-slate-700 md:flex"
+        >
+          <Menu className="h-4 w-4" />
+          <span className="sr-only">Toggle Sidebar</span>
+        </Button>
       </div>
       
-      <nav className="flex-1 mt-4 space-y-1 overflow-y-auto">
+      <nav className={`flex-1 p-4 space-y-1 overflow-y-auto ${!open && 'hidden md:block'}`}>
         {/* Administration Section */}
         <div className="py-2 mt-4">
           <h3 className="px-2 text-xs uppercase tracking-wider text-slate-500 font-semibold mb-2">Administration</h3>
@@ -143,6 +156,41 @@ const MasterDashSidebar: React.FC<MasterDashSidebarProps> = ({ activePath }) => 
           />
         </div>
       </nav>
+      
+      {/* Collapsed sidebar with only icons */}
+      {!open && (
+        <nav className="hidden md:flex flex-col items-center p-2 space-y-4">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => handleNavigation('/admin/users')}
+            className={`${isActive('/admin/users') ? 'bg-blue-500/10 text-blue-400' : 'text-slate-400 hover:text-white hover:bg-slate-800'}`}
+          >
+            <Users className="h-5 w-5" />
+            <span className="sr-only">User Management</span>
+          </Button>
+          
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => handleNavigation('/customer-management/directory')}
+            className={`${isActive('/customer-management') ? 'bg-blue-500/10 text-blue-400' : 'text-slate-400 hover:text-white hover:bg-slate-800'}`}
+          >
+            <Building className="h-5 w-5" />
+            <span className="sr-only">Customer Management</span>
+          </Button>
+          
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => handleNavigation('/settings/billing')}
+            className={`${isActive('/settings/billing') ? 'bg-blue-500/10 text-blue-400' : 'text-slate-400 hover:text-white hover:bg-slate-800'}`}
+          >
+            <CreditCard className="h-5 w-5" />
+            <span className="sr-only">Billing</span>
+          </Button>
+        </nav>
+      )}
     </div>
   );
 };

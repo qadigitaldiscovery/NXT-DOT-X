@@ -11,6 +11,7 @@ import { DashboardLayout } from "../components/layout/DashboardLayout";
 import { AdminRoutes } from "./adminRoutes";
 import { CustomerForm } from "../components/customers/CustomerForm";
 import { CustomerDirectory } from "../components/customers/CustomerDirectory";
+import { CustomerManagementLayout } from "../components/layout/CustomerManagementLayout";
 
 // Temporary placeholder for pages
 const PlaceholderPage = ({ title }: { title: string }) => (
@@ -70,64 +71,15 @@ export function AppRoutes() {
         }
       />
 
-      {/* Customer Management Routes */}
-      <Route path="/customer-management">
-        <Route
-          index
-          element={
-            <ProtectedRoute>
-              <CustomerDirectory />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="directory"
-          element={
-            <ProtectedRoute>
-              <CustomerDirectory />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="new"
-          element={
-            <ProtectedRoute>
-              <CustomerForm />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="edit/:id"
-          element={
-            <ProtectedRoute>
-              <CustomerForm isEditing={true} />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="history"
-          element={
-            <ProtectedRoute>
-              <PlaceholderPage title="Customer Interaction History" />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="analytics"
-          element={
-            <ProtectedRoute>
-              <PlaceholderPage title="Customer Analytics" />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="settings"
-          element={
-            <ProtectedRoute>
-              <PlaceholderPage title="Customer Settings" />
-            </ProtectedRoute>
-          }
-        />
+      {/* Customer Management Routes with Layout */}
+      <Route path="/customer-management" element={<ProtectedRoute><CustomerManagementLayout /></ProtectedRoute>}>
+        <Route index element={<CustomerDirectory />} />
+        <Route path="directory" element={<CustomerDirectory />} />
+        <Route path="new" element={<CustomerForm />} />
+        <Route path="edit/:id" element={<CustomerForm isEditing={true} />} />
+        <Route path="history" element={<PlaceholderPage title="Customer Interaction History" />} />
+        <Route path="analytics" element={<PlaceholderPage title="Customer Analytics" />} />
+        <Route path="settings" element={<PlaceholderPage title="Customer Settings" />} />
       </Route>
 
       {/* Admin Routes - all sidebar links */}
@@ -142,16 +94,6 @@ export function AppRoutes() {
       
       {/* Account Routes */}
       <Route path="/settings/billing" element={<ProtectedRoute><PlaceholderPage title="Billing Information" /></ProtectedRoute>} />
-
-      {/* Data Management Routes */}
-      <Route
-        path="/data-management/customers"
-        element={
-          <ProtectedRoute>
-            <Navigate to="/customer-management/directory" replace />
-          </ProtectedRoute>
-        }
-      />
 
       {/* Include the AdminRoutes array so /admin/... works properly */}
       {AdminRoutes()}
