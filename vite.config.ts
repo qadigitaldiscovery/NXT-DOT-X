@@ -1,14 +1,15 @@
+
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react-swc';
 import path from 'path';
 import { componentTagger } from 'lovable-tagger';
-import tsconfigPaths from 'vite-tsconfig-paths';   // ← NEW
+import tsconfigPaths from 'vite-tsconfig-paths';   // Updated import name
 
 export default defineConfig(({ mode }) => ({
   /* ────────────────── plugins ────────────────── */
   plugins: [
     react(),
-    tsconfigPaths(),                               // ← NEW (keeps Vite + TS path aliases in sync)
+    tsconfigPaths(),                               // Using the correct plugin
     mode === 'development' && componentTagger()
   ].filter(Boolean),
 
