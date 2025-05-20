@@ -1,6 +1,5 @@
 
 import React, { useState } from 'react';
-import RAGDashboardGrid from './RAGDashboardGrid';
 import { useModules } from '@/hooks/useModules';
 import { useAlerts } from '@/hooks/useAlerts';
 import { useDashboardState } from './hooks/useDashboardState';
@@ -11,6 +10,8 @@ import { useStatusLogs } from '@/hooks/useStatusLogs';
 import { useThresholdRules } from '@/hooks/useThresholdRules';
 import { useCustomerImpacts } from '@/hooks/useCustomerImpacts';
 import { DashboardFilters } from './dashboard/DashboardFilters';
+import { RefreshCw, Settings } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 const RAGDashboardGridContainer: React.FC = () => {
   const { modules, loading: modulesLoading, error: modulesError, refreshModules } = useModules();
@@ -31,8 +32,7 @@ const RAGDashboardGridContainer: React.FC = () => {
     isDetailsOpen,
     setIsDetailsOpen,
     isBatchOperationsOpen,
-    setIsBatchOperationsOpen,
-    handleViewDetails
+    setIsBatchOperationsOpen
   } = useDashboardState(modules || [], alerts || []);
 
   // State for module-specific data
@@ -66,18 +66,30 @@ const RAGDashboardGridContainer: React.FC = () => {
       <div className="mb-6 flex justify-between items-center">
         <h1 className="text-2xl font-bold">System Status Dashboard</h1>
         <div className="flex items-center space-x-3">
-          <button 
-            className="px-4 py-2 border rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
-            onClick={refreshModules}
+          <a 
+            href="#"
+            className="inline-flex items-center text-sm font-medium text-primary hover:text-primary/80 hover:underline"
+            onClick={(e) => {
+              e.preventDefault();
+              refreshModules();
+            }}
+            aria-label="Refresh data"
           >
+            <RefreshCw className={cn("h-4 w-4 mr-2", modulesLoading && "animate-spin")} aria-hidden="true" />
             Refresh
-          </button>
-          <button 
-            className="px-4 py-2 bg-primary text-primary-foreground hover:bg-primary/90 rounded-md"
-            onClick={handleBatchOperationsOpen}
+          </a>
+          <a 
+            href="#"
+            className="inline-flex items-center text-sm font-medium text-primary hover:text-primary/80 hover:underline"
+            onClick={(e) => {
+              e.preventDefault();
+              handleBatchOperationsOpen();
+            }}
+            aria-label="Batch Operations"
           >
+            <Settings className="h-4 w-4 mr-2" aria-hidden="true" />
             Batch Operations
-          </button>
+          </a>
         </div>
       </div>
 

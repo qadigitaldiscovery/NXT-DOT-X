@@ -1,5 +1,6 @@
 
 import { RefreshCw } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 interface RefreshButtonProps {
   onRefresh: () => void;
@@ -24,9 +25,10 @@ export function RefreshButton({
           onRefresh();
         }
       }}
-      className={`inline-flex items-center text-sm font-medium text-primary hover:text-primary/80 hover:underline ${
+      className={cn(
+        "inline-flex items-center text-sm font-medium text-primary hover:text-primary/80 hover:underline",
         loading ? "opacity-50 pointer-events-none" : ""
-      }`}
+      )}
       aria-label="Refresh data"
     >
       <RefreshCw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} aria-hidden="true" />

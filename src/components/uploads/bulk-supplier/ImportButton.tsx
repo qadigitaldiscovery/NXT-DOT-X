@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { Upload, Loader2 } from "lucide-react";
+import { cn } from '@/lib/utils';
 
 interface ImportButtonProps {
   onSubmit: () => void;
@@ -18,11 +19,10 @@ export function ImportButton({ onSubmit, isUploading, isDisabled }: ImportButton
           onSubmit();
         }
       }}
-      className={`w-full inline-flex items-center text-sm font-medium text-primary-foreground ${
-        isDisabled || isUploading 
-          ? "opacity-50 pointer-events-none" 
-          : "hover:text-primary-foreground/80 hover:underline"
-      }`}
+      className={cn(
+        "w-full inline-flex items-center text-sm font-medium text-primary hover:text-primary/80 hover:underline",
+        (isDisabled || isUploading) ? "opacity-50 pointer-events-none" : ""
+      )}
       aria-label="Import suppliers"
     >
       {isUploading ? (

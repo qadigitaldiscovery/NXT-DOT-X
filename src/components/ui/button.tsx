@@ -1,7 +1,11 @@
-
 import * as React from "react";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
+import { getLinkClassName } from "@/lib/link-utils";
+
+// This component is deprecated and shouldn't be used anymore.
+// Use standard anchor tags with appropriate styling instead.
+// For example: <a href="#" className={getLinkClassName()} aria-label="Action name">Link text</a>
 
 const buttonVariants = cva(
   "inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none ring-offset-background",
@@ -35,9 +39,13 @@ export interface ButtonProps
   asChild?: boolean;
 }
 
+// We're keeping the component but adding a console warning
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, variant, size, asChild = false, children, ...props }, ref) => {
-    // Ensure button has accessible text
+    React.useEffect(() => {
+      console.warn("Button component is deprecated. Please use anchor links instead.");
+    }, []);
+    
     const hasAccessibleText = React.Children.count(children) > 0;
     
     return (

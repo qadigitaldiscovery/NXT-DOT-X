@@ -3,6 +3,7 @@ import { DashboardHeader } from "@/components/beta2/dashboard/DashboardHeader";
 import { Calendar, Plus } from "lucide-react";
 import { SocialMediaDashboardTabs } from "@/features/social-media/components/SocialMediaDashboardTabs";
 import { useNavigate } from "react-router-dom";
+import { cn } from "@/lib/utils";
 
 export default function SocialMediaDashboard() {
   const navigate = useNavigate();

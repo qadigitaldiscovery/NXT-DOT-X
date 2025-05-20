@@ -20,8 +20,7 @@ export default function App() {
                 richColors 
                 closeButton
                 toastOptions={{
-                  className: "toast",
-                  role: "status"
+                  className: "toast"
                 }}
               />
               <Routes>

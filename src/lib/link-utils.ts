@@ -3,6 +3,8 @@
  * Utility functions for consistent link styling and accessibility
  */
 
+import { cn } from "@/lib/utils";
+
 // Common text link styles with variants
 export const getLinkClassName = (variant: 'default' | 'primary' | 'outline' | 'destructive' = 'default', size: 'sm' | 'md' | 'lg' = 'md', className = '') => {
   const baseStyles = "inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none user-select-none -webkit-user-select-none";
@@ -20,10 +22,10 @@ export const getLinkClassName = (variant: 'default' | 'primary' | 'outline' | 'd
     lg: "text-base py-2.5 px-4"
   };
   
-  return `${baseStyles} ${variantStyles[variant]} ${sizeStyles[size]} ${className}`;
+  return cn(baseStyles, variantStyles[variant], sizeStyles[size], className);
 };
 
 // Helper for consistent icon + text styling within links
 export const getIconLinkClassName = (textColor: string = "text-primary", hoverColor: string = "hover:text-primary/80") => {
-  return `inline-flex items-center gap-2 ${textColor} ${hoverColor} hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 user-select-none -webkit-user-select-none`;
+  return cn("inline-flex items-center gap-2", textColor, hoverColor, "hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2");
 };
