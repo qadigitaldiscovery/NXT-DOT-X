@@ -1,11 +1,11 @@
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
 const RootHandler: React.FC = () => {
   const navigate = useNavigate();
-  const { isAuthenticated, loading } = useAuth();
+  const { isAuthenticated } = useAuth();
 
   useEffect(() => {
     console.log("RootHandler: Auth state", { isAuthenticated, loading });

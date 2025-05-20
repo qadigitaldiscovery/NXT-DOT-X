@@ -14,6 +14,7 @@ type AuthContextType = {
   signIn: (email: string, password: string) => Promise<void>;
   signOut: () => Promise<void>;
   isAuthenticated: boolean;
+  hasPermission: (permission: string) => boolean;
 };
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -73,6 +74,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         signIn,
         signOut,
         isAuthenticated: !!user,
+        hasPermission: (permission: string) => {
+          return user?.permissions?.includes(permission) || false;
+        },
       }}
     >
       {children}
