@@ -13,7 +13,7 @@ export default defineConfig({
   server: {
     port: 8080
   },
-  // Add custom TypeScript configuration
+  // Update custom TypeScript configuration
   optimizeDeps: {
     esbuildOptions: {
       tsconfigRaw: `{
