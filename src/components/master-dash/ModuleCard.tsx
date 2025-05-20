@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { ArrowRight } from 'lucide-react';
+import { getLinkClassName } from '@/lib/link-utils';
 
 interface Feature {
   name: string;
@@ -76,7 +77,7 @@ export const ModuleCard: React.FC<ModuleCardProps> = ({
             e.preventDefault();
             handleModuleClick();
           }}
-          className="text-sm font-medium flex items-center text-primary hover:underline"
+          className={cn(getLinkClassName(), "text-sm font-medium flex items-center")}
           aria-label={`Go to ${title}`}
         >
           View {title}
