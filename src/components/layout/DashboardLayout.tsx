@@ -5,7 +5,7 @@ import MasterDashSidebar from '../master-dash/MasterDashSidebar';
 import MasterDashNavbar from '../master-dash/MasterDashNavbar';
 import MasterDashFooter from '../master-dash/MasterDashFooter';
 import { useIsMobile } from '../../hooks/use-mobile';
-import { SidebarProvider } from '@/components/ui/sidebar/index';
+import { SidebarProvider } from '@/components/ui/sidebar';
 
 export function DashboardLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
