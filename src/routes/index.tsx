@@ -25,6 +25,7 @@ export function AppRoutes() {
   return (
     <Routes>
       {/* Public Routes */}
+<<<<<<< Updated upstream
       <Route path="/landing" element={<Landing />} />
       <Route path="/unauthorized" element={<Navigate to="/landing" />} />
 
@@ -33,6 +34,15 @@ export function AppRoutes() {
 
       {/* Protected Routes - All protected routes should be nested under DashboardLayout */}
       <Route
+=======
+      <Route path="/" element={<RootHandler />} />
+      <Route path="/landing" element={<Landing />} />
+      <Route path="/unauthorized" element={<Navigate to="/landing" />} />
+
+      {/* Protected Routes */}
+      <Route
+        path="/"
+>>>>>>> Stashed changes
         element={
           <ProtectedRoute>
             <DashboardLayout />
@@ -40,9 +50,41 @@ export function AppRoutes() {
         }
       >
         {/* Dashboard Routes */}
+<<<<<<< Updated upstream
         <Route path="/master" element={<MasterDash />} />
         <Route path="/dashboard/rag" element={<RAGDashboardPage />} />
         <Route path="/prototypes" element={<PrototypeSelector />} />
+=======
+        <Route path="master" element={<MasterDash />} />
+        <Route path="dashboard">
+          <Route path="rag" element={<RAGDashboardPage />} />
+        </Route>
+        <Route path="prototypes" element={<PrototypeSelector />} />
+
+        {/* Customer Management Routes */}
+        <Route path="customer-management">
+          <Route path="new" element={<CustomerForm />} />
+          <Route path="edit/:id" element={<CustomerForm isEditing={true} />} />
+          <Route path="directory" element={
+            <div className="p-8">
+              <h1 className="text-2xl font-bold mb-6">Customer Directory</h1>
+              {/* Customer list would go here */}
+            </div>
+          } />
+        </Route>
+
+        {/* Admin Routes */}
+        {AdminRoutes()}
+
+        {/* Settings Routes */}
+        <Route path="settings">
+          <Route path="billing" element={<BillingPlaceholder />} />
+        </Route>
+      </Route>
+
+      {/* Fallback Route */}
+      <Route path="*" element={<Navigate to="/landing" replace />} />
+>>>>>>> Stashed changes
 
         {/* Customer Management Routes */}
         <Route path="/customer-management">

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 // Update the import path below if the card components are located elsewhere in your project structure
+<<<<<<< Updated upstream
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "../../../../components/ui/card";
 import { Input } from "../../../../components/ui/input";
 import { Button } from "../../../../components/ui/button";
@@ -9,6 +10,17 @@ import { Alert, AlertDescription, AlertTitle } from "../../../../components/ui/a
 import { ShoppingCart, CheckCircle, XCircle } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { supabase } from "../../../../integrations/supabase/client";
+=======
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "../../../../../components/ui/card";
+import { Input } from "../../../../../components/ui/input";
+import { Button } from "../../../../../components/ui/button";
+import { Label } from "../../../../../components/ui/label";
+import { Alert, AlertDescription, AlertTitle } from "../../../../../components/ui/alert";
+
+import { ShoppingCart, CheckCircle, XCircle } from "lucide-react";
+import { useForm } from "react-hook-form";
+import { supabase } from "../../../../../integrations/supabase/client";
+>>>>>>> Stashed changes
 import { toast } from "sonner";
 import { fetchWooConfig, saveWooConfig, testWooConnection } from './wooUtils';
 
