@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '../components/ui/button';
@@ -6,7 +5,6 @@ import { Input } from '../components/ui/input';
 import { toast } from 'sonner';
 import { useAuth } from '../context/AuthContext';
 import { SetupTestUser } from '../components/SetupTestUser';
-
 const Landing = () => {
   const [email, setEmail] = useState('admin@example.com'); // Pre-fill with test credentials
   const [password, setPassword] = useState('Pass1'); // Pre-fill with test credentials
@@ -17,21 +15,18 @@ const Landing = () => {
     isAuthenticated,
     loading
   } = useAuth();
-
   useEffect(() => {
     if (isAuthenticated) {
       console.log("Landing: User is authenticated, redirecting to master");
       navigate('/master');
     }
   }, [navigate, isAuthenticated]);
-
   const validateEmail = (email: string): boolean => {
     const trimmedEmail = email.trim();
     // Enhanced email validation
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     return emailRegex.test(trimmedEmail);
   };
-
   const validatePassword = (password: string): {
     valid: boolean;
     message?: string;
@@ -55,7 +50,6 @@ const Landing = () => {
       valid: true
     };
   };
-
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -91,7 +85,6 @@ const Landing = () => {
       setIsLoading(false);
     }
   };
-
   return <div className="h-screen w-full flex flex-col items-center justify-center relative overflow-hidden">
       {/* Full-screen background */}
       <div className="absolute inset-0 z-0" style={{
@@ -108,7 +101,7 @@ const Landing = () => {
 
       {/* NXT DOT X Logo at the top */}
       <div className="relative z-20 mb-16 pt-10">
-        <img src="/lovable-uploads/d13002c2-2ff3-4e7e-b622-17975822f3e6.png" alt="NXT DOT X Logo" className="h-20" />  
+          
       </div>
 
       {/* Login form container - removed the black box background */}
@@ -155,16 +148,15 @@ const Landing = () => {
 
         {/* Partner section at the bottom */}
         <div className="absolute bottom-8 text-center text-white/80 z-20">
-          <p className="text-xs mb-1">POWERED BY</p>
+          
           <div className="flex items-center justify-center space-x-6">
             <div className="flex flex-col items-center">
-              <div className="text-sm font-semibold">Quantum Analytica</div>
-              <div className="text-xs text-gray-300">AI Powered Insights, Human-Centric Impacts</div>
+              
+              
             </div>
           </div>
         </div>
       </div>
     </div>;
 };
-
 export default Landing;
