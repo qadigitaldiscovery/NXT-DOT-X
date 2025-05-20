@@ -29,12 +29,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
-  const hasPermission = (permission: string): boolean => {
+  const hasPermission = (_permission: string): boolean => {
     if (!user) return false;
     if (user.role === 'admin') return true;
     // Add your permission logic here
     return false;
   };
+
 
   useEffect(() => {
     console.log("AuthProvider: Initializing");
@@ -177,41 +178,44 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         
         try {
           // Sign in with the test account credentials
-          const { data, error } = await supabase.auth.signInWithPassword({
-            email: normalizedEmail,
-            password: password
-          });
-          
-          if (error) {
-            // If login fails, the user might not exist yet - try creating it
-            if (error.message.includes('Invalid login credentials')) {
-              console.log("Test account doesn't exist yet, creating...");
-              
-              const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
+              let authData;
+              const { data, error } = await supabase.auth.signInWithPassword({
                 email: normalizedEmail,
                 password: password
               });
               
-              if (signUpError) {
-                console.error("Failed to create test account:", signUpError);
-                toast.error("Failed to set up test account");
-                return;
-              }
-              
-              // Now try to sign in again
-              const { data: secondTry, error: secondError } = await supabase.auth.signInWithPassword({
-                email: normalizedEmail,
-                password: password
-              });
-              
-              if (secondError) {
-                console.error("Test login failed after creation:", secondError);
-                toast.error("Authentication failed. Please try again.");
-                return;
-              }
-              
-              // Use the data from the successful sign-in
-              data = secondTry;
+              if (error) {
+                // If login fails, the user might not exist yet - try creating it
+                if (error.message.includes('Invalid login credentials')) {
+                  console.log("Test account doesn't exist yet, creating...");
+                  
+                  const { error: signUpError } = await supabase.auth.signUp({
+
+                    email: normalizedEmail,
+                    password: password
+                  });
+                  
+                  if (signUpError) {
+                    console.error("Failed to create test account:", signUpError);
+                    toast.error("Failed to set up test account");
+                    return;
+                  }
+                  
+                  // Now try to sign in again
+                  const { data: secondTry, error: secondError } = await supabase.auth.signInWithPassword({
+                    email: normalizedEmail,
+                    password: password
+                  });
+                  
+                  if (secondError) {
+                    console.error("Test login failed after creation:", secondError);
+                    toast.error("Authentication failed. Please try again.");
+                    return;
+                  }
+                  
+                  // Use the data from the successful sign-in
+                  authData = secondTry;
+
             } else {
               console.error("Test login failed:", error);
               toast.error(error.message || "Authentication failed");
@@ -220,26 +224,29 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           }
           
           // Create or update the profile if needed
-          if (data?.user) {
+          const userData = authData || data;
+          if (userData?.user) {
             const { error: profileError } = await supabase
               .from('profiles')
               .upsert({
-                id: data.user.id,
+                id: userData.user.id,
                 name: 'Admin User',
                 role: 'admin',
                 updated_at: new Date()
               });
+
               
             if (profileError) {
               console.error("Error updating admin profile:", profileError);
             }
             
             setUser({
-              id: data.user.id,
+              id: userData.user.id,
               email: 'admin@example.com',
               role: 'admin',
               name: 'Admin User'
             });
+
             
             toast.success('Successfully logged in as admin');
             navigate('/master');

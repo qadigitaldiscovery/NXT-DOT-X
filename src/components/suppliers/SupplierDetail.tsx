@@ -1,11 +1,11 @@
 import React from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from "../../components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../components/ui/tabs";
-import { CreditSummaryCard } from "./credit/CreditSummaryCard";
-import { GaugeRating } from "./credit/GaugeRating";
-import { PerformanceChart } from "./performance/PerformanceChart";
-import { ReportViewer } from "./reports/ReportViewer";
-import { useSupplier } from "../../hooks/use-suppliers";
+import { useSupplier } from '../../hooks/suppliers';
+import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '../ui/tabs';
+import { CreditSummaryCard } from './credit/CreditSummaryCard';
+import { GaugeRating } from './credit/GaugeRating';
+import { PerformanceChart } from './performance/PerformanceChart';
+import { ReportViewer } from './reports/ReportViewer';
 
 interface SupplierDetailProps {
   supplierId: string;
@@ -15,39 +15,34 @@ export const SupplierDetail: React.FC<SupplierDetailProps> = ({ supplierId }) =>
   const { data: supplier, isLoading } = useSupplier(supplierId);
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle>Supplier Details</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="flex items-center justify-center p-8">
+            Loading supplier details...
+          </div>
+        </CardContent>
+      </Card>
+    );
   }
 
   if (!supplier) {
-    return <div>Supplier not found</div>;
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle>Supplier Details</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="flex items-center justify-center p-8">
+            Supplier not found
+          </div>
+        </CardContent>
+      </Card>
+    );
   }
-
-  // Sample performance data - replace with actual data from API
-  const performanceData = [
-    { date: '2024-01', value: 85 },
-    { date: '2024-02', value: 88 },
-    { date: '2024-03', value: 92 }
-  ];
-
-  // Sample reports - replace with actual data from API
-  const reports = [
-    {
-      id: '1',
-      title: 'Annual Performance Review',
-      type: 'PDF',
-      date: '2024-03-15',
-      size: '2.4 MB',
-      url: '/reports/annual-review.pdf'
-    },
-    {
-      id: '2',
-      title: 'Quality Assessment',
-      type: 'PDF',
-      date: '2024-02-28',
-      size: '1.8 MB',
-      url: '/reports/quality-assessment.pdf'
-    }
-  ];
 
   return (
     <div className="space-y-6">
@@ -58,58 +53,79 @@ export const SupplierDetail: React.FC<SupplierDetailProps> = ({ supplierId }) =>
         <CardContent>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <p className="text-sm text-gray-500">Contact</p>
-              <p>{supplier.contact_name}</p>
-              <p>{supplier.email}</p>
-              <p>{supplier.phone}</p>
+              <p className="text-sm text-gray-500">Code</p>
+              <p className="font-medium">{supplier.code}</p>
             </div>
             <div>
-              <p className="text-sm text-gray-500">Details</p>
-              <p>Code: {supplier.code}</p>
-              <p>Status: {supplier.status}</p>
-              <p>Payment Terms: {supplier.payment_terms}</p>
+              <p className="text-sm text-gray-500">Status</p>
+              <p className="font-medium capitalize">{supplier.status}</p>
             </div>
+            {supplier.contact_name && (
+              <div>
+                <p className="text-sm text-gray-500">Contact</p>
+                <p className="font-medium">{supplier.contact_name}</p>
+              </div>
+            )}
+            {supplier.email && (
+              <div>
+                <p className="text-sm text-gray-500">Email</p>
+                <p className="font-medium">{supplier.email}</p>
+              </div>
+            )}
           </div>
         </CardContent>
       </Card>
 
-      <Tabs defaultValue="overview">
+      <Tabs defaultValue="overview" className="w-full">
         <TabsList>
           <TabsTrigger value="overview">Overview</TabsTrigger>
           <TabsTrigger value="performance">Performance</TabsTrigger>
           <TabsTrigger value="reports">Reports</TabsTrigger>
         </TabsList>
 
-        <TabsContent value="overview" className="space-y-4">
-          <div className="grid grid-cols-2 gap-4">
-            <CreditSummaryCard
-              rating="A"
-              description="Excellent"
-              limit="$500,000"
-              score={92}
-            />
-            <GaugeRating
-              value={92}
-              maxValue={100}
-              label="Overall Performance"
-              description="Based on last 12 months"
-            />
+        <TabsContent value="overview">
+          <div className="grid gap-4 md:grid-cols-2">
+            {supplier.creditRating && (
+              <CreditSummaryCard
+                rating={supplier.creditRating.rating}
+                description={supplier.creditRating.description}
+                limit={supplier.creditRating.limit}
+                score={supplier.creditRating.score}
+              />
+            )}
+            {supplier.performance && (
+              <GaugeRating
+                value={supplier.performance.overall}
+                maxValue={100}
+                label="Overall Performance"
+                description="Based on delivery, quality, and responsiveness"
+              />
+            )}
           </div>
         </TabsContent>
 
         <TabsContent value="performance">
-          <PerformanceChart
-            data={performanceData}
-            title="Performance Trend"
-            label="Performance Score"
-          />
+          {supplier.performance?.history && (
+            <PerformanceChart
+              data={supplier.performance.history}
+              title="Performance History"
+              label="Performance score over time"
+            />
+          )}
         </TabsContent>
 
         <TabsContent value="reports">
           <ReportViewer
-            reports={reports}
+            reports={supplier.reports || []}
             onView={(report) => window.open(report.url, '_blank')}
-            onDownload={(report) => window.open(report.url, '_blank')}
+            onDownload={(report) => {
+              const link = document.createElement('a');
+              link.href = report.url;
+              link.download = report.title;
+              document.body.appendChild(link);
+              link.click();
+              document.body.removeChild(link);
+            }}
           />
         </TabsContent>
       </Tabs>

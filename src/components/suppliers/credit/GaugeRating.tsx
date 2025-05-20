@@ -67,7 +67,8 @@ export const GaugeRating: React.FC<GaugeRatingProps> = ({
             </svg>
             {/* Value display */}
             <div className="absolute inset-0 flex items-center justify-center">
-              <span className="text-4xl font-bold" style={{ color }}>
+              <span className={`text-4xl font-bold text-[${color}]`}>
+
                 {value}
               </span>
             </div>

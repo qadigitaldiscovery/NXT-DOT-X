@@ -8,7 +8,7 @@ import { ThemeProvider } from "./context/ThemeContext";
 import { ModulesProvider } from "./context/ModulesContext";
 import { AppRoutes } from "./routes";
 import ErrorBoundary from "./components/ErrorBoundary";
-import { useEffect } from "react";
+
 
 // Create a client
 const queryClient = new QueryClient({
