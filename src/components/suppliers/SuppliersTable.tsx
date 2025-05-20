@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -55,7 +56,9 @@ export const SuppliersTable: React.FC = () => {
                 className="cursor-pointer hover:bg-gray-50"
                 onClick={() => navigate(`/beta1/suppliers/${supplier.id}`)}
               >
-                <TableCell>{supplier.name}</TableCell>
+                <TableCell className="font-medium hover:text-blue-600 hover:underline">
+                  {supplier.name}
+                </TableCell>
                 <TableCell>{supplier.code}</TableCell>
                 <TableCell>
                   <div className="flex items-center gap-2">

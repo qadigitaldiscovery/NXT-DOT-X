@@ -1,10 +1,10 @@
 
 import React from 'react';
 import { Card, CardHeader, CardFooter, CardTitle, CardDescription } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
 import { LucideIcon } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 interface QuickNavCardProps {
   title: string;
@@ -36,12 +36,10 @@ export const QuickNavCard: React.FC<QuickNavCardProps> = ({
         <CardDescription>{description}</CardDescription>
       </CardHeader>
       <CardFooter className="pt-0 pb-4">
-        <Button variant="ghost" className="p-0 h-auto" onClick={() => navigate(path)}>
-          <span className="flex items-center text-sm text-purple-600 font-medium">
-            View {title} 
-            <ArrowRight className="ml-1 h-4 w-4" />
-          </span>
-        </Button>
+        <Link to={path} className="text-sm text-purple-600 font-medium flex items-center hover:underline">
+          View {title} 
+          <ArrowRight className="ml-1 h-4 w-4" />
+        </Link>
       </CardFooter>
     </Card>
   );

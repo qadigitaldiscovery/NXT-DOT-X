@@ -1,10 +1,10 @@
 
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
 import { AlertTriangle, ChevronRight } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { type Module } from '@/hooks/useModules';
 import StatusGauge from './StatusGauge';
+import { Link } from 'react-router-dom';
 
 interface ModuleCardProps {
   module: Module;
@@ -61,14 +61,17 @@ const ModuleCard: React.FC<ModuleCardProps> = ({ module, alertCount, onViewDetai
       </CardContent>
       
       <CardFooter className="pt-4">
-        <Button 
-          variant="outline" 
-          onClick={() => onViewDetails(module)}
-          className="w-full flex items-center justify-between"
+        <a 
+          href="#" 
+          onClick={(e) => {
+            e.preventDefault();
+            onViewDetails(module);
+          }}
+          className="text-blue-600 hover:text-blue-800 hover:underline flex items-center"
         >
           View Details
-          <ChevronRight className="h-4 w-4" />
-        </Button>
+          <ChevronRight className="h-4 w-4 ml-1" />
+        </a>
       </CardFooter>
     </Card>
   );
