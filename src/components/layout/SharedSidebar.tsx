@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from 'react';
 import { MainSidebar } from './sidebar/MainSidebar/MainSidebar';
 import { useModules } from '@/hooks/useModules';
@@ -28,6 +29,7 @@ export function SharedSidebar() {
 
     // Create a single category containing all items
     const categories: NavCategory[] = [{
+      name: 'Modules',
       label: 'Modules',
       items: items
     }];

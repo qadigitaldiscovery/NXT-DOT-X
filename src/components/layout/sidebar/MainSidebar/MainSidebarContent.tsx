@@ -1,5 +1,5 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { X, ChevronRight, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -89,7 +89,7 @@ export function MainSidebarContent({
   };
 
   // Auto-expand categories based on active path
-  React.useEffect(() => {
+  useEffect(() => {
     effectiveNavCategories.forEach(category => {
       const hasActiveItem = category.items?.some(isItemActive);
       if (hasActiveItem) {
@@ -103,28 +103,28 @@ export function MainSidebarContent({
 
   return (
     <>
-      <div className="flex h-14 items-center justify-between border-b border-sidebar-border bg-redmetal-800 text-white px-4">
+      <div className="flex h-14 items-center justify-between border-b border-sidebar-border bg-gray-900 text-white px-4">
         <span className="font-semibold">Navigation</span>
         <Button
           variant="ghost"
           size="sm"
           onClick={onClose}
-          className="h-8 w-8 p-0 text-white hover:bg-redmetal-600 md:hidden"
+          className="h-8 w-8 p-0 text-white hover:bg-gray-800 md:hidden"
         >
           <X className="h-4 w-4" />
           <span className="sr-only">Close</span>
         </Button>
       </div>
       
-      <div className="flex-1 overflow-auto bg-gradient-to-b from-redmetal-800 to-black text-white">
+      <div className="flex-1 overflow-auto bg-gray-900 text-white">
         {/* Home item if provided */}
         {homeItem && (
           <div className="px-3 pt-4">
             <Button
               variant="ghost"
               className={cn(
-                "w-full justify-start text-blue-100 hover:text-white hover:bg-blue-900/50 mb-2",
-                isItemActive(homeItem) && "bg-blue-800/50 text-white"
+                "w-full justify-start text-gray-300 hover:text-white hover:bg-gray-800 mb-2",
+                isItemActive(homeItem) && "bg-gray-800 text-white"
               )}
               onClick={() => handleItemClick(homeItem)}
             >
@@ -145,7 +145,7 @@ export function MainSidebarContent({
                 {/* Category Header */}
                 <Button
                   variant="ghost"
-                  className="w-full justify-between items-center text-blue-200 hover:text-white hover:bg-blue-900/30 py-2"
+                  className="w-full justify-between items-center text-gray-400 hover:text-white hover:bg-gray-800/30 py-2"
                   onClick={() => toggleCategory(categoryName)}
                 >
                   <span className="text-xs font-semibold uppercase tracking-wider">
@@ -166,8 +166,8 @@ export function MainSidebarContent({
                         key={`${item.label}-${itemIndex}`}
                         variant="ghost"
                         className={cn(
-                          "w-full justify-start text-blue-100 hover:text-white hover:bg-blue-900/50 py-1.5 h-auto",
-                          isItemActive(item) && "bg-blue-800/50 text-white"
+                          "w-full justify-start text-gray-300 hover:text-white hover:bg-gray-800/50 py-1.5 h-auto",
+                          isItemActive(item) && "bg-gray-800/50 text-white"
                         )}
                         onClick={() => handleItemClick(item)}
                       >
