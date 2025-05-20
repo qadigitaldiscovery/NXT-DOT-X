@@ -6,12 +6,13 @@ import { useAuth } from '../context/AuthContext';
 const RootHandler: React.FC = () => {
   const navigate = useNavigate();
   const { isAuthenticated } = useAuth();
-+ 9 |   const { isLoading } = useAuth();
 
   useEffect(() => {
     console.log("RootHandler: Auth state", { isAuthenticated, isLoading });
     
-    if (isLoading) return;
+    if (isLoading) {
+      return;
+    }
     
     if (isAuthenticated) {
       console.log("RootHandler: Authenticated, navigating to master dashboard");
