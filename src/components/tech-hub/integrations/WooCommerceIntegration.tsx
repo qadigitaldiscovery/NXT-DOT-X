@@ -1,14 +1,16 @@
+import React, { useState, useEffect } from 'react';
+// Update the import path below if the card components are located elsewhere in your project structure
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "../../../../components/ui/card";
+import { Input } from "../../../../components/ui/input";
+import { Button } from "../../../../components/ui/button";
+import { Label } from "../../../../components/ui/label";
+import { Alert, AlertDescription, AlertTitle } from "../../../../components/ui/alert";
 
-import React, { useState } from 'react';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { ShoppingCart, CheckCircle, XCircle } from "lucide-react";
 import { useForm } from "react-hook-form";
-import { supabase } from "@/integrations/supabase/client";
+import { supabase } from "../../../../integrations/supabase/client";
 import { toast } from "sonner";
+import { fetchWooConfig, saveWooConfig, testWooConnection } from './wooUtils';
 
 interface WooCommerceFormData {
   url: string;
@@ -18,66 +20,78 @@ interface WooCommerceFormData {
 
 const WooCommerceIntegration = () => {
   const [isLoading, setIsLoading] = useState(false);
+  const [isTesting, setIsTesting] = useState(false);
   const [connectionStatus, setConnectionStatus] = useState<'idle' | 'success' | 'error'>('idle');
   const [wooConfig, setWooConfig] = useState<WooCommerceFormData | null>(null);
   
-  const { register, handleSubmit, formState: { errors } } = useForm<WooCommerceFormData>();
+  const { register, handleSubmit, reset, formState: { errors } } = useForm<WooCommerceFormData>();
 
-  const fetchExistingConfig = async () => {
+  const loadExistingConfig = async () => {
     try {
       setIsLoading(true);
-      // Mocking the API call since the 'woocommerce_integrations' table doesn't seem to exist yet
-      console.log("Fetching WooCommerce config (mocked)");
-      
-      // In a real implementation, we would fetch from the database
-      // For now, just set to null to simulate no existing configuration
-      setWooConfig(null);
-      setConnectionStatus('idle');
+      const config = await fetchWooConfig();
+      if (config) {
+        setWooConfig(config);
+        setConnectionStatus('success');
+        reset(config);
+      }
     } catch (err) {
       console.error("Failed to load WooCommerce configuration:", err);
+      toast.error("Failed to load existing configuration");
     } finally {
       setIsLoading(false);
     }
   };
 
-  React.useEffect(() => {
-    fetchExistingConfig();
+  useEffect(() => {
+    loadExistingConfig();
   }, []);
 
-  const testConnection = async (data: WooCommerceFormData) => {
-    setIsLoading(true);
+  const handleTestConnection = async (data: WooCommerceFormData) => {
+    setIsTesting(true);
     try {
-      // In a real implementation, you would call your API to test the connection
-      // For this demo, we'll simulate a successful connection after a delay
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      setConnectionStatus('success');
-      toast.success("Successfully connected to WooCommerce!");
-      return true;
+      const success = await testWooConnection(data);
+      if (success) {
+        setConnectionStatus('success');
+      } else {
+        setConnectionStatus('error');
+      }
+      return success;
     } catch (error) {
       console.error("Connection test failed:", error);
       setConnectionStatus('error');
       toast.error("Failed to connect to WooCommerce");
       return false;
     } finally {
+      setIsTesting(false);
+    }
+  };
+
+  const handleSaveConfig = async (data: WooCommerceFormData) => {
+    try {
+      setIsLoading(true);
+      const savedConfig = await saveWooConfig(data);
+      if (savedConfig) {
+        setWooConfig(savedConfig);
+        toast.success("WooCommerce configuration saved successfully");
+      }
+    } catch (err) {
+      console.error("Failed to save WooCommerce configuration:", err);
+      toast.error("Failed to save configuration");
+    } finally {
       setIsLoading(false);
     }
   };
 
   const onSubmit = async (data: WooCommerceFormData) => {
-    const connectionSuccessful = await testConnection(data);
-    
+    const connectionSuccessful = await handleTestConnection(data);
     if (connectionSuccessful) {
-      try {
-        // In a real implementation, we would save to the database
-        console.log("Saving WooCommerce configuration (mocked):", data);
-        toast.success("WooCommerce configuration saved successfully");
-        setWooConfig(data);
-      } catch (err) {
-        console.error("Failed to save WooCommerce configuration:", err);
-        toast.error("An error occurred while saving configuration");
-      }
+      await handleSaveConfig(data);
     }
+  };
+
+  const handleReset = async () => {
+    await loadExistingConfig();
   };
 
   return (
@@ -107,7 +121,6 @@ const WooCommerceIntegration = () => {
                     id="url"
                     placeholder="https://your-store.com"
                     {...register("url", { required: "URL is required" })}
-                    defaultValue={wooConfig?.url || ""}
                   />
                   {errors.url && (
                     <p className="text-sm text-red-500">{errors.url.message}</p>
@@ -120,7 +133,6 @@ const WooCommerceIntegration = () => {
                     id="consumer_key"
                     placeholder="ck_xxxxxxxxxxxxxxxxxxxx"
                     {...register("consumer_key", { required: "Consumer Key is required" })}
-                    defaultValue={wooConfig?.consumer_key || ""}
                   />
                   {errors.consumer_key && (
                     <p className="text-sm text-red-500">{errors.consumer_key.message}</p>
@@ -134,7 +146,6 @@ const WooCommerceIntegration = () => {
                     type="password"
                     placeholder="cs_xxxxxxxxxxxxxxxxxxxx"
                     {...register("consumer_secret", { required: "Consumer Secret is required" })}
-                    defaultValue={wooConfig?.consumer_secret || ""}
                   />
                   {errors.consumer_secret && (
                     <p className="text-sm text-red-500">{errors.consumer_secret.message}</p>
@@ -164,13 +175,34 @@ const WooCommerceIntegration = () => {
             </Alert>
           )}
         </CardContent>
-        <CardFooter className="flex justify-end space-x-2">
-          <Button variant="outline" onClick={fetchExistingConfig} disabled={isLoading}>
-            Reset
-          </Button>
-          <Button type="submit" form="woocommerce-form" disabled={isLoading}>
-            {isLoading ? "Connecting..." : "Save & Test Connection"}
-          </Button>
+        <CardFooter className="flex justify-between">
+          {wooConfig?.url && (
+            <Button 
+              variant="destructive"
+              type="button"
+              onClick={() => {/* TODO: Implement delete functionality */}}
+              disabled={isLoading || isTesting}
+            >
+              Delete Configuration
+            </Button>
+          )}
+          <div className="flex space-x-2">
+            <Button 
+              variant="outline" 
+              type="button"
+              onClick={handleReset} 
+              disabled={isLoading || isTesting}
+            >
+              Reset
+            </Button>
+            <Button 
+              type="submit" 
+              form="woocommerce-form" 
+              disabled={isLoading || isTesting}
+            >
+              {isTesting ? "Testing..." : isLoading ? "Saving..." : "Save & Test Connection"}
+            </Button>
+          </div>
         </CardFooter>
       </Card>
       
@@ -184,7 +216,13 @@ const WooCommerceIntegration = () => {
         <CardContent>
           <div className="space-y-4">
             <div className="flex items-start space-x-2">
-              <input type="checkbox" id="sync-products" className="mt-1" disabled={connectionStatus !== 'success'} />
+              <input 
+                type="checkbox" 
+                id="sync-products" 
+                className="mt-1" 
+                disabled={connectionStatus !== 'success'} 
+                aria-label="Sync products"
+              />
               <div>
                 <Label htmlFor="sync-products" className="text-base">Products</Label>
                 <p className="text-sm text-muted-foreground">
@@ -193,7 +231,13 @@ const WooCommerceIntegration = () => {
               </div>
             </div>
             <div className="flex items-start space-x-2">
-              <input type="checkbox" id="sync-orders" className="mt-1" disabled={connectionStatus !== 'success'} />
+              <input 
+                type="checkbox" 
+                id="sync-orders" 
+                className="mt-1" 
+                disabled={connectionStatus !== 'success'}
+                aria-label="Sync orders"
+              />
               <div>
                 <Label htmlFor="sync-orders" className="text-base">Orders</Label>
                 <p className="text-sm text-muted-foreground">
@@ -202,7 +246,13 @@ const WooCommerceIntegration = () => {
               </div>
             </div>
             <div className="flex items-start space-x-2">
-              <input type="checkbox" id="sync-customers" className="mt-1" disabled={connectionStatus !== 'success'} />
+              <input 
+                type="checkbox" 
+                id="sync-customers" 
+                className="mt-1" 
+                disabled={connectionStatus !== 'success'}
+                aria-label="Sync customers"
+              />
               <div>
                 <Label htmlFor="sync-customers" className="text-base">Customers</Label>
                 <p className="text-sm text-muted-foreground">
@@ -213,13 +263,17 @@ const WooCommerceIntegration = () => {
           </div>
         </CardContent>
         <CardFooter>
-          <Button variant="secondary" disabled={connectionStatus !== 'success'}>
+          <Button 
+            variant="secondary" 
+            disabled={connectionStatus !== 'success'}
+            onClick={() => {/* TODO: Implement sync functionality */}}
+          >
             Start Synchronization
           </Button>
         </CardFooter>
       </Card>
     </div>
   );
-};
+}
 
 export default WooCommerceIntegration;
