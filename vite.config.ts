@@ -1,4 +1,3 @@
-
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react-swc';
 import path from 'path';
@@ -24,10 +23,14 @@ export default defineConfig(({ mode }) => ({
             'class-variance-authority',
             'clsx',
             'tailwind-merge'
-          ],
-        },
-      },
-    },
+          ]
+        }
+      }
+    }
+  },
+  define: {
+    'process.env.NODE_ENV': JSON.stringify(mode),
+    'global': 'window'
   },
   server: {
     host: "::",
@@ -38,8 +41,8 @@ export default defineConfig(({ mode }) => ({
       "@": path.resolve(__dirname, "./src"),
       "components": path.resolve(__dirname, "./src/components"),
       "lib": path.resolve(__dirname, "./src/lib"),
-      "hooks": path.resolve(__dirname, "./src/hooks"),
-    },
+      "hooks": path.resolve(__dirname, "./src/hooks")
+    }
   },
   optimizeDeps: {
     include: [
@@ -53,5 +56,6 @@ export default defineConfig(({ mode }) => ({
       'clsx',
       'tailwind-merge'
     ],
-  },
+    force: true
+  }
 }));
