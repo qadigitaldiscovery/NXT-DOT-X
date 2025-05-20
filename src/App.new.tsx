@@ -21,7 +21,7 @@ export default function App() {
                 closeButton
                 toastOptions={{
                   className: "toast",
-                  ariaLive: "polite",
+                  role: "status"
                 }}
               />
               <Routes>

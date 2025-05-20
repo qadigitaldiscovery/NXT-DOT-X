@@ -30,8 +30,8 @@ export const sidebarMenuButtonVariants = cva(
 )
 
 const SidebarMenuButton = React.forwardRef<
-  HTMLButtonElement,
-  SidebarMenuButtonProps
+  HTMLAnchorElement,
+  Omit<SidebarMenuButtonProps, 'ref'> & React.AnchorHTMLAttributes<HTMLAnchorElement>
 >(
   (
     {
@@ -45,7 +45,7 @@ const SidebarMenuButton = React.forwardRef<
     },
     ref
   ) => {
-    const Comp = asChild ? Slot : "button"
+    const Comp = asChild ? Slot : "a"
     
     // Safely access sidebar context, providing fallback values if not in a SidebarProvider
     let sidebarContext;
@@ -62,6 +62,11 @@ const SidebarMenuButton = React.forwardRef<
     const button = (
       <Comp
         ref={ref}
+        href="#"
+        onClick={(e: React.MouseEvent<HTMLAnchorElement>) => {
+          e.preventDefault();
+          if (props.onClick) props.onClick(e);
+        }}
         data-sidebar="menu-button"
         data-size={size}
         data-active={isActive}

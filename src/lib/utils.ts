@@ -23,3 +23,11 @@ export function createUserSelectStyles(value: "none" | "auto" | "text" | "all"):
     userSelect: value,
   };
 }
+
+// Format currency helper - adding this since it was missing in some files
+export function formatCurrency(value: number, locale = 'en-US', currency = 'USD'): string {
+  return new Intl.NumberFormat(locale, {
+    style: 'currency',
+    currency,
+  }).format(value);
+}
