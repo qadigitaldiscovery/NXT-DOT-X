@@ -99,7 +99,7 @@ const Landing = () => {
         className="absolute inset-0 z-0" 
         style={{
           backgroundColor: '#111', /* Dark fallback */
-          backgroundImage: `url('/lovable-uploads/3f15bacb-8659-4016-be81-b79d6a1d1b71.png')`,
+          backgroundImage: `url('/lovable-uploads/2e3907f2-88a5-400f-a09d-cd865295f449.png')`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           backgroundRepeat: 'no-repeat'
@@ -108,6 +108,15 @@ const Landing = () => {
       
       {/* Overlay for background opacity (25%) */}
       <div className="absolute inset-0 z-10 bg-black bg-opacity-25" />
+
+      {/* NXT DOT X Logo at the top */}
+      <div className="relative z-20 mb-10 mt-10">
+        <img 
+          src="/lovable-uploads/2e3907f2-88a5-400f-a09d-cd865295f449.png" 
+          alt="NXT DOT X Logo" 
+          className="w-64 h-auto"
+        />
+      </div>
 
       {/* Login box container - frosted black effect */}
       <div className="relative z-20 flex flex-col items-center justify-center">
