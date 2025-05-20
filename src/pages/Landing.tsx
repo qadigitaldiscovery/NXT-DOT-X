@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '../components/ui/button';
@@ -98,15 +97,15 @@ const Landing = () => {
       <div 
         className="absolute inset-0 z-0" 
         style={{
-          backgroundColor: '#3B0000', /* Added fallback color */
-          backgroundImage: `url('/lovable-uploads/0e95b0e9-9a05-4837-bb36-54104b32d22c.png')`,
+          backgroundColor: '#111', /* Dark fallback */
+          backgroundImage: `url('/lovable-uploads/dd9a3d70-4548-4803-8d6e-3d5044d79549.png')`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           backgroundRepeat: 'no-repeat'
         }} 
       />
       
-      {/* Overlay for background opacity (25% - reduced from 50%) */}
+      {/* Overlay for background opacity (25%) */}
       <div className="absolute inset-0 z-10 bg-black bg-opacity-25" />
 
       {/* Login box container - frosted black effect */}
