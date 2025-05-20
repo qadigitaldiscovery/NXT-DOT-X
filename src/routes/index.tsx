@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Route, Routes, Navigate } from "react-router-dom";
 import RootHandler from "../components/RootHandler";
@@ -9,6 +10,10 @@ import PrototypeSelector from "../pages/PrototypeSelector";
 import { DashboardLayout } from "../components/layout/DashboardLayout";
 import { AdminRoutes } from "./adminRoutes";
 import { CustomerForm } from "../components/customers/CustomerForm";
+import TradingSystemLayout from "../components/layout/TradingSystemLayout";
+import { CustomerManagementLayout } from "../components/layout/CustomerManagementLayout";
+import { SidebarProvider } from "@/components/ui/sidebar";
+import Beta1Dashboard from "../pages/Beta1Dashboard";
 
 // Temporary placeholder for Billing
 function BillingPlaceholder() {
@@ -35,7 +40,9 @@ export function AppRoutes() {
       <Route
         element={
           <ProtectedRoute>
-            <DashboardLayout />
+            <SidebarProvider>
+              <DashboardLayout />
+            </SidebarProvider>
           </ProtectedRoute>
         }
       >
@@ -44,17 +51,11 @@ export function AppRoutes() {
         <Route path="/dashboard/rag" element={<RAGDashboardPage />} />
         <Route path="/prototypes" element={<PrototypeSelector />} />
 
-        {/* Customer Management Routes */}
-        <Route path="/customer-management">
-          <Route path="new" element={<CustomerForm />} />
-          <Route path="edit/:id" element={<CustomerForm isEditing={true} />} />
-          <Route path="directory" element={
-            <div className="p-8">
-              <h1 className="text-2xl font-bold mb-6">Customer Directory</h1>
-              {/* Customer list would go here */}
-            </div>
-          } />
-        </Route>
+        {/* Trading System Routes - with its own layout */}
+        <Route path="/trading-system/*" element={<TradingSystemLayout />} />
+        
+        {/* Beta routes */}
+        <Route path="/beta1" element={<Beta1Dashboard />} />
 
         {/* Data Management Redirects */}
         <Route 
@@ -69,6 +70,28 @@ export function AppRoutes() {
 
         {/* Admin Routes */}
         {AdminRoutes()}
+      </Route>
+      
+      {/* Customer Management Routes with their dedicated layout */}
+      <Route
+        element={
+          <ProtectedRoute>
+            <SidebarProvider>
+              <CustomerManagementLayout />
+            </SidebarProvider>
+          </ProtectedRoute>
+        }
+      >
+        <Route path="/customer-management">
+          <Route path="new" element={<CustomerForm />} />
+          <Route path="edit/:id" element={<CustomerForm isEditing={true} />} />
+          <Route path="directory" element={
+            <div className="p-8">
+              <h1 className="text-2xl font-bold mb-6">Customer Directory</h1>
+              {/* Customer list would go here */}
+            </div>
+          } />
+        </Route>
       </Route>
 
       {/* Fallback Route */}
