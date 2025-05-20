@@ -1,14 +1,9 @@
-import { Suspense } from "react";
-import { BrowserRouter, useRoutes } from "react-router-dom";
-import { AuthProvider }   from "@/context/AuthContext";
-import { ThemeProvider }  from "@/context/ThemeContext";
-import { Toaster }        from "sonner";
-import { appRoutes }      from "@/routes";          // ← new (see next file)
-
-/* wrapper for useRoutes() */
-function AppRoutes() {
-  return useRoutes(appRoutes);
-}
+import { Suspense } from 'react';
+import { BrowserRouter, useRoutes } from 'react-router-dom';
+import { AuthProvider }   from '@/context/AuthContext';
+import { ThemeProvider }  from '@/context/ThemeContext';
+import { Toaster }        from 'sonner';
+import { appRoutes }      from '@/routes';
 
 export default function App() {
   return (
@@ -17,7 +12,7 @@ export default function App() {
         <BrowserRouter basename="/">
           <Suspense fallback={<p className="p-4">Loading…</p>}>
             <Toaster position="top-right" richColors />
-            <AppRoutes />
+            {useRoutes(appRoutes)}
           </Suspense>
         </BrowserRouter>
       </ThemeProvider>
