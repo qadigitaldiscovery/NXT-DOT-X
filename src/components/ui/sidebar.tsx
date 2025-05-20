@@ -1,3 +1,4 @@
+
 import React, { createContext, useContext, useState } from 'react';
 import { cn } from "../../lib/utils";
 
@@ -13,7 +14,11 @@ export function useSidebar() {
   if (context === undefined) {
     throw new Error('useSidebar must be used within a SidebarProvider');
   }
-  return context;
+  return { 
+    isOpen: context.isOpen, 
+    toggle: context.toggle,
+    toggleSidebar: context.toggle  // Add this alias for backwards compatibility
+  };
 }
 
 interface SidebarProviderProps {

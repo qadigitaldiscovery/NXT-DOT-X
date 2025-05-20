@@ -1,14 +1,15 @@
+
 import React, { useState, useEffect } from 'react';
-import { toast } from '@/components/ui/toast';
-import { useModules } from '@/context/ModulesContext';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Switch } from '@/components/ui/switch';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { useAuth } from '@/context/AuthContext';
+import { toast } from 'sonner';
+import { useModules } from '../../context/ModulesContext';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../components/ui/card';
+import { Switch } from '../../components/ui/switch';
+import { Badge } from '../../components/ui/badge';
+import { Button } from '../../components/ui/button';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../components/ui/select';
+import { Input } from '../../components/ui/input';
+import { Label } from '../../components/ui/label';
+import { useAuth } from '../../context/AuthContext';
 
 interface User {
   id: string;
@@ -29,7 +30,7 @@ interface ModuleAccess {
 }
 
 const ModuleTogglePanel: React.FC<ModuleTogglePanelProps> = ({ userId }) => {
-  const { modules, loading, toggleModule, refreshModules } = useModules();
+  const { modules, loading, toggleModule } = useModules();
   const [selectedUser, setSelectedUser] = useState<string>(userId);
   const [users, setUsers] = useState<User[]>([]);
   const { user } = useAuth();
@@ -51,7 +52,10 @@ const ModuleTogglePanel: React.FC<ModuleTogglePanelProps> = ({ userId }) => {
     try {
       await toggleModule(id, !currentValue);
       toast.success(`Module access ${!currentValue ? 'enabled' : 'disabled'}`);
-      await refreshModules();
+      
+      // Since refreshModules doesn't exist in the context, we'll adapt to use what's available
+      // If refresh is needed, do a manual refresh instead
+      // await refreshModules();
     } catch (err) {
       console.error('Error toggling access:', err);
       toast.error('Failed to update module access');
@@ -154,7 +158,7 @@ const ModuleTogglePanel: React.FC<ModuleTogglePanelProps> = ({ userId }) => {
                     <SelectValue placeholder="Select a module" />
                   </SelectTrigger>
                   <SelectContent>
-                    {modules.map(module => (
+                    {modules.map((module: any) => (
                       <SelectItem key={module.id} value={module.id}>
                         {module.name}
                       </SelectItem>
