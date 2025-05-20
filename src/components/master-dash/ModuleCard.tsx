@@ -46,23 +46,33 @@ export const ModuleCard: React.FC<ModuleCardProps> = ({
   return (
     <Card 
       className={cn(
-        "transition-all duration-200 cursor-pointer h-full",
+        "transition-all duration-200 cursor-pointer h-full relative",
         variantStyles[variant]
       )}
       onClick={handleModuleClick}
     >
-      <CardHeader className="pb-2">
-        <CardTitle className="text-lg font-bold tracking-tight">{title}</CardTitle>
-        {description && <CardDescription>{description}</CardDescription>}
+      {/* Background image overlay */}
+      <div 
+        className="absolute inset-0 bg-cover bg-center z-0 opacity-100"
+        style={{ 
+          backgroundImage: "url('/lovable-uploads/da13f9da-6b20-4052-a4f9-8628048b0454.png')",
+          borderRadius: 'inherit'
+        }}
+      />
+      
+      {/* Content with z-index to appear above the background */}
+      <CardHeader className="pb-2 relative z-10">
+        <CardTitle className="text-lg font-bold tracking-tight text-white">{title}</CardTitle>
+        {description && <CardDescription className="text-gray-200">{description}</CardDescription>}
       </CardHeader>
-      <CardContent className="pb-2">
+      <CardContent className="pb-2 relative z-10">
         <div className="space-y-1.5">
           {features.map((feature, index) => (
             <a
               key={index}
               href={feature.path}
               onClick={(e) => handleFeatureClick(feature.path, e)}
-              className="text-sm hover:underline flex items-center text-muted-foreground hover:text-foreground"
+              className="text-sm hover:underline flex items-center text-gray-200 hover:text-white"
               aria-label={`Open ${feature.name}`}
             >
               <span className="ml-1">{feature.name}</span>
@@ -70,14 +80,14 @@ export const ModuleCard: React.FC<ModuleCardProps> = ({
           ))}
         </div>
       </CardContent>
-      <CardFooter>
+      <CardFooter className="relative z-10">
         <a
           href={path}
           onClick={(e) => {
             e.preventDefault();
             handleModuleClick();
           }}
-          className={cn(getLinkClassName(), "text-sm font-medium flex items-center")}
+          className={cn(getLinkClassName(), "text-sm font-medium flex items-center text-blue-300 hover:text-blue-200")}
           aria-label={`Go to ${title}`}
         >
           View {title}

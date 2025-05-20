@@ -1,6 +1,8 @@
+
 import { Navigate, RouteObject } from "react-router-dom";
 import DashboardLayout from "../components/layout/DashboardLayout";
 import MasterDash from "../pages/MasterDash";
+import DataManagementDashboard from "../pages/DataManagementDashboard";
 
 export const appRoutes: RouteObject[] = [
   /* Public root: decides where to send you */
@@ -13,8 +15,8 @@ export const appRoutes: RouteObject[] = [
     children: [
       { index: true, element: <MasterDash /> },
       {
-        path: '/data-management',
-        element: <div>Data Management Module</div>, // Replace with actual component
+        path: 'data-management',
+        element: <DataManagementDashboard />, 
       },
       {
         path: '/social-media',

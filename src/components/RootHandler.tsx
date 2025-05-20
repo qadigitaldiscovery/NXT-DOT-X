@@ -1,13 +1,14 @@
 
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
 const RootHandler: React.FC = () => {
   const navigate = useNavigate();
   const { isAuthenticated } = useAuth();
+  const isLoading = false; // Since loading doesn't exist in AuthContextType, we set a default
 
-  useEffect(() => {
+  React.useEffect(() => {
     console.log("RootHandler: Auth state", { isAuthenticated, isLoading });
     
     if (isLoading) {
