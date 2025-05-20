@@ -28,8 +28,11 @@ export function formatDate(
   }).format(date);
 }
 
-/* ---------- example sibling helpers (already requested earlier) ---------- */
-
+/**
+ * formatCurrency
+ * --------------
+ * Formats a number as South-African Rand by default.
+ */
 export function formatCurrency(
   value: number,
   currency: string = 'ZAR',
@@ -41,4 +44,3 @@ export function formatCurrency(
     minimumFractionDigits: 2,
   }).format(value);
 }
- 
