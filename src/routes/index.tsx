@@ -1,6 +1,5 @@
-
 import React from "react";
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes, Navigate } from "react-router-dom";
 import RootHandler from "../components/RootHandler";
 import Landing from "../pages/Landing";
 import ProtectedRoute from "../components/ProtectedRoute";
@@ -9,97 +8,74 @@ import RAGDashboardPage from "../pages/rag-dashboard/RAGDashboardPage";
 import PrototypeSelector from "../pages/PrototypeSelector";
 import { DashboardLayout } from "../components/layout/DashboardLayout";
 import { AdminRoutes } from "./adminRoutes";
-import { CustomerForm } from "../components/customers/CustomerForm";
-import { CustomerDirectory } from "../components/customers/CustomerDirectory";
-import { CustomerManagementLayout } from "../components/layout/CustomerManagementLayout";
 
-// Temporary placeholder for pages
-const PlaceholderPage = ({ title }: { title: string }) => (
-  <div className="p-6 text-white">
-    <h1 className="text-2xl font-semibold mb-4">{title}</h1>
-    <p>This page is under development.</p>
-  </div>
-);
+// Existing imports for customer management
+import { CustomerForm } from "../components/customers/CustomerForm";
+
+// Temporary placeholder for Billing
+function BillingPlaceholder() {
+  return (
+    <div className="p-6 text-white">
+      <h1 className="text-2xl font-semibold mb-4">Billing Page</h1>
+      <p>Billing information will go here.</p>
+    </div>
+  );
+}
 
 export function AppRoutes() {
   console.log("🚗 Rendering AppRoutes");
   return (
     <Routes>
-      {/* Root Route - redirects or shows landing page if needed */}
+      {/* Public Routes */}
       <Route path="/" element={<RootHandler />} />
-
-      {/* Landing Page */}
       <Route path="/landing" element={<Landing />} />
+      <Route path="/unauthorized" element={<Navigate to="/landing" />} />
 
-      {/* Master Dashboard */}
+      {/* Protected Routes - All protected routes should be nested under DashboardLayout */}
       <Route
-        path="/master"
-        element={
-          <ProtectedRoute>
-            <MasterDash />
-          </ProtectedRoute>
-        }
-      />
-
-      {/* RAG Dashboard */}
-      <Route
-        path="/dashboard/rag"
-        element={
-          <ProtectedRoute>
-            <RAGDashboardPage />
-          </ProtectedRoute>
-        }
-      />
-
-      {/* Prototype Selector */}
-      <Route
-        path="/prototypes"
-        element={
-          <ProtectedRoute>
-            <PrototypeSelector />
-          </ProtectedRoute>
-        }
-      />
-
-      {/* Main Dashboard Layout */}
-      <Route
-        path="/dashboard"
+        path="/"
         element={
           <ProtectedRoute>
             <DashboardLayout />
           </ProtectedRoute>
         }
-      />
+      >
+        {/* Dashboard Routes */}
+        <Route path="master" element={<MasterDash />} />
+        <Route path="dashboard">
+          <Route path="rag" element={<RAGDashboardPage />} />
+        </Route>
+        <Route path="prototypes" element={<PrototypeSelector />} />
 
-      {/* Customer Management Routes with Layout */}
-      <Route path="/customer-management" element={<ProtectedRoute><CustomerManagementLayout /></ProtectedRoute>}>
-        <Route index element={<CustomerDirectory />} />
-        <Route path="directory" element={<CustomerDirectory />} />
-        <Route path="new" element={<CustomerForm />} />
-        <Route path="edit/:id" element={<CustomerForm isEditing={true} />} />
-        <Route path="history" element={<PlaceholderPage title="Customer Interaction History" />} />
-        <Route path="analytics" element={<PlaceholderPage title="Customer Analytics" />} />
-        <Route path="settings" element={<PlaceholderPage title="Customer Settings" />} />
+        {/* Customer Management Routes */}
+        <Route path="customer-management">
+          <Route path="new" element={<CustomerForm />} />
+          <Route path="edit/:id" element={<CustomerForm isEditing={true} />} />
+          <Route path="directory" element={
+            <div className="p-8">
+              <h1 className="text-2xl font-bold mb-6">Customer Directory</h1>
+              {/* Customer list would go here */}
+            </div>
+          } />
+        </Route>
+
+        {/* Data Management Redirects */}
+        <Route 
+          path="data-management/customers" 
+          element={<Navigate to="/customer-management/directory" replace />} 
+        />
+
+        {/* Settings Routes */}
+        <Route path="settings">
+          <Route path="billing" element={<BillingPlaceholder />} />
+        </Route>
+
+        {/* Admin Routes */}
+        {AdminRoutes()}
       </Route>
 
-      {/* Admin Routes - all sidebar links */}
-      <Route path="/admin/users" element={<ProtectedRoute><PlaceholderPage title="User Management" /></ProtectedRoute>} />
-      <Route path="/admin/roles" element={<ProtectedRoute><PlaceholderPage title="Roles & Permissions" /></ProtectedRoute>} />
-      <Route path="/admin/security" element={<ProtectedRoute><PlaceholderPage title="Security Settings" /></ProtectedRoute>} />
-      <Route path="/admin/reporting" element={<ProtectedRoute><PlaceholderPage title="Reporting Dashboard" /></ProtectedRoute>} />
-      <Route path="/admin/localization" element={<ProtectedRoute><PlaceholderPage title="Localization Settings" /></ProtectedRoute>} />
-      <Route path="/admin/documentation" element={<ProtectedRoute><PlaceholderPage title="Documentation Center" /></ProtectedRoute>} />
-      <Route path="/admin/database" element={<ProtectedRoute><PlaceholderPage title="Database Administration" /></ProtectedRoute>} />
-      <Route path="/admin/system-settings" element={<ProtectedRoute><PlaceholderPage title="System Settings" /></ProtectedRoute>} />
-      
-      {/* Account Routes */}
-      <Route path="/settings/billing" element={<ProtectedRoute><PlaceholderPage title="Billing Information" /></ProtectedRoute>} />
-
-      {/* Include the AdminRoutes array so /admin/... works properly */}
-      {AdminRoutes()}
-
-      {/* Fallback - catch any other routes */}
-      <Route path="*" element={<RootHandler />} />
+      {/* Fallback Route */}
+      <Route path="*" element={<Navigate to="/landing" replace />} />
     </Routes>
   );
 }
