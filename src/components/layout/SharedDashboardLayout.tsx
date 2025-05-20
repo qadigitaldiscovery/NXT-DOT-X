@@ -81,8 +81,8 @@ const SharedDashboardLayout: React.FC<SharedDashboardLayoutProps> = ({
       {/* Main Content */}
       <div className="flex flex-col flex-1 overflow-hidden">
         {/* Top navigation */}
-        <header className="border-b border-gray-800 p-4 flex items-center justify-between py-[9px] bg-gray-800">
-          <h1 className="text-xl text-white font-semibold">{moduleTitle}</h1>
+        <header className="border-b border-gray-800 p-4 flex items-center justify-between py-[9px] bg-slate-200">
+          <h1 className="text-gray-700 text-2xl font-extrabold">{moduleTitle}</h1>
           <div className="flex items-center space-x-4">
             <ThemeToggle />
             <UserMenu />
@@ -90,7 +90,7 @@ const SharedDashboardLayout: React.FC<SharedDashboardLayoutProps> = ({
         </header>
         
         {/* Content area */}
-        <main className="flex-1 overflow-y-auto p-6 bg-gray-800">
+        <main className="flex-1 overflow-y-auto p-6 bg-zinc-50">
           {children}
         </main>
       </div>
