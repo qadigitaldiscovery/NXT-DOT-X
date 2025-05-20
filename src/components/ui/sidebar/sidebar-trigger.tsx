@@ -16,7 +16,7 @@ const SidebarTrigger = React.forwardRef<
       ref={ref}
       href="#"
       data-sidebar="trigger"
-      className={cn("inline-flex items-center justify-center h-7 w-7 rounded-md hover:bg-accent hover:text-accent-foreground", className)}
+      className={cn("inline-flex items-center justify-center h-7 w-7 text-primary hover:text-primary/80", className)}
       onClick={(event) => {
         event.preventDefault();
         onClick?.(event as any);

@@ -18,10 +18,10 @@ export function ImportButton({ onSubmit, isUploading, isDisabled }: ImportButton
           onSubmit();
         }
       }}
-      className={`w-full inline-flex items-center justify-center rounded-md text-sm font-medium py-2 px-4 ${
+      className={`w-full inline-flex items-center text-sm font-medium text-primary-foreground ${
         isDisabled || isUploading 
-          ? "opacity-50 pointer-events-none bg-primary text-primary-foreground" 
-          : "bg-primary text-primary-foreground hover:bg-primary/90"
+          ? "opacity-50 pointer-events-none" 
+          : "hover:text-primary-foreground/80 hover:underline"
       }`}
       aria-label="Import suppliers"
     >

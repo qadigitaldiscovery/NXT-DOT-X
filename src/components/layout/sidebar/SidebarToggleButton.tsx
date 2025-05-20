@@ -29,7 +29,7 @@ export const SidebarToggleButton: React.FC<SidebarToggleButtonProps> = ({
       }}
       className={cn(
         "fixed bottom-4 left-4 z-30 flex items-center justify-center",
-        "w-10 h-10 rounded-full bg-gray-800 text-white hover:bg-gray-700 shadow-lg"
+        "w-10 h-10 text-white hover:text-gray-200"
       )}
       aria-label={isOpen ? "Collapse sidebar" : "Expand sidebar"}
     >

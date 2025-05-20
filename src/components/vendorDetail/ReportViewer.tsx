@@ -1,6 +1,5 @@
 
 import React, { useState } from 'react';
-import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { VendorReport } from '@/types/vendor';
 import { getReportUrl } from '@/services/vendorApi';
@@ -38,7 +37,7 @@ export function ReportViewer({ report, vendorId }: ReportViewerProps) {
     <Card>
       <CardHeader>
         <CardTitle className="text-xl flex items-center">
-          <FileText className="mr-2" size={20} />
+          <FileText className="mr-2" size={20} aria-hidden="true" />
           Credit Reports
         </CardTitle>
       </CardHeader>
@@ -52,14 +51,18 @@ export function ReportViewer({ report, vendorId }: ReportViewerProps) {
                   {new Date(report.fetched_at).toLocaleDateString()}
                 </p>
               </div>
-              <Button 
-                variant="outline" 
-                className="flex items-center"
-                onClick={handleViewReport}
+              <a 
+                href="#"
+                className="inline-flex items-center text-sm font-medium text-primary hover:text-primary/80 hover:underline"
+                onClick={(e) => {
+                  e.preventDefault();
+                  handleViewReport();
+                }}
+                aria-label="View credit report"
               >
-                <Download className="mr-2" size={16} />
+                <Download className="mr-2" size={16} aria-hidden="true" />
                 View Report
-              </Button>
+              </a>
             </div>
           </div>
         ) : (
@@ -69,12 +72,17 @@ export function ReportViewer({ report, vendorId }: ReportViewerProps) {
         )}
         
         <div className="mt-4 border-t pt-4">
-          <Button 
-            onClick={handleFetchReport} 
-            disabled={isPending}
+          <a 
+            href="#" 
+            onClick={(e) => {
+              e.preventDefault();
+              handleFetchReport();
+            }}
+            className={`inline-flex items-center text-sm font-medium text-primary hover:text-primary/80 hover:underline ${isPending ? 'opacity-50 pointer-events-none' : ''}`}
+            aria-label="Request new credit report"
           >
             {isPending ? 'Fetching...' : 'Request New Credit Report'}
-          </Button>
+          </a>
           <p className="mt-2 text-sm text-muted-foreground">
             Fetch the latest credit information from our providers.
           </p>

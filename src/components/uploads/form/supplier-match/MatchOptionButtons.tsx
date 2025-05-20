@@ -11,10 +11,10 @@ export function MatchOptionButtons({ matchOption, setMatchOption }: MatchOptionB
     <div className="flex items-center gap-4">
       <a
         href="#"
-        className={`flex-1 inline-flex items-center justify-center rounded-md text-sm font-medium py-2 px-4 ${
+        className={`flex-1 inline-flex items-center justify-center text-sm font-medium py-2 px-4 ${
           matchOption === 'existing' 
-            ? "bg-primary text-primary-foreground hover:bg-primary/90" 
-            : "border border-input hover:bg-accent hover:text-accent-foreground"
+            ? "text-primary-foreground bg-primary hover:text-primary-foreground/90 hover:underline" 
+            : "text-foreground hover:text-primary hover:underline"
         }`}
         onClick={(e) => {
           e.preventDefault();
@@ -26,10 +26,10 @@ export function MatchOptionButtons({ matchOption, setMatchOption }: MatchOptionB
       </a>
       <a
         href="#"
-        className={`flex-1 inline-flex items-center justify-center rounded-md text-sm font-medium py-2 px-4 ${
+        className={`flex-1 inline-flex items-center justify-center text-sm font-medium py-2 px-4 ${
           matchOption === 'new' 
-            ? "bg-primary text-primary-foreground hover:bg-primary/90" 
-            : "border border-input hover:bg-accent hover:text-accent-foreground"
+            ? "text-primary-foreground bg-primary hover:text-primary-foreground/90 hover:underline" 
+            : "text-foreground hover:text-primary hover:underline"
         }`}
         onClick={(e) => {
           e.preventDefault();

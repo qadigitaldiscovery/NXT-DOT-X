@@ -32,7 +32,8 @@ export const SidebarItem: React.FC<SidebarItemProps> = ({
     "flex items-center px-3 py-2 rounded-md transition-colors",
     isActive ? activeTextColor : textColor,
     isActive ? activeBgColor : hoverBgColor,
-    !isActive && textHoverColor
+    !isActive && textHoverColor,
+    "hover:underline"
   );
 
   if (path) {

@@ -30,7 +30,7 @@ export function DocumentToolbar({
             e.preventDefault();
             onDocumentAdd();
           }}
-          className="inline-flex items-center justify-center rounded-md text-sm font-medium border border-input py-2 px-3 hover:bg-accent hover:text-accent-foreground"
+          className="inline-flex items-center text-sm font-medium text-primary hover:text-primary/80 hover:underline"
           aria-label="Add document"
         >
           <Plus className="h-4 w-4 mr-2" aria-hidden="true" />
@@ -42,7 +42,7 @@ export function DocumentToolbar({
             e.preventDefault();
             onCategoryAdd();
           }}
-          className="inline-flex items-center justify-center rounded-md text-sm font-medium border border-input py-2 px-3 hover:bg-accent hover:text-accent-foreground"
+          className="inline-flex items-center text-sm font-medium text-primary hover:text-primary/80 hover:underline"
           aria-label="Add category"
         >
           <Plus className="h-4 w-4 mr-2" aria-hidden="true" />
@@ -54,7 +54,7 @@ export function DocumentToolbar({
             e.preventDefault();
             onFileUpload();
           }}
-          className="inline-flex items-center justify-center rounded-md text-sm font-medium border border-input py-2 px-3 hover:bg-accent hover:text-accent-foreground"
+          className="inline-flex items-center text-sm font-medium text-primary hover:text-primary/80 hover:underline"
           aria-label="Upload file"
         >
           <Upload className="h-4 w-4 mr-2" aria-hidden="true" />
@@ -67,7 +67,7 @@ export function DocumentToolbar({
           e.preventDefault();
           onRefresh();
         }}
-        className="inline-flex items-center justify-center rounded-md text-sm font-medium border border-input py-2 px-3 hover:bg-accent hover:text-accent-foreground"
+        className="inline-flex items-center text-sm font-medium text-primary hover:text-primary/80 hover:underline"
         aria-label="Refresh documents"
       >
         <RefreshCw className="h-4 w-4 mr-2" aria-hidden="true" />

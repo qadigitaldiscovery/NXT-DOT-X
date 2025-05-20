@@ -21,7 +21,7 @@ export const CustomerDirectory = () => {
             e.preventDefault();
             navigate('/customer-management/new');
           }}
-          className="inline-flex items-center justify-center rounded-md text-sm font-medium bg-primary text-primary-foreground hover:bg-primary/90 py-2 px-4"
+          className="inline-flex items-center text-sm font-medium text-primary hover:text-primary/80 hover:underline"
           aria-label="Add new customer"
         >
           <PlusCircle className="h-4 w-4 mr-2" aria-hidden="true" />
@@ -40,7 +40,7 @@ export const CustomerDirectory = () => {
               e.preventDefault();
               navigate('/master');
             }}
-            className="inline-flex items-center justify-center rounded-md text-sm font-medium border border-input py-2 px-4 hover:bg-accent hover:text-accent-foreground"
+            className="inline-flex items-center text-sm font-medium text-primary hover:text-primary/80 hover:underline"
             aria-label="Return to dashboard"
           >
             Return to Dashboard

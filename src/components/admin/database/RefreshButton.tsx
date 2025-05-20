@@ -24,7 +24,7 @@ export function RefreshButton({
           onRefresh();
         }
       }}
-      className={`inline-flex items-center justify-center rounded-md text-sm font-medium border border-input py-2 px-3 hover:bg-accent hover:text-accent-foreground ${
+      className={`inline-flex items-center text-sm font-medium text-primary hover:text-primary/80 hover:underline ${
         loading ? "opacity-50 pointer-events-none" : ""
       }`}
       aria-label="Refresh data"

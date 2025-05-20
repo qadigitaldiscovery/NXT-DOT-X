@@ -21,7 +21,7 @@ export default function SocialMediaDashboard() {
               e.preventDefault();
               navigate("/social-media/calendar");
             }}
-            className="inline-flex items-center justify-center rounded-md text-sm font-medium border border-input py-2 px-4 hover:bg-accent hover:text-accent-foreground"
+            className="inline-flex items-center text-sm font-medium text-primary hover:text-primary/80 hover:underline"
             aria-label="View social media calendar"
           >
             <Calendar size={16} className="mr-2" aria-hidden="true" />
@@ -33,7 +33,7 @@ export default function SocialMediaDashboard() {
               e.preventDefault();
               navigate("/social-media/create-post");
             }}
-            className="inline-flex items-center justify-center rounded-md text-sm font-medium bg-primary text-primary-foreground hover:bg-primary/90 py-2 px-4"
+            className="inline-flex items-center text-sm font-medium text-primary hover:text-primary/80 hover:underline"
             aria-label="Create new social media post"
           >
             <Plus size={16} className="mr-2" aria-hidden="true" />

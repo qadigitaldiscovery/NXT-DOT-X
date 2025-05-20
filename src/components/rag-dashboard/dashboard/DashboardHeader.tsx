@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { RefreshCw, Settings } from 'lucide-react';
 import { useDashboard } from '../providers/DashboardProvider';
@@ -23,8 +24,7 @@ export const DashboardHeader: React.FC<DashboardHeaderProps> = ({
             if (!isRefreshing) handleRefresh();
           }}
           className={cn(
-            "inline-flex items-center justify-center rounded-md text-sm font-medium", 
-            "border border-input py-2 px-4 hover:bg-accent hover:text-accent-foreground",
+            "inline-flex items-center text-sm font-medium text-primary hover:text-primary/80 hover:underline",
             isRefreshing && "opacity-50 pointer-events-none"
           )}
           aria-label="Refresh dashboard data"
@@ -38,7 +38,7 @@ export const DashboardHeader: React.FC<DashboardHeaderProps> = ({
             e.preventDefault();
             onBatchOperationsOpen();
           }}
-          className="inline-flex items-center justify-center rounded-md text-sm font-medium bg-primary text-primary-foreground hover:bg-primary/90 py-2 px-4"
+          className="inline-flex items-center text-sm font-medium text-primary hover:text-primary/80 hover:underline"
           aria-label="Open batch operations"
         >
           <Settings className="mr-2 h-4 w-4" aria-hidden="true" />
