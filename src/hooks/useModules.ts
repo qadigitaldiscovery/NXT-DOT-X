@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -8,6 +9,8 @@ export interface Module {
   description: string | null | undefined; // Allow null values from the database
   created_at: string | null;
   updated_at: string | null;
+  isEnabled?: boolean;
+  isVisible?: boolean;
 }
 
 export const useModules = () => {
@@ -43,24 +46,10 @@ export const useModules = () => {
   const refreshModules = async () => {
     try {
       await fetchModules();
-      const isFeatureEnabled = (featureId: string): boolean => {
-    return modules.some((module) => module.id === featureId && module.isEnabled && module.isVisible);
-  };
-
-  return { success: true };
+      return { success: true };
     } catch (err) {
-      const isFeatureEnabled = (featureId: string): boolean => {
-    return modules.some((module) => module.id === featureId && module.isEnabled && module.isVisible);
-  };
-
-  return { success: false, error: err };
+      return { success: false, error: err };
     }
-  };
-
-:start_line:52
--------
-  const isFeatureEnabled = (featureId: string): boolean => {
-    return modules.some((module) => module.id === featureId && module.isEnabled && module.isVisible);
   };
 
   const isFeatureEnabled = (featureId: string): boolean => {
