@@ -1,4 +1,3 @@
-
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react-swc';
 import path from 'path';
@@ -12,44 +11,59 @@ export default defineConfig(({ mode }) => ({
   ].filter(Boolean),
   build: {
     outDir: 'dist',
-    // Enable dynamic imports
     rollupOptions: {
       output: {
         manualChunks: {
           'vendor': ['react', 'react-dom', 'react-router-dom'],
-          'ui': ['@radix-ui/react-toast', '@radix-ui/react-tooltip'],
+          'ui': [
+            '@radix-ui/react-toast', 
+            '@radix-ui/react-tooltip',
+            '@radix-ui/react-label',
+            '@radix-ui/react-tabs',
+            '@radix-ui/react-slot',
+            'class-variance-authority',
+            'clsx',
+            'tailwind-merge'
+          ],
         },
       },
     },
   },
   server: {
     host: "::",
-    port: 8080,
+    port: 3000,
     strictPort: false,
     proxy: {},
-    // Enable SPA routing
     open: true,
   },
   preview: {
-    port: 8080,
-    // Enable SPA routing in preview
+    port: 3000,
     open: true,
   },
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
+      "components": path.resolve(__dirname, "./src/components"),
+      "lib": path.resolve(__dirname, "./src/lib"),
+      "hooks": path.resolve(__dirname, "./src/hooks"),
     },
   },
-  // Add base URL configuration
   base: '/',
-  // Enable SPA mode
   appType: 'spa',
-  // Configure optimizeDeps for better dev performance
   optimizeDeps: {
-    include: ['react', 'react-dom', 'react-router-dom'],
+    include: [
+      'react', 
+      'react-dom', 
+      'react-router-dom',
+      '@radix-ui/react-label',
+      '@radix-ui/react-tabs',
+      '@radix-ui/react-slot',
+      'class-variance-authority',
+      'clsx',
+      'tailwind-merge'
+    ],
   },
   define: {
-    // Expose env variables to the client
     'import.meta.env.VITE_SUPABASE_URL': JSON.stringify(process.env.VITE_SUPABASE_URL),
     'import.meta.env.VITE_SUPABASE_ANON_KEY': JSON.stringify(process.env.VITE_SUPABASE_ANON_KEY),
   },

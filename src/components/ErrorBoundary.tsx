@@ -1,8 +1,7 @@
-import { Component, ErrorInfo, ReactNode } from 'react';
+import * as React from 'react';
 
 interface Props {
-  children?: ReactNode;
-  fallback?: ReactNode;
+  children: React.ReactNode;
 }
 
 interface State {
@@ -10,51 +9,42 @@ interface State {
   error?: Error;
 }
 
-class ErrorBoundary extends Component<Props, State> {
+class ErrorBoundary extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
-    this.state = {
-      hasError: false,
-      error: undefined
-    };
+    this.state = { hasError: false };
   }
 
   static getDerivedStateFromError(error: Error): State {
     return {
       hasError: true,
-      error
+      error,
     };
   }
 
-  componentDidCatch(error: Error, errorInfo: ErrorInfo): void {
-    console.error('Error caught by ErrorBoundary:', error);
-    console.error('Component stack:', errorInfo.componentStack);
+  componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
+    console.error('Error caught by boundary:', error, errorInfo);
   }
 
-  render(): ReactNode {
+  render(): React.ReactNode {
     if (this.state.hasError) {
-      if (this.props.fallback) {
-        return this.props.fallback;
-      }
-      
       return (
-        <div className="min-h-screen flex items-center justify-center bg-background">
-          <div className="text-center space-y-6 p-8 max-w-md">
-            <div className="bg-red-500 rounded-full h-24 w-24 flex items-center justify-center mx-auto">
-              <span className="text-5xl font-bold text-white">!</span>
-            </div>
-            <h1 className="text-3xl font-bold text-dashboard-heading">Something went wrong</h1>
-            <p className="text-xl text-muted-foreground">
-              {this.state.error?.message || 'An unexpected error occurred.'}
+        <div className="min-h-screen flex items-center justify-center bg-gray-50">
+          <div className="max-w-md w-full p-6 bg-white rounded-lg shadow-lg">
+            <h1 className="text-2xl font-bold text-red-600 mb-4">
+              Something went wrong
+            </h1>
+            <p className="text-gray-600 mb-4">
+              An error occurred while rendering this page. Please try refreshing or contact support if the problem persists.
             </p>
-            <pre className="bg-gray-100 p-4 rounded-md text-left text-sm overflow-auto max-h-32">
-              {this.state.error?.stack?.split('\n').slice(0, 3).join('\n')}
+            <pre className="bg-gray-100 p-4 rounded text-sm overflow-auto">
+              {this.state.error?.message}
             </pre>
             <button
               onClick={() => window.location.reload()}
-              className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+              className="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
             >
-              Reload page
+              Refresh Page
             </button>
           </div>
         </div>
