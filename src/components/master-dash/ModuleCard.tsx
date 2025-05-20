@@ -1,8 +1,8 @@
+
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { cn } from '@/lib/utils';
 import { Link } from 'react-router-dom';
+import { cn } from '@/lib/utils';
 interface Feature {
   name: string;
   path: string;
@@ -34,11 +34,13 @@ export const ModuleCard: React.FC<ModuleCardProps> = ({
       </CardHeader>
       
       <CardContent className="space-y-1 bg-dashboard-muted my-[6px] py-[4px]">
-        {features.map((feature, index) => <Button key={index} variant="outline" className="w-full border-gray-600 bg-gray-900/50 hover:bg-gray-900 text-white justify-center mb-1" asChild>
-            <Link to={feature.path} className="px-0 py-0 my-[4px]">
+        {features.map((feature, index) => (
+          <div key={index} className="w-full border-gray-600 bg-gray-900/50 hover:bg-gray-900 text-white rounded-md mb-1 px-3 py-2 text-center">
+            <Link to={feature.path} className="text-white hover:text-blue-200 w-full block">
               {feature.name}
             </Link>
-          </Button>)}
+          </div>
+        ))}
       </CardContent>
     </Card>;
 };

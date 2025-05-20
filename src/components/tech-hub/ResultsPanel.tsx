@@ -1,7 +1,6 @@
 
 import React from 'react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import { Persona } from './PersonaCard';
 
@@ -23,22 +22,28 @@ const ResultsPanel: React.FC<ResultsPanelProps> = ({ result, persona, clearResul
           {result}
         </div>
       </CardContent>
-      <CardFooter className="flex justify-end gap-2">
-        <Button 
-          variant="outline" 
-          onClick={() => {
+      <CardFooter className="flex justify-end gap-4">
+        <a 
+          href="#" 
+          onClick={(e) => {
+            e.preventDefault();
             navigator.clipboard.writeText(result);
             toast.success("Results copied to clipboard");
           }}
+          className="text-sm text-blue-600 hover:text-blue-800 hover:underline"
         >
           Copy Results
-        </Button>
-        <Button 
-          variant="outline" 
-          onClick={clearResult}
+        </a>
+        <a 
+          href="#" 
+          onClick={(e) => {
+            e.preventDefault();
+            clearResult();
+          }}
+          className="text-sm text-gray-600 hover:text-gray-800 hover:underline"
         >
           Clear Results
-        </Button>
+        </a>
       </CardFooter>
     </Card>
   );

@@ -2,7 +2,6 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { Pencil, Trash2, Link as LinkIcon, Users, BarChart3 } from "lucide-react";
 import { SocialMediaAccount, SocialMediaPlatform } from "../api/types";
 
@@ -90,35 +89,41 @@ export function SocialAccountCard({
           </div>
         )}
         <div className="flex items-center space-x-2 pt-3">
-          <Button 
-            variant="outline" 
-            size="sm" 
-            onClick={() => onEdit(account.id)}
-            className="flex-1 h-8"
+          <a 
+            href="#" 
+            onClick={(e) => {
+              e.preventDefault();
+              onEdit(account.id);
+            }}
+            className="flex-1 text-center text-gray-700 hover:text-blue-600 hover:underline text-sm py-1"
           >
-            <Pencil size={14} className="mr-1" />
+            <Pencil size={14} className="mr-1 inline-block" />
             Edit
-          </Button>
+          </a>
           {account.connected ? (
-            <Button 
-              variant="outline" 
-              size="sm" 
-              onClick={() => onDisconnect(account.id)}
-              className="flex-1 h-8"
+            <a 
+              href="#" 
+              onClick={(e) => {
+                e.preventDefault();
+                onDisconnect(account.id);
+              }}
+              className="flex-1 text-center text-gray-700 hover:text-blue-600 hover:underline text-sm py-1"
             >
-              <LinkIcon size={14} className="mr-1" />
+              <LinkIcon size={14} className="mr-1 inline-block" />
               Disconnect
-            </Button>
+            </a>
           ) : (
-            <Button 
-              variant="destructive" 
-              size="sm" 
-              onClick={() => onDelete(account.id)}
-              className="flex-1 h-8"
+            <a 
+              href="#" 
+              onClick={(e) => {
+                e.preventDefault();
+                onDelete(account.id);
+              }}
+              className="flex-1 text-center text-red-600 hover:text-red-800 hover:underline text-sm py-1"
             >
-              <Trash2 size={14} className="mr-1" />
+              <Trash2 size={14} className="mr-1 inline-block" />
               Remove
-            </Button>
+            </a>
           )}
         </div>
       </CardContent>
