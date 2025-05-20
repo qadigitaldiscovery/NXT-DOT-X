@@ -1,4 +1,5 @@
 
+import React from 'react';
 import { AppRoutes } from './routes';
 import { AuthProvider } from './context/AuthContext';
 import { Toaster } from 'sonner';
