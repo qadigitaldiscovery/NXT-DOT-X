@@ -1,86 +1,44 @@
-import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import { cn } from '../../lib/utils';
-import { 
-  Home, 
-  Users, 
-  Settings, 
-  Database, 
-  FileText, 
-  Shield, 
-  BarChart,
-  Globe,
-  Layout
-} from 'lucide-react';
+import React, { createContext, useContext, useState } from 'react';
 
-interface SidebarProps {
-  className?: string;
+interface SidebarContextType {
+  isOpen: boolean;
+  toggle: () => void;
 }
 
-interface NavItem {
-  href: string;
-  label: string;
-  icon: React.ReactNode;
+const SidebarContext = createContext<SidebarContextType | undefined>(undefined);
+
+export function useSidebar() {
+  const context = useContext(SidebarContext);
+  if (context === undefined) {
+    throw new Error('useSidebar must be used within a SidebarProvider');
+  }
+  return context;
 }
 
-const mainNavItems: NavItem[] = [
-  { href: '/master', label: 'Dashboard', icon: <Home className="h-5 w-5" /> },
-  { href: '/dashboard/rag', label: 'RAG Dashboard', icon: <Layout className="h-5 w-5" /> },
-  { href: '/prototypes', label: 'Prototypes', icon: <Layout className="h-5 w-5" /> },
-];
+export function SidebarProvider({ children }: { children: React.ReactNode }) {
+  const [isOpen, setIsOpen] = useState(true);
 
-const adminNavItems: NavItem[] = [
-  { href: '/admin/users', label: 'User Management', icon: <Users className="h-5 w-5" /> },
-  { href: '/admin/module-access', label: 'Module Access', icon: <Shield className="h-5 w-5" /> },
-  { href: '/admin/database', label: 'Database Admin', icon: <Database className="h-5 w-5" /> },
-  { href: '/admin/documentation', label: 'Documentation', icon: <FileText className="h-5 w-5" /> },
-  { href: '/admin/reporting', label: 'Reporting', icon: <BarChart className="h-5 w-5" /> },
-  { href: '/admin/localization', label: 'Localization', icon: <Globe className="h-5 w-5" /> },
-];
-
-const settingsNavItems: NavItem[] = [
-  { href: '/settings/billing', label: 'Billing', icon: <Settings className="h-5 w-5" /> },
-];
-
-export function Sidebar({ className }: SidebarProps) {
-  const location = useLocation();
-
-  const NavLink = ({ href, label, icon }: NavItem) => {
-    const isActive = location.pathname === href;
-    
-    return (
-      <Link
-        to={href}
-        className={cn(
-          "flex items-center gap-3 rounded-lg px-3 py-2 text-gray-500 transition-all hover:text-gray-900",
-          "hover:bg-gray-100",
-          isActive && "bg-gray-100 text-gray-900"
-        )}
-      >
-        {icon}
-        <span>{label}</span>
-      </Link>
-    );
-  };
-
-  const NavSection = ({ title, items }: { title: string; items: NavItem[] }) => (
-    <div className="px-3 py-2">
-      <h2 className="mb-2 px-4 text-lg font-semibold tracking-tight">{title}</h2>
-      <div className="space-y-1">
-        {items.map((item) => (
-          <NavLink key={item.href} {...item} />
-        ))}
-      </div>
-    </div>
-  );
+  const toggle = () => setIsOpen(!isOpen);
 
   return (
-    <div className={cn("pb-12 w-64", className)}>
-      <div className="space-y-4 py-4">
-        <NavSection title="Main" items={mainNavItems} />
-        <NavSection title="Admin" items={adminNavItems} />
-        <NavSection title="Settings" items={settingsNavItems} />
+    <SidebarContext.Provider value={{ isOpen, toggle }}>
+      {children}
+    </SidebarContext.Provider>
+  );
+}
+
+export function Sidebar() {
+  const { isOpen } = useSidebar();
+
+  return (
+    <aside className={`fixed left-0 top-0 z-40 h-screen transition-transform ${
+      isOpen ? 'translate-x-0' : '-translate-x-full'
+    } w-64 bg-gray-800`}>
+      <div className="h-full px-3 py-4 overflow-y-auto">
+        <nav className="space-y-2">
+          {/* Navigation items go here */}
+        </nav>
       </div>
-    </div>
+    </aside>
   );
 }
