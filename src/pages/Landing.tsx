@@ -5,6 +5,7 @@ import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
 import { useAuth } from '@/context/AuthContext';
 import { SetupTestUser } from '@/components/SetupTestUser';
+
 const Landing = () => {
   const [email, setEmail] = useState('admin@example.com'); // Pre-fill with test credentials
   const [password, setPassword] = useState('Pass1'); // Pre-fill with test credentials
@@ -85,75 +86,91 @@ const Landing = () => {
       setIsLoading(false);
     }
   };
-  return <div className="h-screen w-full flex flex-col items-center justify-center relative overflow-hidden">
+  return (
+    <div className="h-screen w-full flex flex-col items-center justify-center relative overflow-hidden">
       {/* Full-screen background with uploaded image */}
       <div className="absolute inset-0 z-0 bg-cover bg-center" style={{
-      backgroundImage: `url('/lovable-uploads/a3137cb7-43b3-4738-8bd4-142a07a94e5c.png')`,
-      backgroundSize: 'cover',
-      backgroundPosition: 'center'
-    }} />
+        backgroundImage: `url('/lovable-uploads/a3137cb7-43b3-4738-8bd4-142a07a94e5c.png')`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center'
+      }} />
       
       {/* Overlay for better text visibility */}
       <div className="absolute inset-0 z-0 bg-black bg-opacity-40" />
 
       {/* Centered login circle with logo and form */}
       <div className="relative z-10 flex flex-col items-center justify-center">
-        <div className="w-[480px] h-auto flex items-center justify-center py-8 my-0">
-          {/* Login box with modern design */}
-          <div className="w-full rounded-2xl flex items-center justify-center relative bg-black/50 backdrop-blur-md shadow-lg border border-gray-600/30">
+        <div className="w-[380px] h-[380px] rounded-full flex items-center justify-center my-0">
+          {/* Login box with circular design */}
+          <div className="w-full h-full rounded-full flex items-center justify-center relative bg-black/70 backdrop-blur-md shadow-lg border border-gray-600/30">
             {/* Logo and form container */}
-            <div className="w-full rounded-2xl overflow-hidden flex flex-col items-center justify-center p-8 py-0 px-0 my-[8px]">
+            <div className="w-[320px] flex flex-col items-center justify-center p-6">
               {/* Logo */}
-              <div className="mb-6">
-                <h1 className="font-bold text-transparent bg-clip-text bg-gradient-to-r from-pink-300 via-purple-300 to-blue-300 text-center text-5xl">NXT LEVEL TECH</h1>
-                <p className="text-center text-gray-200 mt-2">AI Powered Business Management Platform</p>
+              <div className="mb-4">
+                <h1 className="font-bold text-transparent bg-clip-text bg-gradient-to-r from-pink-300 via-purple-300 to-blue-300 text-center text-4xl">NXT LEVEL TECH</h1>
+                <p className="text-center text-gray-200 mt-1 text-sm">AI Powered Business Management</p>
               </div>
 
               {/* Login Form */}
-              <form onSubmit={handleLogin} className="w-full space-y-4 max-w-[380px]">
-                <div className="space-y-2">
+              <form onSubmit={handleLogin} className="w-full space-y-3">
+                <div className="space-y-1">
                   <div className="relative">
-                    <Input id="email" type="email" placeholder="Email" value={email} onChange={e => setEmail(e.target.value)} required className="bg-black/50 border-gray-600 focus:border-purple-400 h-11 pl-10 text-white rounded-xl" autoComplete="email" disabled={isLoading || loading} />
-                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                      <span className="text-gray-400">👤</span>
+                    <Input 
+                      id="email" 
+                      type="email" 
+                      placeholder="Email" 
+                      value={email} 
+                      onChange={e => setEmail(e.target.value)} 
+                      required 
+                      className="bg-black/50 border-gray-600 focus:border-purple-400 h-9 pl-9 text-white text-sm rounded-lg" 
+                      autoComplete="email" 
+                      disabled={isLoading || loading} 
+                    />
+                    <div className="absolute inset-y-0 left-0 pl-2.5 flex items-center pointer-events-none">
+                      <span className="text-gray-400 text-xs">👤</span>
                     </div>
                   </div>
                 </div>
                 
-                <div className="space-y-2">
+                <div className="space-y-1">
                   <div className="relative">
-                    <Input id="password" type="password" placeholder="Password" value={password} onChange={e => setPassword(e.target.value)} required className="bg-black/50 border-gray-600 focus:border-purple-400 h-11 pl-10 text-white rounded-xl" autoComplete="current-password" disabled={isLoading || loading} />
-                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                      <span className="text-gray-400">🔒</span>
+                    <Input 
+                      id="password" 
+                      type="password" 
+                      placeholder="Password" 
+                      value={password} 
+                      onChange={e => setPassword(e.target.value)} 
+                      required 
+                      className="bg-black/50 border-gray-600 focus:border-purple-400 h-9 pl-9 text-white text-sm rounded-lg" 
+                      autoComplete="current-password" 
+                      disabled={isLoading || loading} 
+                    />
+                    <div className="absolute inset-y-0 left-0 pl-2.5 flex items-center pointer-events-none">
+                      <span className="text-gray-400 text-xs">🔒</span>
                     </div>
                   </div>
                 </div>
                 
-                <Button type="submit" disabled={isLoading || loading} className="w-full bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600 
-                             h-12 text-white 
-                             font-bold uppercase tracking-wider rounded-xl transition-all duration-300 shadow-md hover:shadow-lg">
+                <Button 
+                  type="submit" 
+                  disabled={isLoading || loading} 
+                  className="w-full bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600 
+                  h-9 text-white text-sm font-bold uppercase tracking-wider rounded-lg transition-all duration-300 shadow-md hover:shadow-lg"
+                >
                   {isLoading || loading ? 'SIGNING IN...' : 'LOGIN'}
                 </Button>
-                
-                <div className="text-sm text-center text-gray-300 mt-4">
-                  
-                  
-                </div>
               </form>
               
               {/* Setup Test User Button */}
-              <div className="mt-6 w-full flex justify-center">
+              <div className="mt-4 w-full flex justify-center">
                 <SetupTestUser />
               </div>
             </div>
           </div>
         </div>
-
-        {/* Quantum Analytica Footer */}
-        <div className="mt-8 text-center text-white">
-          
-        </div>
       </div>
-    </div>;
+    </div>
+  );
 };
+
 export default Landing;
