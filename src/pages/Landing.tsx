@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '../components/ui/button';
@@ -6,6 +7,7 @@ import { toast } from 'sonner';
 import { useAuth } from '../context/AuthContext';
 import { SetupTestUser } from '../components/SetupTestUser';
 import { PartnersList } from '../components/unified/PartnersList';
+
 const Landing = () => {
   const [email, setEmail] = useState('admin@example.com'); // Pre-fill with test credentials
   const [password, setPassword] = useState('Pass1'); // Pre-fill with test credentials
@@ -16,18 +18,21 @@ const Landing = () => {
     isAuthenticated,
     loading
   } = useAuth();
+
   useEffect(() => {
     if (isAuthenticated) {
       console.log("Landing: User is authenticated, redirecting to master");
       navigate('/master');
     }
   }, [navigate, isAuthenticated]);
+
   const validateEmail = (email: string): boolean => {
     const trimmedEmail = email.trim();
     // Enhanced email validation
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     return emailRegex.test(trimmedEmail);
   };
+
   const validatePassword = (password: string): {
     valid: boolean;
     message?: string;
@@ -51,6 +56,7 @@ const Landing = () => {
       valid: true
     };
   };
+
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -86,11 +92,12 @@ const Landing = () => {
       setIsLoading(false);
     }
   };
-  return <div className="h-screen w-full flex flex-col items-center justify-center relative overflow-hidden">
+
+  return (
+    <div className="h-screen w-full flex flex-col items-center justify-center relative overflow-hidden">
       {/* Full-screen background */}
       <div className="absolute inset-0 z-0" style={{
       backgroundColor: '#111',
-      /* Dark fallback */
       backgroundImage: `url('/lovable-uploads/2e3907f2-88a5-400f-a09d-cd865295f449.png')`,
       backgroundSize: 'cover',
       backgroundPosition: 'center',
@@ -116,7 +123,7 @@ const Landing = () => {
           </div>
 
           {/* Login Form */}
-          <form onSubmit={handleLogin} className="w-full space-y-3 mt-2">
+          <form onSubmit={handleLogin} className="w-full space-y-3 mt-6">
             <div className="space-y-1">
               <div className="relative">
                 <Input id="email" type="email" placeholder="Email" value={email} onChange={e => setEmail(e.target.value)} required className="bg-black/50 border-gray-600 focus:border-purple-400 h-8 pl-8 text-white text-sm rounded-lg" autoComplete="email" disabled={isLoading || loading} />
@@ -151,6 +158,8 @@ const Landing = () => {
           <PartnersList />
         </div>
       </div>
-    </div>;
+    </div>
+  );
 };
+
 export default Landing;

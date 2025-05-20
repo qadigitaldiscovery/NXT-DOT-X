@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Route, Routes, Navigate } from "react-router-dom";
 import RootHandler from "../components/RootHandler";
@@ -8,19 +9,16 @@ import RAGDashboardPage from "../pages/rag-dashboard/RAGDashboardPage";
 import PrototypeSelector from "../pages/PrototypeSelector";
 import { DashboardLayout } from "../components/layout/DashboardLayout";
 import { AdminRoutes } from "./adminRoutes";
-
-// Existing imports for customer management
 import { CustomerForm } from "../components/customers/CustomerForm";
+import { CustomerDirectory } from "../components/customers/CustomerDirectory";
 
-// Temporary placeholder for Billing
-function BillingPlaceholder() {
-  return (
-    <div className="p-6 text-white">
-      <h1 className="text-2xl font-semibold mb-4">Billing Page</h1>
-      <p>Billing information will go here.</p>
-    </div>
-  );
-}
+// Temporary placeholder for pages
+const PlaceholderPage = ({ title }: { title: string }) => (
+  <div className="p-6 text-white">
+    <h1 className="text-2xl font-semibold mb-4">{title}</h1>
+    <p>This page is under development.</p>
+  </div>
+);
 
 export function AppRoutes() {
   console.log("🚗 Rendering AppRoutes");
@@ -75,6 +73,22 @@ export function AppRoutes() {
       {/* Customer Management Routes */}
       <Route path="/customer-management">
         <Route
+          index
+          element={
+            <ProtectedRoute>
+              <CustomerDirectory />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="directory"
+          element={
+            <ProtectedRoute>
+              <CustomerDirectory />
+            </ProtectedRoute>
+          }
+        />
+        <Route
           path="new"
           element={
             <ProtectedRoute>
@@ -91,34 +105,50 @@ export function AppRoutes() {
           }
         />
         <Route
-          path="directory"
+          path="history"
           element={
             <ProtectedRoute>
-              <div className="p-8">
-                <h1 className="text-2xl font-bold mb-6">Customer Directory</h1>
-                {/* Customer list would go here */}
-              </div>
+              <PlaceholderPage title="Customer Interaction History" />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="analytics"
+          element={
+            <ProtectedRoute>
+              <PlaceholderPage title="Customer Analytics" />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="settings"
+          element={
+            <ProtectedRoute>
+              <PlaceholderPage title="Customer Settings" />
             </ProtectedRoute>
           }
         />
       </Route>
 
-      {/* Alias or redirect for data-management references from the sidebar */}
+      {/* Admin Routes - all sidebar links */}
+      <Route path="/admin/users" element={<ProtectedRoute><PlaceholderPage title="User Management" /></ProtectedRoute>} />
+      <Route path="/admin/roles" element={<ProtectedRoute><PlaceholderPage title="Roles & Permissions" /></ProtectedRoute>} />
+      <Route path="/admin/security" element={<ProtectedRoute><PlaceholderPage title="Security Settings" /></ProtectedRoute>} />
+      <Route path="/admin/reporting" element={<ProtectedRoute><PlaceholderPage title="Reporting Dashboard" /></ProtectedRoute>} />
+      <Route path="/admin/localization" element={<ProtectedRoute><PlaceholderPage title="Localization Settings" /></ProtectedRoute>} />
+      <Route path="/admin/documentation" element={<ProtectedRoute><PlaceholderPage title="Documentation Center" /></ProtectedRoute>} />
+      <Route path="/admin/database" element={<ProtectedRoute><PlaceholderPage title="Database Administration" /></ProtectedRoute>} />
+      <Route path="/admin/system-settings" element={<ProtectedRoute><PlaceholderPage title="System Settings" /></ProtectedRoute>} />
+      
+      {/* Account Routes */}
+      <Route path="/settings/billing" element={<ProtectedRoute><PlaceholderPage title="Billing Information" /></ProtectedRoute>} />
+
+      {/* Data Management Routes */}
       <Route
         path="/data-management/customers"
         element={
           <ProtectedRoute>
             <Navigate to="/customer-management/directory" replace />
-          </ProtectedRoute>
-        }
-      />
-
-      {/* Alias or placeholder for /settings/billing */}
-      <Route
-        path="/settings/billing"
-        element={
-          <ProtectedRoute>
-            <BillingPlaceholder />
           </ProtectedRoute>
         }
       />

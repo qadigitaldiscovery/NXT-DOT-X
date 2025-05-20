@@ -1,25 +1,19 @@
+
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { toast } from 'sonner';
 import { useAuth } from '../context/AuthContext';
 import DashboardModules from '../components/master-dash/DashboardModules';
-import SharedDashboardLayout from '../components/layout/SharedDashboardLayout';
+import MasterDashSidebar from '../components/master-dash/MasterDashSidebar';
 import { ChevronLeft, ChevronRight, Home } from 'lucide-react';
 import { Button } from '../components/ui/button';
-
-/**
- * Removed "All Modules," "Project Management," etc. references to better align 
- * with the new “Secondary Systems Module” sidebar changes.
- */
 
 const MasterDash: React.FC = () => {
   console.log("⭐ MasterDash component being rendered");
   const navigate = useNavigate();
+  const location = useLocation();
   const { user } = useAuth() || { user: null };
-
-  // Example user preference states (placeholder)
-  const [loadingPrefs, setLoadingPrefs] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [sidebarOpen, setSidebarOpen] = useState(true);
 
   // Check if user is authenticated
   useEffect(() => {
@@ -61,47 +55,20 @@ const MasterDash: React.FC = () => {
     </div>
   );
 
-  // Error or loading states for user preferences
-  if (error) {
-    console.error("❌ Error loading preferences:", error);
-    return (
-      <SharedDashboardLayout 
-        moduleTitle="Business Management Platform" 
-        navCategories={[]} 
-        customFooterContent={navigationFooter} 
-        showTopLeftToggle={true} 
-        removeBottomToggle={false} 
-      >
-        <DashboardModules />
-      </SharedDashboardLayout>
-    );
-  }
-
-  if (loadingPrefs) {
-    console.log("⭐ Preferences loading");
-    return (
-      <div className="flex h-screen w-full items-center justify-center bg-gray-900">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-white mx-auto mb-4"></div>
-          <p className="text-gray-300">Loading dashboard preferences...</p>
-        </div>
-      </div>
-    );
-  }
-
-  console.log("⭐ Rendering MasterDash without the old 'All Modules' & co. to avoid duplication with the 'Secondary Systems Module' sidebar");
-
   return (
-    <SharedDashboardLayout 
-      moduleTitle="Business Management Platform" 
-      navCategories={[]} 
-      customFooterContent={navigationFooter} 
-      showTopLeftToggle={true} 
-      removeBottomToggle={false} 
-      sidebarClassName="bg-gray-900"
-    >
-      <DashboardModules />
-    </SharedDashboardLayout>
+    <div className="flex h-screen bg-gray-900">
+      {/* Sidebar */}
+      <MasterDashSidebar activePath={location.pathname} />
+      
+      {/* Main content */}
+      <div className="flex-1 flex flex-col overflow-auto">
+        <div className="p-6">
+          <h1 className="text-2xl font-bold text-white mb-6">Business Management Platform</h1>
+          <DashboardModules />
+        </div>
+        {navigationFooter}
+      </div>
+    </div>
   );
 };
 
