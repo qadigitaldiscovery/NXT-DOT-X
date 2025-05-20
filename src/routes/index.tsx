@@ -36,3 +36,4 @@ export const appRoutes: RouteObject[] = [
   /* fallback → home */
   { path: "*", element: <Navigate to="/" replace /> },
 ];
+ 
