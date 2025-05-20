@@ -32,22 +32,31 @@ export const SidebarItem: React.FC<SidebarItemProps> = ({
     "flex items-center px-3 py-2 rounded-md transition-colors",
     isActive ? activeTextColor : textColor,
     isActive ? activeBgColor : hoverBgColor,
-    !isActive && textHoverColor
+    !isActive && textHoverColor,
+    "hover:underline"
   );
 
   if (path) {
     return (
-      <NavLink to={path} className={itemClasses} onClick={onClick}>
-        {icon && <span className="mr-2">{icon}</span>}
+      <NavLink to={path} className={itemClasses} onClick={onClick} aria-label={label}>
+        {icon && <span className="mr-2" aria-hidden="true">{icon}</span>}
         <span className="text-sm">{label}</span>
       </NavLink>
     );
   }
 
   return (
-    <button className={itemClasses} onClick={onClick}>
-      {icon && <span className="mr-2">{icon}</span>}
+    <a 
+      href="#"
+      className={itemClasses} 
+      onClick={(e) => {
+        e.preventDefault();
+        if (onClick) onClick();
+      }}
+      aria-label={label}
+    >
+      {icon && <span className="mr-2" aria-hidden="true">{icon}</span>}
       <span className="text-sm">{label}</span>
-    </button>
+    </a>
   );
 };

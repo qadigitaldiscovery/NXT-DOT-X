@@ -1,33 +1,32 @@
 
 import * as React from "react"
 import { PanelLeft } from "lucide-react"
-import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import { useSidebar } from "./sidebar-context"
 import { SidebarTriggerProps } from "./types"
 
 const SidebarTrigger = React.forwardRef<
-  React.ElementRef<typeof Button>,
-  SidebarTriggerProps
+  HTMLAnchorElement,
+  Omit<SidebarTriggerProps, 'ref'> & React.AnchorHTMLAttributes<HTMLAnchorElement>
 >(({ className, onClick, ...props }, ref) => {
-  const { toggleSidebar } = useSidebar()
+  const { toggleSidebar } = useSidebar();
 
   return (
-    <Button
+    <a
       ref={ref}
+      href="#"
       data-sidebar="trigger"
-      variant="ghost"
-      size="icon"
-      className={cn("h-7 w-7", className)}
+      className={cn("inline-flex items-center justify-center h-7 w-7 text-primary hover:text-primary/80", className)}
       onClick={(event) => {
-        onClick?.(event)
-        toggleSidebar()
+        event.preventDefault();
+        onClick?.(event as any);
+        toggleSidebar();
       }}
+      aria-label="Toggle Sidebar"
       {...props}
     >
-      <PanelLeft />
-      <span className="sr-only">Toggle Sidebar</span>
-    </Button>
+      <PanelLeft aria-hidden="true" />
+    </a>
   )
 })
 SidebarTrigger.displayName = "SidebarTrigger"

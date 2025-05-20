@@ -1,7 +1,7 @@
 
 import React from 'react';
-import { Button } from '../../../components/ui/button';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 interface SidebarToggleButtonProps { 
   collapsed?: boolean; 
@@ -21,17 +21,23 @@ export const SidebarToggleButton: React.FC<SidebarToggleButtonProps> = ({
   const handleClick = onToggle || onClick || (() => {});
   
   return (
-    <Button
-      variant="ghost"
-      size="icon"
-      className="fixed bottom-4 left-4 z-30 rounded-full bg-gray-800 text-white hover:bg-gray-700 shadow-lg"
-      onClick={handleClick}
+    <a
+      href="#"
+      onClick={(e) => {
+        e.preventDefault();
+        handleClick();
+      }}
+      className={cn(
+        "fixed bottom-4 left-4 z-30 flex items-center justify-center",
+        "w-10 h-10 text-white hover:text-gray-200"
+      )}
+      aria-label={isOpen ? "Collapse sidebar" : "Expand sidebar"}
     >
       {isOpen ? (
-        <ChevronLeft className="h-5 w-5" />
+        <ChevronLeft className="h-5 w-5" aria-hidden="true" />
       ) : (
-        <ChevronRight className="h-5 w-5" />
+        <ChevronRight className="h-5 w-5" aria-hidden="true" />
       )}
-    </Button>
+    </a>
   );
 };
