@@ -1,9 +1,9 @@
-import { Suspense } from 'react';
-import { BrowserRouter, useRoutes } from 'react-router-dom';
-import { AuthProvider }   from '@/context/AuthContext';
-import { ThemeProvider }  from '@/context/ThemeContext';
-import { Toaster }        from 'sonner';
-import { appRoutes }      from '@/routes';
+import { Suspense } from "react";
+import { BrowserRouter, useRoutes } from "react-router-dom";
+import { AuthProvider }   from "@/context/AuthContext";
+import { ThemeProvider }  from "@/context/ThemeContext";
+import { Toaster }        from "sonner";
+import { appRoutes }      from "@/routes";
 
 export default function App() {
   return (
@@ -19,3 +19,4 @@ export default function App() {
     </AuthProvider>
   );
 }
+ 
