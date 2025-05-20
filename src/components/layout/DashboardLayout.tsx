@@ -3,8 +3,9 @@ import React, { useState, useEffect } from 'react';
 import { Outlet } from 'react-router-dom';
 import MasterDashSidebar from '../master-dash/MasterDashSidebar';
 import { MasterDashNavbar } from '../master-dash/MasterDashNavbar';
-import { MasterDashFooter } from '../master-dash/MasterDashFooter';
+import MasterDashFooter from '../master-dash/MasterDashFooter';
 import { useIsMobile } from '../../hooks/use-mobile';
+import { SidebarProvider } from '@/components/ui/sidebar/index';
 
 export function DashboardLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
