@@ -135,7 +135,7 @@ const Landing = () => {
               </div>
             </div>
             
-            <Button type="submit" disabled={isLoading || loading} className="w-full bg-gradient-to-r from-red-600 to-red-800 hover:from-red-700 hover:to-red-900 h-8 text-white text-sm font-bold uppercase tracking-wider rounded-lg transition-all duration-300 shadow-md hover:shadow-lg bg-zinc-500 hover:bg-zinc-400">
+            <Button type="submit" disabled={isLoading || loading} className="w-full bg-gradient-to-r from-red-600 to-red-800 hover:from-red-700 hover:to-red-900 h-8 text-white text-sm font-bold uppercase tracking-wider rounded-lg transition-all duration-300 shadow-md hover:shadow-lg bg-zinc-600 hover:bg-zinc-500">
               {isLoading || loading ? 'SIGNING IN...' : 'LOGIN'}
             </Button>
           </form>
