@@ -9,7 +9,8 @@
     "strict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "verbatimModuleSyntax": true,
+    "/* Re-enable classic behaviour so value-less type imports are elided */
+    "importsNotUsedAsValues": "preserve",
 
     "esModuleInterop": true,
     "skipLibCheck": true,
