@@ -111,8 +111,8 @@ const Landing = () => {
         <div className="flex flex-col items-center justify-center w-[340px]">
           {/* Logo */}
           <div className="mb-3">
-            <h1 className="bg-clip-text bg-gradient-to-r from-pink-300 via-purple-300 to-blue-300 text-center text-zinc-600 font-bold text-4xl">NXT LEVEL TECH</h1>
-            <p className="text-center text-gray-200 mt-0.5 text-xs">AI Powered Business Management</p>
+            <h1 className="bg-clip-text bg-gradient-to-r from-pink-300 via-purple-300 to-blue-300 text-center text-zinc-600 font-bold px-[3px] py-0 my-[5px] mx-0 text-4xl">NXT LEVEL TECH</h1>
+            <p className="text-center text-gray-200 mt-0.5 text-xs my-0 px-px">AI Powered Business Management</p>
           </div>
 
           {/* Login Form */}
