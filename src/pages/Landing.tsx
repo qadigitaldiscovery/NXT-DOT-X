@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '../components/ui/button';
@@ -106,76 +105,75 @@ const Landing = () => {
         }} 
       />
       
-      {/* Overlay for better text visibility */}
+      {/* Overlay for background opacity (50%) */}
       <div className="absolute inset-0 z-10 bg-black bg-opacity-50" />
 
-      {/* Centered login circle with logo and form */}
+      {/* Login box container - now square with frosted effect */}
       <div className="relative z-20 flex flex-col items-center justify-center">
-        <div className="w-[280px] h-[280px] rounded-full flex items-center justify-center my-0">
-          {/* Login box with circular design */}
-          <div className="w-full h-full rounded-full flex items-center justify-center relative bg-black/80 backdrop-blur-md shadow-lg border border-gray-600/30">
-            {/* Logo and form container */}
-            <div className="w-[240px] flex flex-col items-center justify-center p-3">
-              {/* Logo */}
-              <div className="mb-1">
-                <h1 className="font-bold text-transparent bg-clip-text bg-gradient-to-r from-pink-300 via-purple-300 to-blue-300 text-center text-2xl">NXT LEVEL TECH</h1>
-                <p className="text-center text-gray-200 mt-0.5 text-xs">AI Powered Business Management</p>
-              </div>
+        <div className="w-[340px] frosted-card">
+          <div className="glossy-overlay"></div>
+          
+          {/* Logo and form container */}
+          <div className="flex flex-col items-center justify-center p-5">
+            {/* Logo */}
+            <div className="mb-3">
+              <h1 className="font-bold text-transparent bg-clip-text bg-gradient-to-r from-pink-300 via-purple-300 to-blue-300 text-center text-2xl">NXT LEVEL TECH</h1>
+              <p className="text-center text-gray-200 mt-0.5 text-xs">AI Powered Business Management</p>
+            </div>
 
-              {/* Login Form */}
-              <form onSubmit={handleLogin} className="w-full space-y-2 mt-1">
-                <div className="space-y-1">
-                  <div className="relative">
-                    <Input 
-                      id="email" 
-                      type="email" 
-                      placeholder="Email" 
-                      value={email} 
-                      onChange={e => setEmail(e.target.value)} 
-                      required 
-                      className="bg-black/50 border-gray-600 focus:border-purple-400 h-7 pl-8 text-white text-sm rounded-lg" 
-                      autoComplete="email" 
-                      disabled={isLoading || loading} 
-                    />
-                    <div className="absolute inset-y-0 left-0 pl-2.5 flex items-center pointer-events-none">
-                      <span className="text-gray-400 text-xs">👤</span>
-                    </div>
+            {/* Login Form */}
+            <form onSubmit={handleLogin} className="w-full space-y-3 mt-2">
+              <div className="space-y-1">
+                <div className="relative">
+                  <Input 
+                    id="email" 
+                    type="email" 
+                    placeholder="Email" 
+                    value={email} 
+                    onChange={e => setEmail(e.target.value)} 
+                    required 
+                    className="bg-black/50 border-gray-600 focus:border-purple-400 h-8 pl-8 text-white text-sm rounded-lg" 
+                    autoComplete="email" 
+                    disabled={isLoading || loading} 
+                  />
+                  <div className="absolute inset-y-0 left-0 pl-2.5 flex items-center pointer-events-none">
+                    <span className="text-gray-400 text-xs">👤</span>
                   </div>
                 </div>
-                
-                <div className="space-y-1">
-                  <div className="relative">
-                    <Input 
-                      id="password" 
-                      type="password" 
-                      placeholder="Password" 
-                      value={password} 
-                      onChange={e => setPassword(e.target.value)} 
-                      required 
-                      className="bg-black/50 border-gray-600 focus:border-purple-400 h-7 pl-8 text-white text-sm rounded-lg" 
-                      autoComplete="current-password" 
-                      disabled={isLoading || loading} 
-                    />
-                    <div className="absolute inset-y-0 left-0 pl-2.5 flex items-center pointer-events-none">
-                      <span className="text-gray-400 text-xs">🔒</span>
-                    </div>
-                  </div>
-                </div>
-                
-                <Button 
-                  type="submit" 
-                  disabled={isLoading || loading} 
-                  className="w-full bg-gradient-to-r from-red-600 to-red-800 hover:from-red-700 hover:to-red-900 
-                  h-7 text-white text-sm font-bold uppercase tracking-wider rounded-lg transition-all duration-300 shadow-md hover:shadow-lg"
-                >
-                  {isLoading || loading ? 'SIGNING IN...' : 'LOGIN'}
-                </Button>
-              </form>
-              
-              {/* Setup Test User Button */}
-              <div className="mt-2 w-full flex justify-center">
-                <SetupTestUser />
               </div>
+              
+              <div className="space-y-1">
+                <div className="relative">
+                  <Input 
+                    id="password" 
+                    type="password" 
+                    placeholder="Password" 
+                    value={password} 
+                    onChange={e => setPassword(e.target.value)} 
+                    required 
+                    className="bg-black/50 border-gray-600 focus:border-purple-400 h-8 pl-8 text-white text-sm rounded-lg" 
+                    autoComplete="current-password" 
+                    disabled={isLoading || loading} 
+                  />
+                  <div className="absolute inset-y-0 left-0 pl-2.5 flex items-center pointer-events-none">
+                    <span className="text-gray-400 text-xs">🔒</span>
+                  </div>
+                </div>
+              </div>
+              
+              <Button 
+                type="submit" 
+                disabled={isLoading || loading} 
+                className="w-full bg-gradient-to-r from-red-600 to-red-800 hover:from-red-700 hover:to-red-900 
+                h-8 text-white text-sm font-bold uppercase tracking-wider rounded-lg transition-all duration-300 shadow-md hover:shadow-lg"
+              >
+                {isLoading || loading ? 'SIGNING IN...' : 'LOGIN'}
+              </Button>
+            </form>
+            
+            {/* Setup Test User Button */}
+            <div className="mt-3 w-full flex justify-center">
+              <SetupTestUser />
             </div>
           </div>
         </div>
