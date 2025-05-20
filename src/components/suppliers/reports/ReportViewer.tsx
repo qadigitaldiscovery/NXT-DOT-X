@@ -98,4 +98,3 @@ export const ReportViewer: React.FC<ReportViewerProps> = ({
       </CardContent>
     </Card>
   );
-};

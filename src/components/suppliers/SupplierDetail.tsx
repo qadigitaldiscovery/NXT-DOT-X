@@ -126,7 +126,6 @@ export const SupplierDetail: React.FC<SupplierDetailProps> = ({ supplierId }) =>
               link.click();
               document.body.removeChild(link);
             }}
-          />
         </TabsContent>
       </Tabs>
     </div>

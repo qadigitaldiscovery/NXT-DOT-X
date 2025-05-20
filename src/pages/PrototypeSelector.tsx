@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-const PrototypeSelector = () => {
+const MasterDash = () => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("all");
   
@@ -15,7 +15,8 @@ const PrototypeSelector = () => {
       { title: "Trading System", description: "Access trading analytics and operations", color: "bg-nxt-accent", route: "/trading-system" },
       { title: "Tech Hub", description: "Access AI tools and technical integrations", color: "bg-purple-600", hoverColor: "hover:bg-purple-700", route: "/tech-hub" },
       { title: "Social Media", description: "Manage social accounts and content", color: "bg-blue-600", hoverColor: "hover:bg-blue-700", route: "/social-media" },
-      { title: "DOT-X", description: "Advanced command center with AI agents", color: "bg-indigo-600", hoverColor: "hover:bg-indigo-700", route: "/dot-x" }
+      { title: "DOT-X", description: "Advanced command center with AI agents", color: "bg-indigo-600", hoverColor: "hover:bg-indigo-700", route: "/dot-x" },
+      { title: "Project Management", description: "Manage projects, tasks and team collaboration", color: "bg-green-600", hoverColor: "hover:bg-green-700", route: "/projects" }
     ],
     data: [
       { title: "Data Management", description: "Manage costs, pricing, suppliers, and more", color: "bg-nxt-primary", route: "/data-management" }
@@ -29,7 +30,8 @@ const PrototypeSelector = () => {
       { title: "DOT-X", description: "Advanced command center with AI agents", color: "bg-indigo-600", hoverColor: "hover:bg-indigo-700", route: "/dot-x" }
     ],
     operations: [
-      { title: "Trading System", description: "Access trading analytics and operations", color: "bg-nxt-accent", route: "/trading-system" }
+      { title: "Trading System", description: "Access trading analytics and operations", color: "bg-nxt-accent", route: "/trading-system" },
+      { title: "Project Management", description: "Manage projects, tasks and team collaboration", color: "bg-green-600", hoverColor: "hover:bg-green-700", route: "/projects" }
     ]
   };
 
@@ -71,7 +73,7 @@ const PrototypeSelector = () => {
           {modules[activeTab as keyof typeof modules].map((module, index) => (
             <div
               key={index}
-              className={`${module.color} text-white rounded-xl p-8 shadow-lg ${module.hoverColor || `hover:opacity-90`} transition flex flex-col items-center cursor-pointer`}
+              className={`${module.color} text-white rounded-xl p-8 shadow-lg ${module.hoverColor || `hover:${module.color.replace('bg-', 'bg-')}/90`} transition flex flex-col items-center cursor-pointer`}
               onClick={() => navigate(module.route)}
             >
               <span className="text-2xl font-semibold mb-2">{module.title}</span>
@@ -84,4 +86,4 @@ const PrototypeSelector = () => {
   );
 };
 
-export default PrototypeSelector;
+export default MasterDash;

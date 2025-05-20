@@ -1,27 +1,14 @@
-
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react-swc';
 import path from 'path';
-import { componentTagger } from './src/lib/component-tagger';
+import { componentTagger } from "lovable-tagger";
 
-<<<<<<< Updated upstream
+// https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
   plugins: [
     react(),
     mode === 'development' && componentTagger(),
   ].filter(Boolean),
-  resolve: {
-    alias: {
-      '@': path.resolve(__dirname, './src'),
-=======
-export default defineConfig({
-  plugins: [
-    react(),
-    componentTagger({
-      mode: 'development',
-      tagPrefix: 'lovable'
-    })
-  ],
   build: {
     outDir: 'dist',
     rollupOptions: {
@@ -40,30 +27,19 @@ export default defineConfig({
           ],
         },
       },
->>>>>>> Stashed changes
     },
   },
   server: {
     host: "::",
-    port: 8080
+    port: 3000,
+    strictPort: false,
+    proxy: {},
+    open: true,
   },
-<<<<<<< Updated upstream
-  optimizeDeps: {
-    esbuildOptions: {
-      tsconfigRaw: `{
-        "compilerOptions": {
-          "target": "ES2020",
-          "useDefineForClassFields": true,
-          "lib": ["ES2020", "DOM", "DOM.Iterable"],
-          "module": "ESNext",
-          "skipLibCheck": true,
-          "moduleResolution": "bundler"
-        }
-      }`
-    }
-  }
-}));
-=======
+  preview: {
+    port: 3000,
+    open: true,
+  },
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
@@ -72,6 +48,8 @@ export default defineConfig({
       "hooks": path.resolve(__dirname, "./src/hooks"),
     },
   },
+  base: '/',
+  appType: 'spa',
   optimizeDeps: {
     include: [
       'react', 
@@ -85,5 +63,8 @@ export default defineConfig({
       'tailwind-merge'
     ],
   },
-});
->>>>>>> Stashed changes
+  define: {
+    'import.meta.env.VITE_SUPABASE_URL': JSON.stringify(process.env.VITE_SUPABASE_URL),
+    'import.meta.env.VITE_SUPABASE_ANON_KEY': JSON.stringify(process.env.VITE_SUPABASE_ANON_KEY),
+  },
+}));

@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 
 import "./styles/globals.css";
 import { Toaster } from "sonner";
@@ -20,29 +21,22 @@ const queryClient = new QueryClient({
     },
   },
 });
+=======
 
-// Initialize app
-const AppWithProviders = () => {
-  return (
-    <ErrorBoundary>
-      <QueryClientProvider client={queryClient}>
-        <BrowserRouter>
-          <AuthProvider>
-            <UserManagementProvider>
-              <ThemeProvider>
-                <ModulesProvider>
-                  <AppRoutes />
-                  <Toaster />
-                </ModulesProvider>
-              </ThemeProvider>
-            </UserManagementProvider>
-          </AuthProvider>
-        </BrowserRouter>
-      </QueryClientProvider>
-    </ErrorBoundary>
-  );
-};
+import React from "react";
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
-// Export the application
-const App = AppWithProviders;
+function App() {
+  const navigate = useNavigate();
+>>>>>>> Stashed changes
+
+  useEffect(() => {
+    // Redirect to main dashboard
+    navigate("/master");
+  }, [navigate]);
+
+  return null; // No need to render anything as we're redirecting
+}
+
 export default App;
