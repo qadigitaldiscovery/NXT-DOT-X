@@ -21,7 +21,7 @@ const RootHandler: React.FC = () => {
       console.log("RootHandler: Not authenticated, navigating to landing page");
       navigate('/landing');
     }
-  }, [isAuthenticated, navigate, isLoading]);
+  }, [isAuthenticated, navigate]);
 
   return (
     <div className="h-screen w-full flex items-center justify-center">
