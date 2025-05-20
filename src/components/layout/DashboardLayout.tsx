@@ -2,11 +2,10 @@
 import React, { useState, useEffect } from 'react';
 import { Outlet } from 'react-router-dom';
 import MasterDashSidebar from '../master-dash/MasterDashSidebar';
-// Fix import to use default import instead of named import
 import MasterDashNavbar from '../master-dash/MasterDashNavbar';
 import MasterDashFooter from '../master-dash/MasterDashFooter';
 import { useIsMobile } from '../../hooks/use-mobile';
-10 |
+
 export function DashboardLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const isMobile = useIsMobile();
@@ -28,7 +27,7 @@ export function DashboardLayout() {
   return (
     <div className="flex min-h-screen bg-gradient-to-br from-gray-900 to-gray-950">
       <MasterDashSidebar 
-        activePath={location.pathname}
+        activePath={window.location.pathname}
         open={sidebarOpen}
         onToggle={toggleSidebar}
       />

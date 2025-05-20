@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -8,6 +9,8 @@ export interface Module {
   description: string | null | undefined; // Allow null values from the database
   created_at: string | null;
   updated_at: string | null;
+  isEnabled?: boolean;
+  isVisible?: boolean;
 }
 
 export const useModules = () => {

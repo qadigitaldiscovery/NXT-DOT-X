@@ -7,7 +7,7 @@ import { cn } from '../../lib/utils';
 import { Outlet } from 'react-router-dom';
 import { Home, Users, Settings, Clock, BarChart3, UserPlus } from 'lucide-react';
 import { NavCategory, NavItem } from './sidebar/types';
-11 |
+
 const customerNavItems: NavCategory[] = [
   {
     name: "CUSTOMER MANAGEMENT",

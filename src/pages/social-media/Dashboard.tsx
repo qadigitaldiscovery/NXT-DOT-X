@@ -4,6 +4,7 @@ import { Calendar, Plus } from "lucide-react";
 import { SocialMediaDashboardTabs } from "@/features/social-media/components/SocialMediaDashboardTabs";
 import { useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
+import { getLinkClassName } from "@/lib/link-utils";
 
 export default function SocialMediaDashboard() {
   const navigate = useNavigate();
@@ -22,7 +23,7 @@ export default function SocialMediaDashboard() {
               e.preventDefault();
               navigate("/social-media/calendar");
             }}
-            className="inline-flex items-center text-sm font-medium text-primary hover:text-primary/80 hover:underline"
+            className={cn(getLinkClassName(), "inline-flex items-center text-sm")}
             aria-label="View social media calendar"
           >
             <Calendar size={16} className="mr-2" aria-hidden="true" />
@@ -34,7 +35,7 @@ export default function SocialMediaDashboard() {
               e.preventDefault();
               navigate("/social-media/create-post");
             }}
-            className="inline-flex items-center text-sm font-medium text-primary hover:text-primary/80 hover:underline"
+            className={cn(getLinkClassName(), "inline-flex items-center text-sm")}
             aria-label="Create new social media post"
           >
             <Plus size={16} className="mr-2" aria-hidden="true" />
