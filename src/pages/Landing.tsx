@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '../components/ui/button';
@@ -105,8 +106,8 @@ const Landing = () => {
         }} 
       />
       
-      {/* Overlay for background opacity (50%) */}
-      <div className="absolute inset-0 z-10 bg-black bg-opacity-50" />
+      {/* Overlay for background opacity (25% - reduced from 50%) */}
+      <div className="absolute inset-0 z-10 bg-black bg-opacity-25" />
 
       {/* Login box container - frosted black effect */}
       <div className="relative z-20 flex flex-col items-center justify-center">
