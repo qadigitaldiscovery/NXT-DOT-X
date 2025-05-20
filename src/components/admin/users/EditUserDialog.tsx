@@ -68,7 +68,7 @@ export function EditUserDialog({ user, open, onOpenChange, onUserUpdated }: Edit
   const handleSubmit = (data: UserFormData) => {
     if (!user) return;
 
-    toast.success('User Updated', `User "${data.username}" has been updated successfully.`);
+    toast.success(`User "${data.username}" has been updated successfully.`);
     
     if (onUserUpdated) {
       onUserUpdated(user.id, {
