@@ -5,7 +5,7 @@ const LoyaltyProgram = () => {
   return (
     <div className="col-span-1">
       <ModuleCard
-        title="Loyalty Program"
+        title="LOYALTY PROGRAM"
         path="/loyalty-rewards"
         variant="default"
         features={[

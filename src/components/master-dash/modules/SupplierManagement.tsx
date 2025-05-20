@@ -5,7 +5,7 @@ const SupplierManagement = () => {
   return (
     <div className="col-span-1">
       <ModuleCard
-        title="Supplier Management"
+        title="SUPPLIER MANAGEMENT"
         path="/supplier-management"
         variant="default"
         features={[

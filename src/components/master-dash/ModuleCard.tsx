@@ -3,10 +3,12 @@ import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Link } from 'react-router-dom';
 import { cn } from '@/lib/utils';
+
 interface Feature {
   name: string;
   path: string;
 }
+
 interface ModuleCardProps {
   title: string;
   path?: string;
@@ -14,6 +16,7 @@ interface ModuleCardProps {
   features?: Feature[];
   className?: string;
 }
+
 export const ModuleCard: React.FC<ModuleCardProps> = ({
   title,
   path,
@@ -26,7 +29,9 @@ export const ModuleCard: React.FC<ModuleCardProps> = ({
     primary: "bg-blue-900 hover:bg-blue-800 border-blue-800",
     secondary: "bg-purple-900 hover:bg-purple-800 border-purple-800"
   };
-  return <Card className={cn(cardVariants[variant], "overflow-hidden shadow-md", className)}>
+
+  return (
+    <Card className={cn(cardVariants[variant], "overflow-hidden shadow-md", className)}>
       <CardHeader className="pb-1 pt-2 bg-zinc-500 py-[2px]">
         <CardTitle className="font-medium text-white text-center text-sm">
           {title}
@@ -42,5 +47,6 @@ export const ModuleCard: React.FC<ModuleCardProps> = ({
           </div>
         ))}
       </CardContent>
-    </Card>;
+    </Card>
+  );
 };

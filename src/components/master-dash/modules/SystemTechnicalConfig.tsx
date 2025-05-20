@@ -5,7 +5,7 @@ const SystemTechnicalConfig = () => {
   return (
     <div className="col-span-1">
       <ModuleCard
-        title="System Technical Configuration"
+        title="SYSTEM TECHNICAL CONFIG"
         path="/system/config"
         variant="default"
         features={[

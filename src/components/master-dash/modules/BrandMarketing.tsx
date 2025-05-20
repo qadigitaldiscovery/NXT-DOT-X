@@ -5,7 +5,7 @@ const BrandMarketing = () => {
   return (
     <div className="col-span-1">
       <ModuleCard
-        title="Brand Marketing"
+        title="BRAND MARKETING"
         path="/brand-marketing"
         variant="default"
         features={[

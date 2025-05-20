@@ -5,7 +5,7 @@ const SocialMediaMarketing = () => {
   return (
     <div className="col-span-1">
       <ModuleCard
-        title="Social Media Marketing"
+        title="SOCIAL MEDIA MARKETING"
         path="/social-media"
         variant="default"
         features={[

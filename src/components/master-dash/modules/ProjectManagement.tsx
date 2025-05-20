@@ -5,7 +5,7 @@ const ProjectManagement = () => {
   return (
     <div className="col-span-1">
       <ModuleCard
-        title="Project Management"
+        title="PROJECT MANAGEMENT"
         path="/projects"
         variant="default"
         features={[
