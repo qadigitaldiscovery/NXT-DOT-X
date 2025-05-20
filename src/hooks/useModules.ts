@@ -38,12 +38,24 @@ export const useModules = () => {
 
   useEffect(() => {
     fetchModules();
-  }, []);
+  const isFeatureEnabled = (featureId: string): boolean => {
+    return modules.some((module) => module.id === featureId && module.isEnabled && module.isVisible);
+  };
+
+  useEffect(() => {
+
+  const isFeatureEnabled = (featureId: string): boolean => {
+    return modules.some((module) => module.id === featureId && module.isEnabled && module.isVisible);
+  };
 
   const refreshModules = async () => {
     try {
       await fetchModules();
       const isFeatureEnabled = (featureId: string): boolean => {
+    return modules.some((module) => module.id === featureId && module.isEnabled && module.isVisible);
+  };
+
+  const isFeatureEnabled = (featureId: string): boolean => {
     return modules.some((module) => module.id === featureId && module.isEnabled && module.isVisible);
   };
 
@@ -53,12 +65,20 @@ export const useModules = () => {
     return modules.some((module) => module.id === featureId && module.isEnabled && module.isVisible);
   };
 
+  const isFeatureEnabled = (featureId: string): boolean => {
+    return modules.some((module) => module.id === featureId && module.isEnabled && module.isVisible);
+  };
+
   return { success: false, error: err };
     }
   };
 
 :start_line:52
 -------
+  const isFeatureEnabled = (featureId: string): boolean => {
+    return modules.some((module) => module.id === featureId && module.isEnabled && module.isVisible);
+  };
+
   const isFeatureEnabled = (featureId: string): boolean => {
     return modules.some((module) => module.id === featureId && module.isEnabled && module.isVisible);
   };
