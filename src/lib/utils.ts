@@ -44,3 +44,15 @@ export function formatCurrency(
     minimumFractionDigits: 2,
   }).format(value);
 }
+
+/**
+ * cn
+ * --
+ * Utility to concatenate conditional class names.
+ *
+ * @param classes  Array of strings or falsy values
+ * @returns        A space-separated string of truthy class names
+ */
+export function cn(...classes: (string | false | undefined | null)[]): string {
+  return classes.filter(Boolean).join(' ');
+}
