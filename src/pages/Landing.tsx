@@ -82,22 +82,32 @@ const Landing = () => {
 
   return (
     <div className="h-screen w-full flex flex-col items-center justify-center relative overflow-hidden">
-      {/* Full-screen background with gradient */}
-      <div className="absolute inset-0 z-0 bg-gradient-to-br from-blue-lightest via-white to-blue-lighter"></div>
+      {/* Full-screen background with uploaded image */}
+      <div 
+        className="absolute inset-0 z-0 bg-cover bg-center"
+        style={{ 
+          backgroundImage: `url('/lovable-uploads/a3137cb7-43b3-4738-8bd4-142a07a94e5c.png')`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center'
+        }}
+      />
+      
+      {/* Overlay for better text visibility */}
+      <div className="absolute inset-0 z-0 bg-black bg-opacity-40" />
 
       {/* Centered login circle with logo and form */}
       <div className="relative z-10 flex flex-col items-center justify-center">
         <div className="w-[480px] h-auto flex items-center justify-center py-8 my-0">
           {/* Login box with modern design */}
-          <div className="w-full rounded-2xl flex items-center justify-center relative bg-white/80 backdrop-blur-sm shadow-lg border border-blue-lightest">
+          <div className="w-full rounded-2xl flex items-center justify-center relative bg-black/50 backdrop-blur-md shadow-lg border border-gray-600/30">
             {/* Logo and form container */}
             <div className="w-full rounded-2xl overflow-hidden flex flex-col items-center justify-center p-8">
               {/* Logo */}
               <div className="mb-6">
-                <h1 className="text-4xl font-bold text-blue bg-clip-text text-transparent bg-gradient-to-r from-blue-light to-blue">
+                <h1 className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-pink-300 via-purple-300 to-blue-300">
                   Quantum Analytica
                 </h1>
-                <p className="text-center text-blue-light mt-2">Business Analytics Platform</p>
+                <p className="text-center text-gray-200 mt-2">AI Powered Insights, Human-Centric Impacts</p>
               </div>
 
               {/* Login Form */}
@@ -111,12 +121,12 @@ const Landing = () => {
                       value={email} 
                       onChange={e => setEmail(e.target.value)} 
                       required 
-                      className="bg-white/90 border-blue-lighter focus:border-blue h-11 pl-10 text-blue-dark rounded-xl"
+                      className="bg-black/50 border-gray-600 focus:border-purple-400 h-11 pl-10 text-white rounded-xl"
                       autoComplete="email" 
                       disabled={isLoading || loading}
                     />
                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                      <span className="text-blue-light">👤</span>
+                      <span className="text-gray-400">👤</span>
                     </div>
                   </div>
                 </div>
@@ -130,12 +140,12 @@ const Landing = () => {
                       value={password} 
                       onChange={e => setPassword(e.target.value)} 
                       required 
-                      className="bg-white/90 border-blue-lighter focus:border-blue h-11 pl-10 text-blue-dark rounded-xl"
+                      className="bg-black/50 border-gray-600 focus:border-purple-400 h-11 pl-10 text-white rounded-xl"
                       autoComplete="current-password"
                       disabled={isLoading || loading}
                     />
                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                      <span className="text-blue-light">🔒</span>
+                      <span className="text-gray-400">🔒</span>
                     </div>
                   </div>
                 </div>
@@ -143,16 +153,16 @@ const Landing = () => {
                 <Button 
                   type="submit" 
                   disabled={isLoading || loading} 
-                  className="w-full bg-gradient-to-r from-blue to-blue-light hover:from-blue-light hover:to-blue 
+                  className="w-full bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600 
                              h-12 text-white 
                              font-bold uppercase tracking-wider rounded-xl transition-all duration-300 shadow-md hover:shadow-lg"
                 >
                   {isLoading || loading ? 'SIGNING IN...' : 'LOGIN'}
                 </Button>
                 
-                <div className="text-sm text-center text-gray-500 mt-4">
+                <div className="text-sm text-center text-gray-300 mt-4">
                   <p className="font-bold">Use admin@example.com / Pass1</p>
-                  <p className="mt-2 text-blue-light">Secure Business Analytics Platform</p>
+                  <p className="mt-2 text-gray-400">Secure Business Analytics Platform</p>
                 </div>
               </form>
               
@@ -165,7 +175,7 @@ const Landing = () => {
         </div>
 
         {/* Quantum Analytica Footer */}
-        <div className="mt-8 text-center text-blue">
+        <div className="mt-8 text-center text-white">
           <p className="text-sm opacity-80">© 2025 Quantum Analytica. All rights reserved.</p>
         </div>
       </div>
