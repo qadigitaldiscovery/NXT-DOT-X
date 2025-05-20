@@ -11,11 +11,14 @@ import { useUserPreferences } from '@/hooks/useUserPreferences';
 import { NavCategory } from '@/components/layout/sidebar/types';
 
 const MasterDash = () => {
+  console.log("⭐ MasterDash component being rendered");
   const navigate = useNavigate();
   const location = useLocation();
   const {
     user
   } = useAuth();
+  console.log("⭐ User auth state:", user ? "Logged in" : "Not logged in");
+  
   const {
     preferences,
     setPreferences,
@@ -32,7 +35,9 @@ const MasterDash = () => {
 
   // Check if user is authenticated
   useEffect(() => {
+    console.log("⭐ MasterDash useEffect running, user:", user);
     if (!user) {
+      console.log("⭐ No user, redirecting to landing page");
       navigate('/landing');
       toast.error('Please sign in to access this page');
     }
@@ -138,6 +143,7 @@ const MasterDash = () => {
 
   // If there's an error loading preferences, show fallback
   if (error) {
+    console.error("❌ Error loading preferences:", error);
     return (
       <SharedDashboardLayout 
         moduleTitle="Business Management Platform" 
@@ -154,6 +160,7 @@ const MasterDash = () => {
 
   // If preferences are loading, render a more stable loading state
   if (prefsLoading) {
+    console.log("⭐ Preferences loading");
     return (
       <div className="flex h-screen w-full items-center justify-center bg-gray-900">
         <div className="text-center">
@@ -163,6 +170,8 @@ const MasterDash = () => {
       </div>
     );
   }
+
+  console.log("⭐ Rendering MasterDash with preferences:", preferences);
 
   // Safely access preferences with proper type handling and fallbacks
   const prefsObject = typeof preferences === 'object' && preferences ? preferences : {};

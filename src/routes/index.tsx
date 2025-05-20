@@ -1,33 +1,57 @@
-import React from 'react';
-import { Routes, Route, Navigate, useParams } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
-import { SuppliersTable } from '../components/suppliers/SuppliersTable';
-import { SupplierDetail } from '../components/suppliers/SupplierDetail';
 
-// Wrapper component to get URL params and pass to SupplierDetail
-const SupplierDetailWrapper: React.FC = () => {
-  const { id } = useParams<{ id: string }>();
-  return <SupplierDetail supplierId={id || ''} />;
-};
+import { Route, Routes } from "react-router-dom";
+import RootHandler from "../components/RootHandler";
+import { DashboardLayout } from "../components/layout/DashboardLayout";
+import MasterDash from "../pages/MasterDash";
+import ProtectedRoute from "../components/ProtectedRoute";
+import PrototypeSelector from "../pages/PrototypeSelector";
+import RAGDashboardPage from "../pages/rag-dashboard/RAGDashboardPage";
+import { SupplierRoutes } from "./suppliers";
 
-export const AppRoutes: React.FC = () => {
-  const { isAuthenticated } = useAuth();
-
-  if (!isAuthenticated) {
-    return <Navigate to="/login" replace />;
-  }
-
+export function AppRoutes() {
+  console.log("🚗 Rendering AppRoutes");
   return (
     <Routes>
-      <Route path="/" element={<Navigate to="/beta1/suppliers" replace />} />
-      <Route path="/beta1/suppliers" element={<SuppliersTable />} />
-      <Route 
-        path="/beta1/suppliers/:id" 
-        element={
-          <SupplierDetailWrapper />
-        } 
-      />
-      {/* Add more routes as needed */}
+      {/* Root Route - redirects based on auth state */}
+      <Route path="/" element={<RootHandler />} />
+      
+      {/* Master Dashboard */}
+      <Route path="/master" element={
+        <ProtectedRoute>
+          <MasterDash />
+        </ProtectedRoute>
+      } />
+      
+      {/* RAG Dashboard */}
+      <Route path="/dashboard/rag" element={
+        <ProtectedRoute>
+          <RAGDashboardPage />
+        </ProtectedRoute>
+      } />
+      
+      {/* Prototype Selector */}
+      <Route path="/prototypes" element={
+        <ProtectedRoute>
+          <PrototypeSelector />
+        </ProtectedRoute>
+      } />
+      
+      {/* Main Dashboard Layout */}
+      <Route path="/dashboard" element={
+        <ProtectedRoute>
+          <DashboardLayout />
+        </ProtectedRoute>
+      } />
+
+      {/* Supplier Routes */}
+      <Route path="/beta1/suppliers/*" element={
+        <ProtectedRoute>
+          <SupplierRoutes />
+        </ProtectedRoute>
+      } />
+
+      {/* Fallback - catch any other routes */}
+      <Route path="*" element={<RootHandler />} />
     </Routes>
   );
-};
+}
