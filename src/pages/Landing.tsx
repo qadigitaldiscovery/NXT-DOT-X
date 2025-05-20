@@ -108,13 +108,11 @@ const Landing = () => {
       {/* Overlay for background opacity (50%) */}
       <div className="absolute inset-0 z-10 bg-black bg-opacity-50" />
 
-      {/* Login box container - now square with frosted effect */}
+      {/* Login box container - frosted black effect */}
       <div className="relative z-20 flex flex-col items-center justify-center">
-        <div className="w-[340px] frosted-card">
-          <div className="glossy-overlay"></div>
-          
+        <div className="w-[340px] rounded-2xl bg-black/70 backdrop-blur-md border border-white/10 shadow-xl p-5">
           {/* Logo and form container */}
-          <div className="flex flex-col items-center justify-center p-5">
+          <div className="flex flex-col items-center justify-center">
             {/* Logo */}
             <div className="mb-3">
               <h1 className="font-bold text-transparent bg-clip-text bg-gradient-to-r from-pink-300 via-purple-300 to-blue-300 text-center text-2xl">NXT LEVEL TECH</h1>
