@@ -27,7 +27,7 @@ export function DashboardLayout() {
   return (
     <div className="flex min-h-screen bg-gradient-to-br from-gray-900 to-gray-950">
       <MasterDashSidebar 
-        activePath={location.pathname}
+        activePath={window.location.pathname}
         open={sidebarOpen}
         onToggle={toggleSidebar}
       />
