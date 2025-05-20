@@ -73,11 +73,6 @@ const DashboardModules: React.FC = () => {
         {(activeCategory === 'all' || activeCategory === 'primary') && 
           filteredModules.primary && (
             <>
-              {/* Developer Access Hub - positioned at the start for easy access */}
-              {showDevAccess && (
-                <DeveloperAccess />
-              )}
-              
               {/* Primary System Modules */}
               <DataManagement />
               <SocialMediaMarketing />
@@ -116,6 +111,11 @@ const DashboardModules: React.FC = () => {
             </>
           )
         }
+
+        {/* Developer Access Hub - moved to the bottom */}
+        {showDevAccess && (
+          <DeveloperAccess />
+        )}
       </div>
     </div>
   );
