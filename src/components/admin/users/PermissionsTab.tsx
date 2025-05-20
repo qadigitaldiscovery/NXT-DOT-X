@@ -6,13 +6,7 @@ import { useUserManagement } from '@/context/UserManagementContext';
 const PermissionsTab: React.FC = () => {
   const { permissions } = useUserManagement();
   
-  // Group permissions by category
-  const permissionsByCategory = permissions.reduce((acc, permission) => {
-    const { category } = permission;
-    if (!acc[category]) acc[category] = [];
-    acc[category].push(permission);
-    return acc;
-  }, {} as Record<string, typeof permissions>);
+  // Display permissions
 
   return (
     <Card>
