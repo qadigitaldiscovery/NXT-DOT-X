@@ -1,5 +1,4 @@
 
-import { Button } from '@/components/ui/button';
 import { RefreshCw } from 'lucide-react';
 
 interface RefreshButtonProps {
@@ -17,9 +16,21 @@ export function RefreshButton({
   const loading = isLoading || isRefreshing;
   
   return (
-    <Button variant="outline" size="sm" onClick={onRefresh} disabled={loading}>
-      <RefreshCw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
+    <a 
+      href="#"
+      onClick={(e) => {
+        e.preventDefault();
+        if (!loading) {
+          onRefresh();
+        }
+      }}
+      className={`inline-flex items-center justify-center rounded-md text-sm font-medium border border-input py-2 px-3 hover:bg-accent hover:text-accent-foreground ${
+        loading ? "opacity-50 pointer-events-none" : ""
+      }`}
+      aria-label="Refresh data"
+    >
+      <RefreshCw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} aria-hidden="true" />
       Refresh
-    </Button>
+    </a>
   );
 }

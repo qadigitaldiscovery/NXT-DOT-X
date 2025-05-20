@@ -1,7 +1,6 @@
 
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "../../../../components/ui/card";
-import { Button } from "../../../../components/ui/button";
 import { Label } from "../../../../components/ui/label";
 import { toast } from "sonner";
 
@@ -32,9 +31,6 @@ const syncOptions: SyncOption[] = [
 const SyncOptionsCard: React.FC = () => {
   const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
   const [isConnected, setIsConnected] = useState(false);
-
-  // In a real implementation, we would check the connection status from a parent component
-  // or a context, but for now, we'll assume it's connected for the UI demo
   
   const handleSyncOptionToggle = (optionId: string) => {
     setSelectedOptions(prev => 
@@ -85,13 +81,23 @@ const SyncOptionsCard: React.FC = () => {
         </div>
       </CardContent>
       <CardFooter>
-        <Button 
-          variant="secondary" 
-          disabled={!isConnected || selectedOptions.length === 0}
-          onClick={handleStartSync}
+        <a 
+          href="#"
+          onClick={(e) => {
+            e.preventDefault();
+            if (isConnected && selectedOptions.length > 0) {
+              handleStartSync();
+            }
+          }}
+          className={`inline-flex items-center justify-center rounded-md text-sm font-medium py-2 px-4 ${
+            !isConnected || selectedOptions.length === 0 
+              ? "opacity-50 pointer-events-none bg-secondary text-secondary-foreground" 
+              : "bg-secondary text-secondary-foreground hover:bg-secondary/80"
+          }`}
+          aria-label="Start synchronization"
         >
           Start Synchronization
-        </Button>
+        </a>
       </CardFooter>
     </Card>
   );
