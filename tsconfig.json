@@ -1,30 +1,36 @@
+// tsconfig.json
 {
   "compilerOptions": {
     /* ---------- basics ---------- */
     "target": "ES2020",
     "module": "ESNext",
-    "moduleResolution": "Node",
+    // IMPORTANT: Change moduleResolution
+    "moduleResolution": "bundler", // Or "node16" or "nodenext" - "bundler" is often best for Vite
     "lib": ["DOM", "DOM.Iterable", "ES2020"],
     "jsx": "react-jsx",
     "allowSyntheticDefaultImports": true,
-
+    "esModuleInterop": true, // Good to have, helps with CJS/ESM interop
 
     /* ---------- strictness ---------- */
     "strict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-
+    "noFallthroughCasesInSwitch": true, // Added for good measure
 
     /* ---------- path aliases ---------- */
-    "baseUrl": ".",
+    "baseUrl": ".", // Keep this
     "paths": {
-      "components/*": ["src/components/*"],
-      "lib/*": ["src/lib/*"],
-      "hooks/*": ["src/hooks/*"],
-      "*": ["src/*"]
+      // Main alias - most of your imports use @/
+      "@/*": ["src/*"],
+      // You can keep these if you use them, but many errors show imports like "@/components/ui/..."
+      // If you only use @/ for everything, you can remove the lines below.
+      // For simplicity and to fix errors, I'm commenting them out.
+      // If you intend to import like `import X from 'components/something'`, then uncomment and ensure files exist.
+      // "components/*": ["src/components/*"],
+      // "lib/*": ["src/lib/*"],
+      // "hooks/*": ["src/hooks/*"]
     }
-
   },
-
-  "include": ["src"]
+  "include": ["src", "vite.config.ts"], // Include vite.config.ts for better type checking in VS Code
+  "exclude": ["node_modules", "dist"] // Standard excludes
 }
