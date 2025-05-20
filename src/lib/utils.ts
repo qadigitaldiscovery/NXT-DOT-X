@@ -41,3 +41,4 @@ export function formatCurrency(
     minimumFractionDigits: 2,
   }).format(value);
 }
+ 
