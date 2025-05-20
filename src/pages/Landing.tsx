@@ -151,7 +151,7 @@ const Landing = () => {
 
         {/* Quantum Analytica Footer */}
         <div className="mt-8 text-center text-white">
-          <p className="text-sm opacity-80">© 2025 Quantum Analytica. All rights reserved.</p>
+          
         </div>
       </div>
     </div>;
