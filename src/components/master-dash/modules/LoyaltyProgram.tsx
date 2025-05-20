@@ -1,4 +1,5 @@
 
+import React from 'react';
 import { ModuleCard } from '../ModuleCard';
 
 const LoyaltyProgram = () => {
