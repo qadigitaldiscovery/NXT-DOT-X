@@ -12,5 +12,20 @@ export default defineConfig({
   },
   server: {
     port: 8080
+  },
+  // Add custom TypeScript configuration
+  optimizeDeps: {
+    esbuildOptions: {
+      tsconfigRaw: `{
+        "compilerOptions": {
+          "target": "ES2020",
+          "useDefineForClassFields": true,
+          "lib": ["ES2020", "DOM", "DOM.Iterable"],
+          "module": "ESNext",
+          "skipLibCheck": true,
+          "moduleResolution": "bundler"
+        }
+      }`
+    }
   }
 });

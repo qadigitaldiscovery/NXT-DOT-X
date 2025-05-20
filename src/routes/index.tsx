@@ -9,7 +9,7 @@ import RAGDashboardPage from "../pages/rag-dashboard/RAGDashboardPage";
 import { SupplierRoutes } from "./suppliers";
 
 export function AppRoutes() {
-  console.log("Rendering AppRoutes");
+  console.log("🚗 Rendering AppRoutes");
   return (
     <Routes>
       {/* Root Route - redirects based on auth state */}
