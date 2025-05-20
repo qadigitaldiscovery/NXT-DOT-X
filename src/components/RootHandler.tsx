@@ -8,11 +8,15 @@ const RootHandler: React.FC = () => {
   const { isAuthenticated, loading } = useAuth();
 
   useEffect(() => {
+    console.log("RootHandler: Auth state", { isAuthenticated, loading });
+    
     if (loading) return;
     
     if (isAuthenticated) {
+      console.log("RootHandler: Authenticated, navigating to master dashboard");
       navigate('/master');
     } else {
+      console.log("RootHandler: Not authenticated, navigating to landing page");
       navigate('/landing');
     }
   }, [isAuthenticated, loading, navigate]);

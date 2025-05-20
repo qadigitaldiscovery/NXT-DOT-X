@@ -26,6 +26,7 @@ const MasterDash: React.FC = () => {
   }, [navigate, user]);
 
   const toggleSidebar = () => {
+    console.log("Toggling sidebar from", sidebarOpen, "to", !sidebarOpen);
     setSidebarOpen(!sidebarOpen);
   };
 

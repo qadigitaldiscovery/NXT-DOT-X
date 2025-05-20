@@ -1,6 +1,5 @@
 
 import { useNavigate } from 'react-router-dom';
-import { ModuleCard } from '../ModuleCard';
 import { Button } from '@/components/ui/button';
 import { Users } from 'lucide-react';
 
@@ -19,7 +18,7 @@ const CustomerManagement = () => {
       >
         <Users className="h-12 w-12" />
         <div className="text-center">
-          <h3 className="text-lg font-medium">Customer Management</h3>
+          <h1 className="text-lg font-medium">Customer Management</h1>
           <p className="text-sm text-gray-400">Manage customer data and interactions</p>
         </div>
       </Button>

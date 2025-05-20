@@ -4,8 +4,8 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { X, ChevronRight, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { NavCategory, NavItem } from '@/components/layout/sidebar/types';
-import { navCategories as globalNavCategories } from '@/components/layout/sidebar/NavigationConfig';
+import { NavCategory, NavItem } from '../types';
+import { navCategories as globalNavCategories } from '../NavigationConfig';
 
 export interface MainSidebarContentProps {
   onClose?: () => void;
@@ -77,6 +77,7 @@ export function MainSidebarContent({
   const handleItemClick = (item: NavItem) => {
     if (item.href || item.path) {
       navigate(item.href || item.path || '/');
+      console.log("NavItem clicked - navigating to:", item.href || item.path);
     }
     // Handle custom onClick if provided
     if ('onClick' in item && typeof item.onClick === 'function') {
@@ -86,6 +87,19 @@ export function MainSidebarContent({
       onClose();
     }
   };
+
+  // Auto-expand categories based on active path
+  React.useEffect(() => {
+    effectiveNavCategories.forEach(category => {
+      const hasActiveItem = category.items?.some(isItemActive);
+      if (hasActiveItem) {
+        const categoryName = category.name || category.label || '';
+        if (categoryName && !expandedCategories.includes(categoryName)) {
+          setExpandedCategories(prev => [...prev, categoryName]);
+        }
+      }
+    });
+  }, [location.pathname, effectiveNavCategories]);
 
   return (
     <>
