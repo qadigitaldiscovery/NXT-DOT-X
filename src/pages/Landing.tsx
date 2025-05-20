@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '../components/ui/button';
@@ -93,34 +94,36 @@ const Landing = () => {
   
   return (
     <div className="h-screen w-full flex flex-col items-center justify-center relative overflow-hidden">
-      {/* Full-screen background with uploaded image */}
+      {/* Full-screen background */}
       <div 
-        className="absolute inset-0 z-0 bg-cover bg-center" 
+        className="absolute inset-0 z-0" 
         style={{
+          backgroundColor: '#3B0000', /* Added fallback color */
           backgroundImage: `url('/lovable-uploads/a3137cb7-43b3-4738-8bd4-142a07a94e5c.png')`,
           backgroundSize: 'cover',
-          backgroundPosition: 'center'
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat'
         }} 
       />
       
       {/* Overlay for better text visibility */}
-      <div className="absolute inset-0 z-0 bg-black bg-opacity-40" />
+      <div className="absolute inset-0 z-10 bg-black bg-opacity-50" />
 
       {/* Centered login circle with logo and form */}
-      <div className="relative z-10 flex flex-col items-center justify-center">
-        <div className="w-[300px] h-[300px] rounded-full flex items-center justify-center my-0">
+      <div className="relative z-20 flex flex-col items-center justify-center">
+        <div className="w-[280px] h-[280px] rounded-full flex items-center justify-center my-0">
           {/* Login box with circular design */}
-          <div className="w-full h-full rounded-full flex items-center justify-center relative bg-black/70 backdrop-blur-md shadow-lg border border-gray-600/30">
+          <div className="w-full h-full rounded-full flex items-center justify-center relative bg-black/80 backdrop-blur-md shadow-lg border border-gray-600/30">
             {/* Logo and form container */}
-            <div className="w-[270px] flex flex-col items-center justify-center p-4">
+            <div className="w-[240px] flex flex-col items-center justify-center p-3">
               {/* Logo */}
-              <div className="mb-2">
-                <h1 className="font-bold text-transparent bg-clip-text bg-gradient-to-r from-pink-300 via-purple-300 to-blue-300 text-center text-3xl">NXT LEVEL TECH</h1>
-                <p className="text-center text-gray-200 mt-1 text-xs">AI Powered Business Management</p>
+              <div className="mb-1">
+                <h1 className="font-bold text-transparent bg-clip-text bg-gradient-to-r from-pink-300 via-purple-300 to-blue-300 text-center text-2xl">NXT LEVEL TECH</h1>
+                <p className="text-center text-gray-200 mt-0.5 text-xs">AI Powered Business Management</p>
               </div>
 
               {/* Login Form */}
-              <form onSubmit={handleLogin} className="w-full space-y-2">
+              <form onSubmit={handleLogin} className="w-full space-y-2 mt-1">
                 <div className="space-y-1">
                   <div className="relative">
                     <Input 
@@ -130,7 +133,7 @@ const Landing = () => {
                       value={email} 
                       onChange={e => setEmail(e.target.value)} 
                       required 
-                      className="bg-black/50 border-gray-600 focus:border-purple-400 h-8 pl-8 text-white text-sm rounded-lg" 
+                      className="bg-black/50 border-gray-600 focus:border-purple-400 h-7 pl-8 text-white text-sm rounded-lg" 
                       autoComplete="email" 
                       disabled={isLoading || loading} 
                     />
@@ -149,7 +152,7 @@ const Landing = () => {
                       value={password} 
                       onChange={e => setPassword(e.target.value)} 
                       required 
-                      className="bg-black/50 border-gray-600 focus:border-purple-400 h-8 pl-8 text-white text-sm rounded-lg" 
+                      className="bg-black/50 border-gray-600 focus:border-purple-400 h-7 pl-8 text-white text-sm rounded-lg" 
                       autoComplete="current-password" 
                       disabled={isLoading || loading} 
                     />
@@ -162,15 +165,15 @@ const Landing = () => {
                 <Button 
                   type="submit" 
                   disabled={isLoading || loading} 
-                  className="w-full bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600 
-                  h-8 text-white text-sm font-bold uppercase tracking-wider rounded-lg transition-all duration-300 shadow-md hover:shadow-lg"
+                  className="w-full bg-gradient-to-r from-red-600 to-red-800 hover:from-red-700 hover:to-red-900 
+                  h-7 text-white text-sm font-bold uppercase tracking-wider rounded-lg transition-all duration-300 shadow-md hover:shadow-lg"
                 >
                   {isLoading || loading ? 'SIGNING IN...' : 'LOGIN'}
                 </Button>
               </form>
               
               {/* Setup Test User Button */}
-              <div className="mt-3 w-full flex justify-center">
+              <div className="mt-2 w-full flex justify-center">
                 <SetupTestUser />
               </div>
             </div>
