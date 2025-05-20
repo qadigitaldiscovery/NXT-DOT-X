@@ -1,11 +1,10 @@
 
 import { Moon, Sun } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useContext } from "react";
-import { ThemeContext } from "@/context/ThemeContext";
+import { useTheme } from "@/context/ThemeContext";
 
 export function ThemeToggle() {
-  const { theme, setTheme } = useContext(ThemeContext);
+  const { theme, setTheme } = useTheme();
 
   return (
     <Button
