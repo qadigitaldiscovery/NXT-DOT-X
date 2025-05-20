@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '../components/ui/button';
@@ -7,7 +6,6 @@ import { toast } from 'sonner';
 import { useAuth } from '../context/AuthContext';
 import { SetupTestUser } from '../components/SetupTestUser';
 import { PartnersList } from '../components/unified/PartnersList';
-
 const Landing = () => {
   const [email, setEmail] = useState('admin@example.com'); // Pre-fill with test credentials
   const [password, setPassword] = useState('Pass1'); // Pre-fill with test credentials
@@ -18,21 +16,18 @@ const Landing = () => {
     isAuthenticated,
     loading
   } = useAuth();
-
   useEffect(() => {
     if (isAuthenticated) {
       console.log("Landing: User is authenticated, redirecting to master");
       navigate('/master');
     }
   }, [navigate, isAuthenticated]);
-
   const validateEmail = (email: string): boolean => {
     const trimmedEmail = email.trim();
     // Enhanced email validation
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     return emailRegex.test(trimmedEmail);
   };
-
   const validatePassword = (password: string): {
     valid: boolean;
     message?: string;
@@ -56,7 +51,6 @@ const Landing = () => {
       valid: true
     };
   };
-
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -80,7 +74,6 @@ const Landing = () => {
       toast.error(passwordValidation.message || 'Invalid password');
       return;
     }
-
     setIsLoading(true);
     console.log("Landing: Login attempt with:", email.trim().toLowerCase());
     try {
@@ -93,18 +86,16 @@ const Landing = () => {
       setIsLoading(false);
     }
   };
-
-  return (
-    <div className="h-screen w-full flex flex-col items-center justify-center relative overflow-hidden">
+  return <div className="h-screen w-full flex flex-col items-center justify-center relative overflow-hidden">
       {/* Full-screen background */}
       <div className="absolute inset-0 z-0" style={{
-        backgroundColor: '#111',
-        /* Dark fallback */
-        backgroundImage: `url('/lovable-uploads/2e3907f2-88a5-400f-a09d-cd865295f449.png')`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundRepeat: 'no-repeat'
-      }} />
+      backgroundColor: '#111',
+      /* Dark fallback */
+      backgroundImage: `url('/lovable-uploads/2e3907f2-88a5-400f-a09d-cd865295f449.png')`,
+      backgroundSize: 'cover',
+      backgroundPosition: 'center',
+      backgroundRepeat: 'no-repeat'
+    }} />
       
       {/* Overlay for background opacity (25%) */}
       <div className="absolute inset-0 z-10 bg-black bg-opacity-25" />
@@ -120,7 +111,7 @@ const Landing = () => {
         <div className="flex flex-col items-center justify-center w-[340px]">
           {/* Logo */}
           <div className="mb-3">
-            <h1 className="font-bold text-transparent bg-clip-text bg-gradient-to-r from-pink-300 via-purple-300 to-blue-300 text-center text-2xl">NXT LEVEL TECH</h1>
+            <h1 className="bg-clip-text bg-gradient-to-r from-pink-300 via-purple-300 to-blue-300 text-center text-zinc-600 font-bold text-4xl">NXT LEVEL TECH</h1>
             <p className="text-center text-gray-200 mt-0.5 text-xs">AI Powered Business Management</p>
           </div>
 
@@ -144,8 +135,7 @@ const Landing = () => {
               </div>
             </div>
             
-            <Button type="submit" disabled={isLoading || loading} className="w-full bg-gradient-to-r from-red-600 to-red-800 hover:from-red-700 hover:to-red-900 
-              h-8 text-white text-sm font-bold uppercase tracking-wider rounded-lg transition-all duration-300 shadow-md hover:shadow-lg">
+            <Button type="submit" disabled={isLoading || loading} className="w-full bg-gradient-to-r from-red-600 to-red-800 hover:from-red-700 hover:to-red-900 h-8 text-white text-sm font-bold uppercase tracking-wider rounded-lg transition-all duration-300 shadow-md hover:shadow-lg bg-zinc-500 hover:bg-zinc-400">
               {isLoading || loading ? 'SIGNING IN...' : 'LOGIN'}
             </Button>
           </form>
@@ -161,8 +151,6 @@ const Landing = () => {
           <PartnersList />
         </div>
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default Landing;
