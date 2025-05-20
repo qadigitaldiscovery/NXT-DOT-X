@@ -1,101 +1,101 @@
+import { lazy } from 'react';
+import { RouteObject } from 'react-router-dom';
+import ProtectedRoute          from '@/components/ProtectedRoute';
+import RootHandler             from '@/components/RootHandler';
+import DashboardLayout         from '@/components/layout/DashboardLayout';
+import CustomerManagementLayout from '@/components/layout/CustomerManagementLayout';
+import TradingSystemLayout     from '@/components/layout/TradingSystemLayout';
+import { SidebarProvider }     from '@/components/ui/sidebar';
 
-import React from "react";
-import { Route, Routes, Navigate } from "react-router-dom";
-import RootHandler from "../components/RootHandler";
-import Landing from "../pages/Landing";
-import ProtectedRoute from "../components/ProtectedRoute";
-import MasterDash from "../pages/MasterDash";
-import RAGDashboardPage from "../pages/rag-dashboard/RAGDashboardPage";
-import PrototypeSelector from "../pages/PrototypeSelector";
-import { DashboardLayout } from "../components/layout/DashboardLayout";
-import { AdminRoutes } from "./adminRoutes";
-import { CustomerForm } from "../components/customers/CustomerForm";
-import TradingSystemLayout from "../components/layout/TradingSystemLayout";
-import { CustomerManagementLayout } from "../components/layout/CustomerManagementLayout";
-import { SidebarProvider } from "@/components/ui/sidebar/index";
-import Beta1Dashboard from "../pages/Beta1Dashboard";
+// lazy pages
+const Landing           = lazy(() => import('@/pages/Landing'));
+const MasterDash        = lazy(() => import('@/pages/MasterDash'));
+const RAGDashboardPage  = lazy(() => import('@/pages/rag-dashboard/RAGDashboardPage'));
+const PrototypeSelector = lazy(() => import('@/pages/PrototypeSelector'));
+const CustomerForm      = lazy(() => import('@/components/customers/CustomerForm'));
+const Beta1Dashboard    = lazy(() => import('@/pages/Beta1Dashboard'));
 
-// Temporary placeholder for Billing
-function BillingPlaceholder() {
-  return (
-    <div className="p-6 text-white">
-      <h1 className="text-2xl font-semibold mb-4">Billing Page</h1>
-      <p>Billing information will go here.</p>
-    </div>
-  );
-}
+const BillingPlaceholder = () => (
+  <div className="p-6 text-white">
+    <h1 className="mb-4 text-2xl font-semibold">Billing Page</h1>
+    <p>Billing information will go here.</p>
+  </div>
+);
 
-export function AppRoutes() {
-  console.log("🚗 Rendering AppRoutes");
-  return (
-    <Routes>
-      {/* Public Routes */}
-      <Route path="/landing" element={<Landing />} />
-      <Route path="/unauthorized" element={<Navigate to="/landing" />} />
+/* ———————————————————————————————————————————————
+   Single definitive list of routes (React-Router v6)
+   ——————————————————————————————————————————————— */
+export const routes: RouteObject[] = [
+  /* public */
+  { path: '/landing',      element: <Landing /> },
+  { path: '/unauthorized', element: <Landing /> },
+  { path: '/',             element: <RootHandler /> },
 
-      {/* Root Route - redirects or shows landing page if needed */}
-      <Route path="/" element={<RootHandler />} />
+  /* protected dashboard area */
+  {
+    element: (
+      <ProtectedRoute>
+        <SidebarProvider>
+          <DashboardLayout />
+        </SidebarProvider>
+      </ProtectedRoute>
+    ),
+    children: [
+      { path: '/master',          element: <MasterDash /> },
+      { path: '/dashboard/rag',   element: <RAGDashboardPage /> },
+      { path: '/prototypes',      element: <PrototypeSelector /> },
+      { path: '/beta1',           element: <Beta1Dashboard /> },
 
-      {/* Protected Routes - All protected routes should be nested under DashboardLayout */}
-      <Route
-        element={
-          <ProtectedRoute>
-            <SidebarProvider>
-              <DashboardLayout />
-            </SidebarProvider>
-          </ProtectedRoute>
-        }
-      >
-        {/* Dashboard Routes */}
-        <Route path="/master" element={<MasterDash />} />
-        <Route path="/dashboard/rag" element={<RAGDashboardPage />} />
-        <Route path="/prototypes" element={<PrototypeSelector />} />
+      /* trading-system subtree keeps its own layout */
+      { path: '/trading-system/*', element: <TradingSystemLayout /> },
 
-        {/* Trading System Routes - with its own layout */}
-        <Route path="/trading-system/*" element={<TradingSystemLayout />} />
-        
-        {/* Beta routes */}
-        <Route path="/beta1" element={<Beta1Dashboard />} />
+      /* redirect that used to sit in AppRoutes */
+      {
+        path: '/data-management/customers',
+        element: <Navigate to="/customer-management/directory" replace />,
+      },
 
-        {/* Data Management Redirects */}
-        <Route 
-          path="/data-management/customers" 
-          element={<Navigate to="/customer-management/directory" replace />} 
-        />
+      /* settings/billing */
+      {
+        path: '/settings/billing',
+        element: <BillingPlaceholder />,
+      },
 
-        {/* Settings Routes */}
-        <Route path="/settings">
-          <Route path="billing" element={<BillingPlaceholder />} />
-        </Route>
+      /* admin pages (your AdminRoutes() output) */
+      /* --- paste <RouteObject> children from AdminRoutes here if you want them inline --- */
+    ],
+  },
 
-        {/* Admin Routes */}
-        {AdminRoutes()}
-      </Route>
-      
-      {/* Customer Management Routes with their dedicated layout */}
-      <Route
-        element={
-          <ProtectedRoute>
-            <SidebarProvider>
-              <CustomerManagementLayout />
-            </SidebarProvider>
-          </ProtectedRoute>
-        }
-      >
-        <Route path="/customer-management">
-          <Route path="new" element={<CustomerForm />} />
-          <Route path="edit/:id" element={<CustomerForm isEditing={true} />} />
-          <Route path="directory" element={
-            <div className="p-8">
-              <h1 className="text-2xl font-bold mb-6">Customer Directory</h1>
-              {/* Customer list would go here */}
-            </div>
-          } />
-        </Route>
-      </Route>
+  /* customer-management area (own sidebar + layout) */
+  {
+    element: (
+      <ProtectedRoute>
+        <SidebarProvider>
+          <CustomerManagementLayout />
+        </SidebarProvider>
+      </ProtectedRoute>
+    ),
+    children: [
+      {
+        path: '/customer-management/new',
+        element: <CustomerForm />,
+      },
+      {
+        path: '/customer-management/edit/:id',
+        element: <CustomerForm isEditing />,
+      },
+      {
+        path: '/customer-management/directory',
+        element: (
+          <div className="p-8">
+            <h1 className="mb-6 text-2xl font-bold">Customer Directory</h1>
+            {/* Customer list would go here */}
+          </div>
+        ),
+      },
+    ],
+  },
 
-      {/* Fallback Route */}
-      <Route path="*" element={<Navigate to="/landing" replace />} />
-    </Routes>
-  );
-}
+  /* catch-all  → landing */
+  { path: '*', element: <Navigate to="/landing" replace /> },
+];
