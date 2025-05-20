@@ -1,15 +1,17 @@
-import React, { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+
+import React from 'react';
+import { Routes, Route } from 'react-router-dom';
+import { AppRoutes } from './routes';
+import { AuthProvider } from './context/AuthContext';
+import { Toaster } from 'sonner';
 
 function App() {
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    // Redirect to main dashboard
-    navigate("/master");
-  }, [navigate]);
-
-  return null; // No need to render anything as we're redirecting
+  return (
+    <AuthProvider>
+      <Toaster position="top-right" richColors />
+      <AppRoutes />
+    </AuthProvider>
+  );
 }
 
 export default App;

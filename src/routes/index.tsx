@@ -6,7 +6,7 @@ import MasterDash from "../pages/MasterDash";
 import ProtectedRoute from "../components/ProtectedRoute";
 import PrototypeSelector from "../pages/PrototypeSelector";
 import RAGDashboardPage from "../pages/rag-dashboard/RAGDashboardPage";
-import { SupplierRoutes } from "./suppliers";
+import { CustomerForm } from "../components/customers/CustomerForm";
 
 export function AppRoutes() {
   console.log("🚗 Rendering AppRoutes");
@@ -43,12 +43,27 @@ export function AppRoutes() {
         </ProtectedRoute>
       } />
 
-      {/* Supplier Routes */}
-      <Route path="/beta1/suppliers/*" element={
-        <ProtectedRoute>
-          <SupplierRoutes />
-        </ProtectedRoute>
-      } />
+      {/* Customer Management Routes */}
+      <Route path="/customer-management">
+        <Route path="new" element={
+          <ProtectedRoute>
+            <CustomerForm />
+          </ProtectedRoute>
+        } />
+        <Route path="edit/:id" element={
+          <ProtectedRoute>
+            <CustomerForm isEditing={true} />
+          </ProtectedRoute>
+        } />
+        <Route path="directory" element={
+          <ProtectedRoute>
+            <div className="p-8">
+              <h1 className="text-2xl font-bold mb-6">Customer Directory</h1>
+              {/* Customer list would go here */}
+            </div>
+          </ProtectedRoute>
+        } />
+      </Route>
 
       {/* Fallback - catch any other routes */}
       <Route path="*" element={<RootHandler />} />

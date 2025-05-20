@@ -1,16 +1,17 @@
+
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react-swc';
 import path from 'path';
-import { componentTagger } from './src/lib/component-tagger';
+import { componentTagger } from 'lovable-tagger';
 
-export default defineConfig({
+export default defineConfig(({ mode }) => ({
   plugins: [
     react(),
-    componentTagger({
+    mode === 'development' && componentTagger({
       mode: 'development',
       tagPrefix: 'lovable'
     })
-  ],
+  ].filter(Boolean),
   build: {
     outDir: 'dist',
     rollupOptions: {
@@ -56,4 +57,4 @@ export default defineConfig({
       'tailwind-merge'
     ],
   },
-});
+}));
