@@ -1,15 +1,26 @@
-
 import React, { useState, useEffect } from 'react';
 import { toast } from 'sonner';
-import { useModules } from '../../context/ModulesContext';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../components/ui/card';
-import { Switch } from '../../components/ui/switch';
-import { Badge } from '../../components/ui/badge';
-import { Button } from '../../components/ui/button';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../components/ui/select';
-import { Input } from '../../components/ui/input';
-import { Label } from '../../components/ui/label';
-import { useAuth } from '../../context/AuthContext';
+import { useModules } from '@/context/ModulesContext';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+import { Switch } from '@/components/ui/switch';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { useAuth } from '@/context/AuthContext';
 
 interface User {
   id: string;
@@ -21,74 +32,40 @@ interface ModuleTogglePanelProps {
   userId: string;
 }
 
-interface ModuleAccess {
-  id: string;
-  module_slug: string;
-  is_enabled: boolean;
-  submenu_slug?: string;
-  category?: string;
-}
-
 const ModuleTogglePanel: React.FC<ModuleTogglePanelProps> = ({ userId }) => {
   const { modules, loading, toggleModule } = useModules();
-  const [selectedUser, setSelectedUser] = useState<string>(userId);
+  const [selectedUser, setSelectedUser] = useState(userId);
   const [users, setUsers] = useState<User[]>([]);
   const { user } = useAuth();
 
-  // Convert modules to module access format
-  const userAccessList: ModuleAccess[] = modules.map(module => ({
-    id: module.id,
-    module_slug: module.name,
-    is_enabled: module.enabled,
-    submenu_slug: undefined,
-    category: undefined
-  }));
+  const handleUserChange = (uid: string) => setSelectedUser(uid);
 
-  const handleUserChange = (uid: string) => {
-    setSelectedUser(uid);
+  const handleToggleAccess = (moduleId: string) => {
+    toggleModule(moduleId);
+    toast.success('Module access updated');
   };
 
-  const handleToggleAccess = async (id: string, currentValue: boolean) => {
-    try {
-      await toggleModule(id, !currentValue);
-      toast.success(`Module access ${!currentValue ? 'enabled' : 'disabled'}`);
-      
-      // Since refreshModules doesn't exist in the context, we'll adapt to use what's available
-      // If refresh is needed, do a manual refresh instead
-      // await refreshModules();
-    } catch (err) {
-      console.error('Error toggling access:', err);
-      toast.error('Failed to update module access');
-    }
-  };
-
-  const handleAddModuleAccess = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    toast.error('Adding module access is not supported in current context');
-  };
-
+  /* demo user list */
   useEffect(() => {
     if (user) {
       setUsers([
-        {
-          id: user.id,
-          email: user.email,
-          username: user.email || user.id
-        }
+        { id: user.id, email: user.email, username: user.email || user.id },
       ]);
     }
   }, [user]);
 
   return (
     <div className="space-y-8">
+      {/* ───── Current access ───── */}
       <Card>
         <CardHeader>
           <CardTitle>Module Access Control</CardTitle>
           <CardDescription>
-            Manage which modules and submenus users can access
+            Manage which modules each user can access
           </CardDescription>
         </CardHeader>
         <CardContent>
+          {/* user selector */}
           <div className="mb-6">
             <Label htmlFor="userId">Select User</Label>
             <Select value={selectedUser} onValueChange={handleUserChange}>
@@ -96,9 +73,9 @@ const ModuleTogglePanel: React.FC<ModuleTogglePanelProps> = ({ userId }) => {
                 <SelectValue placeholder="Select a user" />
               </SelectTrigger>
               <SelectContent>
-                {users.map(user => (
-                  <SelectItem key={user.id} value={user.id}>
-                    {user.username}
+                {users.map(u => (
+                  <SelectItem key={u.id} value={u.id}>
+                    {u.username}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -107,32 +84,30 @@ const ModuleTogglePanel: React.FC<ModuleTogglePanelProps> = ({ userId }) => {
 
           {loading ? (
             <div className="flex justify-center py-8">
-              <div className="w-8 h-8 border-t-2 border-b-2 border-gray-500 rounded-full animate-spin"></div>
+              <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-t-2 border-gray-500" />
             </div>
-          ) : userAccessList.length === 0 ? (
-            <div className="text-center py-8 text-gray-500">
-              No module access settings found for this user
-            </div>
+          ) : modules.length === 0 ? (
+            <p className="py-8 text-center text-gray-500">
+              No modules configured
+            </p>
           ) : (
             <div className="space-y-4">
-              {userAccessList.map(access => (
-                <div key={access.id} className="flex justify-between items-center border p-3 rounded-md">
+              {modules.map(m => (
+                <div
+                  key={m.id}
+                  className="flex items-center justify-between rounded-md border p-3"
+                >
                   <div>
-                    <div className="font-medium">{access.module_slug}</div>
-                    {access.submenu_slug && (
-                      <div className="text-sm text-gray-500">
-                        Submenu: {access.submenu_slug}
-                      </div>
-                    )}
-                    {access.category && (
+                    <div className="font-medium">{m.name}</div>
+                    {Object.keys(m.features).length > 0 && (
                       <Badge variant="outline" className="mt-1">
-                        {access.category}
+                        {Object.keys(m.features).length} features
                       </Badge>
                     )}
                   </div>
-                  <Switch 
-                    checked={access.is_enabled} 
-                    onCheckedChange={() => handleToggleAccess(access.id, access.is_enabled)} 
+                  <Switch
+                    checked={m.enabled}
+                    onCheckedChange={() => handleToggleAccess(m.id)}
                   />
                 </div>
               ))}
@@ -141,48 +116,40 @@ const ModuleTogglePanel: React.FC<ModuleTogglePanelProps> = ({ userId }) => {
         </CardContent>
       </Card>
 
+      {/* ───── Add access UI (stub, unchanged) ───── */}
       <Card>
         <CardHeader>
           <CardTitle>Add Module Access</CardTitle>
-          <CardDescription>
-            Grant access to a module for this user
-          </CardDescription>
+          <CardDescription>Grant access to another module</CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleAddModuleAccess} className="space-y-4">
+          <form
+            onSubmit={e => {
+              e.preventDefault();
+              toast.error('Adding module access not implemented yet');
+            }}
+            className="space-y-4"
+          >
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="space-y-2">
-                <Label htmlFor="moduleSlug">Module Slug *</Label>
+                <Label htmlFor="moduleSlug">Module *</Label>
                 <Select name="moduleSlug" required>
                   <SelectTrigger>
                     <SelectValue placeholder="Select a module" />
                   </SelectTrigger>
                   <SelectContent>
-                    {modules.map((module: any) => (
-                      <SelectItem key={module.id} value={module.id}>
-                        {module.name}
+                    {modules.map(m => (
+                      <SelectItem key={m.id} value={m.id}>
+                        {m.name}
                       </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
               </div>
               <div className="space-y-2">
-                <Label htmlFor="submenuSlug">Submenu Slug (Optional)</Label>
-                <Input id="submenuSlug" name="submenuSlug" placeholder="e.g., analytics" />
+                <Label htmlFor="submenuSlug">Submenu (optional)</Label>
+                <Input id="submenuSlug" name="submenuSlug" />
               </div>
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="category">Category (Optional)</Label>
-              <Select name="category">
-                <SelectTrigger>
-                  <SelectValue placeholder="Select a category" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="project">Project</SelectItem>
-                  <SelectItem value="admin">Admin</SelectItem>
-                  <SelectItem value="system">System</SelectItem>
-                </SelectContent>
-              </Select>
             </div>
             <Button type="submit" className="w-full">
               Add Access
