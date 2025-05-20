@@ -61,34 +61,12 @@ const MasterDashSidebar: React.FC<MasterDashSidebarProps> = ({ activePath }) => 
   return (
     <div className="h-full bg-[#15171f] dark:bg-[#12141d] w-64 p-4 flex flex-col">
       <div className="py-4 border-b border-slate-800">
-        <h2 className="text-lg font-semibold text-white">All Modules</h2>
+<h2 className="text-lg font-semibold text-white">Secondary Systems Module</h2>
+
       </div>
       
       <nav className="flex-1 mt-4 space-y-1">
-        <SidebarItem 
-          icon={<Layout className="w-5 h-5" />} 
-          label="All Modules" 
-          active={activePath === '/'} 
-          onClick={() => handleNavigation('/')}
-        />
-        <SidebarItem 
-          icon={<Key className="w-5 h-5" />} 
-          label="API Keys" 
-          active={activePath === '/tech-hub/api-management'}
-          onClick={() => handleNavigation('/tech-hub/api-management')}
-        />
-        <SidebarItem 
-          icon={<ClipboardList className="w-5 h-5" />} 
-          label="Project Management"
-          active={activePath === '/projects'} 
-          onClick={() => handleNavigation('/projects')}
-        />
-        <SidebarItem 
-          icon={<CalendarClock className="w-5 h-5" />} 
-          label="Events"
-          active={activePath === '/events'} 
-          onClick={() => handleNavigation('/events')}
-        />
+
         
         {/* Administration Section */}
         <div className="py-2 mt-4">
