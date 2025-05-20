@@ -99,7 +99,7 @@ const Landing = () => {
         className="absolute inset-0 z-0" 
         style={{
           backgroundColor: '#3B0000', /* Added fallback color */
-          backgroundImage: `url('/lovable-uploads/a3137cb7-43b3-4738-8bd4-142a07a94e5c.png')`,
+          backgroundImage: `url('/lovable-uploads/0e95b0e9-9a05-4837-bb36-54104b32d22c.png')`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           backgroundRepeat: 'no-repeat'
