@@ -68,10 +68,7 @@ export function EditUserDialog({ user, open, onOpenChange, onUserUpdated }: Edit
   const handleSubmit = (data: UserFormData) => {
     if (!user) return;
 
-    toast({
-      title: 'User Updated',
-      description: `User "${data.username}" has been updated successfully.`,
-    });
+    toast.success('User Updated', `User "${data.username}" has been updated successfully.`);
     
     if (onUserUpdated) {
       onUserUpdated(user.id, {
@@ -93,7 +90,7 @@ export function EditUserDialog({ user, open, onOpenChange, onUserUpdated }: Edit
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Edit User</DialogTitle>
+          <h2>Edit User</h2>
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4 pt-4">

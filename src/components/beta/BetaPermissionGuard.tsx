@@ -18,7 +18,7 @@ const BetaPermissionGuard = ({
   fallbackComponent
 }: BetaPermissionGuardProps) => {
   const { user, isAuthenticated } = useAuth();
-  const { modules, hasAccess } = useModules();
+  const { isFeatureEnabled } = useModules();
 
   // Debug logging
   console.log(`Beta permission check - Feature: ${featureId}, User: ${user?.id}`);
@@ -34,7 +34,7 @@ const BetaPermissionGuard = ({
   }
 
   // Check if the feature exists and is enabled
-  const hasFeatureAccess = hasAccess?.(featureId) ?? false;
+  const hasFeatureAccess = isFeatureEnabled(featureId);
   
   if (!hasFeatureAccess) {
     console.log(`No access to beta feature: ${featureId}`);

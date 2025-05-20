@@ -43,10 +43,7 @@ export function AddUserDialog({ open, onOpenChange, onUserAdded }: AddUserDialog
   });
 
   const handleSubmit = (data: UserFormData) => {
-    toast({
-      title: 'User Added',
-      description: `User "${data.username}" has been added successfully.`,
-    });
+    toast.success(`User "${data.username}" has been added successfully.`);
     if (onUserAdded) {
       onUserAdded({
         username: data.username,
@@ -67,7 +64,7 @@ export function AddUserDialog({ open, onOpenChange, onUserAdded }: AddUserDialog
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Add New User</DialogTitle>
+          <h2>Add New User</h2>
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4 pt-4">
