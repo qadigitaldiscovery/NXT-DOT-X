@@ -6,7 +6,7 @@ import { masterDashItem } from '@/components/layout/sidebar/NavigationConfig';
 import { SharedNavbar } from '@/components/layout/SharedNavbar';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { cn } from '@/lib/utils';
-import { SidebarProvider } from '@/components/ui/sidebar';
+import { SidebarProvider } from '@/components/ui/sidebar/index';
 
 interface PlatformLayoutProps {
   children: React.ReactNode;
