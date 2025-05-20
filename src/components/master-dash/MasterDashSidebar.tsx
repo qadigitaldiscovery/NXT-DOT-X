@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { 
@@ -71,14 +70,21 @@ const MasterDashSidebar: React.FC<MasterDashSidebarProps> = ({ activePath, open 
   };
 
   return (
-    <div className={`h-full bg-[#15171f] dark:bg-[#12141d] transition-all duration-300 ${open ? 'w-64' : 'w-0 md:w-16'} overflow-hidden`}>
+    <div 
+      className={`h-full transition-all duration-300 ${open ? 'w-64' : 'w-0 md:w-16'} overflow-hidden`}
+      style={{
+        backgroundImage: "url('/lovable-uploads/aa6d647a-c9bc-44e1-9955-e15729d4116a.png')",
+        backgroundSize: 'cover',
+        backgroundRepeat: 'no-repeat'
+      }}
+    >
       <div className="h-14 flex items-center justify-between border-b border-slate-800 px-4">
-        <h2 className={`text-lg font-semibold text-white ${!open && 'hidden md:hidden'}`}>Business Platform</h2>
+        <h2 className={`text-lg font-semibold text-slate-800 ${!open && 'hidden md:hidden'}`}>Business Platform</h2>
         <Button
           variant="ghost"
           size="sm"
           onClick={onToggle}
-          className="h-8 w-8 p-0 text-white hover:bg-slate-700 md:flex"
+          className="h-8 w-8 p-0 text-slate-800 hover:bg-slate-200 md:flex"
         >
           <Menu className="h-4 w-4" />
           <span className="sr-only">Toggle Sidebar</span>
@@ -88,7 +94,7 @@ const MasterDashSidebar: React.FC<MasterDashSidebarProps> = ({ activePath, open 
       <nav className={`flex-1 p-4 space-y-1 overflow-y-auto ${!open && 'hidden md:block'}`}>
         {/* Administration Section */}
         <div className="py-2 mt-4">
-          <h3 className="px-2 text-xs uppercase tracking-wider text-slate-500 font-semibold mb-2">Administration</h3>
+          <h3 className="px-2 text-xs uppercase tracking-wider text-slate-600 font-semibold mb-2">Administration</h3>
           <SidebarItem 
             icon={<Users className="w-5 h-5" />} 
             label="User Management" 
@@ -147,7 +153,7 @@ const MasterDashSidebar: React.FC<MasterDashSidebarProps> = ({ activePath, open 
         
         {/* Other sections */}
         <div className="py-2 mt-4">
-          <h3 className="px-2 text-xs uppercase tracking-wider text-slate-500 font-semibold mb-2">Account</h3>
+          <h3 className="px-2 text-xs uppercase tracking-wider text-slate-600 font-semibold mb-2">Account</h3>
           <SidebarItem 
             icon={<CreditCard className="w-5 h-5" />} 
             label="Billing" 
@@ -164,7 +170,7 @@ const MasterDashSidebar: React.FC<MasterDashSidebarProps> = ({ activePath, open 
             variant="ghost"
             size="icon"
             onClick={() => handleNavigation('/admin/users')}
-            className={`${isActive('/admin/users') ? 'bg-blue-500/10 text-blue-400' : 'text-slate-400 hover:text-white hover:bg-slate-800'}`}
+            className={`${isActive('/admin/users') ? 'bg-blue-500/10 text-blue-400' : 'text-slate-600 hover:text-slate-800 hover:bg-slate-200'}`}
           >
             <Users className="h-5 w-5" />
             <span className="sr-only">User Management</span>
@@ -174,7 +180,7 @@ const MasterDashSidebar: React.FC<MasterDashSidebarProps> = ({ activePath, open 
             variant="ghost"
             size="icon"
             onClick={() => handleNavigation('/customer-management/directory')}
-            className={`${isActive('/customer-management') ? 'bg-blue-500/10 text-blue-400' : 'text-slate-400 hover:text-white hover:bg-slate-800'}`}
+            className={`${isActive('/customer-management') ? 'bg-blue-500/10 text-blue-400' : 'text-slate-600 hover:text-slate-800 hover:bg-slate-200'}`}
           >
             <Building className="h-5 w-5" />
             <span className="sr-only">Customer Management</span>
@@ -184,7 +190,7 @@ const MasterDashSidebar: React.FC<MasterDashSidebarProps> = ({ activePath, open 
             variant="ghost"
             size="icon"
             onClick={() => handleNavigation('/settings/billing')}
-            className={`${isActive('/settings/billing') ? 'bg-blue-500/10 text-blue-400' : 'text-slate-400 hover:text-white hover:bg-slate-800'}`}
+            className={`${isActive('/settings/billing') ? 'bg-blue-500/10 text-blue-400' : 'text-slate-600 hover:text-slate-800 hover:bg-slate-200'}`}
           >
             <CreditCard className="h-5 w-5" />
             <span className="sr-only">Billing</span>
