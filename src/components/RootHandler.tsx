@@ -5,12 +5,13 @@ import { useAuth } from '../context/AuthContext';
 
 const RootHandler: React.FC = () => {
   const navigate = useNavigate();
-  const { isAuthenticated, isLoading } = useAuth();
+  const { isAuthenticated } = useAuth();
++ 9 |   const { isLoading } = useAuth();
 
   useEffect(() => {
-    console.log("RootHandler: Auth state", { isAuthenticated, loading });
+    console.log("RootHandler: Auth state", { isAuthenticated, isLoading });
     
-    if (loading) return;
+    if (isLoading) return;
     
     if (isAuthenticated) {
       console.log("RootHandler: Authenticated, navigating to master dashboard");
@@ -19,7 +20,7 @@ const RootHandler: React.FC = () => {
       console.log("RootHandler: Not authenticated, navigating to landing page");
       navigate('/landing');
     }
-  }, [isAuthenticated, loading, navigate]);
+  }, [isAuthenticated, isLoading, navigate]);
 
   return (
     <div className="h-screen w-full flex items-center justify-center">
