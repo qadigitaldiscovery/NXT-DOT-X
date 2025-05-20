@@ -71,20 +71,15 @@ const MasterDashSidebar: React.FC<MasterDashSidebarProps> = ({ activePath, open 
 
   return (
     <div 
-      className={`h-full transition-all duration-300 ${open ? 'w-64' : 'w-0 md:w-16'} overflow-hidden`}
-      style={{
-        backgroundImage: "url('/lovable-uploads/aa6d647a-c9bc-44e1-9955-e15729d4116a.png')",
-        backgroundSize: 'cover',
-        backgroundRepeat: 'no-repeat'
-      }}
+      className={`h-full transition-all duration-300 ${open ? 'w-64' : 'w-0 md:w-16'} overflow-hidden bg-gray-900`}
     >
       <div className="h-14 flex items-center justify-between border-b border-slate-800 px-4">
-        <h2 className={`text-lg font-semibold text-slate-800 ${!open && 'hidden md:hidden'}`}>Business Platform</h2>
+        <h2 className={`text-lg font-semibold text-slate-300 ${!open && 'hidden md:hidden'}`}>Business Platform</h2>
         <Button
           variant="ghost"
           size="sm"
           onClick={onToggle}
-          className="h-8 w-8 p-0 text-slate-800 hover:bg-slate-200 md:flex"
+          className="h-8 w-8 p-0 text-slate-300 hover:bg-slate-800 md:flex"
         >
           <Menu className="h-4 w-4" />
           <span className="sr-only">Toggle Sidebar</span>
@@ -170,7 +165,7 @@ const MasterDashSidebar: React.FC<MasterDashSidebarProps> = ({ activePath, open 
             variant="ghost"
             size="icon"
             onClick={() => handleNavigation('/admin/users')}
-            className={`${isActive('/admin/users') ? 'bg-blue-500/10 text-blue-400' : 'text-slate-600 hover:text-slate-800 hover:bg-slate-200'}`}
+            className={`${isActive('/admin/users') ? 'bg-blue-500/10 text-blue-400' : 'text-slate-600 hover:text-slate-800 hover:bg-slate-800'}`}
           >
             <Users className="h-5 w-5" />
             <span className="sr-only">User Management</span>
@@ -180,7 +175,7 @@ const MasterDashSidebar: React.FC<MasterDashSidebarProps> = ({ activePath, open 
             variant="ghost"
             size="icon"
             onClick={() => handleNavigation('/customer-management/directory')}
-            className={`${isActive('/customer-management') ? 'bg-blue-500/10 text-blue-400' : 'text-slate-600 hover:text-slate-800 hover:bg-slate-200'}`}
+            className={`${isActive('/customer-management') ? 'bg-blue-500/10 text-blue-400' : 'text-slate-600 hover:text-slate-800 hover:bg-slate-800'}`}
           >
             <Building className="h-5 w-5" />
             <span className="sr-only">Customer Management</span>
@@ -190,7 +185,7 @@ const MasterDashSidebar: React.FC<MasterDashSidebarProps> = ({ activePath, open 
             variant="ghost"
             size="icon"
             onClick={() => handleNavigation('/settings/billing')}
-            className={`${isActive('/settings/billing') ? 'bg-blue-500/10 text-blue-400' : 'text-slate-600 hover:text-slate-800 hover:bg-slate-200'}`}
+            className={`${isActive('/settings/billing') ? 'bg-blue-500/10 text-blue-400' : 'text-slate-600 hover:text-slate-800 hover:bg-slate-800'}`}
           >
             <CreditCard className="h-5 w-5" />
             <span className="sr-only">Billing</span>
