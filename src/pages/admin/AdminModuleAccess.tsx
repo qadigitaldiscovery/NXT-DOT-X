@@ -1,33 +1,30 @@
-
 import React from 'react';
-import { useAuth } from '@/context/AuthContext';
-import ModuleTogglePanel from '@/components/admin/ModuleTogglePanel';
-import { PermissionGuard } from '@/components/admin/PermissionGuard';
-import { ShieldCheck } from 'lucide-react';
 
-const AdminModuleAccess = () => {
-  const { user } = useAuth();
-
-  if (!user) return null;
-
+const AdminModuleAccess: React.FC = () => {
   return (
-    <PermissionGuard requiredRole="admin">
-      <div className="container mx-auto p-6">
-        <div className="flex items-center mb-6">
-          <div className="mr-4 p-2 rounded-full bg-blue-100 dark:bg-blue-900">
-            <ShieldCheck className="h-8 w-8 text-blue-600 dark:text-blue-300" />
+    <div className="p-6">
+      <h1 className="text-2xl font-bold mb-4">Module Access Management</h1>
+      <div className="bg-white rounded-lg shadow p-4">
+        <p className="mb-4">Manage access permissions for different modules in the system.</p>
+        
+        <div className="space-y-4">
+          <div className="p-4 border rounded">
+            <h2 className="text-lg font-semibold mb-2">Role-based Access</h2>
+            <p>Configure which roles have access to specific modules.</p>
           </div>
-          <div>
-            <h1 className="text-2xl font-bold">Module Access Control</h1>
-            <p className="text-muted-foreground">
-              Manage user access permissions to modules and features
-            </p>
+          
+          <div className="p-4 border rounded">
+            <h2 className="text-lg font-semibold mb-2">Module Permissions</h2>
+            <p>Set granular permissions for each module.</p>
+          </div>
+          
+          <div className="p-4 border rounded">
+            <h2 className="text-lg font-semibold mb-2">Access Logs</h2>
+            <p>View and manage module access history.</p>
           </div>
         </div>
-
-        <ModuleTogglePanel userId={user.id} />
       </div>
-    </PermissionGuard>
+    </div>
   );
 };
 

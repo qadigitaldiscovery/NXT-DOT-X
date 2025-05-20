@@ -1,10 +1,10 @@
-
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
 interface User {
   id: string;
   email: string;
   role?: string;
+  permissions?: string[];
 }
 
 interface AuthContextType {
@@ -13,6 +13,7 @@ interface AuthContextType {
   loading: boolean;
   signIn: (email: string, password: string) => Promise<void>;
   signOut: () => Promise<void>;
+  hasPermission: (permission: string) => boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -20,6 +21,16 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+
+  const hasPermission = (permission: string): boolean => {
+    if (!user) return false;
+    
+    // Admin role has all permissions
+    if (user.role === 'admin') return true;
+    
+    // Check specific permissions
+    return user.permissions?.includes(permission) || false;
+  };
 
   // Mock authentication for demo purposes
   useEffect(() => {
@@ -50,7 +61,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const mockUser = { 
         id: '123', 
         email: email,
-        role: 'admin' 
+        role: 'admin',
+        permissions: ['admin/*'] // Mock permissions
       };
       setUser(mockUser);
       localStorage.setItem('user', JSON.stringify(mockUser));
@@ -81,7 +93,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     isAuthenticated: !!user,
     loading,
     signIn,
-    signOut
+    signOut,
+    hasPermission
   };
 
   return (

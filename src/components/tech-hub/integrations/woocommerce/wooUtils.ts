@@ -1,7 +1,7 @@
 // Utility functions for WooCommerce integration logic
 
 import { toast } from "sonner";
-import { supabase } from "../../../../../integrations/supabase/client";
+import { supabase } from "../../../../integrations/supabase/client";
 
 
 // The shape of Woocommerce config, matching the existing form

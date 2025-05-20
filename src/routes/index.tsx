@@ -8,8 +8,6 @@ import RAGDashboardPage from "../pages/rag-dashboard/RAGDashboardPage";
 import PrototypeSelector from "../pages/PrototypeSelector";
 import { DashboardLayout } from "../components/layout/DashboardLayout";
 import { AdminRoutes } from "./adminRoutes";
-
-// Existing imports for customer management
 import { CustomerForm } from "../components/customers/CustomerForm";
 
 // Temporary placeholder for Billing
@@ -27,13 +25,14 @@ export function AppRoutes() {
   return (
     <Routes>
       {/* Public Routes */}
-      <Route path="/" element={<RootHandler />} />
       <Route path="/landing" element={<Landing />} />
       <Route path="/unauthorized" element={<Navigate to="/landing" />} />
 
+      {/* Root Route - redirects or shows landing page if needed */}
+      <Route path="/" element={<RootHandler />} />
+
       {/* Protected Routes - All protected routes should be nested under DashboardLayout */}
       <Route
-        path="/"
         element={
           <ProtectedRoute>
             <DashboardLayout />
@@ -41,14 +40,12 @@ export function AppRoutes() {
         }
       >
         {/* Dashboard Routes */}
-        <Route path="master" element={<MasterDash />} />
-        <Route path="dashboard">
-          <Route path="rag" element={<RAGDashboardPage />} />
-        </Route>
-        <Route path="prototypes" element={<PrototypeSelector />} />
+        <Route path="/master" element={<MasterDash />} />
+        <Route path="/dashboard/rag" element={<RAGDashboardPage />} />
+        <Route path="/prototypes" element={<PrototypeSelector />} />
 
         {/* Customer Management Routes */}
-        <Route path="customer-management">
+        <Route path="/customer-management">
           <Route path="new" element={<CustomerForm />} />
           <Route path="edit/:id" element={<CustomerForm isEditing={true} />} />
           <Route path="directory" element={
@@ -61,12 +58,12 @@ export function AppRoutes() {
 
         {/* Data Management Redirects */}
         <Route 
-          path="data-management/customers" 
+          path="/data-management/customers" 
           element={<Navigate to="/customer-management/directory" replace />} 
         />
 
         {/* Settings Routes */}
-        <Route path="settings">
+        <Route path="/settings">
           <Route path="billing" element={<BillingPlaceholder />} />
         </Route>
 
