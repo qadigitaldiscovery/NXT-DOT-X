@@ -22,9 +22,19 @@
     "baseUrl": ".",
     "paths": {
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
       "@/*": ["src/*"],      // ← shared alias for Vite & TS
 =======
       "@/*": ["src/*"],
+=======
+      "@/*": ["src/*"],
+
+      "*": ["src/*"]
+    }
+
+  },
+  "include": ["src"],
+>>>>>>> Stashed changes
 
 >>>>>>> Stashed changes
       "*": ["src/*"]
