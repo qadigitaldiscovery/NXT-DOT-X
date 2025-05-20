@@ -6,22 +6,24 @@
     "moduleResolution": "Node",
     "lib": ["DOM", "DOM.Iterable", "ES2020"],
     "jsx": "react-jsx",
+    "allowSyntheticDefaultImports": true,
+
 
     /* ---------- strictness ---------- */
     "strict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "importsNotUsedAsValues": "preserve",  // old behaviour, avoids TS1484 storm
+
 
     /* ---------- path aliases ---------- */
     "baseUrl": ".",
     "paths": {
-      "@/*": ["src/*"],                  // main alias  ->  '@/components/...'
       "components/*": ["src/components/*"],
       "lib/*": ["src/lib/*"],
       "hooks/*": ["src/hooks/*"],
-      "*": ["src/*"]                     // catch-all fallback
+      "*": ["src/*"]
     }
+
   },
 
   "include": ["src"]

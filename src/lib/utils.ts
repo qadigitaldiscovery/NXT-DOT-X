@@ -1,58 +1,10 @@
-/* ------------------------------------------------------------------
-   Date / currency / numeric helpers
-   Add any new formatters here so every module can re-use them.
--------------------------------------------------------------------*/
+import { type ClassValue, clsx } from "clsx";
+import { twMerge } from "tailwind-merge";
 
-/**
- * formatDate
- * ----------
- * Converts a JS Date (or date-serialisable value) into
- *   2025-05-20  |  20 May 2025  |  20/05/2025
- * depending on the supplied options.
- *
- * @param input   Date | string | number
- * @param locale  BCP-47 locale tag (default 'en-ZA')
- * @param opts    Intl.DateTimeFormatOptions overrides
- */
-export function formatDate(
-  input: Date | string | number,
-  locale: string = 'en-ZA',
-  opts: Intl.DateTimeFormatOptions = {}
-): string {
-  const date = input instanceof Date ? input : new Date(input);
-  return new Intl.DateTimeFormat(locale, {
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-    ...opts,
-  }).format(date);
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs));
 }
 
-/**
- * formatCurrency
- * --------------
- * Formats a number as South-African Rand by default.
- */
-export function formatCurrency(
-  value: number,
-  currency: string = 'ZAR',
-  locale: string = 'en-ZA'
-): string {
-  return new Intl.NumberFormat(locale, {
-    style: 'currency',
-    currency,
-    minimumFractionDigits: 2,
-  }).format(value);
-}
-
-/**
- * cn
- * --
- * Utility to concatenate conditional class names.
- *
- * @param classes  Array of strings or falsy values
- * @returns        A space-separated string of truthy class names
- */
-export function cn(...classes: (string | false | undefined | null)[]): string {
-  return classes.filter(Boolean).join(' ');
+export function formatDate(date: Date): string {
+  return new Date(date).toLocaleDateString();
 }
