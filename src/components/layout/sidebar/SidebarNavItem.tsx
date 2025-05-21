@@ -2,99 +2,39 @@
 import React from 'react';
 import { cn } from '@/lib/utils';
 import { NavLink } from 'react-router-dom';
-import { ChevronDown, ChevronRight } from 'lucide-react';
 
-type NavItem = {
-  label: string;
-  icon: React.ElementType;
-  path: string;
-  children?: NavItem[];
-};
-
-interface SidebarNavItemProps {
-  item: NavItem;
-  isExpanded: boolean;
-  onToggleExpand: (label: string) => void;
-  textColor: string;
-  textHoverColor: string;
-  activeBgColor: string;
-  activeTextColor: string;
-  hoverBgColor: string;
+// Updated NavItem interface to match the types file
+interface NavItemProps {
+  item: {
+    label: string;
+    path?: string;
+    href?: string;
+    icon?: React.ElementType; // Updated to ElementType
+  };
+  isActive: boolean;
+  onClick: () => void;
 }
 
-export const SidebarNavItem = ({
-  item,
-  isExpanded,
-  onToggleExpand,
-  textColor,
-  textHoverColor,
-  activeBgColor,
-  activeTextColor,
-  hoverBgColor
-}: SidebarNavItemProps) => {
-  if (item.children) {
-    return (
-      <li key={item.path}>
-        <div 
-          className={cn(
-            "flex items-center justify-between px-3 py-2 rounded-lg transition-all duration-300 cursor-pointer text-sm",
-            textColor, textHoverColor, hoverBgColor
-          )}
-          onClick={() => onToggleExpand(item.label)}
-        >
-          <div className="flex items-center gap-3">
-            <item.icon className="h-5 w-5" />
-            <span className="font-medium uppercase">{item.label}</span>
-          </div>
-          {isExpanded ? 
-            <ChevronDown className="h-4 w-4" /> : 
-            <ChevronRight className="h-4 w-4" />
-          }
-        </div>
-        {isExpanded && (
-          <ul className="ml-8 space-y-1 mt-1">
-            {item.children.map(child => (
-              <li key={child.path}>
-                <NavLink
-                  to={child.path}
-                  end
-                  className={({ isActive }) =>
-                    cn(
-                      'flex items-center gap-3 px-3 py-2 rounded-lg transition-all duration-300 text-sm',
-                      isActive
-                        ? `${activeBgColor} ${activeTextColor} shadow-md shadow-blue-900/30`
-                        : `${textColor} ${textHoverColor} ${hoverBgColor}`
-                    )
-                  }
-                >
-                  <child.icon className="h-4 w-4" />
-                  <span className="font-medium uppercase">{child.label}</span>
-                </NavLink>
-              </li>
-            ))}
-          </ul>
-        )}
-      </li>
-    );
-  }
-
+export const SidebarNavItem: React.FC<NavItemProps> = ({ item, isActive, onClick }) => {
+  const { label, path, href, icon: Icon } = item;
+  const itemPath = path || href || '#';
+  
   return (
-    <li key={item.path} className="my-1">
-      <NavLink
-        to={item.path}
-        end
-        className={({ isActive }) =>
-          cn(
-            'flex items-center gap-3 px-3 py-2 rounded-lg transition-all duration-300 text-sm',
-            isActive
-              ? `${activeBgColor} ${activeTextColor} shadow-md shadow-indigo-900/50`
-              : `${textColor} ${textHoverColor} ${hoverBgColor}`
-          )
+    <NavLink
+      to={itemPath}
+      className={cn(
+        "flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition-colors",
+        isActive ? "bg-blue-800/50 text-white" : "text-blue-100 hover:bg-blue-900/50 hover:text-white"
+      )}
+      onClick={(e) => {
+        if (itemPath === '#') {
+          e.preventDefault();
         }
-      >
-        <item.icon className="h-5 w-5" />
-        <span className="font-medium uppercase">{item.label}</span>
-      </NavLink>
-    </li>
+        onClick();
+      }}
+    >
+      {Icon && <Icon className="h-5 w-5" />}
+      <span>{label}</span>
+    </NavLink>
   );
 };
