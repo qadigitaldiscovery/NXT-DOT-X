@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Route } from "react-router-dom";
 
@@ -22,7 +21,7 @@ import { RAGDashboardRoutes }         from "./ragDashboardRoutes";
 import { RequestsRoutes }             from "./requestsRoutes";
 import { RiskRegisterRoutes }         from "./riskRegisterRoutes";
 import { ScorecardsRoutes }           from "./scorecardsRoutes";
-import { SecureRoutes }               from "./secureRouteExample";
+import { SecureRoute }                from "./secureRouteExample";
 import { SocialMediaRoutes }          from "./socialMediaRoutes";
 import { SupplierRoutes }             from "./supplierRoutes";
 import { SupplierManagementRoutes }   from "./supplierManagementRoutes";
@@ -32,31 +31,33 @@ import { VendorRoutes }               from "./vendorRoutes";
 import { WorkflowsRoutes }            from "./workflowsRoutes";
 
 /* ——— aggregate them ——— */
-export const AllAreaRoutes = () => [
-  ...(AdminRoutes || []),
-  ...(AIExtractRoutes || []),
-  ...(BetaRoutes || []),
-  ...(BrandMarketingRoutes || []),
-  ...(CategoriesRoutes || []),
-  ...(ContractsRoutes || []),
-  ...(CustomerManagementRoutes || []),
-  ...(DataManagementRoutes || []),
-  ...(DotXRoutes || []),
-  ...(EntitiesRoutes || []),
-  ...(EventsRoutes || []),
-  ...(FilesRoutes || []),
-  ...(LoyaltyRoutes || []),
-  ...(ProjectManagementRoutes || []),
-  ...(RAGDashboardRoutes || []),
-  ...(RequestsRoutes || []),
-  ...(RiskRegisterRoutes || []),
-  ...(ScorecardsRoutes || []),
-  ...(SecureRoutes || []),
-  ...(SocialMediaRoutes || []),
-  ...(SupplierRoutes || []),
-  ...(SupplierManagementRoutes || []),
-  ...(TechHubRoutes || []),
-  ...(TradingSystemRoutes || []),
-  ...(VendorRoutes || []),
-  ...(WorkflowsRoutes || []),
-];
+export const AllAreaRoutes = () => {
+  return [
+    ...(typeof AdminRoutes === 'function' ? AdminRoutes() : []),
+    ...(typeof AIExtractRoutes === 'function' ? AIExtractRoutes() : []),
+    ...(typeof BetaRoutes === 'function' ? BetaRoutes() : []),
+    ...(typeof BrandMarketingRoutes === 'function' ? BrandMarketingRoutes() : []),
+    ...(typeof CategoriesRoutes === 'function' ? CategoriesRoutes() : []),
+    ...(typeof ContractsRoutes === 'function' ? ContractsRoutes() : []),
+    ...(typeof CustomerManagementRoutes === 'function' ? CustomerManagementRoutes() : []),
+    ...(typeof DataManagementRoutes === 'function' ? DataManagementRoutes() : []),
+    ...(typeof DotXRoutes === 'function' ? DotXRoutes() : []),
+    ...(typeof EntitiesRoutes === 'function' ? EntitiesRoutes() : []),
+    ...(typeof EventsRoutes === 'function' ? EventsRoutes() : []),
+    ...(typeof FilesRoutes === 'function' ? FilesRoutes() : []),
+    ...(typeof LoyaltyRoutes === 'function' ? LoyaltyRoutes() : []),
+    ...(typeof ProjectManagementRoutes === 'function' ? ProjectManagementRoutes() : []),
+    ...(typeof RAGDashboardRoutes === 'function' ? RAGDashboardRoutes() : []),
+    ...(typeof RequestsRoutes === 'function' ? RequestsRoutes() : []),
+    ...(typeof RiskRegisterRoutes === 'function' ? RiskRegisterRoutes() : []),
+    ...(typeof ScorecardsRoutes === 'function' ? ScorecardsRoutes() : []),
+    ...(typeof SecureRoute === 'function' ? SecureRoute() : []),
+    ...(typeof SocialMediaRoutes === 'function' ? SocialMediaRoutes() : []),
+    ...(typeof SupplierRoutes === 'function' ? SupplierRoutes() : []),
+    ...(typeof SupplierManagementRoutes === 'function' ? SupplierManagementRoutes() : []),
+    ...(typeof TechHubRoutes === 'function' ? TechHubRoutes() : []),
+    ...(typeof TradingSystemRoutes === 'function' ? TradingSystemRoutes() : []),
+    ...(typeof VendorRoutes === 'function' ? VendorRoutes() : []),
+    ...(typeof WorkflowsRoutes === 'function' ? WorkflowsRoutes() : []),
+  ];
+};
