@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-"build": "tsc && vite build",
+"build": "tsc --noEmit && vite build",
 "build:dev": "vite build --mode development",
 "lint:components": "eslint src/components --ext .ts,.tsx --cache",
 "lint:pages": "eslint src/pages --ext .ts,.tsx --cache",
