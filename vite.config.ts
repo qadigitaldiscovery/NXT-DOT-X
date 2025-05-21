@@ -1,3 +1,4 @@
+
 // vite.config.ts
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react-swc';
@@ -47,21 +48,6 @@ export default defineConfig(({ mode }) => ({
     port: 8080,
   },
 
-  /* ────────────────── path aliases ────────────────── */
-  // REMOVE or COMMENT OUT this entire resolve.alias section
-  // tsconfigPaths() plugin will handle aliases from tsconfig.json
-  /*
-  resolve: {
-    alias: {
-      '@': path.resolve(__dirname, './src'),
-      // These are now redundant if tsconfigPaths is working with the updated tsconfig.json
-      // components: path.resolve(__dirname, './src/components'),
-      // lib: path.resolve(__dirname, './src/lib'),
-      // hooks: path.resolve(__dirname, './src/hooks')
-    }
-  },
-  */
-
   /* ────────────────── dependency optimisation ────────────────── */
   optimizeDeps: {
     include: [
@@ -75,7 +61,5 @@ export default defineConfig(({ mode }) => ({
       'clsx',
       'tailwind-merge',
     ],
-    // force: true // Consider removing 'force: true' unless you have a specific reason for it during development
-                  // as it slows down dev server startup. It's useful if deps change and Vite doesn't pick it up.
   },
 }));
