@@ -8,6 +8,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { ExcelService } from '@/utils/excel';
 
 const ExportData = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -39,11 +40,27 @@ const ExportData = () => {
     try {
       setExporting(exportType);
       
-      // Simulate export process
-      setTimeout(() => {
-        toast.success(`${exportType} exported successfully`);
-        setExporting(null);
-      }, 1500);
+      // Sample data for demonstration - in a real app this would come from an API
+      const sampleData = Array(10).fill(null).map((_, i) => ({
+        id: i + 1,
+        name: `Item ${i + 1}`,
+        category: ['Category A', 'Category B', 'Category C'][i % 3],
+        price: Math.round(Math.random() * 100 + 10),
+        inStock: Math.random() > 0.3,
+        lastUpdated: new Date().toISOString().split('T')[0]
+      }));
+      
+      // Export to Excel using ExcelService
+      ExcelService.exportToExcel(sampleData, `${exportType}-${new Date().toISOString().slice(0, 10)}`)
+        .then(() => {
+          toast.success(`${exportType} exported successfully`);
+          setExporting(null);
+        })
+        .catch(err => {
+          console.error(`Error exporting ${exportType}:`, err);
+          toast.error(`Failed to export ${exportType}. Please try again.`);
+          setExporting(null);
+        });
     } catch (err) {
       toast.error(`Failed to export ${exportType}. Please try again.`);
       console.error(`Error exporting ${exportType}:`, err);
@@ -56,11 +73,26 @@ const ExportData = () => {
     try {
       setExporting('custom');
       
-      // Simulate export process
-      setTimeout(() => {
-        toast.success('Custom export generated successfully');
-        setExporting(null);
-      }, 2000);
+      // Generate custom export data based on selected fields
+      // This is a simplified example - in a real app, this would be dynamic
+      const customData = Array(5).fill(null).map((_, i) => ({
+        name: `Custom Item ${i + 1}`,
+        contact: `contact${i+1}@example.com`,
+        email: `info${i+1}@example.com`,
+        phone: `+1 (555) ${100 + i * 111}`,
+      }));
+      
+      // Export to Excel using ExcelService
+      ExcelService.exportToExcel(customData, `custom-export-${new Date().toISOString().slice(0, 10)}`)
+        .then(() => {
+          toast.success('Custom export generated successfully');
+          setExporting(null);
+        })
+        .catch(err => {
+          console.error('Error generating custom export:', err);
+          toast.error('Failed to generate custom export. Please try again.');
+          setExporting(null);
+        });
     } catch (err) {
       toast.error('Failed to generate custom export. Please try again.');
       console.error('Error generating custom export:', err);

@@ -4,14 +4,14 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { FileTypeIcon } from "../FileTypeIcon";
 import { FileSize } from "../FileSize";
-import * as XLSX from 'xlsx';
+import { ExcelService } from '@/utils/excel';
 
 type FilePreviewProps = {
   file: File | null;
   onDetectedSupplier?: (supplierName: string) => void;
 };
 
-type ExcelData = Array<Array<string | number>>;
+type ExcelData = Array<{[key: string]: string | number | boolean | Date | null}>;
 
 export function FilePreview({ file, onDetectedSupplier }: FilePreviewProps) {
   const [previewContent, setPreviewContent] = useState<string | null>(null);
@@ -19,8 +19,8 @@ export function FilePreview({ file, onDetectedSupplier }: FilePreviewProps) {
 
   const extractSupplierFromExcel = (jsonData: ExcelData): boolean => {
     if (jsonData.length > 0) {
-      const headers = jsonData[0];
-      const firstRow = jsonData[1];
+      const firstRow = jsonData[0];
+      const headers = Object.keys(firstRow);
       
       // Look for supplier information in headers
       const supplierHeaderIndex = headers ? 
@@ -31,7 +31,8 @@ export function FilePreview({ file, onDetectedSupplier }: FilePreviewProps) {
         ) : -1;
       
       if (supplierHeaderIndex !== -1 && firstRow) {
-        const supplierName = firstRow[supplierHeaderIndex];
+        const headerName = headers[supplierHeaderIndex];
+        const supplierName = firstRow[headerName];
         if (supplierName) {
           setExtractedSupplier(String(supplierName));
           if (onDetectedSupplier) onDetectedSupplier(String(supplierName));
@@ -107,21 +108,15 @@ export function FilePreview({ file, onDetectedSupplier }: FilePreviewProps) {
       };
       reader.readAsText(file);
     } 
-    // For Excel files - use SheetJS to extract and preview content
+    // For Excel files - use ExcelJS to extract and preview content
     else if (file.name.endsWith('.xlsx') || file.name.endsWith('.xls')) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
+      const processExcelFile = async () => {
         try {
-          const data = new Uint8Array(e.target?.result as ArrayBuffer);
-          const workbook = XLSX.read(data, { type: 'array' });
+          const jsonData = await ExcelService.readExcelFile(file);
           
-          const firstSheetName = workbook.SheetNames[0];
-          const worksheet = workbook.Sheets[firstSheetName];
-          
-          const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 }) as ExcelData;
-          
+          // Create preview from the first few rows
           const previewRows = jsonData.slice(0, 5).map(row => 
-            Array.isArray(row) ? row.join('\t') : String(row)
+            Object.values(row).join('\t')
           );
           setPreviewContent(previewRows.join('\n'));
           
@@ -134,7 +129,8 @@ export function FilePreview({ file, onDetectedSupplier }: FilePreviewProps) {
           extractSupplierFromFilename(file.name);
         }
       };
-      reader.readAsArrayBuffer(file);
+      
+      processExcelFile();
     }
     // For PDFs - we can't easily extract content in the browser
     else if (file.type === 'application/pdf' || file.name.endsWith('.pdf')) {

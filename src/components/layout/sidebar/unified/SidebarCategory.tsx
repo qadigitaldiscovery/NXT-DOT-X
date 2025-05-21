@@ -19,7 +19,7 @@ export function SidebarCategory({
   onToggle,
   onItemClick,
   isItemActive,
-  isMobile, // Keep the isMobile prop
+  // isMobile parameter is intentionally not destructured as it's not used directly
 }: SidebarCategoryProps) {
   return (
     <div className="mb-3">
@@ -40,11 +40,11 @@ export function SidebarCategory({
       </Button>
       
       {/* Category Items */}
-      {isExpanded && category.items && (
-        <div className="mt-1 ml-2 space-y-1">
-          {category.items.map((item, itemIndex) => (
-            <SidebarNavItem 
-              key={`${item.label}-${itemIndex}`}
+      {isExpanded && (
+        <div className="pl-2 space-y-1 mt-1">
+          {category.items.map((item) => (
+            <SidebarNavItem
+              key={item.path || item.href || item.label}
               item={item}
               isActive={isItemActive(item)}
               onClick={() => onItemClick(item)}

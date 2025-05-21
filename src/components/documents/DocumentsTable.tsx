@@ -1,3 +1,4 @@
+
 import React from 'react';
 import {
   Table,
@@ -19,7 +20,7 @@ interface Document {
 }
 
 interface DocumentsTableProps {
-  supplier: {
+  supplier?: {
     id: string;
     name: string;
   };
