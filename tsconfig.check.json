@@ -5,7 +5,9 @@
     "skipLibCheck": true,
     "noUnusedLocals": false,
     "noUnusedParameters": false,
-    "noFallthroughCasesInSwitch": false
+    "noFallthroughCasesInSwitch": false,
+    "noEmit": true,
+    "allowImportingTsExtensions": true,
   },
   "references": []
 }

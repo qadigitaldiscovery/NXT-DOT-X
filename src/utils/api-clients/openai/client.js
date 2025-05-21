@@ -1,0 +1,131 @@
+import { OpenAIError, RateLimitError, InvalidRequestError, NetworkError } from './types';
+import { tryUseEdgeFunction, processStreamingResponse, getApiKey } from '../common/shared-utils';
+// Get API key from storage or database
+export async function getOpenAIKey() {
+    return await getApiKey('openai');
+}
+;
+// Main function to call OpenAI API
+export async function callOpenAI({ endpoint, payload, apiKey, signal }) {
+    // Use provided apiKey or fetch from storage
+    const result = apiKey ?
+        { key: apiKey, model: null, config: null } :
+        await getOpenAIKey();
+    const key = result.key;
+    const config = result.config;
+    if (!key) {
+        console.error("No API key available");
+        throw new Error("No API key available. Please add your OpenAI API key in the settings.");
+    }
+    console.log("Making OpenAI API call with valid key");
+    // Apply any additional config parameters if available
+    if (config && !apiKey && typeof config === 'object') {
+        // Merge the saved config with the provided payload
+        // Apply temperature if it exists
+        if (config.temperature_default !== undefined && payload.temperature === undefined) {
+            payload.temperature = config.temperature_default;
+        }
+        // Apply max_tokens if it exists
+        if (config.max_tokens_default !== undefined && payload.max_tokens === undefined) {
+            payload.max_tokens = config.max_tokens_default;
+        }
+        // Apply frequency_penalty if it exists
+        if (config.frequency_penalty_default !== undefined && payload.frequency_penalty === undefined) {
+            payload.frequency_penalty = config.frequency_penalty_default;
+        }
+        // Apply presence_penalty if it exists
+        if (config.presence_penalty_default !== undefined && payload.presence_penalty === undefined) {
+            payload.presence_penalty = config.presence_penalty_default;
+        }
+    }
+    // Try to use our edge function first
+    try {
+        const edgeResponse = await tryUseEdgeFunction('openai', endpoint === 'chat' ? 'chat/completions' : endpoint, payload);
+        if (edgeResponse) {
+            console.log("Successfully used edge function for OpenAI request");
+            return edgeResponse;
+        }
+    }
+    catch (err) {
+        console.warn("Edge function attempt failed, using direct API:", err);
+        // Continue to direct API call
+    }
+    // Direct API call as fallback
+    console.log("Attempting direct OpenAI API call");
+    const baseUrl = 'https://api.openai.com/v1';
+    const url = `${baseUrl}/${endpoint === 'chat' ? 'chat/completions' : endpoint}`;
+    // Add organization if configured
+    const headers = {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${key}`,
+        'User-Agent': 'lovable.dev-fe',
+        'X-Request-Timestamp': new Date().toISOString()
+    };
+    if (config?.organization_id) {
+        headers['OpenAI-Organization'] = config.organization_id;
+    }
+    try {
+        console.log(`Sending request to ${url}`);
+        const response = await fetch(url, {
+            method: 'POST',
+            headers,
+            body: JSON.stringify(payload),
+            signal
+        });
+        // Handle non-2xx responses
+        if (!response.ok) {
+            const errorData = await response.json();
+            console.error("OpenAI API error:", errorData);
+            // Map to specific error types
+            if (errorData.error.type === 'insufficient_quota' ||
+                errorData.error.code === 'rate_limit_exceeded') {
+                throw new RateLimitError(errorData.error);
+            }
+            if (errorData.error.type === 'invalid_request_error') {
+                throw new InvalidRequestError(errorData.error);
+            }
+            throw new OpenAIError(errorData.error);
+        }
+        // Handle streaming response
+        if (endpoint === 'chat' && payload.stream === true) {
+            // Return the readable stream for processing by the caller
+            return response.body;
+        }
+        // Regular JSON response
+        const data = await response.json();
+        console.log("OpenAI API response received successfully");
+        return data;
+    }
+    catch (error) {
+        console.error("Error in OpenAI API call:", error);
+        // Re-throw OpenAI specific errors
+        if (error instanceof OpenAIError ||
+            error instanceof RateLimitError ||
+            error instanceof InvalidRequestError) {
+            throw error;
+        }
+        // Handle abort errors
+        if (error instanceof DOMException && error.name === 'AbortError') {
+            throw error;
+        }
+        // Handle network errors
+        throw new NetworkError(error instanceof Error ? error.message : 'Unknown network error');
+    }
+}
+// Helper function to process streaming responses
+export async function* processStream(stream) {
+    yield* processStreamingResponse(stream);
+}
+// Utility function to estimate cost based on model and token count
+export function estimateCost(model, promptTokens, completionTokens = 0) {
+    const rates = {
+        'gpt-4o': { input: 0.00005, output: 0.00015 },
+        'gpt-4o-mini': { input: 0.00001, output: 0.00003 },
+        'gpt-4-turbo': { input: 0.00001, output: 0.00003 },
+        'gpt-4': { input: 0.00003, output: 0.00006 },
+        'gpt-3.5-turbo': { input: 0.0000015, output: 0.000002 }
+    };
+    const defaultRate = { input: 0.00001, output: 0.00002 };
+    const rate = rates[model] || defaultRate;
+    return (promptTokens * rate.input) + (completionTokens * rate.output);
+}

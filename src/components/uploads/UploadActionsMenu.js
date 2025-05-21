@@ -1,0 +1,7 @@
+import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger, } from "@/components/ui/dropdown-menu";
+import { Button } from "@/components/ui/button";
+import { MoreHorizontal, Play, DownloadCloud, User, Trash2 } from "lucide-react";
+export function UploadActionsMenu({ upload, isHoldingBucket, onProcess, onDelete, onAssign }) {
+    return (_jsxs(DropdownMenu, { children: [_jsx(DropdownMenuTrigger, { asChild: true, children: _jsx(Button, { variant: "ghost", className: "h-8 w-8 p-0", children: _jsx(MoreHorizontal, { className: "h-4 w-4" }) }) }), _jsxs(DropdownMenuContent, { align: "end", children: [_jsx(DropdownMenuLabel, { children: "Actions" }), upload.status === 'pending' && (_jsxs(DropdownMenuItem, { onClick: () => onProcess(upload), children: [_jsx(Play, { className: "h-4 w-4 mr-2" }), "Process File"] })), _jsxs(DropdownMenuItem, { children: [_jsx(DownloadCloud, { className: "h-4 w-4 mr-2" }), "Download"] }), isHoldingBucket && (_jsxs(DropdownMenuItem, { onClick: () => onAssign(upload), children: [_jsx(User, { className: "h-4 w-4 mr-2" }), "Assign to Supplier"] })), _jsx(DropdownMenuSeparator, {}), _jsxs(DropdownMenuItem, { className: "text-red-600", onClick: () => onDelete(upload), children: [_jsx(Trash2, { className: "h-4 w-4 mr-2" }), "Delete"] })] })] }));
+}

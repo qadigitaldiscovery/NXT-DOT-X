@@ -2,67 +2,77 @@
  * Utility to simplify calling MCP tools from the Smithery Toolbox.
  * This abstracts the complexity of the XML structure or direct chat commands.
  */
-
 /**
- * Calls OpenAI's API through the MCP tool
- * @param {string} prompt - The prompt to send to OpenAI
- * @param {Object} options - Additional options for the API call
- * @returns {Promise<string>} - The response from OpenAI
+ * Function to call an MCP tool with a simpler syntax.
+ * This is a placeholder for the actual implementation which would be handled by the underlying system.
+ * For now, it logs the intended call structure for demonstration.
+ */
+export function callMcpTool(options) {
+    const { serverName, toolName, arguments: args } = options;
+    console.log(`Calling MCP Tool: ${toolName} from server: ${serverName}`);
+    console.log(`Arguments:`, args);
+    // The actual implementation would involve sending this data to the MCP system.
+    // For demonstration, we're just logging the intent.
+    console.log(`This would invoke <use_mcp_tool> with server_name: ${serverName}, tool_name: ${toolName}, and the provided arguments.`);
+}
+/**
+ * Simulates a call to the OpenAI API
+ * @param prompt The prompt to send to OpenAI
+ * @returns A promise that resolves to a simulated OpenAI response
  */
 export function callOpenAI(prompt) {
-  return new Promise((resolve) => {
-    setTimeout(() => resolve(`OpenAI Response for prompt: "${prompt}"`), 500);
-  });
+    return new Promise((resolve) => {
+        setTimeout(() => resolve(`OpenAI Response for prompt: "${prompt}"`), 500);
+    });
 }
-
 /**
- * Analyzes brand sentiment from text data
- * @param {string} text - The text to analyze
- * @returns {Promise<Object>} - The sentiment analysis result
+ * Analyzes sentiment in text data
+ * @param data Array of text strings to analyze
+ * @returns Object containing counts of positive, neutral, and negative sentiments
  */
 export function analyzeBrandSentiment(data) {
-  const sentimentCount = { positive: 0, neutral: 0, negative: 0 };
-  data.forEach(text => {
-    if (text.includes("great") || text.includes("love")) sentimentCount.positive++;
-    else if (text.includes("okay") || text.includes("fine")) sentimentCount.neutral++;
-    else sentimentCount.negative++;
-  });
-  return sentimentCount;
+    const sentimentCount = { positive: 0, neutral: 0, negative: 0 };
+    data.forEach(text => {
+        if (text.includes("great") || text.includes("love"))
+            sentimentCount.positive++;
+        else if (text.includes("okay") || text.includes("fine"))
+            sentimentCount.neutral++;
+        else
+            sentimentCount.negative++;
+    });
+    return sentimentCount;
 }
-
 /**
- * Generates SEO keyword suggestions based on a topic
- * @param {string} topic - The topic to generate keywords for
- * @param {Object} options - Additional options for keyword generation
- * @returns {Promise<Array>} - Array of keyword suggestions
+ * Generates SEO keyword suggestions based on topic
+ * @param topic The main topic for keyword generation
+ * @returns Array of SEO keyword suggestions
  */
 export function generateSEOKeywords(topic) {
-  return [
-    `${topic} tips`,
-    `best ${topic} tools`,
-    `${topic} strategies 2025`,
-    `how to improve ${topic}`,
-    `top ${topic} software`
-  ];
+    return [
+        `${topic} tips`,
+        `best ${topic} tools`,
+        `${topic} strategies 2025`,
+        `how to improve ${topic}`,
+        `top ${topic} software`
+    ];
 }
-
 /**
- * Analyzes brand trust factors from customer reviews
- * @param {Array} reviews - Array of customer review texts
- * @returns {Promise<Object>} - Trust analysis results
+ * Analyzes trust-related feedback from reviews
+ * @param reviews Array of review objects with rating and content
+ * @returns Average trust score (0-5)
  */
 export function analyzeBrandTrust(reviews) {
-  const total = reviews.length;
-  const trustScore = reviews.reduce((acc, review) => acc + review.rating, 0);
-  return total ? parseFloat((trustScore / total).toFixed(2)) : 0;
+    const total = reviews.length;
+    const trustScore = reviews.reduce((acc, review) => acc + review.rating, 0);
+    return total ? parseFloat((trustScore / total).toFixed(2)) : 0;
 }
-
 /**
- * Default export of all utility functions
+ * Example usage of the MCP tool caller.
  */
-export default {
-  callOpenAI,
-  analyzeBrandSentiment,
-  generateSEOKeywords,
-  analyzeBrandTrust
-};
+export function exampleSearchServers(query) {
+    callMcpTool({
+        serverName: 'smithery/toolbox',
+        toolName: 'search_servers',
+        arguments: { query }
+    });
+}

@@ -1,0 +1,9 @@
+import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
+import { Activity } from "lucide-react";
+export const MissionControlCard = ({ status = {
+    activeOperations: 6,
+    completedTasks: 28,
+    efficiency: 92
+} }) => {
+    return (_jsxs("div", { className: "frosted-card h-full", children: [_jsx("div", { className: "glossy-overlay" }), _jsxs("div", { className: "flex flex-col h-full", children: [_jsxs("div", { className: "flex justify-between items-center mb-4", children: [_jsx("h3", { className: "text-silver-300/80 font-medium", children: "Mission Status" }), _jsx(Activity, { className: "h-5 w-5 text-silver-300/70" })] }), _jsxs("div", { className: "grid grid-cols-2 gap-4 mt-4", children: [_jsxs("div", { className: "bg-black-800/50 p-3 rounded-xl", children: [_jsx("div", { className: "text-2xl font-bold text-silver-100 tabular-nums", children: status.activeOperations }), _jsx("div", { className: "text-xs text-silver-300/60 mt-1", children: "Active Operations" })] }), _jsxs("div", { className: "bg-black-800/50 p-3 rounded-xl", children: [_jsx("div", { className: "text-2xl font-bold text-silver-100 tabular-nums", children: status.completedTasks }), _jsx("div", { className: "text-xs text-silver-300/60 mt-1", children: "Completed Tasks" })] }), _jsx("div", { className: "col-span-2 bg-black-800/50 p-3 rounded-xl", children: _jsxs("div", { className: "flex justify-between items-center", children: [_jsxs("div", { children: [_jsxs("div", { className: "text-2xl font-bold text-silver-100 tabular-nums", children: [status.efficiency, "%"] }), _jsx("div", { className: "text-xs text-silver-300/60 mt-1", children: "Operational Efficiency" })] }), _jsx("div", { className: "h-10 w-10 rounded-full border-[3px] border-redmetal-400 flex items-center justify-center", children: _jsx("span", { className: "text-sm font-medium text-silver-100", children: "A+" }) })] }) })] })] })] }));
+};

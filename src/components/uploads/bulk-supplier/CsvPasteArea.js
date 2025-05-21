@@ -1,0 +1,5 @@
+import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
+import { Textarea } from "@/components/ui/textarea";
+export function CsvPasteArea({ value, onChange, isUploading }) {
+    return (_jsxs("div", { className: "space-y-4", children: [_jsx(Textarea, { placeholder: "Paste your CSV content here, including the headers 'name,code,contact_name,email,phone,website,payment_terms,status' in the first row", value: value, onChange: (e) => onChange(e.target.value), disabled: isUploading, rows: 10, className: "font-mono text-sm" }), _jsxs("div", { className: "text-sm text-muted-foreground", children: [_jsx("p", { children: "Example format:" }), _jsxs("pre", { className: "bg-secondary/20 p-2 rounded-md overflow-auto mt-1", children: ["name,code,contact_name,email,phone,website,payment_terms,status", '\n', "Acme Supplies,ACME001,John Doe,john@acme.com,+1-555-123-4567,https://acme.com,Net 30,active", '\n', "GlobalTech,GTECH002,Jane Smith,jane@globaltech.com,+1-555-987-6543,https://globaltech.com,Net 45,active"] })] })] }));
+}

@@ -1,0 +1,12 @@
+import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
+import { Users } from "lucide-react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+export const TeamOperationsCard = ({ members = [
+    { id: "team-1", name: "Alex Wright", role: "Squad Leader", avatar: "/agents/agent-1.jpg", status: "online", location: "HQ" },
+    { id: "team-2", name: "Sarah Chen", role: "Tactical Lead", avatar: "/agents/agent-2.jpg", status: "mission", location: "Field" },
+    { id: "team-3", name: "Miguel Rodriguez", role: "Intel Officer", avatar: "/agents/agent-3.jpg", status: "online", location: "HQ" }
+] }) => {
+    return (_jsxs("div", { className: "frosted-card h-full", children: [_jsx("div", { className: "glossy-overlay" }), _jsxs("div", { className: "flex flex-col h-full", children: [_jsxs("div", { className: "flex justify-between items-center mb-4", children: [_jsxs("div", { className: "flex items-center", children: [_jsx(Users, { className: "h-5 w-5 text-silver-300/70 mr-2" }), _jsx("h3", { className: "text-silver-100 font-medium", children: "Team Operations" })] }), _jsxs("div", { className: "bg-redmetal-400/30 px-2 py-1 rounded-full text-xs font-medium text-silver-300", children: [members.filter(m => m.status === 'online').length, "/", members.length, " Active"] })] }), _jsx("div", { className: "space-y-3 mt-4 flex-1", children: members.map((member) => (_jsxs("div", { className: "flex items-center justify-between bg-black-800/50 p-2.5 rounded-xl", children: [_jsxs("div", { className: "flex items-center", children: [_jsxs(Avatar, { className: "h-8 w-8 mr-3 border border-redmetal-600", children: [_jsx(AvatarImage, { src: member.avatar, alt: member.name }), _jsx(AvatarFallback, { className: "bg-black-800 text-silver-300", children: member.name.split(' ').map(n => n[0]).join('') })] }), _jsxs("div", { children: [_jsx("p", { className: "text-sm font-medium text-silver-100", children: member.name }), _jsx("p", { className: "text-xs text-silver-300/60", children: member.role })] })] }), _jsxs("div", { className: "flex items-center", children: [_jsx("div", { className: `w-2 h-2 rounded-full mr-2 ${member.status === 'online' ? 'bg-emerald-500' :
+                                                member.status === 'mission' ? 'bg-redmetal-400' :
+                                                    'bg-gray-500'}` }), _jsx("span", { className: "text-xs text-silver-300/70", children: member.location })] })] }, member.id))) })] })] }));
+};

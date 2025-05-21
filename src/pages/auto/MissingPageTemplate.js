@@ -1,0 +1,10 @@
+import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
+import { Button } from '@/components/ui/button';
+import { useNavigate } from 'react-router-dom';
+import { ArrowLeft, FileText } from 'lucide-react';
+import { PlatformLayout } from '@/components/layouts/PlatformLayout';
+const MissingPageTemplate = ({ moduleName, moduleDescription, navCategories, docsLink }) => {
+    const navigate = useNavigate();
+    return (_jsx(PlatformLayout, { moduleTitle: moduleName, navCategories: navCategories, children: _jsxs("div", { className: "container mx-auto px-4 py-8", children: [_jsxs("div", { className: "flex justify-between items-center mb-8", children: [_jsxs(Button, { variant: "outline", size: "sm", onClick: () => navigate('/master'), className: "flex items-center gap-2", children: [_jsx(ArrowLeft, { className: "h-4 w-4" }), "Back to Master Dashboard"] }), docsLink && (_jsxs(Button, { variant: "outline", size: "sm", onClick: () => navigate(docsLink), className: "flex items-center gap-2", children: [_jsx(FileText, { className: "h-4 w-4" }), "View Documentation"] }))] }), _jsxs("div", { className: "bg-white rounded-lg shadow-md p-8 border border-gray-200", children: [_jsxs("div", { className: "text-center mb-8", children: [_jsx("h1", { className: "text-3xl font-bold mb-4", children: moduleName }), _jsx("p", { className: "text-gray-600 max-w-2xl mx-auto", children: moduleDescription })] }), _jsx("div", { className: "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8", children: navCategories[0]?.items.map((item, index) => (_jsxs("div", { className: "border border-gray-200 rounded-lg p-6 hover:shadow-md transition-shadow cursor-pointer", onClick: () => navigate(item.path), children: [_jsxs("div", { className: "flex items-center mb-4", children: [item.icon && _jsx(item.icon, { className: "h-5 w-5 mr-2 text-blue-600" }), _jsx("h3", { className: "font-medium", children: item.label })] }), _jsxs("p", { className: "text-sm text-gray-500", children: ["Access and manage ", item.label.toLowerCase(), " functionality."] })] }, index))) })] })] }) }));
+};
+export default MissingPageTemplate;

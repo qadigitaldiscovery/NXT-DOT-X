@@ -1,0 +1,8 @@
+import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { Search } from 'lucide-react';
+const SearchAndFilter = ({ activeCategory, onCategoryChange, searchTerm, onSearchChange }) => {
+    return _jsxs("div", { className: "flex flex-col space-y-4 sm:space-y-0 sm:flex-row sm:justify-between sm:items-center", children: [_jsxs("div", { className: "relative", children: [_jsx(Search, { className: "absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground h-4 w-4" }), _jsx(Input, { placeholder: "Search modules...", value: searchTerm, onChange: e => onSearchChange(e.target.value), className: "w-full sm:w-[250px] pl-9" })] }), _jsxs("div", { className: "flex space-x-2 overflow-x-auto pb-2 sm:pb-0", children: [_jsx(Button, { variant: activeCategory === 'all' ? 'default' : 'outline', size: "sm", onClick: () => onCategoryChange('all'), children: "All" }), _jsx(Button, { variant: activeCategory === 'primary' ? 'default' : 'outline', size: "sm", onClick: () => onCategoryChange('primary'), className: "bg-slate-400 hover:bg-slate-300 text-slate-500", children: "Primary" }), _jsx(Button, { variant: activeCategory === 'secondary' ? 'default' : 'outline', size: "sm", onClick: () => onCategoryChange('secondary'), className: "bg-slate-400 hover:bg-slate-300 text-slate-500", children: "Secondary" }), _jsx(Button, { variant: activeCategory === 'subcategory' ? 'default' : 'outline', size: "sm", onClick: () => onCategoryChange('subcategory'), className: "text-slate-500 bg-slate-400 hover:bg-slate-300", children: "Sub-Category" })] })] });
+};
+export default SearchAndFilter;

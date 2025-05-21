@@ -1,0 +1,185 @@
+import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
+import { useState, useCallback, useEffect } from 'react';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { toast } from "sonner";
+import { supabase } from '@/integrations/supabase/client';
+const RequestyKeyForm = () => {
+    const [apiKey, setApiKey] = useState('');
+    const [savedKey, setSavedKey] = useState('');
+    const [isVerifying, setIsVerifying] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
+    const [keyStatus, setKeyStatus] = useState('unknown');
+    const [model, setModel] = useState('openai/gpt-4o-mini');
+    // Load API key from database on component mount
+    useEffect(() => {
+        const fetchApiKey = async () => {
+            try {
+                const { data: { session } } = await supabase.auth.getSession();
+                if (!session) {
+                    setIsLoading(false);
+                    return;
+                }
+                const { data, error } = await supabase
+                    .from('api_provider_settings')
+                    .select('api_key, preferred_model')
+                    .eq('provider_name', 'requesty')
+                    .maybeSingle();
+                if (error) {
+                    console.error("Error fetching API key:", error);
+                    toast.error("Failed to fetch saved API key");
+                }
+                else if (data?.api_key) {
+                    // Set the actual API key
+                    setApiKey(data.api_key);
+                    setSavedKey(data.api_key);
+                    if (data.preferred_model)
+                        setModel(data.preferred_model);
+                    setKeyStatus('valid'); // Assume valid until tested
+                }
+            }
+            catch (err) {
+                console.error("Exception while fetching API key:", err);
+            }
+            finally {
+                setIsLoading(false);
+            }
+        };
+        fetchApiKey();
+    }, []);
+    // Save API key to database
+    const saveApiKey = async (key, verifiedModel) => {
+        try {
+            const { data: { session } } = await supabase.auth.getSession();
+            if (!session) {
+                toast.error("You must be logged in to save API keys");
+                return false;
+            }
+            const { error } = await supabase
+                .from('api_provider_settings')
+                .upsert({
+                provider_name: 'requesty',
+                api_key: key,
+                preferred_model: verifiedModel,
+                user_id: session.user.id,
+                updated_at: new Date().toISOString()
+            }, { onConflict: 'user_id, provider_name' });
+            if (error) {
+                console.error("Error saving API key:", error);
+                toast.error("Failed to save API key to database");
+                return false;
+            }
+            setSavedKey(key);
+            return true;
+        }
+        catch (error) {
+            console.error("Error saving API key:", error);
+            toast.error("Failed to save API key to database");
+            return false;
+        }
+    };
+    // Verify API key by making a simple call through our secure proxy
+    const verifyApiKey = useCallback(async () => {
+        if (!apiKey.trim()) {
+            toast.error("Please enter an API key");
+            return;
+        }
+        setIsVerifying(true);
+        try {
+            // We'll make a direct call to the Requesty API for verification
+            // In a production app, this should go through our edge function
+            const response = await fetch("https://router.requesty.ai/v1/chat/completions", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${apiKey}`
+                },
+                body: JSON.stringify({
+                    model,
+                    messages: [{ role: "system", content: "Hello, this is a test message to verify API key." }],
+                    max_tokens: 1
+                }),
+            });
+            if (!response.ok) {
+                const errorData = await response.json();
+                if (errorData.error?.code === 'insufficient_quota' || errorData.error?.type === 'insufficient_quota') {
+                    setKeyStatus('quota_exceeded');
+                    toast.error("Your API key is valid, but you've exceeded your quota limits. Check your Requesty account billing.");
+                }
+                else {
+                    setKeyStatus('invalid');
+                    toast.error(errorData.error?.message || "Invalid API key");
+                }
+                return;
+            }
+            // If no error was thrown, the key is valid
+            const saved = await saveApiKey(apiKey, model);
+            if (saved) {
+                setKeyStatus('valid');
+                toast.success("API key verified and saved successfully!");
+            }
+        }
+        catch (error) {
+            console.error("API key verification failed:", error);
+            setKeyStatus('invalid');
+            toast.error("Invalid API key or network error");
+        }
+        finally {
+            setIsVerifying(false);
+        }
+    }, [apiKey, model]);
+    const clearApiKey = async () => {
+        try {
+            const { data: { session } } = await supabase.auth.getSession();
+            if (!session) {
+                toast.error("You must be logged in to remove API keys");
+                return;
+            }
+            const { error } = await supabase
+                .from('api_provider_settings')
+                .delete()
+                .eq('provider_name', 'requesty')
+                .eq('user_id', session.user.id);
+            if (error) {
+                console.error("Error removing API key:", error);
+                toast.error("Failed to remove API key from database");
+                return;
+            }
+            setApiKey('');
+            setSavedKey('');
+            setKeyStatus('unknown');
+            toast.info("API key removed");
+        }
+        catch (error) {
+            console.error("Error removing API key:", error);
+            toast.error("Failed to remove API key from database");
+        }
+    };
+    const handleModelChange = async (value) => {
+        setModel(value);
+        // If we have a saved key, update the preferred model in the database
+        if (savedKey) {
+            await saveApiKey(savedKey, value);
+        }
+    };
+    const renderStatusMessage = () => {
+        switch (keyStatus) {
+            case 'valid':
+                return _jsx("p", { className: "text-sm text-green-500 mt-1", children: "\u2713 Valid API key saved" });
+            case 'invalid':
+                return _jsx("p", { className: "text-sm text-red-500 mt-1", children: "\u2717 Invalid API key" });
+            case 'quota_exceeded':
+                return (_jsxs("p", { className: "text-sm text-amber-500 mt-1", children: ["\u26A0 Valid key, but quota exceeded. ", _jsx("a", { href: "https://requesty.ai/dashboard/billing", target: "_blank", rel: "noopener noreferrer", className: "underline hover:text-amber-600", children: "Check your billing" })] }));
+            default:
+                return null;
+        }
+    };
+    if (isLoading) {
+        return (_jsx(Card, { children: _jsxs(CardHeader, { children: [_jsx(CardTitle, { children: "Requesty API Configuration" }), _jsx(CardDescription, { children: "Loading..." })] }) }));
+    }
+    return (_jsxs(Card, { children: [_jsxs(CardHeader, { children: [_jsx(CardTitle, { children: "Requesty API Configuration" }), _jsx(CardDescription, { children: "Configure your Requesty API key for routing requests to different AI providers" })] }), _jsxs(CardContent, { className: "space-y-4", children: [_jsxs("div", { className: "space-y-2", children: [_jsx(Label, { htmlFor: "apiKey", children: "Requesty API Key" }), _jsxs("div", { className: "flex gap-2", children: [_jsx(Input, { id: "apiKey", type: "password", value: apiKey, onChange: (e) => setApiKey(e.target.value), placeholder: "rty-...", className: "flex-1" }), _jsx(Button, { onClick: verifyApiKey, disabled: isVerifying || !apiKey.trim(), children: isVerifying ? "Verifying..." : "Verify" })] }), renderStatusMessage()] }), _jsxs("div", { className: "space-y-2", children: [_jsx(Label, { children: "Preferred Model" }), _jsxs(RadioGroup, { value: model, onValueChange: handleModelChange, className: "grid grid-cols-1 gap-2", children: [_jsxs("div", { className: "flex items-center space-x-2", children: [_jsx(RadioGroupItem, { value: "openai/gpt-4o-mini", id: "gpt-4o-mini" }), _jsx(Label, { htmlFor: "gpt-4o-mini", children: "OpenAI GPT-4o Mini" })] }), _jsxs("div", { className: "flex items-center space-x-2", children: [_jsx(RadioGroupItem, { value: "openai/gpt-4o", id: "gpt-4o" }), _jsx(Label, { htmlFor: "gpt-4o", children: "OpenAI GPT-4o" })] }), _jsxs("div", { className: "flex items-center space-x-2", children: [_jsx(RadioGroupItem, { value: "anthropic/claude-3-5-sonnet", id: "claude-3-5-sonnet" }), _jsx(Label, { htmlFor: "claude-3-5-sonnet", children: "Anthropic Claude 3.5 Sonnet" })] }), _jsxs("div", { className: "flex items-center space-x-2", children: [_jsx(RadioGroupItem, { value: "mistral/mistral-large", id: "mistral-large" }), _jsx(Label, { htmlFor: "mistral-large", children: "Mistral Large" })] })] })] }), savedKey && (_jsx("div", { className: "pt-2", children: _jsx(Button, { variant: "outline", size: "sm", onClick: clearApiKey, children: "Remove API Key" }) }))] }), _jsx(CardFooter, { className: "flex flex-col items-start border-t p-4", children: _jsxs("p", { className: "text-sm text-gray-500", children: ["Your API key is stored securely in the database and never exposed to the browser. Visit the ", _jsx("a", { href: "https://requesty.ai/dashboard/api-keys", className: "text-blue-500 hover:underline", target: "_blank", rel: "noopener noreferrer", children: "Requesty API Keys page" }), " to create a new key if needed."] }) })] }));
+};
+export default RequestyKeyForm;

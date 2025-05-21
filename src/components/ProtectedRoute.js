@@ -1,0 +1,31 @@
+import { jsx as _jsx, Fragment as _Fragment } from "react/jsx-runtime";
+import React from 'react';
+import { Navigate, useLocation } from 'react-router-dom';
+import { toast } from 'sonner';
+import { useAuth } from '../context/AuthContext';
+const ProtectedRoute = ({ children }) => {
+    const location = useLocation();
+    const { isAuthenticated } = useAuth();
+    // Additional logging to help with debugging
+    console.log("Protected route check - Auth status:", isAuthenticated);
+    console.log("Current path:", location.pathname);
+    // If not authenticated, redirect to landing page
+    if (!isAuthenticated) {
+        console.log("Not authenticated, redirecting to landing");
+        return _jsx(Navigate, { to: "/landing", replace: true });
+    }
+    // If we're on the dashboard path, show a welcome toast once
+    React.useEffect(() => {
+        if (location.pathname === '/') {
+            // Use sessionStorage to ensure the toast only shows once per session
+            const welcomeShown = sessionStorage.getItem('welcomeShown');
+            if (!welcomeShown) {
+                toast.success("Welcome to the dashboard");
+                sessionStorage.setItem('welcomeShown', 'true');
+            }
+        }
+    }, [location.pathname]);
+    // If authenticated, render the protected content
+    return _jsx(_Fragment, { children: children });
+};
+export default ProtectedRoute;
