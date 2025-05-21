@@ -11,7 +11,7 @@ export function useNavigation() {
   const isItemActive = (item: NavItem) => {
     if (!item.path && !item.href) return false;
     
-    const path = item.path || item.href;
+    const path = item.path || item.href || '';
     return location.pathname === path || 
            (path !== '/' && location.pathname.startsWith(path));
   };
