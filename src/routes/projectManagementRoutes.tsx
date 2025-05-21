@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Route } from "react-router-dom";
 import PermissionGuard from "@/components/PermissionGuard";
@@ -9,33 +8,51 @@ import GanttChartPage from "@/pages/project-management/GanttChartPage";
 import ProjectsDashboardPage from "@/pages/project-management/ProjectsDashboardPage";
 import { ProjectManagementLayout } from "@/components/layout/ProjectManagementLayout";
 
+// Create interface to match the expected props
+interface PermissionGuardProps {
+  permission: string;
+  children: React.ReactNode;
+}
+
+// Create a wrapper component that converts requiredPermission to permission
+const PermissionWrapper: React.FC<{ requiredPermission: string, children: React.ReactNode }> = ({ 
+  requiredPermission, 
+  children 
+}) => {
+  return (
+    <PermissionGuard permission={requiredPermission}>
+      {children}
+    </PermissionGuard>
+  );
+};
+
 export const ProjectManagementRoutes = () => {
   return [
     <Route key="projects" path="/projects" element={<ProjectManagementLayout />}>
       <Route index element={
-        <PermissionGuard requiredPermission="projects.access">
+        <PermissionWrapper requiredPermission="projects.access">
           <ProjectsDashboardPage />
-        </PermissionGuard>
+        </PermissionWrapper>
       } />
       <Route path="list" element={
-        <PermissionGuard requiredPermission="projects.access">
+        <PermissionWrapper requiredPermission="projects.access">
           <ProjectsPage />
-        </PermissionGuard>
+        </PermissionWrapper>
       } />
       <Route path=":projectId" element={
-        <PermissionGuard requiredPermission="projects.access">
+        <PermissionWrapper requiredPermission="projects.access">
           <ProjectDetailsPage />
-        </PermissionGuard>
+        </PermissionWrapper>
       } />
       <Route path=":projectId/kanban" element={
-        <PermissionGuard requiredPermission="projects.access">
+        <PermissionWrapper requiredPermission="projects.access">
           <KanbanBoardPage />
-        </PermissionGuard>
+        </PermissionWrapper>
       } />
       <Route path=":projectId/gantt" element={
-        <PermissionGuard requiredPermission="projects.access">
+        <PermissionWrapper requiredPermission="projects.access">
           <GanttChartPage />
-        </PermissionGuard>
+        </PermissionWrapper>
       } />
     </Route>
   ];
