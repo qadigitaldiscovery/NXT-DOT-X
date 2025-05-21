@@ -42,7 +42,10 @@ export function DashboardLayout() {
         useGlobalNavigation={true}
       />
       <div className="flex flex-col flex-1">
-        <MasterDashNavbar />
+        <MasterDashNavbar 
+          sidebarOpen={sidebarOpen}
+          sidebarToggle={toggleSidebar}
+        />
         <main className="flex-1 p-6 overflow-y-auto bg-gray-200">
           <Outlet />
         </main>
