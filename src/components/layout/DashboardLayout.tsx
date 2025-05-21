@@ -1,5 +1,4 @@
 
-import { useState, useEffect } from 'react';
 import { Outlet } from 'react-router-dom';
 import { UnifiedSidebar } from './UnifiedSidebar';
 import MasterDashNavbar from '../master-dash/MasterDashNavbar';
@@ -16,22 +15,7 @@ const homeItem: NavItem = {
 };
 
 export function DashboardLayout() {
-  const [sidebarOpen, setSidebarOpen] = useState(true);
   const isMobile = useIsMobile();
-
-  useEffect(() => {
-    // Close sidebar on mobile by default
-    if (isMobile) {
-      setSidebarOpen(false);
-    } else {
-      setSidebarOpen(true);
-    }
-  }, [isMobile]);
-
-  const toggleSidebar = () => {
-    setSidebarOpen(!sidebarOpen);
-    console.log("Toggling sidebar:", !sidebarOpen);
-  };
 
   return (
     <SidebarProvider defaultOpen={!isMobile}>

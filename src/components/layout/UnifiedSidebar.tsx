@@ -48,10 +48,12 @@ export function UnifiedSidebar({
   return (
     <>
       {/* Mobile backdrop */}
-      <SidebarMobileBackdrop 
-        isOpen={!!isOpen && isMobile} 
-        onClose={() => onToggle?.()}
-      />
+      {isMobile && isOpen && (
+        <SidebarMobileBackdrop 
+          isOpen={true} 
+          onClose={() => onToggle?.()}
+        />
+      )}
       
       <aside
         className={cn(

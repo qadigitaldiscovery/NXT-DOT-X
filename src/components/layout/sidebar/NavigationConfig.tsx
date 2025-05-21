@@ -151,19 +151,3 @@ export const navCategories: NavCategory[] = [
     ]
   }
 ];
-
-// Settings item (for footer)
-export const settingsItem: NavItem = { 
-  label: 'Settings', 
-  icon: Settings, 
-  href: '/settings', 
-  path: '/settings' 
-};
-
-// Home item for master dashboard
-export const masterDashItem: NavItem = { 
-  label: 'Master Dashboard', 
-  icon: LayoutDashboard, 
-  href: '/', 
-  path: '/' 
-};

@@ -1,11 +1,8 @@
 
-import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { cn } from '@/lib/utils';
 import { ChevronDown, ChevronRight } from 'lucide-react';
 import { NavCategory, NavItem } from '../types';
 import { SidebarNavItem } from './SidebarNavItem';
-import { useLocation } from 'react-router-dom';
 
 interface SidebarCategoryProps {
   category: NavCategory;
@@ -24,8 +21,6 @@ export function SidebarCategory({
   isItemActive,
   isMobile
 }: SidebarCategoryProps) {
-  const categoryName = category.name || category.label || '';
-
   return (
     <div className="mb-3">
       {/* Category Header */}
