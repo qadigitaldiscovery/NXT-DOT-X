@@ -8,16 +8,14 @@ const LoyaltyProgram = () => {
   return (
     <div className="p-6 space-y-6">
       <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-3xl font-bold tracking-tight">Loyalty Program</h2>
-          <p className="text-muted-foreground">
-            Manage your customer rewards and points system
-          </p>
-        </div>
-        <div className="flex gap-2">
-          <Button variant="outline">Export Data</Button>
-          <Button>Create Campaign</Button>
-        </div>
+        <h2 className="text-3xl font-bold tracking-tight">Loyalty Program</h2>
+        <p className="text-muted-foreground">
+          Manage your customer rewards and points system
+        </p>
+      </div>
+      <div className="flex gap-2">
+        <Button variant="outline">Export Data</Button>
+        <Button>Create Campaign</Button>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
