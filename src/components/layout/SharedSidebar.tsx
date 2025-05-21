@@ -2,6 +2,7 @@
 import { UnifiedSidebar } from './UnifiedSidebar';
 import { Home } from 'lucide-react';
 import type { NavItem } from './sidebar/types';
+import { useSidebar } from '@/context/SidebarContext';
 
 const defaultHomeItem: NavItem = {
   label: 'Home',
@@ -9,13 +10,24 @@ const defaultHomeItem: NavItem = {
   icon: Home
 };
 
-export function SharedSidebar(props: any) {
-  // For backward compatibility, just forward all props to UnifiedSidebar
+export interface SharedSidebarProps {
+  homeItem?: NavItem;
+  moduleTitle?: string;
+  useGlobalNavigation?: boolean;
+}
+
+export function SharedSidebar({
+  homeItem = defaultHomeItem,
+  moduleTitle = 'Navigation',
+  useGlobalNavigation = true,
+  ...props
+}: SharedSidebarProps) {
+  // We'll use the context in the UnifiedSidebar component
   return (
     <UnifiedSidebar 
-      homeItem={defaultHomeItem}
-      useGlobalNavigation={true}
-      moduleTitle="Data Management"
+      homeItem={homeItem}
+      moduleTitle={moduleTitle}
+      useGlobalNavigation={useGlobalNavigation}
       {...props}
     />
   );

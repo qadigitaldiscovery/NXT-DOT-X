@@ -1,5 +1,5 @@
 
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
 import { useIsMobile } from '@/hooks/use-mobile';
 
 interface SidebarContextType {
@@ -29,6 +29,11 @@ export const SidebarProvider: React.FC<SidebarProviderProps> = ({
 }) => {
   const isMobile = useIsMobile();
   const [isOpen, setIsOpen] = useState(isMobile ? false : defaultOpen);
+
+  // Adjust sidebar state when screen size changes
+  useEffect(() => {
+    setIsOpen(!isMobile && defaultOpen);
+  }, [isMobile, defaultOpen]);
 
   const toggle = () => setIsOpen(prev => !prev);
 

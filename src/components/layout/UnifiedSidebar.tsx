@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { NavCategory, NavItem } from './sidebar/types';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { navCategories } from './sidebar/NavigationConfig';
+import { useSidebar } from '@/context/SidebarContext';
 
 export interface UnifiedSidebarProps {
   isOpen?: boolean;
@@ -18,8 +19,8 @@ export interface UnifiedSidebarProps {
 }
 
 export function UnifiedSidebar({
-  isOpen = true,
-  onToggle,
+  isOpen: propIsOpen,
+  onToggle: propOnToggle,
   items = [],
   homeItem,
   moduleTitle = 'Navigation',
@@ -29,6 +30,11 @@ export function UnifiedSidebar({
   const location = useLocation();
   const isMobile = useIsMobile();
   const [expandedCategories, setExpandedCategories] = useState<string[]>([]);
+  
+  // Use the context if available, otherwise use props
+  const sidebarContext = useSidebar();
+  const isOpen = propIsOpen !== undefined ? propIsOpen : sidebarContext?.isOpen;
+  const onToggle = propOnToggle || sidebarContext?.toggle;
   
   // Determine which navigation to use
   const effectiveNavItems = useGlobalNavigation ? navCategories : items;
@@ -207,7 +213,7 @@ export function UnifiedSidebar({
             
             {/* Show only icons for items in collapsed view */}
             {effectiveNavItems.flatMap(category => 
-              category.items.map((item, index) => (
+              category.items?.map((item, index) => (
                 <Button
                   key={`icon-${item.label}-${index}`}
                   variant="ghost"

@@ -10,14 +10,15 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { useSidebar } from '@/context/SidebarContext';
 
 interface SharedNavbarProps {
-  onMenuClick?: () => void;
   moduleTitle?: string;
 }
 
-export function SharedNavbar({ onMenuClick, moduleTitle = "Dashboard" }: SharedNavbarProps) {
+export function SharedNavbar({ moduleTitle = "Dashboard" }: SharedNavbarProps) {
   const { user, signOut } = useAuth();
+  const { toggle } = useSidebar();
 
   return (
     <header className="bg-gray-900 text-white z-10 border-b border-gray-800 flex h-14 items-center justify-between px-4">
@@ -25,7 +26,7 @@ export function SharedNavbar({ onMenuClick, moduleTitle = "Dashboard" }: SharedN
         <Button 
           variant="ghost" 
           size="icon" 
-          onClick={onMenuClick} 
+          onClick={toggle} 
           className="md:hidden h-8 w-8 text-gray-300"
         >
           <Menu className="h-5 w-5" />

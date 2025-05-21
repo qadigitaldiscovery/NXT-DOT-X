@@ -37,17 +37,12 @@ export function DashboardLayout() {
     <SidebarProvider defaultOpen={!isMobile}>
       <div className="flex min-h-screen bg-gradient-to-br from-gray-900 to-gray-950">
         <UnifiedSidebar 
-          isOpen={sidebarOpen} 
-          onToggle={toggleSidebar}
           homeItem={homeItem}
           moduleTitle="Data Management"
           useGlobalNavigation={true}
         />
         <div className="flex flex-col flex-1">
-          <MasterDashNavbar 
-            sidebarOpen={sidebarOpen}
-            sidebarToggle={toggleSidebar}
-          />
+          <MasterDashNavbar />
           <main className="flex-1 p-6 overflow-y-auto bg-gray-200">
             <Outlet />
           </main>
