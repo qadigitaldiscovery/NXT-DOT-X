@@ -2,7 +2,7 @@
 // vite.config.ts
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react-swc';
-import path from 'path'; // Keep this if componentTagger or other parts need it
+import path from 'path';
 import { componentTagger } from 'lovable-tagger';
 import tsconfigPaths from 'vite-tsconfig-paths';
 
@@ -17,6 +17,10 @@ export default defineConfig(({ mode }) => ({
   /* ────────────────── build ────────────────── */
   build: {
     outDir: 'dist',
+    sourcemap: false, // Disable sourcemaps in production for better performance
+    minify: 'terser', // Use terser for better minification
+    target: 'es2018', // Ensure compatibility with most browsers
+    cssMinify: true, // Minify CSS
     rollupOptions: {
       output: {
         manualChunks: {

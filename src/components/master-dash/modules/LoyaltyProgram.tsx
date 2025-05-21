@@ -1,7 +1,8 @@
+
 import React from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { BadgePercent, Gift, TrendingUp } from "lucide-react";
+import { BadgePercent } from "lucide-react";
 
 const LoyaltyProgram: React.FC = () => {
   return (
