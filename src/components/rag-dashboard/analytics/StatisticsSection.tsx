@@ -9,7 +9,8 @@ interface StatisticsSectionProps {
   modulesCount: number;
   operationalCount: number;
   errorRate: number | null;
-  healthLoading: boolean;
+  // Keeping healthLoading for future implementation
+  healthLoading?: boolean;
 }
 
 // Export as a named constant to match import in RAGDashboardPage
@@ -20,7 +21,8 @@ export const StatisticsSection: React.FC<StatisticsSectionProps> = ({
   modulesCount,
   operationalCount,
   errorRate,
-  healthLoading
+  // Using optional param syntax to avoid unused variable warning
+  healthLoading: _healthLoading
 }) => {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">

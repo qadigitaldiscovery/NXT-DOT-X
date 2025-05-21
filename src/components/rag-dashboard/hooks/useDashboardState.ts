@@ -4,11 +4,16 @@ import { Module } from '@/hooks/useModules';
 import { useUserPreferences } from '@/hooks/useUserPreferences';
 import { useAuth } from '@/context/AuthContext';
 
+interface DashboardPreferences {
+  selectedStatus: string | null;
+  searchQuery: string;
+}
+
 export const useDashboardState = (modules: Module[], alerts: any[]) => {
   const { user } = useAuth();
   
   // Get preferences from database with fallback to local state
-  const { preferences, setPreferences } = useUserPreferences({
+  const { preferences, setPreferences } = useUserPreferences<DashboardPreferences>({
     module: 'rag_dashboard',
     key: 'filters',
     defaultValue: {
@@ -19,11 +24,11 @@ export const useDashboardState = (modules: Module[], alerts: any[]) => {
   
   // Local state for UI
   const [selectedStatus, setSelectedStatus] = useState<string | null>(
-    (preferences as any)?.selectedStatus || null
+    (preferences as DashboardPreferences)?.selectedStatus || null
   );
   
   const [searchQuery, setSearchQuery] = useState<string>(
-    (preferences as any)?.searchQuery || ''
+    (preferences as DashboardPreferences)?.searchQuery || ''
   );
   
   // State for module details dialog

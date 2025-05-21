@@ -1,5 +1,5 @@
 
-import { KpiCard } from './KpiCard';
+import KpiCard from './KpiCard';
 import { AlertTriangle, CheckCircle, XCircle } from 'lucide-react';
 import { type Module } from '@/context/ModulesContext';
 

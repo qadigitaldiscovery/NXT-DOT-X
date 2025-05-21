@@ -23,14 +23,22 @@ const samplePermissions = {
   ]
 };
 
+type Permission = {
+  id: string;
+  name: string;
+};
+
+type PermissionsByCategory = {
+  [category: string]: Permission[];
+};
+
 const PermissionsTab: React.FC = () => {
   // Get permissions from context
-  const { permissions = [] } = useUserManagement();
+  const { permissions = {} as PermissionsByCategory } = useUserManagement();
   
   // Use sample data if no permissions are available
-  const permissionsByCategory = Object.keys(permissions).length > 0 
-    ? permissions 
-    : samplePermissions;
+  const permissionsByCategory: PermissionsByCategory = 
+    Object.keys(permissions).length > 0 ? permissions : samplePermissions;
 
   return (
     <Card>
@@ -45,7 +53,7 @@ const PermissionsTab: React.FC = () => {
           <div key={category} className="mb-8">
             <h3 className="text-lg font-medium mb-4">{category} Permissions</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {(perms as Array<{id: string, name: string}>).map((permission) => (
+              {perms.map((permission) => (
                 <div 
                   key={permission.id} 
                   className="p-4 border rounded-md flex justify-between items-center"
