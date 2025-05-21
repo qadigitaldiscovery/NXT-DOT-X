@@ -3,7 +3,7 @@
 import { UnifiedSidebar } from '../UnifiedSidebar';
 
 // Export types
-export { NavCategory, NavItem } from './types';
+export { type NavCategory, type NavItem } from './types';
 
 // Export the NavigationConfig
 export { navCategories } from './NavigationConfig';

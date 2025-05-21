@@ -1,100 +1,76 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Button } from '../ui/button';
-import { Menu, User, Settings, Bell, LogOut } from 'lucide-react';
-import { useLocation } from 'react-router-dom';
-import { cn } from '../../lib/utils';
+
 import { useAuth } from '../../context/AuthContext';
+import { Button } from '../ui/button';
+import { Search, Menu, BellRing, Settings, UserCircle } from 'lucide-react';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 
 interface SharedNavbarProps {
-  onMenuClick: () => void;
+  onMenuClick?: () => void;
   moduleTitle?: string;
 }
 
-export function SharedNavbar({ onMenuClick, moduleTitle }: SharedNavbarProps) {
-  const location = useLocation();
-  const navigate = useNavigate();
-  const { signOut } = useAuth();
-  
-  const getTitle = () => {
-    if (moduleTitle) return moduleTitle;
-    
-    const path = location.pathname;
-    if (path === '/') return 'Dashboard';
-    
-    // Format the path into a readable title (e.g., "/data-management/settings" -> "Data Management / Settings")
-    return path.split('/').filter(Boolean).map(
-      word => word.charAt(0).toUpperCase() + word.slice(1).replace(/-/g, ' ')
-    ).join(' / ');
-  };
-
-  const handleSettingsClick = () => {
-    navigate('/settings/billing');
-  };
-
-  const handleProfileClick = () => {
-    navigate('/admin/users/profile');
-  };
-
-  const handleLogoutClick = async () => {
-    try {
-      await signOut();
-      navigate('/landing');
-    } catch (error) {
-      console.error('Logout failed:', error);
-    }
-  };
+export function SharedNavbar({ onMenuClick, moduleTitle = "Dashboard" }: SharedNavbarProps) {
+  const { user, signOut } = useAuth();
 
   return (
-    <header className={cn(
-      "sticky top-0 z-40 flex h-14 items-center justify-between border-b",
-      "bg-gradient-to-r from-redmetal-800 to-black text-white",
-      "px-4 sm:px-6"
-    )}>
-      <div className="flex items-center">
+    <header className="bg-gray-900 text-white z-10 border-b border-gray-800 flex h-14 items-center justify-between px-4">
+      <div className="flex items-center gap-4">
         <Button 
           variant="ghost" 
           size="icon" 
-          className="text-white hover:bg-redmetal-700 mr-2" 
-          onClick={onMenuClick}
+          onClick={onMenuClick} 
+          className="md:hidden h-8 w-8 text-gray-300"
         >
           <Menu className="h-5 w-5" />
+          <span className="sr-only">Toggle menu</span>
         </Button>
-        <h1 className="text-xl font-semibold">{getTitle()}</h1>
+        <h1 className="text-lg font-semibold">{moduleTitle}</h1>
       </div>
+
       <div className="flex items-center gap-2">
-        <Button 
-          variant="ghost" 
-          size="icon" 
-          className="text-white hover:bg-redmetal-700"
-          onClick={() => navigate('/notifications')}
-        >
-          <Bell className="h-5 w-5" />
+        <div className="hidden md:flex relative">
+          <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-gray-500" />
+          <input
+            placeholder="Search..."
+            className="bg-gray-800 border-gray-700 rounded pl-8 h-9 w-[200px] text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
+          />
+        </div>
+
+        <Button variant="ghost" size="icon" className="ml-2 text-gray-300">
+          <BellRing className="h-5 w-5" />
         </Button>
-        <Button 
-          variant="ghost" 
-          size="icon" 
-          className="text-white hover:bg-redmetal-700"
-          onClick={handleSettingsClick}
-        >
+
+        <Button variant="ghost" size="icon" className="ml-2 text-gray-300">
           <Settings className="h-5 w-5" />
         </Button>
-        <Button 
-          variant="ghost" 
-          size="icon" 
-          className="text-white hover:bg-redmetal-700"
-          onClick={handleProfileClick}
-        >
-          <User className="h-5 w-5" />
-        </Button>
-        <Button 
-          variant="ghost" 
-          size="icon" 
-          className="text-white hover:bg-redmetal-700"
-          onClick={handleLogoutClick}
-        >
-          <LogOut className="h-5 w-5" />
-        </Button>
+
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" size="sm" className="ml-2 gap-2">
+              <UserCircle className="h-5 w-5" />
+              <span className="hidden md:inline text-sm font-normal">
+                {user?.email?.split('@')[0] || 'User'}
+              </span>
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuLabel>My Account</DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem>Profile</DropdownMenuItem>
+            <DropdownMenuItem>Settings</DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem onClick={signOut}>
+              Sign Out
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
     </header>
   );

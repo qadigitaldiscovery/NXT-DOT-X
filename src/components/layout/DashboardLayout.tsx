@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from 'react';
-import { Outlet, useLocation } from 'react-router-dom';
+import { Outlet } from 'react-router-dom';
 import { UnifiedSidebar } from './UnifiedSidebar';
 import MasterDashNavbar from '../master-dash/MasterDashNavbar';
 import MasterDashFooter from '../master-dash/MasterDashFooter';
@@ -17,7 +17,6 @@ const homeItem: NavItem = {
 export function DashboardLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const isMobile = useIsMobile();
-  const location = useLocation();
 
   useEffect(() => {
     // Close sidebar on mobile by default
@@ -43,7 +42,11 @@ export function DashboardLayout() {
         useGlobalNavigation={true}
       />
       <div className="flex flex-col flex-1">
-        <MasterDashNavbar onToggleSidebar={toggleSidebar} sidebarOpen={sidebarOpen} />
+        <MasterDashNavbar 
+          // Add sidebarToggle prop instead of onToggleSidebar to match component definition
+          sidebarToggle={toggleSidebar}
+          sidebarOpen={sidebarOpen} 
+        />
         <main className="flex-1 p-6 overflow-y-auto bg-gray-200">
           <Outlet />
         </main>

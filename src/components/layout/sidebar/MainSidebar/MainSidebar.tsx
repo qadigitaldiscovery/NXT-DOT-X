@@ -38,10 +38,6 @@ export function MainSidebar({
   navCategories = [],
   items = [],
   homeItem,
-  showToggleButton = false,
-  removeBottomToggle = false,
-  initialState,
-  onStateChange,
   useGlobalNavigation = false
 }: MainSidebarProps) {
   const isMobile = useIsMobile();

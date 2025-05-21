@@ -1,17 +1,7 @@
 
 import { UnifiedSidebar } from './UnifiedSidebar';
-import { useModules } from '@/hooks/useModules';
-import type { NavItem, NavCategory } from './sidebar/types';
-import { 
-  Home, 
-  BarChart3, 
-  Building, 
-  FileText, 
-  Settings, 
-  Database, 
-  FileUp, 
-  ShoppingCart 
-} from 'lucide-react';
+import { Home } from 'lucide-react';
+import type { NavItem } from './sidebar/types';
 
 const defaultHomeItem: NavItem = {
   label: 'Home',

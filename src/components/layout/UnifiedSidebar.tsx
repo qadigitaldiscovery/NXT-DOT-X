@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
-import { X, Menu, ChevronDown, ChevronRight, Home } from 'lucide-react';
+import { X, Menu, ChevronDown, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { NavCategory, NavItem } from './sidebar/types';
 import { useIsMobile } from '@/hooks/use-mobile';
