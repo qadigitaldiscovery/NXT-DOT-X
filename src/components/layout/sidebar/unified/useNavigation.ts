@@ -18,7 +18,7 @@ export function useNavigation() {
 
   // Handle clicking on a navigation item
   const handleItemClick = (
-    _item: NavItem, // Added underscore to indicate intentionally unused parameter
+    item: NavItem, // Fixed: Removed underscore prefix from param name
     onToggle?: () => void, 
     isMobile?: boolean
   ) => {

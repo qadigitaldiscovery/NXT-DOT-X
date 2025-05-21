@@ -1,9 +1,7 @@
-
 import { ReactNode } from 'react';
 import { Navigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { useModules } from '../../context/ModulesContext';
-// Removed unused BetaAccessStatus import
 
 interface BetaPermissionGuardProps {
   featureId: string;
@@ -19,7 +17,7 @@ const BetaPermissionGuard = ({
   fallbackComponent
 }: BetaPermissionGuardProps) => {
   const { user, isAuthenticated } = useAuth();
-  const { isFeatureEnabled } = useModules(); // Removed unused modules variable
+  const { isFeatureEnabled } = useModules();
 
   // Debug logging
   console.log(`Beta permission check - Feature: ${featureId}, User: ${user?.id}`);

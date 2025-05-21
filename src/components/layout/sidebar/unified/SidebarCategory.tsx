@@ -19,7 +19,7 @@ export function SidebarCategory({
   onToggle,
   onItemClick,
   isItemActive,
-  isMobile, // Added the isMobile prop here
+  isMobile, // Keep the isMobile prop
 }: SidebarCategoryProps) {
   return (
     <div className="mb-3">
