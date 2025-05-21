@@ -1,53 +1,138 @@
-
 import { RouteObject } from "react-router-dom";
 import DashboardLayout from "../components/layout/DashboardLayout";
 import MasterDash from "../pages/MasterDash";
-import { AllAreaRoutes } from "./AllAreaRoutes";
 import { Navigate } from "react-router-dom";
-import { DotXLayout } from "../components/layout/DotXLayout";
-import DotXDashboard from "../pages/dot-x/Dashboard"; 
-import DotXDashboard2 from "../pages/dot-x/Dashboard2";
-import DotXApi from "../pages/dot-x/Api";
-import DotXDataServices from "../pages/dot-x/DataServices";
-import DotXPlugins from "../pages/dot-x/Plugins";
-import DotXSettings from "../pages/dot-x/Settings";
 import RootHandler from "../components/RootHandler";
 
-export const appRoutes: RouteObject[] = [
-  /* Public root: decides where to send you */
-  { path: "/", element: <RootHandler /> },
+// Module dashboards
+import DataManagementDashboard from "../pages/data-management/Dashboard";
+import CustomerManagementDirectory from "../pages/data-management/CustomerManagementDirectory";
+import SupplierManagementDirectory from "../pages/data-management/SupplierManagementDirectory";
+import PriceManagement from "../pages/data-management/PriceManagement";
+import CostManagement from "../pages/data-management/CostManagement";
 
-  /* Dashboard area with its own layout + nested pages */
+// Import other module dashboards and their sub-pages
+// ...
+
+export const appRoutes: RouteObject[] = [
+  // Root handler deciding initial redirection
+  { 
+    path: "/", 
+    element: <RootHandler /> 
+  },
+
+  // Main dashboard with nested routing structure
   {
     path: "/dashboard",
     element: <DashboardLayout />,
     children: [
-      { index: true, element: <MasterDash /> },
-      ...AllAreaRoutes(),
-    ],
+      // MasterDash is the main hub showing all modules
+      { 
+        index: true, 
+        element: <MasterDash /> 
+      },
+      
+      // Data Management Module and its children
+      {
+        path: "data-management",
+        children: [
+          // Data Management Dashboard (module home)
+          { 
+            index: true, 
+            element: <DataManagementDashboard /> 
+          },
+          // Customer Management Directory (sub-module)
+          { 
+            path: "customer-management", 
+            element: <CustomerManagementDirectory /> 
+          },
+          // Supplier Management Directory (sub-module)
+          { 
+            path: "supplier-management", 
+            element: <SupplierManagementDirectory /> 
+          },
+          // Price Management (sub-module)
+          { 
+            path: "price-management", 
+            element: <PriceManagement /> 
+          },
+          // Cost Management (sub-module)
+          { 
+            path: "cost-management", 
+            element: <CostManagement /> 
+          },
+          // Other data management sub-modules...
+        ]
+      },
+      
+      // Tech Hub Module and its children
+      {
+        path: "tech-hub",
+        children: [
+          // Tech Hub Dashboard (module home)
+          { 
+            index: true, 
+            element: <TechHubDashboard /> 
+          },
+          // API Management (sub-module)
+          { 
+            path: "api-management", 
+            element: <ApiManagementDashboard />,
+            children: [
+              // Further nested sub-features
+              { path: "requesty", element: <RequestyPage /> }
+            ]
+          },
+          // Integrations (sub-module with further nesting)
+          {
+            path: "integrations",
+            children: [
+              { index: true, element: <IntegrationsHome /> },
+              { path: "odoo", element: <OdooIntegration /> },
+              { path: "woocommerce", element: <WooCommerceIntegration /> }
+            ]
+          },
+          // Other tech hub sub-modules...
+        ]
+      },
+      
+      // Social Media Module and its children
+      {
+        path: "social-media",
+        children: [
+          // Social Media Dashboard (module home)
+          { 
+            index: true, 
+            element: <SocialMediaDashboard /> 
+          },
+          // Accounts management (sub-module)
+          { 
+            path: "accounts", 
+            element: <SocialMediaAccounts /> 
+          },
+          // Calendar (sub-module)
+          { 
+            path: "calendar", 
+            element: <SocialMediaCalendar /> 
+          },
+          // Other social media sub-modules...
+        ]
+      },
+      
+      // Add other top-level modules following the same pattern
+      // ...
+    ]
   },
 
-  /* Master dashboard shortcut */
-  { path: "/master", element: <Navigate to="/dashboard" replace /> },
-
-  /* DOT-X routes */
-  {
-    path: "/dot-x",
-    element: <DotXLayout />,
-    children: [
-      { index: true, element: <DotXDashboard /> },
-      { path: "dot-x-2", element: <DotXDashboard2 /> },
-      { path: "api", element: <DotXApi /> },
-      { path: "data-services", element: <DotXDataServices /> },
-      { path: "plugins", element: <DotXPlugins /> },
-      { path: "settings", element: <DotXSettings /> },
-      { path: "command-center", element: <DotXDashboard /> },
-      { path: "agents", element: <DotXDashboard /> },
-      { path: "reports", element: <DotXDashboard /> },
-      { path: "knowledge", element: <DotXDashboard /> }
-    ],
+  // Shortcut to dashboard
+  { 
+    path: "/master", 
+    element: <Navigate to="/dashboard" replace /> 
   },
 
-  /* Fallback: any unknown URL sends you home */
-  { path: "*", element: <Navigate to="/" replace /> },
+  // Fallback route
+  { 
+    path: "*", 
+    element: <Navigate to="/" replace /> 
+  },
 ];
