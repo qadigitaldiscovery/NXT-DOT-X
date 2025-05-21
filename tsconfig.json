@@ -1,36 +1,98 @@
-// tsconfig.json
-{
-  "compilerOptions": {
-    /* ---------- basics ---------- */
-    "target": "ES2020",
-    "module": "ESNext",
-    // IMPORTANT: Change moduleResolution
-    "moduleResolution": "bundler", // Or "node16" or "nodenext" - "bundler" is often best for Vite
-    "lib": ["DOM", "DOM.Iterable", "ES2020"],
-    "jsx": "react-jsx",
-    "allowSyntheticDefaultImports": true,
-    "esModuleInterop": true, // Good to have, helps with CJS/ESM interop
+// eslint.config.js
+import js from "@eslint/js";
+import globals from "globals";
+import reactHooks from "eslint-plugin-react-hooks";
+import reactRefresh from "eslint-plugin-react-refresh";
+import tseslint from "@typescript-eslint/eslint-plugin";
+import tsParser from "@typescript-eslint/parser";
+import importPlugin from "eslint-plugin-import";
 
-    /* ---------- strictness ---------- */
-    "strict": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "noFallthroughCasesInSwitch": true, // Added for good measure
-
-    /* ---------- path aliases ---------- */
-    "baseUrl": ".", // Keep this
-    "paths": {
-      // Main alias - most of your imports use @/
-      "@/*": ["src/*"],
-      // You can keep these if you use them, but many errors show imports like "@/components/ui/..."
-      // If you only use @/ for everything, you can remove the lines below.
-      // For simplicity and to fix errors, I'm commenting them out.
-      // If you intend to import like `import X from 'components/something'`, then uncomment and ensure files exist.
-      // "components/*": ["src/components/*"],
-      // "lib/*": ["src/lib/*"],
-      // "hooks/*": ["src/hooks/*"]
-    }
+export default [
+  {
+    ignores: [
+      "dist",
+      "backup-nested-NXT-DOT-X",
+      "docs-backup",
+      "NXT-DOT-X/docs",
+      "NXT-DOT-X/backup-nested-NXT-DOT-X",
+      "NXT-DOT-X/docs-backup",
+      "node_modules"
+    ]
   },
-  "include": ["src", "vite.config.ts"], // Include vite.config.ts for better type checking in VS Code
-  "exclude": ["node_modules", "dist"] // Standard excludes
-}
+  {
+    files: ["**/*.{js,jsx,ts,tsx}"],
+    plugins: {
+      "@typescript-eslint": tseslint,
+      "react-hooks": reactHooks,
+      "react-refresh": reactRefresh,
+      "import": importPlugin
+    },
+    languageOptions: {
+      parser: tsParser,
+      parserOptions: {
+        ecmaVersion: 2020,
+        sourceType: "module",
+        ecmaFeatures: {
+          jsx: true
+        },
+        project: "./tsconfig.json",
+        tsconfigRootDir: ".",
+        moduleResolution: "bundler"
+      },
+      globals: {
+        ...globals.browser,
+        React: true
+      }
+    },
+    settings: {
+      "import/resolver": {
+        typescript: {
+          alwaysTryTypes: true,
+          project: "./tsconfig.json"
+        }
+      },
+      react: {
+        version: "detect"
+      }
+    },
+    rules: {
+      // TypeScript rules
+      "@typescript-eslint/no-unused-vars": ["warn", { 
+        "argsIgnorePattern": "^_",
+        "varsIgnorePattern": "^_"
+      }],
+      "@typescript-eslint/explicit-function-return-type": "off",
+      "@typescript-eslint/no-explicit-any": "warn",
+      "@typescript-eslint/no-non-null-assertion": "warn",
+      "@typescript-eslint/no-empty-interface": "warn",
+
+      // React rules
+      "react-hooks/rules-of-hooks": "error",
+      "react-hooks/exhaustive-deps": "warn",
+      "react-refresh/only-export-components": [
+        "warn",
+        { allowConstantExport: true }
+      ],
+
+      // Import rules
+      "import/order": ["warn", {
+        "groups": ["builtin", "external", "internal", "parent", "sibling", "index"],
+        "pathGroups": [
+          {
+            "pattern": "@/**",
+            "group": "internal"
+          }
+        ],
+        "newlines-between": "always",
+        "alphabetize": { "order": "asc" }
+      }],
+      "import/no-duplicates": "warn",
+      "import/no-unresolved": "error",
+
+      // General rules
+      "no-console": ["warn", { allow: ["warn", "error"] }],
+      "prefer-const": "warn",
+      "no-var": "error"
+    }
+  }
+];
