@@ -7,7 +7,6 @@
     "allowSyntheticDefaultImports": true,
     "strict": true,
     "forceConsistentCasingInFileNames": true,
-    "noEmit": false
 
   },
   "include": ["vite.config.ts"]
