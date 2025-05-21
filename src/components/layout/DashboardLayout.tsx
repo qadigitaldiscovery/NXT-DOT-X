@@ -42,11 +42,7 @@ export function DashboardLayout() {
         useGlobalNavigation={true}
       />
       <div className="flex flex-col flex-1">
-        <MasterDashNavbar 
-          // Add sidebarToggle prop instead of onToggleSidebar to match component definition
-          sidebarToggle={toggleSidebar}
-          sidebarOpen={sidebarOpen} 
-        />
+        <MasterDashNavbar />
         <main className="flex-1 p-6 overflow-y-auto bg-gray-200">
           <Outlet />
         </main>
