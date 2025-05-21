@@ -7,6 +7,7 @@ import SocialMediaAccounts from "@/pages/social-media/Accounts";
 import SocialMediaCalendar from "@/pages/social-media/Calendar";
 import SocialMediaEngagement from "@/pages/social-media/Engagement";
 import SocialMediaSettings from "@/pages/social-media/Settings";
+import NotFound from "@/pages/NotFound";
 import { NavCategory } from '@/components/layout/sidebar/types';
 import { MessageSquare, BarChart3, Calendar, Settings, Users } from 'lucide-react';
 
@@ -26,47 +27,58 @@ const socialMediaNavCategories: NavCategory[] = [
 
 export const SocialMediaRoutes = () => {
   return [
-    <Route key="social-media-index" path="/social-media">
-      <Route index element={
-        <PlatformLayout
-          moduleTitle="Social Media Marketing"
-          navCategories={socialMediaNavCategories}
-        >
-          <SocialMediaDashboard />
-        </PlatformLayout>
-      } />
-      <Route path="accounts" element={
-        <PlatformLayout
-          moduleTitle="Social Media Accounts"
-          navCategories={socialMediaNavCategories}
-        >
-          <SocialMediaAccounts />
-        </PlatformLayout>
-      } />
-      <Route path="calendar" element={
-        <PlatformLayout
-          moduleTitle="Social Media Calendar"
-          navCategories={socialMediaNavCategories}
-        >
-          <SocialMediaCalendar />
-        </PlatformLayout>
-      } />
-      <Route path="engagement" element={
-        <PlatformLayout
-          moduleTitle="Social Media Engagement"
-          navCategories={socialMediaNavCategories}
-        >
-          <SocialMediaEngagement />
-        </PlatformLayout>
-      } />
-      <Route path="settings" element={
-        <PlatformLayout
-          moduleTitle="Social Media Settings"
-          navCategories={socialMediaNavCategories}
-        >
-          <SocialMediaSettings />
-        </PlatformLayout>
-      } />
-    </Route>
+    <Route key="social-media-index" path="/social-media" element={
+      <PlatformLayout
+        moduleTitle="Social Media Dashboard" 
+        navCategories={socialMediaNavCategories}
+      >
+        <SocialMediaDashboard />
+      </PlatformLayout>
+    } />,
+    
+    <Route key="social-media-accounts" path="/social-media/accounts" element={
+      <PlatformLayout
+        moduleTitle="Social Media Accounts" 
+        navCategories={socialMediaNavCategories}
+      >
+        <SocialMediaAccounts />
+      </PlatformLayout>
+    } />,
+    
+    <Route key="social-media-calendar" path="/social-media/calendar" element={
+      <PlatformLayout
+        moduleTitle="Social Media Calendar" 
+        navCategories={socialMediaNavCategories}
+      >
+        <SocialMediaCalendar />
+      </PlatformLayout>
+    } />,
+    
+    <Route key="social-media-engagement" path="/social-media/engagement" element={
+      <PlatformLayout
+        moduleTitle="Social Media Engagement" 
+        navCategories={socialMediaNavCategories}
+      >
+        <SocialMediaEngagement />
+      </PlatformLayout>
+    } />,
+    
+    <Route key="social-media-settings" path="/social-media/settings" element={
+      <PlatformLayout
+        moduleTitle="Social Media Settings" 
+        navCategories={socialMediaNavCategories}
+      >
+        <SocialMediaSettings />
+      </PlatformLayout>
+    } />,
+    
+    <Route key="social-media-not-found" path="/social-media/*" element={
+      <PlatformLayout
+        moduleTitle="Not Found" 
+        navCategories={socialMediaNavCategories}
+      >
+        <NotFound />
+      </PlatformLayout>
+    } />
   ];
 };

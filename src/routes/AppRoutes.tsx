@@ -1,138 +1,68 @@
-import { RouteObject } from "react-router-dom";
-import DashboardLayout from "../components/layout/DashboardLayout";
-import MasterDash from "../pages/MasterDash";
-import { Navigate } from "react-router-dom";
-import RootHandler from "../components/RootHandler";
 
-// Module dashboards
-import DataManagementDashboard from "../pages/data-management/Dashboard";
-import CustomerManagementDirectory from "../pages/data-management/CustomerManagementDirectory";
-import SupplierManagementDirectory from "../pages/data-management/SupplierManagementDirectory";
-import PriceManagement from "../pages/data-management/PriceManagement";
-import CostManagement from "../pages/data-management/CostManagement";
+/**
+ * Application Routes
+ * 
+ * This file implements a hierarchical routing structure where:
+ * - MasterDash serves as the central hub
+ * - Module dashboards branch out from MasterDash
+ * - Sub-module pages branch out from module dashboards
+ * 
+ * NOTE: The routing structure has two patterns:
+ * 1. Explicitly managed module routes:
+ *    - DataManagementRoutes
+ *    - SocialMediaRoutes
+ *    - TechHubRoutes
+ *    - DOT-X routes
+ * 
+ * 2. Legacy grouped routes:
+ *    - All other module routes managed through AllAreaRoutes()
+ */
 
-// Import other module dashboards and their sub-pages
-// ...
+import { Routes, Route, Navigate } from 'react-router-dom';
 
-export const appRoutes: RouteObject[] = [
-  // Root handler deciding initial redirection
-  { 
-    path: "/", 
-    element: <RootHandler /> 
-  },
+// Layouts
+import DashboardLayout from '../components/layout/DashboardLayout';
 
-  // Main dashboard with nested routing structure
-  {
-    path: "/dashboard",
-    element: <DashboardLayout />,
-    children: [
-      // MasterDash is the main hub showing all modules
-      { 
-        index: true, 
-        element: <MasterDash /> 
-      },
+// Core Pages
+import RootHandler from '../components/RootHandler';
+import MasterDash from '../pages/MasterDash';
+
+// Explicitly managed route modules
+import { DataManagementRoutes } from './dataManagementRoutes';
+import { SocialMediaRoutes } from './socialMediaRoutes';
+import { TechHubRoutes } from './techHubRoutes';
+import { DotXRoutes } from './dotXRoutes';
+
+// Legacy grouped routes
+import { AllAreaRoutes } from './AllAreaRoutes';
+
+export const AppRoutes: React.FC = () => {
+  return (
+    <Routes>
+      {/* Root handler - decides where to send users initially */}
+      <Route path="/" element={<RootHandler />} />
       
-      // Data Management Module and its children
-      {
-        path: "data-management",
-        children: [
-          // Data Management Dashboard (module home)
-          { 
-            index: true, 
-            element: <DataManagementDashboard /> 
-          },
-          // Customer Management Directory (sub-module)
-          { 
-            path: "customer-management", 
-            element: <CustomerManagementDirectory /> 
-          },
-          // Supplier Management Directory (sub-module)
-          { 
-            path: "supplier-management", 
-            element: <SupplierManagementDirectory /> 
-          },
-          // Price Management (sub-module)
-          { 
-            path: "price-management", 
-            element: <PriceManagement /> 
-          },
-          // Cost Management (sub-module)
-          { 
-            path: "cost-management", 
-            element: <CostManagement /> 
-          },
-          // Other data management sub-modules...
-        ]
-      },
+      {/* Main Dashboard - the central hub */}
+      <Route path="/dashboard" element={<DashboardLayout />}>
+        <Route index element={<MasterDash />} />
+      </Route>
       
-      // Tech Hub Module and its children
-      {
-        path: "tech-hub",
-        children: [
-          // Tech Hub Dashboard (module home)
-          { 
-            index: true, 
-            element: <TechHubDashboard /> 
-          },
-          // API Management (sub-module)
-          { 
-            path: "api-management", 
-            element: <ApiManagementDashboard />,
-            children: [
-              // Further nested sub-features
-              { path: "requesty", element: <RequestyPage /> }
-            ]
-          },
-          // Integrations (sub-module with further nesting)
-          {
-            path: "integrations",
-            children: [
-              { index: true, element: <IntegrationsHome /> },
-              { path: "odoo", element: <OdooIntegration /> },
-              { path: "woocommerce", element: <WooCommerceIntegration /> }
-            ]
-          },
-          // Other tech hub sub-modules...
-        ]
-      },
+      {/* Explicitly managed module routes */}
+      {DataManagementRoutes()}
+      {SocialMediaRoutes()}
+      {TechHubRoutes()}
+      {DotXRoutes()}
       
-      // Social Media Module and its children
-      {
-        path: "social-media",
-        children: [
-          // Social Media Dashboard (module home)
-          { 
-            index: true, 
-            element: <SocialMediaDashboard /> 
-          },
-          // Accounts management (sub-module)
-          { 
-            path: "accounts", 
-            element: <SocialMediaAccounts /> 
-          },
-          // Calendar (sub-module)
-          { 
-            path: "calendar", 
-            element: <SocialMediaCalendar /> 
-          },
-          // Other social media sub-modules...
-        ]
-      },
+      {/* Legacy grouped routes - maintained for backward compatibility */}
+      {AllAreaRoutes()}
       
-      // Add other top-level modules following the same pattern
-      // ...
-    ]
-  },
+      {/* Master dashboard shortcut */}
+      <Route path="/master" element={<Navigate to="/dashboard" replace />} />
+      
+      {/* Fallback route */}
+      <Route path="*" element={<Navigate to="/" replace />} />
+    </Routes>
+  );
+};
 
-  // Shortcut to dashboard
-  { 
-    path: "/master", 
-    element: <Navigate to="/dashboard" replace /> 
-  },
-
-  // Fallback route
-  { 
-    path: "*", 
-    element: <Navigate to="/" replace /> 
-  },
-];
+export default AppRoutes;
