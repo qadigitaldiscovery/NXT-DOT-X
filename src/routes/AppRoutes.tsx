@@ -54,7 +54,7 @@ export const AppRoutes: React.FC = () => {
       {DotXRoutes()}
       
       {/* Legacy grouped routes - maintained for backward compatibility */}
-      {AllAreaRoutes()}
+      <AllAreaRoutes />
       
       {/* Master dashboard shortcut */}
       <Route path="/master" element={<Navigate to="/dashboard" replace />} />
