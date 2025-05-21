@@ -4,7 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { BadgePercent, Gift, TrendingUp } from "lucide-react";
 
-export function LoyaltyProgram() {
+const LoyaltyProgram = () => {
   return (
     <div className="p-6 space-y-6">
       <div className="flex items-center justify-between">
@@ -85,4 +85,6 @@ export function LoyaltyProgram() {
       </Tabs>
     </div>
   );
-}
+};
+
+export default LoyaltyProgram;
