@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from 'react';
-import { MainSidebar } from './sidebar/MainSidebar/MainSidebar';
+import { UnifiedSidebar } from './UnifiedSidebar';
 import { SharedNavbar } from './SharedNavbar';
 import { useIsMobile } from '../../hooks/use-mobile';
 import { cn } from '../../lib/utils';
@@ -42,12 +42,12 @@ export const CustomerManagementLayout = () => {
 
   return (
    <div className="flex h-screen overflow-hidden bg-gray-900">
-      <MainSidebar
-        open={sidebarOpen}
+      <UnifiedSidebar
+        isOpen={sidebarOpen}
         onToggle={toggleSidebar}
         items={customerNavItems}
         homeItem={homeNavItem}
-        useGlobalNavigation={false}
+        moduleTitle="Customer Management"
       />
       <div className="flex flex-col flex-1 overflow-hidden">
         <SharedNavbar

@@ -1,11 +1,15 @@
-// Export all sidebar components
-import Sidebar from './Sidebar';
-export { Sidebar } from './Sidebar';
-export { SidebarNavList } from './SidebarNavList';
-export { SidebarFooter } from './SidebarFooter';
-export { SidebarToggleButton } from './SidebarToggleButton';
-export { CollapsedSidebar } from './CollapsedSidebar';
-export * from './types';
 
-// Also export Sidebar as default
-export default Sidebar;
+// Export the UnifiedSidebar as the main component
+import { UnifiedSidebar } from '../UnifiedSidebar';
+
+// Export types
+export { NavCategory, NavItem } from './types';
+
+// Export the NavigationConfig
+export { navCategories } from './NavigationConfig';
+
+// Export the UnifiedSidebar
+export { UnifiedSidebar };
+
+// Export as default
+export default UnifiedSidebar;
