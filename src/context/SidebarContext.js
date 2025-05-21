@@ -1,6 +1,7 @@
+
 import { jsx as _jsx } from "react/jsx-runtime";
 import { createContext, useContext, useState, useEffect } from 'react';
-import { useIsMobile } from '@/hooks/use-mobile';
+import { useIsMobile } from '../hooks/use-mobile';
 const SidebarContext = createContext(undefined);
 export const useSidebar = () => {
     const context = useContext(SidebarContext);

@@ -1,7 +1,7 @@
 import { jsx as _jsx } from "react/jsx-runtime";
 import * as React from "react";
 import { cva } from "class-variance-authority";
-import { cn } from "@/lib/utils";
+import { cn } from "../../lib/utils";
 // This component is deprecated and shouldn't be used anymore.
 // Use standard anchor tags with appropriate styling instead.
 // For example: <a href="#" className={getLinkClassName()} aria-label="Action name">Link text</a>
