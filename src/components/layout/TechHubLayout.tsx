@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Outlet } from 'react-router-dom';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -25,7 +24,8 @@ interface NavItem {
   isNew?: boolean;
 }
 
-export default function TechHubLayout() {
+// Define as React.FC for better type checking
+const TechHubLayout: React.FC = () => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const location = useLocation();
   
@@ -127,3 +127,7 @@ export default function TechHubLayout() {
     </div>
   );
 }
+
+// Export both as default and named export to support either import style
+export default TechHubLayout;
+export { TechHubLayout };
