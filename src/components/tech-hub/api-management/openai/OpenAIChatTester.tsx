@@ -1,12 +1,11 @@
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Loader2, SendIcon } from "lucide-react";
 import { toast } from "sonner";
-import { ChatMessage } from "@/types/ai";
 
 import { useOpenAI } from "@/hooks/use-openai";
 
@@ -27,10 +26,6 @@ export const OpenAIChatTester: React.FC = () => {
     try {
       setIsSubmitting(true);
       setResponse(""); // Clear previous response
-      
-      const messages: ChatMessage[] = [
-        { role: "user", content: prompt }
-      ];
       
       // Use the openai hook to send the message
       const completion = await openai.sendMessage(prompt, model);

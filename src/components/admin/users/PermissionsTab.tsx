@@ -34,11 +34,11 @@ type PermissionsByCategory = {
 
 const PermissionsTab: React.FC = () => {
   // Get permissions from context
-  const { permissions = {} as PermissionsByCategory } = useUserManagement();
+  const { permissions } = useUserManagement();
   
   // Use sample data if no permissions are available
   const permissionsByCategory: PermissionsByCategory = 
-    Object.keys(permissions).length > 0 ? permissions : samplePermissions;
+    Object.keys(permissions || {}).length > 0 ? (permissions as PermissionsByCategory) : samplePermissions;
 
   return (
     <Card>

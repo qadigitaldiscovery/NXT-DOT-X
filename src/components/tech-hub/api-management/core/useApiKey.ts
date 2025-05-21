@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { useToast } from '@/components/ui/use-toast';
 import { 
@@ -44,14 +45,12 @@ export function useApiKey(provider: string, initialConfig: Record<string, any> =
       storeApiKey(provider, key, state.model, state.config);
       setState(prev => ({ ...prev, apiKey: key, isKeySet: true }));
       toast({
-        title: 'API Key Saved',
         description: `Your ${provider} API key has been saved securely.`,
       });
     } else {
       removeApiKey(provider);
       setState(prev => ({ ...prev, apiKey: '', isKeySet: false }));
       toast({
-        title: 'API Key Removed',
         description: `Your ${provider} API key has been removed.`,
       });
     }

@@ -49,7 +49,7 @@ export function SupplierForm({ initialData, isEditing = false, onDelete }: Suppl
     setFormData(prev => ({ ...prev, [name]: value }));
   };
   
-  const handleStatusChange = (value: string) => {
+  const handleStatusChange = (value: "active" | "inactive") => {
     setFormData(prev => ({ ...prev, status: value }));
   };
   

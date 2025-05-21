@@ -1,5 +1,4 @@
-
-import React from 'react';
+import { useState } from 'react';
 import {
   Table,
   TableBody,
@@ -7,56 +6,65 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '../ui/table';
-import { Button } from '../ui/button';
-import { FileText, Download, Trash2 } from 'lucide-react';
-
-interface Document {
-  id: string;
-  name: string;
-  type: string;
-  uploadDate: string;
-  size: string;
-}
+} from '@/components/ui/table';
+import { Button } from '@/components/ui/button';
+import { FileText, Download, Eye, Trash2 } from 'lucide-react';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { Badge } from '@/components/ui/badge';
+import { format } from 'date-fns';
+import { Document } from '@/types/document';
 
 interface DocumentsTableProps {
-  supplier?: {
-    id: string;
-    name: string;
-  };
+  documents: Document[];
+  onView: (document: Document) => void;
+  onDownload: (document: Document) => void;
+  onDelete: (documentId: string) => void;
 }
 
-export function DocumentsTable({ supplier }: DocumentsTableProps) {
-  const [documents] = React.useState<Document[]>([
-    {
-      id: '1',
-      name: 'Contract Agreement',
-      type: 'PDF',
-      uploadDate: '2024-01-15',
-      size: '2.5 MB',
-    },
-    {
-      id: '2',
-      name: 'Technical Specifications',
-      type: 'DOCX',
-      uploadDate: '2024-01-14',
-      size: '1.8 MB',
-    },
-    {
-      id: '3',
-      name: 'Price List',
-      type: 'XLSX',
-      uploadDate: '2024-01-13',
-      size: '956 KB',
-    },
-  ]);
+export function DocumentsTable({ documents, onView, onDownload, onDelete }: DocumentsTableProps) {
+  const [sortColumn, setSortColumn] = useState<keyof Document>('uploadDate');
+  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
 
-  const handleDownload = (documentId: string) => {
-    console.log(`Downloading document ${documentId}`);
+  const handleSort = (column: keyof Document) => {
+    if (sortColumn === column) {
+      setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
+    } else {
+      setSortColumn(column);
+      setSortDirection('asc');
+    }
   };
 
-  const handleDelete = (documentId: string) => {
-    console.log(`Deleting document ${documentId}`);
+  const sortedDocuments = [...documents].sort((a, b) => {
+    const columnA = a[sortColumn];
+    const columnB = b[sortColumn];
+
+    if (columnA === undefined || columnB === undefined) {
+      return 0;
+    }
+
+    let comparison = 0;
+
+    if (typeof columnA === 'string' && typeof columnB === 'string') {
+      comparison = columnA.localeCompare(columnB);
+    } else if (typeof columnA === 'number' && typeof columnB === 'number') {
+      comparison = columnA - columnB;
+    } else if (columnA instanceof Date && columnB instanceof Date) {
+      comparison = columnA.getTime() - columnB.getTime();
+    }
+
+    return sortDirection === 'asc' ? comparison : -comparison;
+  });
+
+  const renderSortIndicator = (column: keyof Document) => {
+    if (sortColumn === column) {
+      return sortDirection === 'asc' ? '▲' : '▼';
+    }
+    return null;
   };
 
   return (
@@ -64,42 +72,54 @@ export function DocumentsTable({ supplier }: DocumentsTableProps) {
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>Name</TableHead>
-            <TableHead>Type</TableHead>
-            <TableHead>Upload Date</TableHead>
-            <TableHead>Size</TableHead>
+            <TableHead className="w-[250px] cursor-pointer" onClick={() => handleSort('name')}>
+              Document Name
+              {renderSortIndicator('name')}
+            </TableHead>
+            <TableHead className="cursor-pointer" onClick={() => handleSort('type')}>
+              Type
+              {renderSortIndicator('type')}
+            </TableHead>
+            <TableHead className="cursor-pointer" onClick={() => handleSort('uploadDate')}>
+              Uploaded
+              {renderSortIndicator('uploadDate')}
+            </TableHead>
+            <TableHead className="cursor-pointer" onClick={() => handleSort('size')}>
+              Size
+              {renderSortIndicator('size')}
+            </TableHead>
             <TableHead className="text-right">Actions</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
-          {documents.map((doc) => (
-            <TableRow key={doc.id}>
-              <TableCell className="font-medium">
-                <div className="flex items-center gap-2">
-                  <FileText className="h-4 w-4" />
-                  {doc.name}
-                </div>
+          {sortedDocuments.map((document) => (
+            <TableRow key={document.id}>
+              <TableCell className="font-medium">{document.name}</TableCell>
+              <TableCell>
+                <Badge variant="secondary">{document.type}</Badge>
               </TableCell>
-              <TableCell>{doc.type}</TableCell>
-              <TableCell>{doc.uploadDate}</TableCell>
-              <TableCell>{doc.size}</TableCell>
+              <TableCell>{format(new Date(document.uploadDate), 'MMM dd, yyyy')}</TableCell>
+              <TableCell>{document.size}</TableCell>
               <TableCell className="text-right">
-                <div className="flex justify-end gap-2">
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => handleDownload(doc.id)}
-                  >
-                    <Download className="h-4 w-4" />
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => handleDelete(doc.id)}
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
-                </div>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" className="h-8 w-8 p-0">
+                      <span className="sr-only">Open menu</span>
+                      <FileText className="h-4 w-4" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuItem onClick={() => onView(document)}>
+                      <Eye className="mr-2 h-4 w-4" /> View
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => onDownload(document)}>
+                      <Download className="mr-2 h-4 w-4" /> Download
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => onDelete(document.id)}>
+                      <Trash2 className="mr-2 h-4 w-4" /> Delete
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
               </TableCell>
             </TableRow>
           ))}

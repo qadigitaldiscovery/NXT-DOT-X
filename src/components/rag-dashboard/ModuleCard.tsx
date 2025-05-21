@@ -4,7 +4,6 @@ import { AlertTriangle, ChevronRight } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { type Module } from '@/hooks/useModules';
 import StatusGauge from './StatusGauge';
-import { Link } from 'react-router-dom';
 
 interface ModuleCardProps {
   module: Module;

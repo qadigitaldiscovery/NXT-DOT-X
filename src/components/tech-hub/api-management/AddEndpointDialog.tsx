@@ -1,160 +1,168 @@
 
-import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Textarea } from '@/components/ui/textarea';
-import { zodResolver } from '@hookform/resolvers/zod';
+import { Label } from '@/components/ui/label';
+import { Button } from '@/components/ui/button';
 import { useForm } from 'react-hook-form';
-import { EndpointFormValues, endpointSchema, ApiEndpoint } from './types';
-import { useState, useEffect } from 'react';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+
+const endpointSchema = z.object({
+  name: z.string().min(1, { message: 'Name is required' }),
+  description: z.string().optional(),
+  url: z.string().url({ message: 'Valid URL is required' }),
+  method: z.enum(['GET', 'POST', 'PUT', 'DELETE', 'PATCH']),
+  category: z.string().min(1, { message: 'Category is required' }),
+});
+
+type EndpointFormValues = z.infer<typeof endpointSchema>;
 
 interface AddEndpointDialogProps {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  onSubmit: (values: EndpointFormValues) => void;
-  endpoint?: ApiEndpoint | null;
-  onClose?: () => void;
+  categories: string[];
+  onAddEndpoint: (endpoint: EndpointFormValues) => void;
+  defaultOpen?: boolean;
+  onOpenChange?: (open: boolean) => void;
 }
 
-export function AddEndpointDialog({ open, onOpenChange, onSubmit, endpoint, onClose }: AddEndpointDialogProps) {
-  const isEditMode = Boolean(endpoint);
-  
+export function AddEndpointDialog({ 
+  categories, 
+  onAddEndpoint, 
+  defaultOpen,
+  onOpenChange 
+}: AddEndpointDialogProps) {
   const form = useForm<EndpointFormValues>({
     resolver: zodResolver(endpointSchema),
     defaultValues: {
       name: '',
-      url: '',
-      method: 'POST',
-      apiKey: '',
-      status: 'active',
       description: '',
-    }
+      url: '',
+      method: 'GET',
+      category: categories[0] || '',
+    },
   });
 
-  useEffect(() => {
-    // When editing, populate form with endpoint data
-    if (endpoint) {
-      form.reset({
-        name: endpoint.name,
-        url: endpoint.url,
-        method: endpoint.method,
-        apiKey: endpoint.apiKey,
-        status: endpoint.status,
-        description: endpoint.description || ''
-      });
-    } else {
-      form.reset({
-        name: '',
-        url: '',
-        method: 'POST',
-        apiKey: '',
-        status: 'active',
-        description: ''
-      });
-    }
-  }, [endpoint, form]);
-
-  const handleSubmit = (values: EndpointFormValues) => {
-    onSubmit(values);
+  const onSubmit = (data: EndpointFormValues) => {
+    onAddEndpoint(data);
     form.reset();
-    if (onClose) onClose();
-  };
-
-  const handleDialogChange = (open: boolean) => {
-    onOpenChange(open);
-    if (!open && onClose) {
-      onClose();
-    }
+    if (onOpenChange) onOpenChange(false);
   };
 
   return (
-    <Dialog open={open} onOpenChange={handleDialogChange}>
-      <DialogContent className="sm:max-w-[425px]">
+    <Dialog defaultOpen={defaultOpen} onOpenChange={onOpenChange}>
+      <DialogTrigger asChild>
+        <Button>Add Endpoint</Button>
+      </DialogTrigger>
+      <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
-          <DialogTitle>{isEditMode ? 'Edit Endpoint' : 'Add New Endpoint'}</DialogTitle>
+          <DialogTitle>Add New Endpoint</DialogTitle>
         </DialogHeader>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <FormField
               control={form.control}
               name="name"
               render={({ field }) => (
                 <FormItem>
+                  <FormLabel>Endpoint Name</FormLabel>
                   <FormControl>
-                    <Input placeholder="Endpoint Name" {...field} />
+                    <Input placeholder="e.g., Get User Profile" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
-            <FormField
-              control={form.control}
-              name="url"
-              render={({ field }) => (
-                <FormItem>
-                  <FormControl>
-                    <Input placeholder="https://api.example.com/resource" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="apiKey"
-              render={({ field }) => (
-                <FormItem>
-                  <FormControl>
-                    <Input placeholder="API Key" type="password" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="method"
-              render={({ field }) => (
-                <FormItem>
-                  <FormControl>
-                    <Select onValueChange={field.onChange} value={field.value}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select Method" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="GET">GET</SelectItem>
-                        <SelectItem value="POST">POST</SelectItem>
-                        <SelectItem value="PUT">PUT</SelectItem>
-                        <SelectItem value="DELETE">DELETE</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            
             <FormField
               control={form.control}
               name="description"
               render={({ field }) => (
                 <FormItem>
+                  <FormLabel>Description (Optional)</FormLabel>
                   <FormControl>
-                    <Textarea placeholder="Endpoint Description" {...field} />
+                    <Input placeholder="e.g., Retrieves the user's profile information" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
-            <DialogFooter>
-              <Button type="submit">{isEditMode ? 'Update' : 'Add'} Endpoint</Button>
-            </DialogFooter>
+            
+            <FormField
+              control={form.control}
+              name="url"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>URL</FormLabel>
+                  <FormControl>
+                    <Input placeholder="e.g., https://api.example.com/users/{id}" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            
+            <div className="grid grid-cols-2 gap-4">
+              <FormField
+                control={form.control}
+                name="method"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Method</FormLabel>
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select method" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="GET">GET</SelectItem>
+                        <SelectItem value="POST">POST</SelectItem>
+                        <SelectItem value="PUT">PUT</SelectItem>
+                        <SelectItem value="DELETE">DELETE</SelectItem>
+                        <SelectItem value="PATCH">PATCH</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              
+              <FormField
+                control={form.control}
+                name="category"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Category</FormLabel>
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select category" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {categories.map(category => (
+                          <SelectItem key={category} value={category}>
+                            {category}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+            
+            <div className="flex justify-end space-x-2 pt-4">
+              <Button type="button" variant="outline" onClick={() => onOpenChange && onOpenChange(false)}>
+                Cancel
+              </Button>
+              <Button type="submit">Add Endpoint</Button>
+            </div>
           </form>
         </Form>
       </DialogContent>
     </Dialog>
   );
 }
-
-export default AddEndpointDialog;

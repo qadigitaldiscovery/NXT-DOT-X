@@ -8,6 +8,24 @@ interface OverviewStatsProps {
   alerts: any[];
 }
 
+interface KpiCardWithIconProps {
+  title: string;
+  value: number;
+  icon: React.ReactNode;
+  trend?: { 
+    value: number; 
+    isUpward: boolean; 
+    isPositive: boolean;
+  };
+  description: string;
+  isLoading?: boolean;
+}
+
+// Extended KpiCard component that accepts icon prop
+const KpiCardWithIcon: React.FC<KpiCardWithIconProps> = (props) => {
+  return <KpiCard {...props} />;
+};
+
 const OverviewStats: React.FC<OverviewStatsProps> = ({ modules, alerts }) => {
   // Count modules by status
   const healthyCount = modules.filter(m => m.isEnabled).length;
@@ -21,7 +39,7 @@ const OverviewStats: React.FC<OverviewStatsProps> = ({ modules, alerts }) => {
 
   return (
     <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 mb-8">
-      <KpiCard 
+      <KpiCardWithIcon 
         title="Healthy Systems"
         value={healthyCount}
         icon={<CheckCircle className="h-5 w-5 text-green-500" />}
@@ -33,7 +51,7 @@ const OverviewStats: React.FC<OverviewStatsProps> = ({ modules, alerts }) => {
         description="Systems operating normally" 
       />
       
-      <KpiCard 
+      <KpiCardWithIcon 
         title="Systems With Warnings" 
         value={warningCount}
         icon={<AlertTriangle className="h-5 w-5 text-amber-500" />}
@@ -45,7 +63,7 @@ const OverviewStats: React.FC<OverviewStatsProps> = ({ modules, alerts }) => {
         description="Systems with minor issues"
       />
       
-      <KpiCard 
+      <KpiCardWithIcon 
         title="Critical Systems"
         value={criticalCount}
         icon={<XCircle className="h-5 w-5 text-red-500" />} 
@@ -57,25 +75,28 @@ const OverviewStats: React.FC<OverviewStatsProps> = ({ modules, alerts }) => {
         description="Systems with major problems"
       />
 
-      <KpiCard 
+      <KpiCardWithIcon 
         title="Total Alerts" 
         value={totalAlerts}
         isLoading={!alerts}
         description="All system alerts"
+        icon={null}
       />
 
-      <KpiCard 
+      <KpiCardWithIcon 
         title="Critical Alerts" 
         value={criticalAlerts}
         isLoading={!alerts}
         description="Highest priority alerts"
+        icon={null}
       />
 
-      <KpiCard 
+      <KpiCardWithIcon 
         title="Resolved Alerts" 
         value={resolvedAlerts}
         isLoading={!alerts}
         description="Fixed and cleared alerts"
+        icon={null}
       />
     </div>
   );

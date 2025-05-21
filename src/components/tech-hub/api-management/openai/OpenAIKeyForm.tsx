@@ -7,8 +7,6 @@ import { ChatCompletionResponse } from '@/utils/api-clients/openai/types';
 
 const OpenAIKeyForm: React.FC = () => {
   const [apiKey, setApiKey] = useState('');
-  const [isVerifying, setIsVerifying] = useState(false);
-  const [keyStatus, setKeyStatus] = useState<'unknown' | 'valid' | 'invalid' | 'quota_exceeded'>('unknown');
   const [isVisible, setIsVisible] = useState(false);
   const [config, setConfig] = useState({
     model: 'gpt-4o-mini',
@@ -24,7 +22,6 @@ const OpenAIKeyForm: React.FC = () => {
     
     if (savedKey) {
       setApiKey(savedKey);
-      setKeyStatus('valid'); // Assume valid if saved
     }
     
     if (savedConfig) {
@@ -40,9 +37,6 @@ const OpenAIKeyForm: React.FC = () => {
   // Verify API key by making a simple call
   const verifyOpenAIKey = async (apiKey: string): Promise<boolean> => {
     try {
-      setIsVerifying(true);
-      setKeyStatus('unknown');
-      
       await callOpenAI<ChatCompletionResponse>({
         endpoint: 'chat',
         payload: {
@@ -54,7 +48,6 @@ const OpenAIKeyForm: React.FC = () => {
       });
       
       // If no error was thrown, the key is valid
-      setKeyStatus('valid');
       toast.success("API key validated successfully");
       
       // Save the key and config
@@ -69,16 +62,12 @@ const OpenAIKeyForm: React.FC = () => {
       if (error.message?.includes('quota') || 
           error.message?.includes('rate_limit') || 
           error.message?.includes('insufficient_quota')) {
-        setKeyStatus('quota_exceeded');
         toast.warning("API key valid but quota exceeded");
         return false;
       }
       
-      setKeyStatus('invalid');
       toast.error("Invalid API key");
       return false;
-    } finally {
-      setIsVerifying(false);
     }
   };
   

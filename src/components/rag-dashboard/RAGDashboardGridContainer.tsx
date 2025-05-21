@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useModules } from '@/hooks/useModules';
 import { useAlerts } from '@/hooks/useAlerts';
 import { useDashboardState } from './hooks/useDashboardState';
@@ -12,11 +12,12 @@ import { useCustomerImpacts } from '@/hooks/useCustomerImpacts';
 import { DashboardFilters } from './dashboard/DashboardFilters';
 import { RefreshCw, Settings } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { Module as ContextModule } from '@/context/ModulesContext';
 
 const RAGDashboardGridContainer: React.FC = () => {
   const { modules, loading: modulesLoading, error: modulesError } = useModules();
   const { alerts, loading: alertsLoading, resolveAlert } = useAlerts();
-  const { getLogsByModuleId, loading: logsLoading } = useStatusLogs(); // Removed unused logs variable
+  const { getLogsByModuleId, loading: logsLoading } = useStatusLogs();
   const { rules, loading: rulesLoading, addRule, deleteRule } = useThresholdRules();
   const { impacts, loading: impactsLoading } = useCustomerImpacts();
 
@@ -66,8 +67,12 @@ const RAGDashboardGridContainer: React.FC = () => {
     console.log('Attempting to refresh modules data');
   };
 
-  // Ensure the modules are compatible with expected ModulesContext.Module type
-  const compatibleModules = Array.isArray(modules) ? modules : [];
+  // Convert modules to be compatible with ModulesContext.Module type
+  const compatibleModules: ContextModule[] = Array.isArray(modules) ? modules.map(m => ({
+    ...m,
+    isEnabled: m.status === 'green', 
+    isVisible: m.status !== 'red'
+  })) : [];
 
   return (
     <div className="container mx-auto py-6 max-w-7xl">

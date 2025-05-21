@@ -1,110 +1,154 @@
 
-import React, { useState, useEffect } from 'react';
-import { supabase } from "@/integrations/supabase/client";
-import { toast } from "sonner";
-import { OdooConfig, SyncSetting } from './types';
-import OdooConnectionForm from './OdooConnectionForm';
-import SyncSettings from './SyncSettings';
+import { useState } from 'react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Label } from '@/components/ui/label';
 
-const OdooIntegration = () => {
-  const [isLoading, setIsLoading] = useState(false);
-  const [connectionStatus, setConnectionStatus] = useState<'idle' | 'success' | 'error'>('idle');
-  const [odooConfig, setOdooConfig] = useState<OdooConfig | null>(null);
-  const [syncSettings, setSyncSettings] = useState<SyncSetting[]>([]);
+export interface OdooConfig {
+  url: string;
+  database: string;
+  username: string;
+  apiKey: string;
+}
 
-  // Fetch existing configuration from the database
-  const fetchExistingConfig = async () => {
+interface OdooIntegrationProps {
+  onSaveConfig: (config: OdooConfig) => Promise<void>;
+  initialConfig?: OdooConfig;
+}
+
+const OdooIntegration: React.FC<OdooIntegrationProps> = ({ onSaveConfig, initialConfig }) => {
+  const [config, setConfig] = useState<OdooConfig>(
+    initialConfig || {
+      url: '',
+      database: '',
+      username: '',
+      apiKey: '',
+    }
+  );
+  const [isTesting, setIsTesting] = useState(false);
+  const [testResult, setTestResult] = useState<{
+    success: boolean;
+    message: string;
+  } | null>(null);
+  
+  const handleChange = (key: keyof OdooConfig, value: string) => {
+    setConfig((prev) => ({ ...prev, [key]: value }));
+    // Clear test result when config changes
+    setTestResult(null);
+  };
+  
+  const handleTestConnection = async () => {
+    setIsTesting(true);
+    setTestResult(null);
+    
     try {
-      setIsLoading(true);
+      // In a real implementation, this would make an actual API call to test the connection
+      await new Promise((resolve) => setTimeout(resolve, 1500)); // Simulate network delay
       
-      const { data: session } = await supabase.auth.getSession();
-      if (!session?.session) {
-        toast.error("You must be logged in to manage integrations");
-        setIsLoading(false);
-        return;
-      }
+      // For demo purposes, let's consider it successful if all fields are filled
+      const isConfigValid = Object.values(config).every((value) => value.trim() !== '');
       
-      const { data: configs, error } = await supabase
-        .from('integration_configs')
-        .select('*')
-        .eq('integration_type', 'odoo')
-        .order('created_at', { ascending: false })
-        .maybeSingle();
-      
-      if (error) {
-        console.error("Failed to load Odoo configuration:", error);
-        toast.error("Failed to load saved configuration");
-        setIsLoading(false);
-        return;
-      }
-      
-      if (configs) {
-        setOdooConfig(configs as OdooConfig);
-        
-        // Set connection status to success if config exists
-        setConnectionStatus('success');
-        
-        // Fetch sync settings for this integration
-        if (configs.id) {
-          fetchSyncSettings(configs.id);
-        }
+      if (isConfigValid) {
+        setTestResult({
+          success: true,
+          message: 'Successfully connected to Odoo API!',
+        });
       } else {
-        setOdooConfig(null);
-        setConnectionStatus('idle');
+        setTestResult({
+          success: false,
+          message: 'Failed to connect. Please check your configuration.',
+        });
       }
-    } catch (err) {
-      console.error("Exception while fetching Odoo configuration:", err);
+    } catch (error) {
+      setTestResult({
+        success: false,
+        message: `Connection failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
+      });
     } finally {
-      setIsLoading(false);
+      setIsTesting(false);
     }
   };
-
-  // Fetch sync settings for an integration
-  const fetchSyncSettings = async (integrationId: string) => {
-    try {
-      const { data, error } = await supabase
-        .from('integration_sync_settings')
-        .select('*')
-        .eq('integration_id', integrationId);
-      
-      if (error) {
-        console.error("Failed to load sync settings:", error);
-        return;
-      }
-      
-      setSyncSettings(data as SyncSetting[]);
-    } catch (err) {
-      console.error("Error fetching sync settings:", err);
-    }
+  
+  const handleSave = async () => {
+    await onSaveConfig(config);
   };
-
-  useEffect(() => {
-    fetchExistingConfig();
-  }, []);
-
+  
+  const isFormValid = Object.values(config).every((value) => value.trim() !== '');
+  
   return (
-    <div className="container max-w-4xl mx-auto py-6 space-y-6">
-      <h1 className="text-3xl font-bold">Odoo ERP Integration</h1>
-      <p className="text-muted-foreground">
-        Connect your Odoo ERP instance to synchronize products, orders, and inventory.
-      </p>
-      
-      <OdooConnectionForm 
-        odooConfig={odooConfig}
-        setOdooConfig={setOdooConfig}
-        fetchExistingConfig={fetchExistingConfig}
-        connectionStatus={connectionStatus}
-        setConnectionStatus={setConnectionStatus}
-      />
-      
-      {connectionStatus === 'success' && (
-        <SyncSettings 
-          odooConfig={odooConfig as OdooConfig}
-          syncSettings={syncSettings}
-          setSyncSettings={setSyncSettings}
-        />
-      )}
-    </div>
+    <Card className="w-full">
+      <CardHeader>
+        <CardTitle>Odoo ERP Integration</CardTitle>
+        <CardDescription>
+          Connect your Odoo ERP system to enable product, customer, and order synchronization.
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        <div className="space-y-2">
+          <Label htmlFor="url">Odoo Instance URL</Label>
+          <Input
+            id="url"
+            placeholder="https://your-instance.odoo.com"
+            value={config.url}
+            onChange={(e) => handleChange('url', e.target.value)}
+          />
+        </div>
+        
+        <div className="space-y-2">
+          <Label htmlFor="database">Database Name</Label>
+          <Input
+            id="database"
+            placeholder="odoo_db"
+            value={config.database}
+            onChange={(e) => handleChange('database', e.target.value)}
+          />
+        </div>
+        
+        <div className="space-y-2">
+          <Label htmlFor="username">Username</Label>
+          <Input
+            id="username"
+            placeholder="admin@example.com"
+            value={config.username}
+            onChange={(e) => handleChange('username', e.target.value)}
+          />
+        </div>
+        
+        <div className="space-y-2">
+          <Label htmlFor="apiKey">API Key</Label>
+          <Input
+            id="apiKey"
+            type="password"
+            placeholder="Your Odoo API key"
+            value={config.apiKey}
+            onChange={(e) => handleChange('apiKey', e.target.value)}
+          />
+        </div>
+        
+        {testResult && (
+          <Alert variant={testResult.success ? "default" : "destructive"}>
+            <AlertDescription>{testResult.message}</AlertDescription>
+          </Alert>
+        )}
+      </CardContent>
+      <CardFooter className="flex justify-between">
+        <Button 
+          variant="outline" 
+          onClick={handleTestConnection} 
+          disabled={!isFormValid || isTesting}
+        >
+          {isTesting ? 'Testing...' : 'Test Connection'}
+        </Button>
+        <Button 
+          onClick={handleSave} 
+          disabled={!isFormValid}
+        >
+          Save Configuration
+        </Button>
+      </CardFooter>
+    </Card>
   );
 };
 

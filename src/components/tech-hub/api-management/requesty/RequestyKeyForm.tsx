@@ -1,12 +1,10 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import ApiKeyForm from '../core/ApiKeyForm';
 import { toast } from 'sonner';
 
 const RequestyKeyForm: React.FC = () => {
   const [apiKey, setApiKey] = useState('');
-  const [isVerifying, setIsVerifying] = useState(false);
-  const [keyStatus, setKeyStatus] = useState<'unknown' | 'valid' | 'invalid' | 'quota_exceeded'>('unknown');
   const [isVisible, setIsVisible] = useState(false);
   const [config, setConfig] = useState({
     model: 'openai/gpt-4o-mini',
@@ -18,9 +16,6 @@ const RequestyKeyForm: React.FC = () => {
   // Verify API key by making a simple call
   const verifyRequestyKey = async (apiKey: string): Promise<boolean> => {
     try {
-      setIsVerifying(true);
-      setKeyStatus('unknown');
-      
       const response = await fetch("https://router.requesty.ai/v1/chat/completions", {
         method: "POST",
         headers: {
@@ -37,16 +32,13 @@ const RequestyKeyForm: React.FC = () => {
       if (!response.ok) {
         const errorData = await response.json();
         if (errorData.error?.code === 'insufficient_quota' || errorData.error?.type === 'insufficient_quota') {
-          setKeyStatus('quota_exceeded');
           toast.warning("API key valid but quota exceeded");
           return false;
         }
-        setKeyStatus('invalid');
         toast.error("Invalid API key");
         return false;
       }
       
-      setKeyStatus('valid');
       toast.success("API key validated successfully");
       // Save the key locally
       localStorage.setItem('requesty_api_key', apiKey);
@@ -55,20 +47,12 @@ const RequestyKeyForm: React.FC = () => {
     } catch (error: any) {
       console.error("API key verification failed:", error);
       if (error.message === 'quota_exceeded') {
-        setKeyStatus('quota_exceeded');
         toast.warning("API key valid but quota exceeded");
       } else {
-        setKeyStatus('invalid');
         toast.error("Failed to verify API key");
       }
       return false;
-    } finally {
-      setIsVerifying(false);
     }
-  };
-
-  const handleVerifyClick = async () => {
-    await verifyRequestyKey(apiKey);
   };
 
   const handleConfigUpdate = (key: string, value: any) => {
@@ -80,13 +64,12 @@ const RequestyKeyForm: React.FC = () => {
   };
 
   // Initialize from localStorage if available
-  useState(() => {
+  useEffect(() => {
     const savedKey = localStorage.getItem('requesty_api_key');
     const savedConfig = localStorage.getItem('requesty_config');
     
     if (savedKey) {
       setApiKey(savedKey);
-      setKeyStatus('valid'); // Assume valid if saved
     }
     
     if (savedConfig) {
@@ -97,7 +80,7 @@ const RequestyKeyForm: React.FC = () => {
         console.error("Failed to parse saved config", e);
       }
     }
-  });
+  }, []);
 
   const modelOptions = [
     { value: 'openai/gpt-4o-mini', label: 'OpenAI GPT-4o Mini (Default)' },

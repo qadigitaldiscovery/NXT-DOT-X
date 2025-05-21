@@ -13,12 +13,12 @@ import { type StatusLog } from '@/hooks/useStatusLogs';
 import { type Alert } from '@/hooks/useAlerts';
 import { type ThresholdRule } from '@/hooks/useThresholdRules';
 import { type CustomerImpact } from '@/hooks/useCustomerImpacts';
-import StatusGauge from './StatusGauge';
-import StatusTimeline from './StatusTimeline';
-import AlertsList from './AlertsList';
-import ThresholdRulesList from './ThresholdRulesList';
-import CustomerImpactsList from './CustomerImpactsList';
-import RuleForm from './RuleForm';
+import StatusGauge from './rag-dashboard/StatusGauge';
+import StatusTimeline from './rag-dashboard/StatusTimeline';
+import AlertsList from './rag-dashboard/AlertsList';
+import ThresholdRulesList from './rag-dashboard/ThresholdRulesList';
+import CustomerImpactsList from './rag-dashboard/CustomerImpactsList';
+import RuleForm from './rag-dashboard/RuleForm';
 
 type ModuleDetailsDialogProps = {
   isOpen: boolean;
