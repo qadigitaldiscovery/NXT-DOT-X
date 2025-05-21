@@ -1,5 +1,6 @@
 import { NavCategory, NavItem } from "@/components/layout/sidebar/types";
 import { ModulePermission } from "@/types/rbac";
+import { Users, Shield, Database, FileText } from 'lucide-react';
 
 /**
  * Filters sidebar items based on the user's roles and permissions
@@ -19,7 +20,7 @@ export const filterSidebarItems = (
   }
   
   // Otherwise, filter based on permissions
-  return items.filter(item => {
+  return items.filter(() => {
     // For now, just return all items since we're adapting the function
     return true;
   });
@@ -43,25 +44,25 @@ export const generateAdminSidebarItems = (
       {
         label: 'User Management',
         path: '/admin/users',
-        icon: () => import('lucide-react').then(mod => mod.Users),
+        icon: Users,
         roles: ['admin']
       },
       {
         label: 'Module Access',
         path: '/admin/module-access',
-        icon: () => import('lucide-react').then(mod => mod.Shield),
+        icon: Shield,
         roles: ['admin']
       },
       {
         label: 'Database Admin',
         path: '/admin/database',
-        icon: () => import('lucide-react').then(mod => mod.Database),
+        icon: Database,
         roles: ['admin']
       },
       {
         label: 'Documentation',
         path: '/admin/documentation',
-        icon: () => import('lucide-react').then(mod => mod.FileText),
+        icon: FileText,
         roles: ['admin', 'manager']
       }
     ]
