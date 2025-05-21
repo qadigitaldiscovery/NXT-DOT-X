@@ -1,4 +1,3 @@
-
 import React, { Suspense } from "react";
 import { Route } from "react-router-dom";
 import RAGDashboardPage from "@/pages/rag-dashboard/RAGDashboardPage";
@@ -36,32 +35,44 @@ const LoadingFallback = () => (
   </PlatformLayout>
 );
 
+// Create a wrapper component that converts requiredPermission to permission
+const PermissionWrapper: React.FC<{ requiredPermission: string, children: React.ReactNode }> = ({ 
+  requiredPermission, 
+  children 
+}) => {
+  return (
+    <PermissionGuard permission={requiredPermission}>
+      {children}
+    </PermissionGuard>
+  );
+};
+
 export const RAGDashboardRoutes = () => {
   return [
     <Route key="rag-dashboard-index" path="/dashboard/rag">
       <Route index element={
-        <PermissionGuard requiredPermission="modules.rag">
+        <PermissionWrapper requiredPermission="modules.rag">
           <RAGDashboardPage />
-        </PermissionGuard>
+        </PermissionWrapper>
       } />
       <Route path="analytics" element={
-        <PermissionGuard requiredPermission="modules.rag">
+        <PermissionWrapper requiredPermission="modules.rag">
           <RAGAnalytics />
-        </PermissionGuard>
+        </PermissionWrapper>
       } />
       <Route path="alerts" element={
-        <PermissionGuard requiredPermission="modules.rag">
+        <PermissionWrapper requiredPermission="modules.rag">
           <Suspense fallback={<LoadingFallback />}>
             <RAGAlerts />
           </Suspense>
-        </PermissionGuard>
+        </PermissionWrapper>
       } />
       <Route path="settings" element={
-        <PermissionGuard requiredPermission="modules.rag.admin">
+        <PermissionWrapper requiredPermission="modules.rag.admin">
           <Suspense fallback={<LoadingFallback />}>
             <RAGSettings />
           </Suspense>
-        </PermissionGuard>
+        </PermissionWrapper>
       } />
     </Route>
   ];
