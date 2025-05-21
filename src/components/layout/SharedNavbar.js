@@ -1,9 +1,10 @@
+
 import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
 import { useAuth } from '../../context/AuthContext';
 import { Button } from '../ui/button';
 import { Search, Menu, BellRing, Settings, UserCircle } from 'lucide-react';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '../ui/dropdown-menu';
-import { useSidebar } from '@/context/SidebarContext';
+import { useSidebar } from '../../context/SidebarContext';
 
 export function SharedNavbar({ moduleTitle = "Dashboard", onMenuClick }) {
     const { user, signOut } = useAuth();
