@@ -1,4 +1,6 @@
+
 import React from "react";
+import { Route } from "react-router-dom";
 
 /* ——— import EVERY existing factory ——— */
 /*  ⚠️  Keep the list in alphabetical order so duplicates stand out.  */
@@ -31,30 +33,30 @@ import { WorkflowsRoutes }            from "./workflowsRoutes";
 
 /* ——— aggregate them ——— */
 export const AllAreaRoutes = () => [
-  ...AdminRoutes(),
-  ...AIExtractRoutes(),
-  ...BetaRoutes(),
-  ...BrandMarketingRoutes(),
-  ...CategoriesRoutes(),
-  ...ContractsRoutes(),
-  ...CustomerManagementRoutes(),
-  ...DataManagementRoutes(),
-  ...DotXRoutes(),
-  ...EntitiesRoutes(),
-  ...EventsRoutes(),
-  ...FilesRoutes(),
-  ...LoyaltyRoutes(),
-  ...ProjectManagementRoutes(),
-  ...RAGDashboardRoutes(),
-  ...RequestsRoutes(),
-  ...RiskRegisterRoutes(),
-  ...ScorecardsRoutes(),
-  ...SecureRoutes(),
-  ...SocialMediaRoutes(),
-  ...SupplierRoutes(),
-  ...SupplierManagementRoutes(),
-  ...TechHubRoutes(),
-  ...TradingSystemRoutes(),
-  ...VendorRoutes(),
-  ...WorkflowsRoutes(),
+  ...(AdminRoutes || []),
+  ...(AIExtractRoutes || []),
+  ...(BetaRoutes || []),
+  ...(BrandMarketingRoutes || []),
+  ...(CategoriesRoutes || []),
+  ...(ContractsRoutes || []),
+  ...(CustomerManagementRoutes || []),
+  ...(DataManagementRoutes || []),
+  ...(DotXRoutes || []),
+  ...(EntitiesRoutes || []),
+  ...(EventsRoutes || []),
+  ...(FilesRoutes || []),
+  ...(LoyaltyRoutes || []),
+  ...(ProjectManagementRoutes || []),
+  ...(RAGDashboardRoutes || []),
+  ...(RequestsRoutes || []),
+  ...(RiskRegisterRoutes || []),
+  ...(ScorecardsRoutes || []),
+  ...(SecureRoutes || []),
+  ...(SocialMediaRoutes || []),
+  ...(SupplierRoutes || []),
+  ...(SupplierManagementRoutes || []),
+  ...(TechHubRoutes || []),
+  ...(TradingSystemRoutes || []),
+  ...(VendorRoutes || []),
+  ...(WorkflowsRoutes || []),
 ];

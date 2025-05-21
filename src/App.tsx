@@ -1,10 +1,10 @@
 
 import { Suspense } from "react";
 import { useRoutes } from "react-router-dom";
-import { AuthProvider }   from "@/context/AuthContext";
-import { ThemeProvider }  from "@/context/ThemeContext";
-import { Toaster }        from "sonner";
-import { appRoutes }      from "@/routes";
+import { AuthProvider } from "@/context/AuthContext";
+import { ThemeProvider } from "@/context/ThemeContext";
+import { Toaster } from "sonner";
+import { appRoutes } from "@/routes/AppRoutes";
 
 export default function App() {
   return (

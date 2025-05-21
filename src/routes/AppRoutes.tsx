@@ -11,10 +11,11 @@ import DotXApi from "../pages/dot-x/Api";
 import DotXDataServices from "../pages/dot-x/DataServices";
 import DotXPlugins from "../pages/dot-x/Plugins";
 import DotXSettings from "../pages/dot-x/Settings";
+import RootHandler from "../components/RootHandler";
 
 export const appRoutes: RouteObject[] = [
   /* Public root: decides where to send you */
-  { path: "/", element: <Navigate to="/dashboard" replace /> },
+  { path: "/", element: <RootHandler /> },
 
   /* Dashboard area with its own layout + nested pages */
   {
@@ -40,10 +41,10 @@ export const appRoutes: RouteObject[] = [
       { path: "data-services", element: <DotXDataServices /> },
       { path: "plugins", element: <DotXPlugins /> },
       { path: "settings", element: <DotXSettings /> },
-      { path: "command-center", element: <DotXDashboard /> }, // Add command center route
-      { path: "agents", element: <DotXDashboard /> }, // Add agents route
-      { path: "reports", element: <DotXDashboard /> }, // Add reports route
-      { path: "knowledge", element: <DotXDashboard /> } // Add knowledge route
+      { path: "command-center", element: <DotXDashboard /> },
+      { path: "agents", element: <DotXDashboard /> },
+      { path: "reports", element: <DotXDashboard /> },
+      { path: "knowledge", element: <DotXDashboard /> }
     ],
   },
 

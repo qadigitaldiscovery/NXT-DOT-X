@@ -1,27 +1,16 @@
 
-import React, { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { toast } from 'sonner';
-import { useAuth } from '../context/AuthContext';
+import React from 'react';
 import DashboardModules from '../components/master-dash/DashboardModules';
+import { useAuth } from '../context/AuthContext';
+import { Navigate } from 'react-router-dom';
 
 const MasterDash: React.FC = () => {
   console.log("⭐ MasterDash component being rendered");
-  const navigate = useNavigate();
   const { user } = useAuth() || { user: null };
 
-  // Check if user is authenticated
-  useEffect(() => {
-    console.log("⭐ MasterDash useEffect running, user:", user);
-    if (!user) {
-      console.log("⭐ No user, redirecting to landing page");
-      navigate('/landing');
-      toast.error('Please sign in to access this page');
-    }
-  }, [navigate, user]);
-
   if (!user) {
-    return null; // Don't render anything while redirecting
+    console.log("⭐ No user, redirecting to landing page");
+    return <Navigate to="/landing" replace />;
   }
 
   return (

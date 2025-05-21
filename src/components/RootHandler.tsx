@@ -6,21 +6,16 @@ import { useAuth } from '../context/AuthContext';
 const RootHandler: React.FC = () => {
   const navigate = useNavigate();
   const { isAuthenticated } = useAuth();
-  const isLoading = false; // Since loading doesn't exist in AuthContextType, we set a default
-
+  
   React.useEffect(() => {
-    console.log("RootHandler: Auth state", { isAuthenticated, isLoading });
-    
-    if (isLoading) {
-      return;
-    }
+    console.log("RootHandler: Auth state", { isAuthenticated });
     
     if (isAuthenticated) {
-      console.log("RootHandler: Authenticated, navigating to master dashboard");
-      navigate('/master');
+      console.log("RootHandler: Authenticated, navigating to dashboard");
+      navigate('/dashboard', { replace: true });
     } else {
       console.log("RootHandler: Not authenticated, navigating to landing page");
-      navigate('/landing');
+      navigate('/landing', { replace: true });
     }
   }, [isAuthenticated, navigate]);
 
