@@ -1,3 +1,4 @@
+
 import { Outlet } from 'react-router-dom';
 import { SharedNavbar } from './SharedNavbar';
 import { Sidebar } from '@/components/ui/sidebar';
@@ -26,3 +27,5 @@ export function DotXLayout() {
     </div>
   );
 }
+
+export default DotXLayout;
