@@ -1,33 +1,31 @@
 
-import { type ClassValue, clsx } from "clsx";
-import { twMerge } from "tailwind-merge";
-
+import { type ClassValue, clsx } from "clsx"
+import { twMerge } from "tailwind-merge"
+ 
 export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs));
+  return twMerge(clsx(inputs))
 }
 
-// Additional utility for handling common accessibility issues
-export function ensureAccessibleLabel(
-  label?: string | null,
-  fallback: string = "Element"
-): string {
-  return label || fallback;
+export function formatDate(date: string | Date | null | undefined): string {
+  if (!date) return 'N/A';
+  
+  const d = typeof date === 'string' ? new Date(date) : date;
+  
+  if (isNaN(d.getTime())) return 'Invalid Date';
+  
+  return d.toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric'
+  });
 }
 
-// Fix user-select cross-browser compatibility
-export function createUserSelectStyles(value: "none" | "auto" | "text" | "all"): React.CSSProperties {
-  return {
-    WebkitUserSelect: value,
-    MozUserSelect: value as any,
-    msUserSelect: value as any,
-    userSelect: value,
-  };
-}
-
-// Format currency helper - adding this since it was missing in some files
-export function formatCurrency(value: number, locale = 'en-US', currency = 'USD'): string {
-  return new Intl.NumberFormat(locale, {
+export function formatCurrency(amount: number | null | undefined, currency = 'USD'): string {
+  if (amount === null || amount === undefined) return 'N/A';
+  
+  return new Intl.NumberFormat('en-US', {
     style: 'currency',
     currency,
-  }).format(value);
+    minimumFractionDigits: 2
+  }).format(amount);
 }

@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
-import MasterDashSidebar from '../master-dash/MasterDashSidebar';
+import { SharedSidebar } from './SharedSidebar';
 import MasterDashNavbar from '../master-dash/MasterDashNavbar';
 import MasterDashFooter from '../master-dash/MasterDashFooter';
 import { useIsMobile } from '../../hooks/use-mobile';
@@ -27,9 +27,11 @@ export function DashboardLayout() {
 
   return (
     <div className="flex min-h-screen bg-gradient-to-br from-gray-900 to-gray-950">
-      <MasterDashSidebar activePath={location.pathname} open={sidebarOpen} onToggle={toggleSidebar} />
+      <div className={`${sidebarOpen ? 'w-64' : 'w-0 md:w-16'} transition-width duration-300 ease-in-out`}>
+        <SharedSidebar />
+      </div>
       <div className="flex flex-col flex-1">
-        <MasterDashNavbar />
+        <MasterDashNavbar onToggleSidebar={toggleSidebar} sidebarOpen={sidebarOpen} />
         <main className="flex-1 p-6 overflow-y-auto bg-gray-200">
           <Outlet />
         </main>

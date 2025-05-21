@@ -37,10 +37,10 @@ export function MainSidebarContent({
     effectiveNavCategories = globalNavCategories;
   } else if (useGlobalNavigation) {
     effectiveNavCategories = globalNavCategories;
-  } else if (navCategories && navCategories.length > 0) {
-    effectiveNavCategories = navCategories;
   } else if (items && items.length > 0) {
     effectiveNavCategories = items;
+  } else if (navCategories && navCategories.length > 0) {
+    effectiveNavCategories = navCategories;
   } else if (navItems && navItems.length > 0) {
     effectiveNavCategories = [{
       name: 'Navigation',
@@ -159,9 +159,9 @@ export function MainSidebarContent({
                 </Button>
                 
                 {/* Category Items */}
-                {isExpanded && (
+                {isExpanded && category.items && (
                   <div className="mt-1 ml-2 space-y-1">
-                    {category.items?.map((item, itemIndex) => (
+                    {category.items.map((item, itemIndex) => (
                       <Button
                         key={`${item.label}-${itemIndex}`}
                         variant="ghost"
