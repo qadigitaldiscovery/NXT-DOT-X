@@ -2,32 +2,11 @@
 import { useState, useEffect } from 'react';
 import { useModules } from '../../context/ModulesContext';
 import { useAuth } from '../../context/AuthContext';
-import { BetaAccessStatus } from '../../types/beta';
+import { type BetaAccessStatus } from '../../types/beta';
 import { supabase } from '../../integrations/supabase/client';
 import { toast } from 'sonner';
 
-// Define proper types for beta features
-interface BetaFeature {
-  id: string;
-  name: string;
-  enabled: boolean;
-  description?: string;
-}
-
-interface DatabaseBetaAccess {
-  id: string;
-  user_id: string;
-  feature_id: string;
-  status: BetaAccessStatus;
-  created_at: string;
-  profiles: {
-    email: string;
-  };
-  beta_features: {
-    name: string;
-  };
-}
-
+// Define proper types for beta access requests
 interface BetaAccessRequest {
   id: string;
   userId: string;
@@ -152,14 +131,14 @@ export default function BetaFeatureManagement() {
                   <p className="text-sm text-gray-600">{feature.description || 'No description available'}</p>
                 </div>
                 <button
-                  onClick={() => toggleBetaFeature(feature.id, !feature.enabled)}
+                  onClick={() => toggleBetaFeature(feature.id, !feature.isEnabled)}
                   className={`px-4 py-2 rounded ${
-                    feature.enabled
+                    feature.isEnabled
                       ? 'bg-red-100 text-red-700 hover:bg-red-200'
                       : 'bg-green-100 text-green-700 hover:bg-green-200'
                   }`}
                 >
-                  {feature.enabled ? 'Disable' : 'Enable'}
+                  {feature.isEnabled ? 'Disable' : 'Enable'}
                 </button>
               </div>
             ))}

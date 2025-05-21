@@ -1,8 +1,9 @@
+
 import { ReactNode } from 'react';
 import { Navigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { useModules } from '../../context/ModulesContext';
-import { BetaFeature } from '../../types/beta';
+import { type BetaAccessStatus } from '../../types/beta';
 
 interface BetaPermissionGuardProps {
   featureId: string;
@@ -18,7 +19,7 @@ const BetaPermissionGuard = ({
   fallbackComponent
 }: BetaPermissionGuardProps) => {
   const { user, isAuthenticated } = useAuth();
-  const { isFeatureEnabled } = useModules();
+  const { modules, isFeatureEnabled } = useModules();
 
   // Debug logging
   console.log(`Beta permission check - Feature: ${featureId}, User: ${user?.id}`);
@@ -34,7 +35,7 @@ const BetaPermissionGuard = ({
   }
 
   // Check if the feature exists and is enabled
-  const hasFeatureAccess = isFeatureEnabled(featureId);
+  const hasFeatureAccess = isFeatureEnabled ? isFeatureEnabled(featureId) : false;
   
   if (!hasFeatureAccess) {
     console.log(`No access to beta feature: ${featureId}`);

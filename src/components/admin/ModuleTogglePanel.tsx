@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'; // No-op
+import React, { useState, useEffect } from 'react';
 import { toast } from 'sonner';
 import { useModules } from '@/context/ModulesContext';
 import {
@@ -41,8 +41,10 @@ const ModuleTogglePanel: React.FC<ModuleTogglePanelProps> = ({ userId }) => {
   const handleUserChange = (uid: string) => setSelectedUser(uid);
 
   const handleToggleAccess = (moduleId: string) => {
-    toggleModule(moduleId);
-    toast.success('Module access updated');
+    if (toggleModule) {
+      toggleModule(moduleId);
+      toast.success('Module access updated');
+    }
   };
 
   /* demo user list */
@@ -99,14 +101,14 @@ const ModuleTogglePanel: React.FC<ModuleTogglePanelProps> = ({ userId }) => {
                 >
                   <div>
                     <div className="font-medium">{m.name}</div>
-                    {Object.keys(m.features).length > 0 && (
+                    {m.features && Object.keys(m.features).length > 0 && (
                       <Badge variant="outline" className="mt-1">
                         {Object.keys(m.features).length} features
                       </Badge>
                     )}
                   </div>
                   <Switch
-                    checked={m.enabled}
+                    checked={m.isEnabled}
                     onCheckedChange={() => handleToggleAccess(m.id)}
                   />
                 </div>

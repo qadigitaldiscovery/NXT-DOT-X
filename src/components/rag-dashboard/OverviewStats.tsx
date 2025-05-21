@@ -1,80 +1,84 @@
 
-import React from 'react';
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
-import { type Alert } from '@/hooks/useAlerts';
-import { type Module } from '@/hooks/useModules';
-import StatusGauge from './StatusGauge';
-import { AlertCircle, AlertTriangle, CheckCircle } from 'lucide-react';
+import { KpiCard } from './KpiCard';
+import { AlertTriangle, CheckCircle, XCircle } from 'lucide-react';
+import { type Module } from '@/context/ModulesContext';
 
-type OverviewStatsProps = {
+interface OverviewStatsProps {
   modules: Module[];
-  alerts: Alert[];
+  alerts: any[];
 }
 
-export default function OverviewStats({ modules, alerts }: OverviewStatsProps) {
-  const greenCount = modules.filter(m => m.status === 'green').length;
-  const orangeCount = modules.filter(m => m.status === 'orange').length;
-  const redCount = modules.filter(m => m.status === 'red').length;
-  
-  const unresolvedAlerts = alerts.filter(a => !a.resolved).length;
-  
+const OverviewStats: React.FC<OverviewStatsProps> = ({ modules, alerts }) => {
+  // Count modules by status
+  const healthyCount = modules.filter(m => m.isEnabled).length;
+  const warningCount = modules.filter(m => !m.isEnabled && m.isVisible).length;
+  const criticalCount = modules.filter(m => !m.isEnabled && !m.isVisible).length;
+
+  // Count alerts
+  const totalAlerts = alerts.length;
+  const criticalAlerts = alerts.filter(a => a.severity === 'critical').length;
+  const resolvedAlerts = alerts.filter(a => a.resolved).length;
+
   return (
-    <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-      <Card>
-        <CardHeader className="pb-2">
-          <CardTitle className="text-sm">Operational</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="flex justify-between items-center">
-            <span className="text-2xl font-bold">{greenCount}</span>
-            <div className="bg-green-100 dark:bg-green-900/20 p-2 rounded-full">
-              <CheckCircle className="h-5 w-5 text-green-500" />
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+    <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 mb-8">
+      <KpiCard 
+        title="Healthy Systems"
+        value={healthyCount}
+        icon={<CheckCircle className="h-5 w-5 text-green-500" />}
+        trend={{ 
+          value: healthyCount / modules.length * 100, 
+          isUpward: true, 
+          isPositive: true 
+        }}
+        description="Systems operating normally" 
+      />
       
-      <Card>
-        <CardHeader className="pb-2">
-          <CardTitle className="text-sm">Degraded</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="flex justify-between items-center">
-            <span className="text-2xl font-bold">{orangeCount}</span>
-            <div className="bg-amber-100 dark:bg-amber-900/20 p-2 rounded-full">
-              <AlertTriangle className="h-5 w-5 text-amber-500" />
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+      <KpiCard 
+        title="Systems With Warnings" 
+        value={warningCount}
+        icon={<AlertTriangle className="h-5 w-5 text-amber-500" />}
+        trend={{ 
+          value: warningCount / modules.length * 100, 
+          isUpward: false, 
+          isPositive: false 
+        }}
+        description="Systems with minor issues"
+      />
       
-      <Card>
-        <CardHeader className="pb-2">
-          <CardTitle className="text-sm">Outage</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="flex justify-between items-center">
-            <span className="text-2xl font-bold">{redCount}</span>
-            <div className="bg-red-100 dark:bg-red-900/20 p-2 rounded-full">
-              <AlertCircle className="h-5 w-5 text-red-500" />
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-      
-      <Card>
-        <CardHeader className="pb-2">
-          <CardTitle className="text-sm">Active Alerts</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="flex justify-between items-center">
-            <span className="text-2xl font-bold">{unresolvedAlerts}</span>
-            <div className="bg-blue-100 dark:bg-blue-900/20 p-2 rounded-full">
-              <AlertCircle className="h-5 w-5 text-blue-500" />
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+      <KpiCard 
+        title="Critical Systems"
+        value={criticalCount}
+        icon={<XCircle className="h-5 w-5 text-red-500" />} 
+        trend={{ 
+          value: criticalCount / modules.length * 100, 
+          isUpward: false, 
+          isPositive: false 
+        }}
+        description="Systems with major problems"
+      />
+
+      <KpiCard 
+        title="Total Alerts" 
+        value={totalAlerts}
+        isLoading={!alerts}
+        description="All system alerts"
+      />
+
+      <KpiCard 
+        title="Critical Alerts" 
+        value={criticalAlerts}
+        isLoading={!alerts}
+        description="Highest priority alerts"
+      />
+
+      <KpiCard 
+        title="Resolved Alerts" 
+        value={resolvedAlerts}
+        isLoading={!alerts}
+        description="Fixed and cleared alerts"
+      />
     </div>
   );
-}
+};
+
+export default OverviewStats;

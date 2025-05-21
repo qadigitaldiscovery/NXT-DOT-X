@@ -3,10 +3,34 @@ import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useUserManagement } from '@/context/UserManagementContext';
 
+// Sample permission data structure
+const samplePermissions = {
+  "User Management": [
+    { id: "users.view", name: "View Users" },
+    { id: "users.create", name: "Create Users" },
+    { id: "users.edit", name: "Edit Users" },
+    { id: "users.delete", name: "Delete Users" }
+  ],
+  "Content Management": [
+    { id: "content.view", name: "View Content" },
+    { id: "content.create", name: "Create Content" },
+    { id: "content.edit", name: "Edit Content" },
+    { id: "content.delete", name: "Delete Content" }
+  ],
+  "System": [
+    { id: "system.settings", name: "System Settings" },
+    { id: "system.logs", name: "View Logs" }
+  ]
+};
+
 const PermissionsTab: React.FC = () => {
-  const { permissions } = useUserManagement();
+  // Get permissions from context
+  const { permissions = [] } = useUserManagement();
   
-  // Display permissions
+  // Use sample data if no permissions are available
+  const permissionsByCategory = Object.keys(permissions).length > 0 
+    ? permissions 
+    : samplePermissions;
 
   return (
     <Card>
@@ -21,7 +45,7 @@ const PermissionsTab: React.FC = () => {
           <div key={category} className="mb-8">
             <h3 className="text-lg font-medium mb-4">{category} Permissions</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {perms.map((permission) => (
+              {(perms as Array<{id: string, name: string}>).map((permission) => (
                 <div 
                   key={permission.id} 
                   className="p-4 border rounded-md flex justify-between items-center"

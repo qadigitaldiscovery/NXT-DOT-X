@@ -10,7 +10,7 @@ interface SidebarCategoryProps {
   onToggle: () => void;
   onItemClick: (item: NavItem) => void;
   isItemActive: (item: NavItem) => boolean;
-  isMobile: boolean;
+  isMobile?: boolean;
 }
 
 export function SidebarCategory({
@@ -19,7 +19,6 @@ export function SidebarCategory({
   onToggle,
   onItemClick,
   isItemActive,
-  isMobile
 }: SidebarCategoryProps) {
   return (
     <div className="mb-3">

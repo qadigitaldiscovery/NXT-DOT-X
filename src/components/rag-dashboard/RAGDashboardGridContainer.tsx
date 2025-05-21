@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useModules } from '@/hooks/useModules';
 import { useAlerts } from '@/hooks/useAlerts';
@@ -14,8 +13,8 @@ import { RefreshCw, Settings } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 const RAGDashboardGridContainer: React.FC = () => {
-  const { modules, loading: modulesLoading, error: modulesError, refreshModules } = useModules();
-  const { alerts, loading: alertsLoading, error: alertsError, resolveAlert } = useAlerts();
+  const { modules, loading: modulesLoading, error: modulesError } = useModules();
+  const { alerts, loading: alertsLoading, resolveAlert } = useAlerts();
   const { logs, getLogsByModuleId, loading: logsLoading } = useStatusLogs();
   const { rules, loading: rulesLoading, addRule, deleteRule } = useThresholdRules();
   const { impacts, loading: impactsLoading } = useCustomerImpacts();
@@ -61,6 +60,16 @@ const RAGDashboardGridContainer: React.FC = () => {
     setIsBatchOperationsOpen(true);
   };
 
+  const handleRefresh = () => {
+    // If refreshModules exists in the hook, call it
+    if ('refreshModules' in useModules() && typeof useModules().refreshModules === 'function') {
+      useModules().refreshModules?.();
+    } else {
+      // Otherwise show a toast or console message
+      console.log('Refresh functionality not implemented');
+    }
+  };
+
   return (
     <div className="container mx-auto py-6 max-w-7xl">
       <div className="mb-6 flex justify-between items-center">
@@ -71,7 +80,7 @@ const RAGDashboardGridContainer: React.FC = () => {
             className="inline-flex items-center text-sm font-medium text-primary hover:text-primary/80 hover:underline"
             onClick={(e) => {
               e.preventDefault();
-              refreshModules();
+              handleRefresh();
             }}
             aria-label="Refresh data"
           >

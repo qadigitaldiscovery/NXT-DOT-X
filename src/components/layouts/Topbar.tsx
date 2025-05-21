@@ -1,3 +1,4 @@
+
 import React, { memo } from 'react';
 import { ThemeToggle } from '@/components/theme-toggle';
 import { UserMenu } from '@/components/user-menu';
@@ -15,8 +16,8 @@ interface TopbarProps {
 const Topbar: React.FC<TopbarProps> = memo(({ moduleTitle = '' }) => {
   // Get top-level navigation items from all categories
   const mainNavLinks = navCategories.map(category => ({
-    name: category.label,
-    href: `/${category.label.toLowerCase().replace(/\s+/g, '-')}`,
+    name: category.label || '',
+    href: `/${category.label?.toLowerCase().replace(/\s+/g, '-') || ''}`,
   }));
 
   return (

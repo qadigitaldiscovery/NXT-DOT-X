@@ -14,11 +14,21 @@ import { useSidebar } from '@/context/SidebarContext';
 
 interface SharedNavbarProps {
   moduleTitle?: string;
+  onMenuClick?: () => void;
 }
 
-export function SharedNavbar({ moduleTitle = "Dashboard" }: SharedNavbarProps) {
+export function SharedNavbar({ moduleTitle = "Dashboard", onMenuClick }: SharedNavbarProps) {
   const { user, signOut } = useAuth();
   const { toggle } = useSidebar();
+
+  // Use the provided onMenuClick if available, otherwise use sidebar.toggle
+  const handleMenuClick = () => {
+    if (onMenuClick) {
+      onMenuClick();
+    } else {
+      toggle();
+    }
+  };
 
   return (
     <header className="bg-gray-900 text-white z-10 border-b border-gray-800 flex h-14 items-center justify-between px-4">
@@ -26,7 +36,7 @@ export function SharedNavbar({ moduleTitle = "Dashboard" }: SharedNavbarProps) {
         <Button 
           variant="ghost" 
           size="icon" 
-          onClick={toggle} 
+          onClick={handleMenuClick} 
           className="md:hidden h-8 w-8 text-gray-300"
         >
           <Menu className="h-5 w-5" />

@@ -14,7 +14,8 @@ import {
   Database,
   BookOpen,
   FileCog,
-  ServerCog
+  ServerCog,
+  Home
 } from 'lucide-react';
 import { NavItem, NavCategory } from './types';
 
@@ -27,6 +28,14 @@ export const topLevelNavItems: NavItem[] = [
     path: '/data-management' 
   }
 ];
+
+// Master dashboard item for navigation
+export const masterDashItem: NavItem = {
+  label: 'Dashboard',
+  href: '/dashboard',
+  icon: Home,
+  path: '/dashboard'
+};
 
 // Organize navigation items into categories
 export const navCategories: NavCategory[] = [
