@@ -1,10 +1,9 @@
-
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Plus } from 'lucide-react';
 
-export function CustomerManagement() {
+function CustomerManagement() {
   return (
     <div className="p-6 space-y-6">
       <div className="flex items-center justify-between">
@@ -58,3 +57,5 @@ export function CustomerManagement() {
     </div>
   );
 }
+
+export default CustomerManagement;
