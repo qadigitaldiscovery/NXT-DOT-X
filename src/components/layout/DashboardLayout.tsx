@@ -7,6 +7,7 @@ import MasterDashFooter from '../master-dash/MasterDashFooter';
 import { useIsMobile } from '../../hooks/use-mobile';
 import { Home } from 'lucide-react';
 import { NavItem } from './sidebar/types';
+import { SidebarProvider } from '@/context/SidebarContext';
 
 const homeItem: NavItem = {
   label: 'Dashboard',
@@ -33,25 +34,27 @@ export function DashboardLayout() {
   };
 
   return (
-    <div className="flex min-h-screen bg-gradient-to-br from-gray-900 to-gray-950">
-      <UnifiedSidebar 
-        isOpen={sidebarOpen} 
-        onToggle={toggleSidebar}
-        homeItem={homeItem}
-        moduleTitle="Data Management"
-        useGlobalNavigation={true}
-      />
-      <div className="flex flex-col flex-1">
-        <MasterDashNavbar 
-          sidebarOpen={sidebarOpen}
-          sidebarToggle={toggleSidebar}
+    <SidebarProvider defaultOpen={!isMobile}>
+      <div className="flex min-h-screen bg-gradient-to-br from-gray-900 to-gray-950">
+        <UnifiedSidebar 
+          isOpen={sidebarOpen} 
+          onToggle={toggleSidebar}
+          homeItem={homeItem}
+          moduleTitle="Data Management"
+          useGlobalNavigation={true}
         />
-        <main className="flex-1 p-6 overflow-y-auto bg-gray-200">
-          <Outlet />
-        </main>
-        <MasterDashFooter />
+        <div className="flex flex-col flex-1">
+          <MasterDashNavbar 
+            sidebarOpen={sidebarOpen}
+            sidebarToggle={toggleSidebar}
+          />
+          <main className="flex-1 p-6 overflow-y-auto bg-gray-200">
+            <Outlet />
+          </main>
+          <MasterDashFooter />
+        </div>
       </div>
-    </div>
+    </SidebarProvider>
   );
 }
 
