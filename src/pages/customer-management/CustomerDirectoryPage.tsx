@@ -1,77 +1,61 @@
-
-import React, { useState } from 'react';
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
+import React from 'react';
 import { Button } from '@/components/ui/button';
-import { useNavigate } from 'react-router-dom';
-import { CustomersTable } from '@/components/customers/CustomersTable';
-import { PlusCircle, Search, RefreshCw } from 'lucide-react';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Plus } from 'lucide-react';
 
-const CustomerDirectoryPage = () => {
-  const navigate = useNavigate();
-  const [searchQuery, setSearchQuery] = useState('');
-
-  const handleAddCustomer = () => {
-    navigate('/customer-management/new');
-  };
-
-  const handleRefresh = () => {
-    // In a real implementation, this would refresh customer data
-    console.log('Refreshing customer data');
-  };
-  
+const CustomerManagement = () => {
   return (
-    <div className="h-full w-full space-y-6">
-      <div>
-        <p className="text-muted-foreground">
-          Manage your customer information and relationships
-        </p>
+    <div className="p-6 space-y-6">
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-3xl font-bold tracking-tight">Customer Management</h2>
+          <p className="text-muted-foreground">
+            Manage your customer relationships and data.
+          </p>
+        </div>
+        <Button className="flex items-center gap-2">
+          <Plus className="h-4 w-4" /> Add Customer
+        </Button>
       </div>
-      
-      <Card className="w-full h-[calc(100%-4rem)]">
-        <CardHeader>
-          <CardTitle>Customers</CardTitle>
-          <CardDescription>
-            Browse, search and manage your customer database
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between mb-4">
-            <div className="flex items-center gap-2 w-full md:w-1/2">
-              <Search className="h-4 w-4 text-muted-foreground" />
-              <Input
-                placeholder="Search customers..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full"
-              />
-            </div>
-            <div className="flex items-center gap-2">
-              <Button 
-                variant="outline" 
-                onClick={handleRefresh} 
-                className="flex items-center gap-1"
-              >
-                <RefreshCw className="h-4 w-4" />
-                Refresh
-              </Button>
-              <Button 
-                onClick={handleAddCustomer}
-                className="flex items-center gap-1"
-              >
-                <PlusCircle className="h-4 w-4" />
-                Add Customer
-              </Button>
-            </div>
-          </div>
-          
-          <div className="h-[calc(100vh-20rem)] overflow-auto">
-            <CustomersTable />
-          </div>
-        </CardContent>
-      </Card>
+
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <Card>
+          <CardHeader>
+            <CardTitle>Total Customers</CardTitle>
+            <CardDescription>Active accounts in your system</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <p className="text-4xl font-bold">287</p>
+            <p className="text-sm text-muted-foreground mt-2">+12% from last month</p>
+          </CardContent>
+        </Card>
+        
+        <Card>
+          <CardHeader>
+            <CardTitle>Pending Approvals</CardTitle>
+            <CardDescription>Accounts requiring verification</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <p className="text-4xl font-bold">24</p>
+            <p className="text-sm text-muted-foreground mt-2">-3% from last month</p>
+          </CardContent>
+        </Card>
+        
+        <Card>
+          <CardHeader>
+            <CardTitle>Recent Activity</CardTitle>
+            <CardDescription>Last 30 days</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <p className="text-4xl font-bold">152</p>
+            <p className="text-sm text-muted-foreground mt-2">+8% from previous period</p>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Additional content would go here */}
     </div>
   );
 };
 
-export default CustomerDirectoryPage;
+export default CustomerManagement;
