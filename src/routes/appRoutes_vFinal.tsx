@@ -6,6 +6,7 @@ import SideBarHeaderTemplate from "@/pages/SideBarHeaderTemplate";
 import TestMasterDash from "@/pages/TestMasterDash";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import NoSidebarLayout from "@/components/layout/NoSidebarLayout";
+import WebDevModule from "@/pages/WebDevModule";
 
 // Not found component
 const NotFound = () => (
@@ -26,6 +27,9 @@ export default function AppRoutes() {
       <Route path="/master" element={<MasterDash />} />
       <Route path="/master-copy" element={<MasterCopy1 />} />
       <Route path="/sidebar-template" element={<SideBarHeaderTemplate />} />
+      
+      {/* WebDev Module */}
+      <Route path="/webdev" element={<WebDevModule />} />
       
       {/* Test Master Dashboard with No Sidebar */}
       <Route path="/test-master" element={<NoSidebarLayout />}>
