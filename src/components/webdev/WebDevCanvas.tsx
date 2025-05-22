@@ -12,14 +12,15 @@ import {
   Connection,
   Node,
   Edge,
-  NodeTypes
-} from 'reactflow';
+  NodeTypes,
+  ReactFlowProvider
+} from '@xyflow/react';
 import { useWebDev } from '@/context/WebDevContext';
 import ModuleNode from './nodes/ModuleNode';
 import MenuNode from './nodes/MenuNode';
 import PageNode from './nodes/PageNode';
 import InspectorPanel from './InspectorPanel';
-import 'reactflow/dist/style.css';
+import '@xyflow/react/dist/style.css';
 
 // Define custom node types
 const nodeTypes: NodeTypes = {
@@ -28,7 +29,7 @@ const nodeTypes: NodeTypes = {
   page: PageNode,
 };
 
-const WebDevCanvas: React.FC = () => {
+const FlowWithProvider = () => {
   const { nodes, edges, addNode, addEdge, removeNode, removeEdge, selectNode, selectEdge } = useWebDev();
   const [reactFlowNodes, setReactFlowNodes] = useNodesState([]);
   const [reactFlowEdges, setReactFlowEdges] = useEdgesState([]);
@@ -107,22 +108,30 @@ const WebDevCanvas: React.FC = () => {
   );
 
   return (
+    <ReactFlow
+      nodes={reactFlowNodes}
+      edges={reactFlowEdges}
+      onNodesDelete={onNodesDelete}
+      onEdgesDelete={onEdgesDelete}
+      onConnect={onConnect}
+      onSelectionChange={onSelectionChange}
+      nodeTypes={nodeTypes}
+      fitView
+    >
+      <Background />
+      <Controls />
+      <MiniMap />
+    </ReactFlow>
+  );
+};
+
+const WebDevCanvas: React.FC = () => {
+  return (
     <div className="flex h-[700px]">
       <div className="flex-1">
-        <ReactFlow
-          nodes={reactFlowNodes}
-          edges={reactFlowEdges}
-          onNodesDelete={onNodesDelete}
-          onEdgesDelete={onEdgesDelete}
-          onConnect={onConnect}
-          onSelectionChange={onSelectionChange}
-          nodeTypes={nodeTypes}
-          fitView
-        >
-          <Background />
-          <Controls />
-          <MiniMap />
-        </ReactFlow>
+        <ReactFlowProvider>
+          <FlowWithProvider />
+        </ReactFlowProvider>
       </div>
       <InspectorPanel />
     </div>
