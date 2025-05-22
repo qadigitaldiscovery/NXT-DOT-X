@@ -1,3 +1,1 @@
-
-// Re-export appRoutes from AppRoutes.tsx
-export { appRoutes } from './AppRoutes';
+// Patched routing file: src/routes/index.tsx
