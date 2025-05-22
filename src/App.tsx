@@ -1,14 +1,12 @@
-import { BrowserRouter as Router, Routes } from "react-router-dom";
-import AppRoutes from "@/routes/AppRoutes";
+import { BrowserRouter as Router } from "react-router-dom";
+import AppRoutes from "@/routes/appRoutes_vFinal";
 import ErrorBoundary from "@/components/ErrorBoundary";
 
 export default function App() {
   return (
     <Router>
       <ErrorBoundary>
-        <Routes>
-          <AppRoutes />
-        </Routes>
+        <AppRoutes />
       </ErrorBoundary>
     </Router>
   );
