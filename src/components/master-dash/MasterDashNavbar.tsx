@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { ThemeToggle } from '@/components/ui/theme-toggle';
+import { Link } from 'react-router-dom';
 
 interface MasterDashNavbarProps {
   user?: {
@@ -10,26 +11,15 @@ interface MasterDashNavbarProps {
 }
 
 const MasterDashNavbar: React.FC<MasterDashNavbarProps> = ({
-  user
+  user = { email: 'user@example.com', role: 'User' }
 }) => {
   return (
-    <header className="flex items-center justify-between p-4 border-b border-slate-800 bg-gray-200">
+    <header className="flex items-center justify-between p-4 border-b border-slate-200 bg-white">
       <div className="flex items-center gap-3">
-        <h1 className="text-xl font-semibold">Business Management Platform</h1>
+        <Link to="/" className="text-xl font-semibold">Business Management Platform</Link>
       </div>
       <div className="flex items-center gap-4">
         <div className="flex gap-2">
-          <button className="p-2 text-slate-700 hover:text-slate-900">
-            <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M3 15a1 1 0 0 1 1-1h16a1 1 0 0 1 1 1v4a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1v-4Z" />
-              <path d="M4 10h6" />
-              <path d="M14 10h6" />
-              <path d="M9 15v5" />
-              <path d="M15 15v5" />
-              <path d="M12 10V3" />
-              <path d="M6 7l6-4 6 4" />
-            </svg>
-          </button>
           <button className="p-2 text-slate-700 hover:text-slate-900">
             <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18Z" />
@@ -51,9 +41,6 @@ const MasterDashNavbar: React.FC<MasterDashNavbarProps> = ({
           </div>
           <div className="p-2 bg-slate-700 rounded-md text-white">
             {user?.role || 'User'}
-          </div>
-          <div className="w-8 h-8 flex items-center justify-center bg-blue-500 rounded-md">
-            <span className="text-white font-bold">+</span>
           </div>
         </div>
       </div>

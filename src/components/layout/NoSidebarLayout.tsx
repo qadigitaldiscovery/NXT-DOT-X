@@ -6,9 +6,9 @@ import MasterDashFooter from '../master-dash/MasterDashFooter';
 
 export function NoSidebarLayout() {
   return (
-    <div className="flex flex-col min-h-screen bg-gradient-to-br from-gray-900 to-gray-950">
+    <div className="flex flex-col min-h-screen bg-gray-100">
       <MasterDashNavbar />
-      <main className="flex-1 p-6 overflow-y-auto bg-gray-200">
+      <main className="flex-1 p-6 overflow-y-auto">
         <Outlet />
       </main>
       <MasterDashFooter />

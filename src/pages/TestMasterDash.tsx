@@ -1,18 +1,8 @@
 
 import React from 'react';
 import DashboardModules from '../components/master-dash/DashboardModules';
-import { useAuth } from '../context/AuthContext';
-import { Navigate } from 'react-router-dom';
 
 const TestMasterDash: React.FC = () => {
-  console.log("⭐ TestMasterDash component being rendered");
-  const { user } = useAuth() || { user: null };
-
-  if (!user) {
-    console.log("⭐ No user, redirecting to landing page");
-    return <Navigate to="/landing" replace />;
-  }
-
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">

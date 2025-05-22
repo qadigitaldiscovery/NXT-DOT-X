@@ -7,13 +7,6 @@ import TestMasterDash from "@/pages/TestMasterDash";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import NoSidebarLayout from "@/components/layout/NoSidebarLayout";
 
-// Import other layouts
-import CustomerManagementLayout from "@/components/layout/CustomerManagementLayout";
-import SupplierManagementLayout from "@/components/layout/SupplierManagementLayout";
-import TechHubLayout from "@/components/layout/TechHubLayout";
-import LoyaltyLayout from "@/components/layout/LoyaltyLayout";
-import AdminLayout from "@/components/layout/AdminLayout";
-
 // Not found component
 const NotFound = () => (
   <div className="flex items-center justify-center h-screen bg-gray-100">
@@ -43,21 +36,6 @@ export default function AppRoutes() {
       <Route path="/dashboard" element={<DashboardLayout />}>
         <Route index element={<MasterDash />} />
       </Route>
-
-      {/* Customer Management Routes */}
-      <Route path="/customer-management/*" element={<CustomerManagementLayout />} />
-      
-      {/* Supplier Management Routes */}
-      <Route path="/supplier-management/*" element={<SupplierManagementLayout />} />
-      
-      {/* Tech Hub Routes */}
-      <Route path="/tech-hub/*" element={<TechHubLayout />} />
-
-      {/* Loyalty Program Routes */}
-      <Route path="/loyalty/*" element={<LoyaltyLayout />} />
-
-      {/* Admin Routes */}
-      <Route path="/admin/*" element={<AdminLayout />} />
       
       {/* Catch-all route for 404 */}
       <Route path="*" element={<NotFound />} />
