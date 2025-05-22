@@ -1,5 +1,5 @@
 
-import { BrowserRouter as Router, Navigate, useLocation } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from "react-router-dom";
 import AppRoutes from "@/routes/appRoutes_vFinal";
 import ErrorBoundary from "@/components/ErrorBoundary";
 
