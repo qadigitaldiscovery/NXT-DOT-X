@@ -1,7 +1,8 @@
+
 /**
  * Utility functions for consistent link styling and accessibility
  */
-import { cn } from "@/lib/utils";
+import { cn } from "./utils";
 // Common text link styles with variants
 export const getLinkClassName = (variant = 'default', size = 'md', className = '') => {
     const baseStyles = "inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none user-select-none -webkit-user-select-none";
