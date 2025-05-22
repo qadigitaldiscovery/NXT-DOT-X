@@ -13,7 +13,7 @@ import {
   Node,
   Edge,
   NodeTypes,
-  ReactFlowProvider
+  ReactFlowProvider,
 } from '@xyflow/react';
 import { useWebDev } from '@/context/WebDevContext';
 import ModuleNode from './nodes/ModuleNode';
@@ -30,7 +30,7 @@ const nodeTypes: NodeTypes = {
 };
 
 const FlowWithProvider = () => {
-  const { nodes, edges, addNode, addEdge, removeNode, removeEdge, selectNode, selectEdge } = useWebDev();
+  const { nodes, edges, addNode, addEdge: addContextEdge, removeNode, removeEdge, selectNode, selectEdge } = useWebDev();
   const [reactFlowNodes, setReactFlowNodes] = useNodesState([]);
   const [reactFlowEdges, setReactFlowEdges] = useEdgesState([]);
   const [selectedElements, setSelectedElements] = useState<any[]>([]);
@@ -64,14 +64,14 @@ const FlowWithProvider = () => {
     (connection: Connection) => {
       // Create a new edge in the context
       if (connection.source && connection.target) {
-        addEdge({
+        addContextEdge({
           source: connection.source,
           target: connection.target,
           type: 'default',
         });
       }
     },
-    [addEdge]
+    [addContextEdge]
   );
 
   // Handle node deletion

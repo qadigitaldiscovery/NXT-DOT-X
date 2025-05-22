@@ -4,8 +4,7 @@
   "compilerOptions": {
     "incremental": true,
     "outDir": "./dist",
-    "skipLibCheck": true,
-    "noEmit": false
+    "skipLibCheck": true
   },
   "include": ["./**/*.ts", "./**/*.tsx"],
   "exclude": ["node_modules"]
