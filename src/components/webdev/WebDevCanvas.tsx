@@ -29,7 +29,7 @@ const nodeTypes: NodeTypes = {
 };
 
 // The inner component that uses ReactFlow hooks
-const FlowComponent = () => {
+const InnerFlow = () => {
   const { nodes, edges, addNode, addEdge: addContextEdge, removeNode, removeEdge, selectNode, selectEdge } = useWebDev();
   const [reactFlowNodes, setReactFlowNodes] = useNodesState([]);
   const [reactFlowEdges, setReactFlowEdges] = useEdgesState([]);
@@ -130,7 +130,7 @@ const WebDevCanvas: React.FC = () => {
     <div className="flex h-[700px]">
       <div className="flex-1">
         <ReactFlowProvider>
-          <FlowComponent />
+          <InnerFlow />
         </ReactFlowProvider>
       </div>
       <InspectorPanel />
