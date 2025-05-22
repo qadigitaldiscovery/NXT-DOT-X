@@ -19,6 +19,7 @@ import Communications from './modules/Communications';
 import AutomationWorkflow from './modules/AutomationWorkflow';
 import Operations from './modules/Operations';
 import WebServices from './modules/WebServices';
+import WebDev from './modules/WebDev'; // Add import for WebDev
 
 const DashboardModules: React.FC = () => {
   const [activeCategory, setActiveCategory] = useState('all');
@@ -85,6 +86,7 @@ const DashboardModules: React.FC = () => {
               <AutomationWorkflow />
               <Operations />
               <WebServices />
+              <WebDev /> {/* Add WebDev module here */}
             </>
           )
         }

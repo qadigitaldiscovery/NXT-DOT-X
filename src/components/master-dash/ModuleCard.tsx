@@ -5,6 +5,7 @@ import { cn } from '@/lib/utils';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { ArrowRight } from 'lucide-react';
 import { getLinkClassName } from '@/lib/link-utils';
+import { LucideIcon } from 'lucide-react';
 
 interface Feature {
   name: string;
@@ -17,6 +18,7 @@ interface ModuleCardProps {
   features?: Feature[];
   description?: string;
   variant?: 'default' | 'active' | 'inactive';
+  icon?: LucideIcon;
 }
 
 export const ModuleCard: React.FC<ModuleCardProps> = ({
@@ -24,7 +26,8 @@ export const ModuleCard: React.FC<ModuleCardProps> = ({
   path,
   features = [],
   description,
-  variant = 'default'
+  variant = 'default',
+  icon: Icon
 }) => {
   const navigate = useNavigate();
 
@@ -52,7 +55,10 @@ export const ModuleCard: React.FC<ModuleCardProps> = ({
       onClick={handleModuleClick}
     >
       <CardHeader className="pb-2 relative z-10">
-        <CardTitle className="font-bold tracking-tight text-gray-800 dark:text-white text-2xl text-left">{title}</CardTitle>
+        <div className="flex items-center gap-2">
+          {Icon && <Icon className="h-5 w-5 text-blue-600" />}
+          <CardTitle className="font-bold tracking-tight text-gray-800 dark:text-white text-2xl text-left">{title}</CardTitle>
+        </div>
         {description && <CardDescription className="text-gray-600 dark:text-gray-300">{description}</CardDescription>}
       </CardHeader>
       <CardContent className="pb-2 relative z-10">

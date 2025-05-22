@@ -10,6 +10,7 @@ import Communications from './Communications';
 import AutomationWorkflow from './AutomationWorkflow';
 import Operations from './Operations';
 import WebServices from './WebServices';
+import WebDev from './WebDev';
 
 export const PrimaryModules = () => {
   return (
@@ -25,6 +26,7 @@ export const PrimaryModules = () => {
       <AutomationWorkflow />
       <Operations />
       <WebServices />
+      <WebDev />
     </>
   );
 };
