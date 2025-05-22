@@ -1,8 +1,6 @@
 
 import React from 'react';
 import { ThemeToggle } from '@/components/ui/theme-toggle';
-import { Menu } from 'lucide-react';
-import { useSidebar } from '@/context/SidebarContext';
 
 interface MasterDashNavbarProps {
   user?: {
@@ -14,18 +12,9 @@ interface MasterDashNavbarProps {
 const MasterDashNavbar: React.FC<MasterDashNavbarProps> = ({
   user
 }) => {
-  const { isOpen, toggle } = useSidebar();
-
   return (
     <header className="flex items-center justify-between p-4 border-b border-slate-800 bg-gray-200">
       <div className="flex items-center gap-3">
-        <button 
-          onClick={toggle}
-          className="p-2 rounded-md text-slate-700 hover:text-slate-900 hover:bg-slate-300"
-          aria-label={isOpen ? "Close sidebar" : "Open sidebar"}
-        >
-          <Menu className="w-5 h-5" />
-        </button>
         <h1 className="text-xl font-semibold">Business Management Platform</h1>
       </div>
       <div className="flex items-center gap-4">
