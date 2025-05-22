@@ -5,7 +5,6 @@ import {
   Background,
   Controls,
   MiniMap,
-  useReactFlow,
   useNodesState,
   useEdgesState,
   addEdge,
@@ -29,12 +28,11 @@ const nodeTypes: NodeTypes = {
   page: PageNode,
 };
 
-const FlowWithProvider = () => {
+const Flow = () => {
   const { nodes, edges, addNode, addEdge: addContextEdge, removeNode, removeEdge, selectNode, selectEdge } = useWebDev();
   const [reactFlowNodes, setReactFlowNodes] = useNodesState([]);
   const [reactFlowEdges, setReactFlowEdges] = useEdgesState([]);
   const [selectedElements, setSelectedElements] = useState<any[]>([]);
-  const reactFlowInstance = useReactFlow();
 
   // Convert context nodes/edges to ReactFlow format
   useEffect(() => {
@@ -130,7 +128,7 @@ const WebDevCanvas: React.FC = () => {
     <div className="flex h-[700px]">
       <div className="flex-1">
         <ReactFlowProvider>
-          <FlowWithProvider />
+          <Flow />
         </ReactFlowProvider>
       </div>
       <InspectorPanel />

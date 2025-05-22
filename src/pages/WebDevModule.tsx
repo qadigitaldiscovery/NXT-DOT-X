@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import WebDevCanvas from '@/components/webdev/WebDevCanvas';
 import ModulePalette from '@/components/webdev/ModulePalette';
 import { useModules } from '@/hooks/useModules';
