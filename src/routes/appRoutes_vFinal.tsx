@@ -1,6 +1,5 @@
 
 import { Routes, Route } from "react-router-dom";
-import App from "@/App";
 import MasterDash from "@/pages/MasterDash";
 import MasterCopy1 from "@/pages/MasterCopy-1";
 import SideBarHeaderTemplate from "@/pages/SideBarHeaderTemplate";
