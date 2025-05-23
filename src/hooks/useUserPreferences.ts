@@ -75,6 +75,12 @@ export const useUserPreferences = (options?: UseUserPreferencesOptions) => {
     }
   };
 
+  const setPreferences = async (newValue: any) => {
+    if (options) {
+      return await updatePreference(options.module, options.key, newValue);
+    }
+  };
+
   const refetch = async () => {
     await fetchPreferences();
     return { success: true };
@@ -86,8 +92,10 @@ export const useUserPreferences = (options?: UseUserPreferencesOptions) => {
     return {
       preferences: preference?.value ?? options.defaultValue,
       loading,
+      isLoading: loading,
       error,
       updatePreference,
+      setPreferences,
       refetch
     };
   }
@@ -95,8 +103,10 @@ export const useUserPreferences = (options?: UseUserPreferencesOptions) => {
   return {
     preferences,
     loading,
+    isLoading: loading,
     error,
     updatePreference,
+    setPreferences,
     refetch
   };
 };

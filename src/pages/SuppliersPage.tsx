@@ -26,11 +26,11 @@ import { Supplier } from '@/hooks/suppliers/types';
 const supplierSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
   code: z.string().min(1, "Supplier code is required"),
-  contact_name: z.string().nullable().optional(),
-  email: z.string().email("Invalid email address").nullable().optional(),
-  phone: z.string().nullable().optional(),
-  website: z.string().nullable().optional(),
-  payment_terms: z.string().nullable().optional(),
+  contact_name: z.string().optional(),
+  email: z.string().email("Invalid email address").optional(),
+  phone: z.string().optional(),
+  website: z.string().optional(),
+  payment_terms: z.string().optional(),
   status: z.string().default("active")
 });
 
@@ -54,30 +54,28 @@ export default function SuppliersPage() {
 
   // Add new supplier handler
   const handleAddSupplier = () => {
-    reset(); // Clear form fields
+    reset();
     setShowForm(true);
   };
 
   // Handle form submission
   const onSubmitForm = (data: SupplierFormData) => {
     try {
-      // Ensure all required fields are present
-      const supplierData: Omit<Supplier, 'id'> = {
+      createSupplier({
         name: data.name,
         code: data.code,
-        contact_name: data.contact_name || null,
-        email: data.email || null,
-        phone: data.phone || null,
-        website: data.website || null,
-        payment_terms: data.payment_terms || null,
-        status: data.status
-      };
-      
-      // Call the createSupplier mutation to save to database
-      createSupplier(supplierData);
+        contact_name: data.contact_name || undefined,
+        email: data.email || undefined,
+        phone: data.phone || undefined,
+        website: data.website || undefined,
+        payment_terms: data.payment_terms || undefined,
+        status: data.status,
+        created_at: new Date().toISOString()
+      });
       setShowForm(false);
+      toast('Supplier created successfully');
     } catch (err) {
-      toast.error('Error saving supplier. Please try again.');
+      toast('Error saving supplier. Please try again.');
       console.error('Error creating supplier:', err);
     }
   };
@@ -101,8 +99,7 @@ export default function SuppliersPage() {
   // Handle export action
   const handleExport = () => {
     try {
-      toast.success('Supplier data exported successfully');
-      // In a real application, this would trigger a CSV/Excel export
+      toast.success('Export feature coming soon');
     } catch (err) {
       toast.error('Failed to export data. Please try again.');
       console.error('Error exporting:', err);
@@ -137,11 +134,11 @@ export default function SuppliersPage() {
             <Upload className="h-4 w-4 mr-2" />
             Upload Cost File
           </Button>
-          <Button onClick={handleFilter}>
+          <Button onClick={() => setShowFilterDialog(true)}>
             <Filter className="h-4 w-4 mr-2" />
             Filter
           </Button>
-          <Button variant="outline" onClick={handleExport}>
+          <Button variant="outline" onClick={() => toast('Export feature coming soon')}>
             <DownloadCloud className="h-4 w-4 mr-2" />
             Export
           </Button>

@@ -1,8 +1,7 @@
-
 import { Button } from '../../../components/ui/button';
 import { Dialog, DialogContent, DialogHeader } from '../../../components/ui/dialog';
 import { Input } from '../../../components/ui/input';
-import { useToast } from '../../../components/ui/use-toast';
+import { toast } from 'sonner';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm, UseFormReturn, FieldValues } from 'react-hook-form';
@@ -44,7 +43,6 @@ interface EditUserDialogProps {
 }
 
 export function EditUserDialog({ user, open, onOpenChange, onUserUpdated }: EditUserDialogProps) {
-  const { toast } = useToast();
   const form: UseFormReturn<UserFormData> = useForm<UserFormData>({
     resolver: zodResolver(userSchema),
     defaultValues: {
@@ -69,7 +67,7 @@ export function EditUserDialog({ user, open, onOpenChange, onUserUpdated }: Edit
   const handleSubmit = (data: UserFormData) => {
     if (!user) return;
 
-    toast.success(`User "${data.username}" has been updated successfully.`);
+    toast(`User "${data.username}" has been updated successfully.`);
     
     if (onUserUpdated) {
       onUserUpdated(user.id, {

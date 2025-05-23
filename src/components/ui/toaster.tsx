@@ -12,12 +12,10 @@ import {
 import { Toaster as SonnerToaster } from "sonner";
 
 export function Toaster() {
-  // We're using toasts from useToast for compatibility
   const { toasts } = useToast();
 
   return (
     <>
-      {/* Use the sonner toaster component with some styling */}
       <SonnerToaster 
         position="bottom-right"
         toastOptions={{
@@ -29,9 +27,8 @@ export function Toaster() {
         }}
       />
       
-      {/* Keep the shadcn structure for compatibility */}
       <ToastProvider>
-        {toasts.map(function ({ id, title, description, action, ...props }) {
+        {toasts.map(function ({ id, title, description, ...props }) {
           return (
             <div key={id} {...props}>
               <div className="grid gap-1">
@@ -40,7 +37,6 @@ export function Toaster() {
                   <ToastDescription>{description}</ToastDescription>
                 )}
               </div>
-              {action}
               <ToastClose />
             </div>
           );
