@@ -1,41 +1,14 @@
 
-export interface SidebarItem {
-  id: string;
-  title: string;
-  icon?: React.ComponentType<any>;
-  path: string;
-  children?: SidebarItem[];
+export interface SubScore {
+  category: string;
+  score: number;
+  weight: number;
 }
 
-export interface TabItem {
+export interface VendorDetail {
   id: string;
-  label: string;
-  content: React.ReactNode;
-}
-
-export interface Vendor {
-  id: string;
-  name: string;
-  email?: string;
-  phone?: string;
-  rating?: number;
-  status?: string;
-  createdAt?: string;
-  updatedAt?: string;
-  localScore?: number;
-  website?: string;
-}
-
-export interface VendorTab {
-  id: string;
-  label: string;
-  content: React.ReactNode;
-}
-
-export interface VendorReport {
-  id: string;
-  title: string;
-  description: string;
-  createdAt: string;
-  fileUrl: string;
+  company_name: string;
+  local_score: number;
+  created_at: string;
+  sub_scores?: SubScore[];
 }

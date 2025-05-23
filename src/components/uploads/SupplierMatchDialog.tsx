@@ -9,13 +9,15 @@ interface SupplierMatchDialogProps {
   onOpenChange: (open: boolean) => void;
   suppliers: any[];
   onSupplierSelected: (id: any) => void;
+  detectedSupplier?: string | null;
 }
 
 export function SupplierMatchDialog({ 
   open, 
   onOpenChange, 
   suppliers, 
-  onSupplierSelected 
+  onSupplierSelected,
+  detectedSupplier 
 }: SupplierMatchDialogProps) {
   const [selectedSupplierId, setSelectedSupplierId] = React.useState<string>('');
 
@@ -31,6 +33,9 @@ export function SupplierMatchDialog({
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Select Supplier</DialogTitle>
+          {detectedSupplier && (
+            <p className="text-sm text-gray-600">Detected supplier: {detectedSupplier}</p>
+          )}
         </DialogHeader>
         <div className="space-y-4">
           <Select value={selectedSupplierId} onValueChange={setSelectedSupplierId}>

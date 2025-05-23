@@ -2,6 +2,12 @@
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 
+export interface Feature {
+  name: string;
+  path: string;
+  description?: string;
+}
+
 export interface Module {
   id: string;
   name: string;
@@ -9,6 +15,8 @@ export interface Module {
   description?: string;
   created_at?: string;
   updated_at?: string;
+  path?: string;
+  features?: Feature[];
 }
 
 export const useModules = () => {
@@ -26,15 +34,24 @@ export const useModules = () => {
         
       if (error) throw error;
       
-      // Properly map the data with correct types
-      setModules(data?.map(item => ({
+      // Add mock features for data management module
+      const enhancedData = data?.map(item => ({
         id: item.id,
         name: item.name,
         status: item.status,
         description: item.description || undefined,
         created_at: item.created_at || undefined,
-        updated_at: item.updated_at || undefined
-      })) || []);
+        updated_at: item.updated_at || undefined,
+        path: item.id === 'data-management' ? '/data-management' : undefined,
+        features: item.id === 'data-management' ? [
+          { name: 'Cost Analysis', path: '/data-management/cost-analysis' },
+          { name: 'Supplier Costing', path: '/data-management/supplier-costing' },
+          { name: 'Documents', path: '/data-management/documents' },
+          { name: 'Price Management', path: '/data-management/pricing' }
+        ] : undefined
+      })) || [];
+      
+      setModules(enhancedData);
     } catch (err) {
       console.error('Error fetching modules:', err);
       setError(err instanceof Error ? err : new Error('Unknown error fetching modules'));
@@ -56,7 +73,6 @@ export const useModules = () => {
         
       if (error) throw error;
       
-      // Update local state
       setModules(prevModules =>
         prevModules.map(module =>
           module.id === id ? { ...module, status } : module

@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Handle, Position, NodeProps } from 'reactflow';
+import { Handle, Position, NodeProps } from '@xyflow/react';
 import { File } from 'lucide-react';
 
 const PageNode: React.FC<NodeProps<{ label: string; path?: string }>> = ({ data }) => {
