@@ -1,9 +1,10 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { useToast } from '@/hooks/use-toast';
+import { useToast } from '@/components/ui/use-toast';
 import { 
   Table, 
   TableBody, 
@@ -111,17 +112,18 @@ const CompetitorPricing = () => {
 
   const handleUpload = () => {
     if (!selectedFile || !selectedCompetitor) {
-      toast.error({
+      toast({
         title: "Upload Error",
-        description: "Please select both a competitor and a file."
+        description: "Please select both a competitor and a file.",
+        variant: "destructive",
       });
       return;
     }
 
     // Simulate processing
-    toast.success({
+    toast({
       title: "File Uploaded",
-      description: `${selectedFile.name} has been uploaded and is now processing.`
+      description: `${selectedFile.name} has been uploaded and is now processing.`,
     });
 
     // Reset form
@@ -134,9 +136,9 @@ const CompetitorPricing = () => {
 
     // Simulate completion
     setTimeout(() => {
-      toast.success({
+      toast({
         title: "Processing Complete",
-        description: "Competitor pricing data has been processed successfully."
+        description: "Competitor pricing data has been processed successfully.",
       });
     }, 2000);
   };

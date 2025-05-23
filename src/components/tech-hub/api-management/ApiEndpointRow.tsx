@@ -1,104 +1,128 @@
-import { useState } from 'react';
+
+import React from 'react';
+import { Button } from "@/components/ui/button";
+import { TableCell, TableRow } from "@/components/ui/table";
+import { Badge } from "@/components/ui/badge";
+import { ExternalLink, KeyRound, Trash2 } from "lucide-react";
 import { ApiEndpoint } from './types';
-import { Button } from '@/components/ui/button';
-import { CheckCircle, Edit, Trash2, XCircle, MoreHorizontal } from 'lucide-react';
-import { Badge } from '@/components/ui/badge';
-import { 
-  DropdownMenu, 
-  DropdownMenuTrigger, 
-  DropdownMenuContent, 
-  DropdownMenuItem,
-  DropdownMenuSeparator
-} from '@/components/ui/dropdown-menu';
-import { formatDistanceToNow, parseISO } from 'date-fns';
-import { cn } from '@/lib/utils';
 
 interface ApiEndpointRowProps {
   endpoint: ApiEndpoint;
-  onEdit: (endpoint: ApiEndpoint) => void;
-  onDelete: (id: string) => void;
-  onToggleStatus: (id: string) => void;
+  showApiKey: boolean;
+  onToggleApiKey: () => void;
+  onCopyApiKey: () => void;
+  onTestEndpoint: () => void;
+  onDeleteEndpoint: () => void;
 }
 
-export default function ApiEndpointRow({
-  endpoint,
-  onEdit,
-  onDelete,
-  onToggleStatus,
-}: ApiEndpointRowProps) {
-  const [showApiKey, setShowApiKey] = useState(false);
-
-  // Format time since last used
-  const lastUsedText = endpoint.lastUsed
-    ? formatDistanceToNow(parseISO(endpoint.lastUsed), { addSuffix: true })
-    : 'Never';
-
-  const maskedApiKey = endpoint.apiKey.substring(0, 3) + '•'.repeat(endpoint.apiKey.length - 6) + endpoint.apiKey.substring(endpoint.apiKey.length - 3);
+const ApiEndpointRow: React.FC<ApiEndpointRowProps> = ({ 
+  endpoint, 
+  showApiKey, 
+  onToggleApiKey, 
+  onCopyApiKey, 
+  onTestEndpoint,
+  onDeleteEndpoint
+}) => {
+  // Function to render the appropriate status badge
+  const getStatusBadge = (status: string) => {
+    switch(status) {
+      case 'active':
+        return <Badge className="bg-green-500">Active</Badge>;
+      case 'inactive':
+        return <Badge variant="outline" className="text-gray-500">Inactive</Badge>;
+      case 'error':
+        return <Badge className="bg-red-500">Error</Badge>;
+      default:
+        return <Badge variant="outline">Unknown</Badge>;
+    }
+  };
 
   return (
-    <div className="flex items-center justify-between p-3 border rounded-md bg-background hover:bg-muted/50 transition-colors">
-      <div className="flex flex-col space-y-1 flex-grow">
-        <div className="flex items-center space-x-2">
-          <span className="font-medium">{endpoint.name}</span>
-          <Badge 
-            variant={endpoint.status === 'active' ? 'default' : 'secondary'} 
-            className={cn(
-              "text-xs",
-              endpoint.status === 'active' ? "bg-green-500 hover:bg-green-600" : ""
-            )}
-          >
-            {endpoint.status === 'active' ? 'Active' : 'Inactive'}
-          </Badge>
-          <Badge variant="outline" className="text-xs">
-            {endpoint.method}
-          </Badge>
-        </div>
-        <div className="text-xs text-muted-foreground truncate max-w-xs">
-          {endpoint.url}
-        </div>
-        <div className="text-xs text-muted-foreground flex items-center">
-          <span className="mr-2">Key: {showApiKey ? endpoint.apiKey : maskedApiKey}</span>
-          <Button
-            variant="ghost"
-            size="sm"
-            className="h-4 p-0 text-xs"
-            onClick={() => setShowApiKey(!showApiKey)}
-          >
-            {showApiKey ? 'Hide' : 'Show'}
-          </Button>
-          <span className="ml-4">Last used: {lastUsedText}</span>
-        </div>
-      </div>
-
-      <div className="flex items-center space-x-1">
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-              <MoreHorizontal className="h-4 w-4" />
+    <TableRow>
+      <TableCell className="font-medium">{endpoint.name}</TableCell>
+      <TableCell className="font-mono text-sm flex items-center">
+        {endpoint.url}
+        <ExternalLink className="h-3 w-3 ml-1 text-gray-400" />
+      </TableCell>
+      <TableCell>
+        {endpoint.apiKey ? (
+          <div className="flex items-center space-x-2">
+            <KeyRound className="h-4 w-4 text-blue-500" />
+            <span className="font-mono text-sm">
+              {showApiKey ? endpoint.apiKey : '••••••••••••'}
+            </span>
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              className="h-6 w-6 p-0" 
+              onClick={onToggleApiKey}
+              title={showApiKey ? "Hide API key" : "Show API key"}
+            >
+              <svg 
+                xmlns="http://www.w3.org/2000/svg" 
+                className="h-3.5 w-3.5" 
+                fill="none" 
+                viewBox="0 0 24 24" 
+                stroke="currentColor"
+              >
+                {showApiKey ? (
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7A9.97 9.97 0 014.02 8.971m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l18 18" />
+                ) : (
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                )}
+              </svg>
             </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuItem onClick={() => onEdit(endpoint)}>
-              <Edit className="mr-2 h-4 w-4" /> Edit
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => onToggleStatus(endpoint.id)}>
-              {endpoint.status === 'active' ? (
-                <>
-                  <XCircle className="mr-2 h-4 w-4" /> Deactivate
-                </>
-              ) : (
-                <>
-                  <CheckCircle className="mr-2 h-4 w-4" /> Activate
-                </>
-              )}
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={() => onDelete(endpoint.id)} className="text-destructive">
-              <Trash2 className="mr-2 h-4 w-4" /> Delete
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </div>
-    </div>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-6 w-6 p-0"
+              onClick={onCopyApiKey}
+              title="Copy API key"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-3.5 w-3.5"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+                />
+              </svg>
+            </Button>
+          </div>
+        ) : (
+          <span className="text-gray-400 italic">Not set</span>
+        )}
+      </TableCell>
+      <TableCell>
+        <Badge variant="outline" className={
+          endpoint.method === 'GET' ? 'border-blue-500 text-blue-500' :
+          endpoint.method === 'POST' ? 'border-green-500 text-green-500' :
+          endpoint.method === 'PUT' ? 'border-orange-500 text-orange-500' :
+          'border-red-500 text-red-500'
+        }>
+          {endpoint.method}
+        </Badge>
+      </TableCell>
+      <TableCell>{getStatusBadge(endpoint.status)}</TableCell>
+      <TableCell>{new Date(endpoint.lastUsed).toLocaleString()}</TableCell>
+      <TableCell className="text-right">
+        <div className="flex justify-end space-x-2">
+          <Button variant="outline" size="sm" onClick={onTestEndpoint}>
+            Test
+          </Button>
+          <Button variant="destructive" size="sm" onClick={onDeleteEndpoint}>
+            <Trash2 className="h-4 w-4" />
+          </Button>
+        </div>
+      </TableCell>
+    </TableRow>
   );
-}
+};
+
+export default ApiEndpointRow;

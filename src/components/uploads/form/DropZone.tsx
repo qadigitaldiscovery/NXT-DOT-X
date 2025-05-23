@@ -1,5 +1,6 @@
 
 import React, { useState } from 'react';
+import { Button } from "@/components/ui/button";
 import { FileUploadInstructions } from './FileUploadInstructions';
 
 interface DropZoneProps {
@@ -55,17 +56,19 @@ export function DropZone({ onFileChange, selectedFile, isUploading }: DropZonePr
         name="file"
         type="file"
         className="hidden"
-        accept="*/*" 
+        accept="*/*" /* Changed from .csv,.xls,.xlsx,.pdf to accept all file types */
         onChange={handleFileChange}
         disabled={isUploading}
       />
-      <label 
-        htmlFor="file" 
-        className="inline-flex items-center text-sm font-medium text-primary hover:text-primary/80 hover:underline cursor-pointer"
-        aria-label="Select file to upload"
+      <Button
+        type="button"
+        variant="outline"
+        size="sm"
+        disabled={isUploading}
+        onClick={() => document.getElementById('file')?.click()}
       >
         Select File
-      </label>
+      </Button>
       
       {selectedFile && (
         <div className="mt-4 p-2 bg-muted rounded-md">

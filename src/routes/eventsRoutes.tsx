@@ -1,5 +1,4 @@
 
-import React from "react";
 import { Route } from "react-router-dom";
 import { PlatformLayout } from '@/components/layouts/PlatformLayout';
 import EventsPage from "@/pages/auto/EventsPage";
@@ -21,8 +20,8 @@ export const EventsNavCategories: NavCategory[] = [
 ];
 
 export const EventsRoutes = () => {
-  return [
-    <Route key="events-index" path="/events">
+  return (
+    <Route path="/events">
       <Route index element={
         <PlatformLayout
           moduleTitle="Events"
@@ -64,5 +63,5 @@ export const EventsRoutes = () => {
         </PlatformLayout>
       } />
     </Route>
-  ];
+  );
 };

@@ -1,18 +1,8 @@
 
-import { useState, useEffect } from 'react';
+import React from 'react';
 import ApiKeyForm from '../core/ApiKeyForm';
-import { toast } from 'sonner';
 
 const RequestyKeyForm: React.FC = () => {
-  const [apiKey, setApiKey] = useState('');
-  const [isVisible, setIsVisible] = useState(false);
-  const [config, setConfig] = useState({
-    model: 'openai/gpt-4o-mini',
-    temperature: 0.7,
-    max_tokens: 2048,
-    streaming: true
-  });
-
   // Verify API key by making a simple call
   const verifyRequestyKey = async (apiKey: string): Promise<boolean> => {
     try {
@@ -32,55 +22,20 @@ const RequestyKeyForm: React.FC = () => {
       if (!response.ok) {
         const errorData = await response.json();
         if (errorData.error?.code === 'insufficient_quota' || errorData.error?.type === 'insufficient_quota') {
-          toast.warning("API key valid but quota exceeded");
-          return false;
+          throw new Error('quota_exceeded');
         }
-        toast.error("Invalid API key");
         return false;
       }
       
-      toast.success("API key validated successfully");
-      // Save the key locally
-      localStorage.setItem('requesty_api_key', apiKey);
-      localStorage.setItem('requesty_config', JSON.stringify(config));
       return true;
     } catch (error: any) {
       console.error("API key verification failed:", error);
       if (error.message === 'quota_exceeded') {
-        toast.warning("API key valid but quota exceeded");
-      } else {
-        toast.error("Failed to verify API key");
+        throw error; // Let the parent component handle this specific error
       }
       return false;
     }
   };
-
-  const handleConfigUpdate = (key: string, value: any) => {
-    setConfig(prev => {
-      const updated = { ...prev, [key]: value };
-      localStorage.setItem('requesty_config', JSON.stringify(updated));
-      return updated;
-    });
-  };
-
-  // Initialize from localStorage if available
-  useEffect(() => {
-    const savedKey = localStorage.getItem('requesty_api_key');
-    const savedConfig = localStorage.getItem('requesty_config');
-    
-    if (savedKey) {
-      setApiKey(savedKey);
-    }
-    
-    if (savedConfig) {
-      try {
-        const parsedConfig = JSON.parse(savedConfig);
-        setConfig(prev => ({ ...prev, ...parsedConfig }));
-      } catch (e) {
-        console.error("Failed to parse saved config", e);
-      }
-    }
-  }, []);
 
   const modelOptions = [
     { value: 'openai/gpt-4o-mini', label: 'OpenAI GPT-4o Mini (Default)' },
@@ -94,15 +49,16 @@ const RequestyKeyForm: React.FC = () => {
     { value: 'meta/llama-3-8b', label: 'Llama 3 8B' }
   ];
 
+  const additionalConfig = {
+    streaming_default: true,
+    max_tokens_default: 2048,
+    temperature_default: 0.7,
+    response_format: 'text'
+  };
+
   return (
     <ApiKeyForm
       providerName="Requesty"
-      apiKey={apiKey}
-      isVisible={isVisible}
-      config={config}
-      onApiKeyChange={setApiKey}
-      onVisibilityToggle={() => setIsVisible(!isVisible)}
-      onConfigUpdate={handleConfigUpdate}
       apiKeyPlaceholder="rty-..."
       docsLink={{
         text: "Requesty API Keys page",
@@ -112,6 +68,7 @@ const RequestyKeyForm: React.FC = () => {
       preferredModelOptions={modelOptions}
       initialModel="openai/gpt-4o-mini"
       footerText="Your API key is stored securely and never exposed to the browser. Visit the Requesty API Keys page to create a new key if needed."
+      additionalConfig={additionalConfig}
     />
   );
 };

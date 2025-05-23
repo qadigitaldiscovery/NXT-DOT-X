@@ -21,7 +21,6 @@ import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useSuppliers, useCreateSupplier } from '@/hooks/use-suppliers';
 import { Supplier } from '@/hooks/suppliers/types';
-import { BulkSupplierUpload } from '@/components/uploads/BulkSupplierUpload';
 
 // Form schema for validation
 const supplierSchema = z.object({
@@ -43,7 +42,6 @@ export default function SuppliersPage() {
   const { mutate: createSupplier } = useCreateSupplier();
   
   const [showForm, setShowForm] = useState(false);
-  const [showBulkUploadDialog, setShowBulkUploadDialog] = useState(false);
   const [showFilterDialog, setShowFilterDialog] = useState(false);
   const [filterStatus, setFilterStatus] = useState<string | null>(null);
   
@@ -58,11 +56,6 @@ export default function SuppliersPage() {
   const handleAddSupplier = () => {
     reset(); // Clear form fields
     setShowForm(true);
-  };
-
-  // Handle bulk upload
-  const handleBulkUpload = () => {
-    setShowBulkUploadDialog(true);
   };
 
   // Handle form submission
@@ -137,13 +130,6 @@ export default function SuppliersPage() {
           </p>
         </div>
         <div className="flex items-center gap-2">
-          <Button 
-            variant="outline"
-            onClick={handleBulkUpload}
-          >
-            <Upload className="h-4 w-4 mr-2" />
-            Bulk Import
-          </Button>
           <Button 
             variant="outline"
             onClick={() => navigate('/data-management/uploads/new')}
@@ -312,16 +298,6 @@ export default function SuppliersPage() {
               Apply Filters
             </Button>
           </DialogFooter>
-        </DialogContent>
-      </Dialog>
-
-      {/* Bulk Import Dialog */}
-      <Dialog open={showBulkUploadDialog} onOpenChange={setShowBulkUploadDialog}>
-        <DialogContent className="max-w-md">
-          <DialogHeader>
-            <DialogTitle>Bulk Supplier Import</DialogTitle>
-          </DialogHeader>
-          <BulkSupplierUpload />
         </DialogContent>
       </Dialog>
     </div>

@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { toast } from '@/components/ui/toast';
+import { toast } from 'sonner';
 import { SupplierUpload } from '@/types/supplier-uploads';
 
 export function useCreateSupplierUpload() {
@@ -74,17 +74,11 @@ export function useCreateSupplierUpload() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['supplier-uploads'] });
-      toast.default({
-        title: "Success",
-        description: 'File uploaded successfully'
-      });
+      toast.success('File uploaded successfully');
     },
     onError: (error) => {
       console.error('Error in upload mutation:', error);
-      toast.error({
-        title: "Error",
-        description: `Upload failed: ${error.message || 'Unknown error'}`
-      });
+      toast.error(`Upload failed: ${error.message || 'Unknown error'}`);
     }
   });
 }

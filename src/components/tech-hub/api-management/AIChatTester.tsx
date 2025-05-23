@@ -1,107 +1,41 @@
 
-import React, { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Textarea } from '@/components/ui/textarea';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
-import { Loader2 } from 'lucide-react';
-import { callOpenAI, ChatCompletionResponse } from '@/utils/openai-client';
-import { supabase } from '@/integrations/supabase/client';
-import { toast } from 'sonner';
+import React from 'react';
+import { Button } from "@/components/ui/button";
+import { Send, Loader2 } from 'lucide-react';
 
-const AIChatTester = () => {
-  const [prompt, setPrompt] = useState('');
-  const [response, setResponse] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
+interface ChatTesterProps {
+  onSubmit: () => void;
+  isProcessing: boolean;
+  isDisabled: boolean;
+  isAuthenticated?: boolean | null;
+  onLogin?: () => void;
+}
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!prompt.trim()) return;
-
-    try {
-      setIsLoading(true);
-      setResponse('');
-      
-      // Get preferred model from database if available
-      let model = 'gpt-4o-mini';
-      const { data: { session } } = await supabase.auth.getSession();
-      
-      if (session) {
-        const { data } = await supabase
-          .from('api_provider_settings')
-          .select('preferred_model')
-          .eq('provider_name', 'openai')
-          .eq('user_id', session.user.id)
-          .maybeSingle();
-          
-        if (data?.preferred_model) {
-          model = data.preferred_model;
-        }
-      }
-
-      const result = await callOpenAI<ChatCompletionResponse>({
-        endpoint: 'chat',
-        payload: {
-          model,
-          messages: [
-            { role: 'user', content: prompt }
-          ],
-          max_tokens: 500
-        }
-      });
-
-      setResponse(result.choices[0].message.content);
-    } catch (error) {
-      console.error('Error testing OpenAI:', error);
-      toast.error('Failed to get response from OpenAI');
-      setResponse('Error: Failed to get a response. Please check your API key and try again.');
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
+export function AIChatTester({ 
+  onSubmit, 
+  isProcessing, 
+  isDisabled, 
+  isAuthenticated,
+  onLogin 
+}: ChatTesterProps) {
   return (
-    <Card className="w-full">
-      <CardHeader>
-        <CardTitle>OpenAI Chat Test</CardTitle>
-        <CardDescription>
-          Send a test message to OpenAI to verify your API key is working
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <Textarea
-              placeholder="Enter a prompt to test the OpenAI API..."
-              value={prompt}
-              onChange={(e) => setPrompt(e.target.value)}
-              rows={4}
-              className="resize-none"
-            />
-          </div>
-          <Button 
-            type="submit" 
-            disabled={isLoading || !prompt.trim()}
-            className="w-full"
-          >
-            {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-            {isLoading ? 'Generating Response...' : 'Send Test Message'}
-          </Button>
-        </form>
-
-        {response && (
-          <div className="mt-4">
-            <h3 className="text-sm font-medium mb-2">Response:</h3>
-            <div className="border rounded-md p-4 bg-gray-50 whitespace-pre-wrap">
-              {response}
-            </div>
-          </div>
-        )}
-      </CardContent>
-      <CardFooter className="border-t pt-4 text-xs text-gray-500">
-        Your prompt and the response are not stored anywhere beyond this session.
-      </CardFooter>
-    </Card>
+    <Button 
+      onClick={onSubmit}
+      disabled={isDisabled || isProcessing}
+      className="w-full"
+      variant="default"
+    >
+      {isProcessing ? (
+        <>
+          <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+          Processing...
+        </>
+      ) : (
+        <>
+          <Send className="h-4 w-4 mr-2" />
+          Send Message
+        </>
+      )}
+    </Button>
   );
-};
-
-export default AIChatTester;
+}

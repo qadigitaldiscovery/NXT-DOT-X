@@ -1,41 +1,61 @@
 
-import React from 'react';
-import { Upload, Loader2 } from "lucide-react";
-import { cn } from '@/lib/utils';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
+import { Upload } from 'lucide-react';
+import { toast } from 'sonner';
+import { useAuth } from '@/context/AuthContext';
 
 interface ImportButtonProps {
-  onSubmit: () => void;
-  isUploading: boolean;
-  isDisabled: boolean;
+  onImport: () => void;
+  disabled?: boolean;
+  hasData: boolean;
 }
 
-export function ImportButton({ onSubmit, isUploading, isDisabled }: ImportButtonProps) {
+const ImportButton = ({ onImport, disabled = false, hasData }: ImportButtonProps) => {
+  const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
+  const { isAuthenticated } = useAuth();
+
+  const handleImport = () => {
+    if (!isAuthenticated) {
+      // Store current path to redirect back after login
+      localStorage.setItem('returnUrl', window.location.pathname);
+      
+      // Redirect to login
+      toast.info("Please log in to import suppliers");
+      navigate('/landing');
+      return;
+    }
+
+    if (!hasData) {
+      toast.error("No data available to import");
+      return;
+    }
+
+    setIsLoading(true);
+    
+    try {
+      onImport();
+    } catch (error) {
+      console.error("Import error:", error);
+      toast.error("Failed to import suppliers");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
-    <a
-      href="#"
-      onClick={(e) => {
-        e.preventDefault();
-        if (!isDisabled && !isUploading) {
-          onSubmit();
-        }
-      }}
-      className={cn(
-        "w-full inline-flex items-center text-sm font-medium text-primary hover:text-primary/80 hover:underline",
-        (isDisabled || isUploading) ? "opacity-50 pointer-events-none" : ""
-      )}
-      aria-label="Import suppliers"
+    <Button 
+      onClick={handleImport} 
+      disabled={disabled || isLoading || hasData === false} 
+      variant="default" 
+      className="ml-auto"
     >
-      {isUploading ? (
-        <>
-          <Loader2 className="mr-2 h-4 w-4 animate-spin" aria-hidden="true" />
-          Importing...
-        </>
-      ) : (
-        <>
-          <Upload className="mr-2 h-4 w-4" aria-hidden="true" />
-          Import Suppliers
-        </>
-      )}
-    </a>
+      <Upload className="h-4 w-4 mr-2" />
+      {isLoading ? "Importing..." : "Import Suppliers"}
+    </Button>
   );
-}
+};
+
+export default ImportButton;

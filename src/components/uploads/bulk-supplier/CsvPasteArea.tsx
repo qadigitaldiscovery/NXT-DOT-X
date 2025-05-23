@@ -1,32 +1,49 @@
 
-import React from 'react';
-import { Textarea } from "@/components/ui/textarea";
+import React, { useState } from 'react';
+import { Clipboard } from 'lucide-react';
+import { Textarea } from '@/components/ui/textarea';
+import { Button } from '@/components/ui/button';
 
-interface CsvPasteAreaProps {
-  value: string;
-  onChange: (value: string) => void;
-  isUploading: boolean;
+export interface CsvPasteAreaProps {
+  onPaste: (pastedText: string) => void;
 }
 
-export function CsvPasteArea({ value, onChange, isUploading }: CsvPasteAreaProps) {
+export const CsvPasteArea: React.FC<CsvPasteAreaProps> = ({ onPaste }) => {
+  const [text, setText] = useState('');
+
+  const handleTextChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setText(e.target.value);
+  };
+
+  const handlePaste = () => {
+    if (text.trim()) {
+      onPaste(text);
+    }
+  };
+
   return (
     <div className="space-y-4">
-      <Textarea
-        placeholder="Paste your CSV content here, including the headers 'name,code,contact_name,email,phone,website,payment_terms,status' in the first row"
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        disabled={isUploading}
-        rows={10}
-        className="font-mono text-sm"
-      />
-      <div className="text-sm text-muted-foreground">
-        <p>Example format:</p>
-        <pre className="bg-secondary/20 p-2 rounded-md overflow-auto mt-1">
-          name,code,contact_name,email,phone,website,payment_terms,status{'\n'}
-          Acme Supplies,ACME001,John Doe,john@acme.com,+1-555-123-4567,https://acme.com,Net 30,active{'\n'}
-          GlobalTech,GTECH002,Jane Smith,jane@globaltech.com,+1-555-987-6543,https://globaltech.com,Net 45,active
-        </pre>
+      <div className="flex items-center space-x-2 mb-2">
+        <Clipboard className="h-5 w-5 text-gray-500" />
+        <span className="text-gray-700">Paste CSV data below</span>
       </div>
+      
+      <Textarea 
+        placeholder="Paste your CSV data here..." 
+        className="min-h-[200px] font-mono text-sm"
+        value={text}
+        onChange={handleTextChange}
+      />
+      
+      <Button 
+        onClick={handlePaste}
+        disabled={!text.trim()}
+        className="w-full"
+      >
+        Use Pasted Data
+      </Button>
     </div>
   );
-}
+};
+
+export default CsvPasteArea;

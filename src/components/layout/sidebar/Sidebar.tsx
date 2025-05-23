@@ -1,19 +1,19 @@
-
-import { useState } from 'react';
-import { cn } from '../../../lib/utils';
-import { useIsMobile } from '../../../hooks/use-mobile';
+import React, { useState, useEffect } from 'react';
+import { cn } from '@/lib/utils';
+import { Button } from '@/components/ui/button';
+import { ChevronLeft, MenuIcon } from 'lucide-react';
+import { useIsMobile } from '@/hooks/use-mobile';
 import { SidebarNavList } from './SidebarNavList';
 import { CollapsedSidebar } from './CollapsedSidebar';
-import { NavItem, NavCategory } from './types';
-import { useAuth } from '../../../context/AuthContext';
+import { NavItem, NavCategory, SidebarProps } from './types';
+import { useAuth } from '@/context/AuthContext';
 import { SidebarToggleButton } from './SidebarToggleButton';
-import { ChevronLeft, Menu } from 'lucide-react';
 
 // Helper function to normalize navigation items
 const normalizeNavItems = (items: NavItem[] = []): NavItem[] => {
   return items.map(item => ({
     ...item,
-    href: item.href || item.path || '#'
+    href: item.href || item.path || '#' // Ensure href is always present
   }));
 };
 
@@ -22,24 +22,10 @@ const normalizeNavCategories = (categories: NavCategory[] = []): NavCategory[] =
     ...category,
     items: category.items.map(item => ({
       ...item,
-      href: item.href || item.path || '#'
+      href: item.href || item.path || '#' // Ensure href is always present
     }))
   }));
 };
-
-interface SidebarProps {
-  open?: boolean;
-  onToggle?: () => void;
-  navItems?: NavItem[];
-  navCategories?: NavCategory[];
-  items?: NavCategory[];
-  homeItem?: NavItem;
-  customFooterContent?: React.ReactNode;
-  removeBottomToggle?: boolean;
-  showToggleButton?: boolean;
-  initialState?: "expanded" | "collapsed";
-  onStateChange?: (state: "expanded" | "collapsed") => void;
-}
 
 const Sidebar: React.FC<SidebarProps> = ({
   open,
@@ -49,6 +35,7 @@ const Sidebar: React.FC<SidebarProps> = ({
   items = [],
   homeItem,
   customFooterContent,
+  className,
   removeBottomToggle = false,
   showToggleButton = true,
   initialState,
@@ -58,7 +45,9 @@ const Sidebar: React.FC<SidebarProps> = ({
   const [expandedItems, setExpandedItems] = useState<string[]>([]);
   const { user } = useAuth();
 
+  // Use provided open/onToggle or internal state
   const [internalOpen, setInternalOpen] = useState(() => {
+    // Initialize with initialState if provided
     if (initialState) {
       return initialState === 'expanded';
     }
@@ -68,12 +57,14 @@ const Sidebar: React.FC<SidebarProps> = ({
   const isOpen = open !== undefined ? open : internalOpen;
   
   const toggleSidebar = () => {
+    // Call the provided onToggle without arguments
     if (onToggle) {
       onToggle();
     } else {
       setInternalOpen(!internalOpen);
     }
     
+    // Call onStateChange with the new state if provided
     if (onStateChange) {
       onStateChange(isOpen ? 'collapsed' : 'expanded');
     }
@@ -83,6 +74,7 @@ const Sidebar: React.FC<SidebarProps> = ({
   const allCategories = [...normalizeNavCategories(navCategories), ...normalizeNavCategories(items)];
   const allNavItems = [...normalizeNavItems(navItems)];
 
+  // If there are plain navItems without categories
   if (allNavItems.length > 0 && allCategories.length === 0) {
     allCategories.push({
       label: "Navigation",
@@ -91,6 +83,18 @@ const Sidebar: React.FC<SidebarProps> = ({
     });
   }
 
+  // Log navigation data for debugging
+  console.log('Sidebar - Navigation Categories:', allCategories);
+  console.log('Sidebar - Plain Nav Items:', allNavItems);
+
+  // Updated styling with more reasonable sizing
+  const sidebarBgColor = className || 'bg-gradient-to-b from-indigo-950 via-blue-950 to-slate-950';
+  const textColor = 'text-blue-200';
+  const textHoverColor = 'hover:text-blue-300';
+  const activeBgColor = 'bg-gradient-to-r from-blue-800 to-indigo-700';
+  const activeTextColor = 'text-white';
+  const hoverBgColor = 'hover:bg-indigo-900/50';
+  
   const toggleExpanded = (label: string) => {
     setExpandedItems(prev => prev.includes(label) ? prev.filter(item => item !== label) : [...prev, label]);
   };
@@ -100,53 +104,35 @@ const Sidebar: React.FC<SidebarProps> = ({
       {/* Mobile backdrop */}
       {isOpen && isMobile && (
         <div 
-          className="fixed inset-0 bg-black bg-opacity-50 z-20 backdrop-blur-sm" 
+          className="fixed inset-0 bg-black bg-opacity-70 z-20 backdrop-blur-sm" 
           onClick={toggleSidebar} 
         />
       )}
 
       <aside 
         className={cn(
-          "fixed md:sticky top-0 left-0 h-screen z-30 shadow-lg flex flex-col transition-all duration-300 ease-in-out",
-          "bg-gray-900",
-          "border-r border-gray-800",
-          isOpen ? "w-64" : "w-0 md:w-16",
+          "fixed md:sticky top-0 left-0 h-screen z-30 shadow-xl flex flex-col transition-all duration-300 ease-in-out",
+          sidebarBgColor,
+          isOpen ? "w-60" : "w-0 md:w-16",
           isMobile && !isOpen && "-translate-x-full",
           isMobile && isOpen && "translate-x-0"
         )}
       >
-        {/* Header */}
-        <div className="h-16 flex items-center justify-between px-4 border-b border-gray-800">
-          {isOpen && (
-            <span className="text-lg font-semibold text-gray-100">
-              Data Management
-            </span>
-          )}
-          <button
-            onClick={toggleSidebar}
-            className="p-2 rounded-md hover:bg-gray-800 text-gray-300"
-          >
-            {isOpen ? <ChevronLeft /> : <Menu />}
-          </button>
-        </div>
-
         {/* Full Navigation List (Visible when open) */}
         <nav className={cn(
-          "flex-1 pt-4 px-3 overflow-y-auto scrollbar-thin",
-          "scrollbar-thumb-gray-700",
-          "scrollbar-track-gray-800",
-          !isOpen && "hidden"
+          "flex-1 pt-4 px-2 overflow-y-auto scrollbar-thin scrollbar-thumb-blue-800/50 scrollbar-track-slate-900/50",
+          !isOpen && "hidden" // Hide when sidebar is collapsed
         )}>
           <SidebarNavList 
             categories={allCategories}
             userRole={user?.role}
             expandedCategories={expandedItems}
             onCategoryToggle={toggleExpanded}
-            textColor="text-gray-300"
-            textHoverColor="hover:text-gray-100"
-            activeBgColor="bg-gray-800"
-            activeTextColor="text-gray-100"
-            hoverBgColor="hover:bg-gray-800/50"
+            textColor={textColor}
+            textHoverColor={textHoverColor}
+            activeBgColor={activeBgColor}
+            activeTextColor={activeTextColor}
+            hoverBgColor={hoverBgColor}
           />
         </nav>
 
@@ -154,20 +140,26 @@ const Sidebar: React.FC<SidebarProps> = ({
         {!isOpen && !isMobile && (
           <CollapsedSidebar 
             navItems={allCategories}
-            textColor="text-gray-300"
-            activeBgColor="bg-gray-800"
-            activeTextColor="text-gray-100"
-            hoverBgColor="hover:bg-gray-800/50"
+            textColor={textColor}
+            activeBgColor={activeBgColor}
+            activeTextColor={activeTextColor}
+            hoverBgColor={hoverBgColor}
             homeItem={homeItem}
           />
         )}
 
-        {/* Footer */}
-        {customFooterContent && (
-          <div className="border-t border-gray-800 p-4">
-            {customFooterContent}
-          </div>
-        )}
+        {/* Navigation buttons at bottom */}
+        <div className="flex justify-center space-x-2 bg-indigo-950/80 border-t border-indigo-900/50 py-3">
+          <Button variant="ghost" size="icon" className="w-10 h-10 rounded-lg bg-indigo-800/30 text-blue-200 hover:text-white hover:bg-indigo-700">
+            1
+          </Button>
+          <Button variant="ghost" size="icon" className="w-10 h-10 rounded-lg bg-indigo-800/30 text-blue-200 hover:text-white hover:bg-indigo-700">
+            2
+          </Button>
+          <Button variant="ghost" size="icon" className="w-10 h-10 rounded-lg bg-indigo-800/30 text-blue-200 hover:text-white hover:bg-indigo-700">
+            3
+          </Button>
+        </div>
       </aside>
 
       {/* Bottom sidebar toggle button (if not removed) */}

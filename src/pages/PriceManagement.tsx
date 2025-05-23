@@ -1,9 +1,10 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { useToast } from '@/hooks/use-toast';
+import { useToast } from '@/components/ui/use-toast';
 import { 
   Table, 
   TableBody, 
@@ -114,9 +115,9 @@ const PriceManagement = () => {
   const { toast } = useToast();
 
   const handleSaveChanges = () => {
-    toast.success({
+    toast({
       title: "Changes Saved",
-      description: "Your price changes have been saved successfully."
+      description: "Your price changes have been saved successfully.",
     });
   };
 
@@ -157,9 +158,9 @@ const PriceManagement = () => {
     
     setProducts(newProducts);
     
-    toast.success({
+    toast({
       title: "Bulk Update Applied",
-      description: `Price changes have been calculated and applied to all visible products.`
+      description: `Price changes have been calculated and applied to all visible products.`,
     });
   };
 

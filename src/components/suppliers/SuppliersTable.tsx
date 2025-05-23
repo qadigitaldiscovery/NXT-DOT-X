@@ -1,5 +1,4 @@
-
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Table,
@@ -8,25 +7,81 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "../ui/table";
-import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
-import { useSuppliers } from "../../hooks/use-suppliers";
-import { formatDate } from "../../lib/utils";
+} from "@/components/ui/table";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { PlusCircle, Search, MoreHorizontal, Edit, Trash2, FileText } from "lucide-react";
+import { Supplier, useSuppliers, useDeleteSupplier } from '@/hooks/use-suppliers';
+import { Badge } from '@/components/ui/badge';
+import { toast } from 'sonner';
 
-export const SuppliersTable: React.FC = () => {
+export function SuppliersTable() {
   const navigate = useNavigate();
-  const { data: suppliers, isLoading } = useSuppliers();
+  const { data: suppliers = [], isLoading, error } = useSuppliers();
+  const { mutate: deleteSupplier } = useDeleteSupplier();
+  const [searchTerm, setSearchTerm] = useState('');
+
+  const filteredSuppliers = suppliers.filter(supplier => 
+    supplier.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
+    supplier.code.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  const handleDelete = (id: string, name: string) => {
+    if (window.confirm(`Are you sure you want to delete supplier "${name}"?`)) {
+      deleteSupplier(id);
+    }
+  };
+
+  const handleNewSupplier = () => {
+    toast.info('New supplier page will be available soon');
+    // navigate("/data-management/suppliers/new");
+  };
+
+  const handleEditSupplier = (supplierId: string) => {
+    toast.info(`Editing supplier: ${supplierId}`);
+    // navigate(`/data-management/suppliers/${supplierId}`);
+  };
+
+  const handleViewCosts = (supplierId: string) => {
+    toast.info(`Viewing costs for supplier: ${supplierId}`);
+    // navigate(`/data-management/suppliers/${supplierId}/costs`);
+  };
 
   if (isLoading) {
     return (
       <Card>
         <CardHeader>
           <CardTitle>Suppliers</CardTitle>
+          <CardDescription>Loading suppliers...</CardDescription>
+        </CardHeader>
+      </Card>
+    );
+  }
+
+  if (error) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle>Suppliers</CardTitle>
+          <CardDescription>Error loading suppliers</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="flex items-center justify-center p-8">
-            Loading suppliers...
-          </div>
+          <p className="text-red-500">Failed to load suppliers. Please try again.</p>
         </CardContent>
       </Card>
     );
@@ -34,73 +89,97 @@ export const SuppliersTable: React.FC = () => {
 
   return (
     <Card>
-      <CardHeader>
-        <CardTitle>Suppliers</CardTitle>
+      <CardHeader className="flex flex-row items-center justify-between">
+        <div>
+          <CardTitle>Suppliers</CardTitle>
+          <CardDescription>
+            Manage your supplier information and cost data
+          </CardDescription>
+        </div>
+        <Button onClick={handleNewSupplier}>
+          <PlusCircle className="h-4 w-4 mr-2" />
+          New Supplier
+        </Button>
       </CardHeader>
       <CardContent>
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Name</TableHead>
-              <TableHead>Code</TableHead>
-              <TableHead>Credit Rating</TableHead>
-              <TableHead>Performance Score</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Last Updated</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {suppliers?.map((supplier) => (
-              <TableRow
-                key={supplier.id}
-                className="cursor-pointer hover:bg-gray-50"
-                onClick={() => navigate(`/beta1/suppliers/${supplier.id}`)}
-              >
-                <TableCell className="font-medium hover:text-blue-600 hover:underline">
-                  {supplier.name}
-                </TableCell>
-                <TableCell>{supplier.code}</TableCell>
-                <TableCell>
-                  <div className="flex items-center gap-2">
-                    <span className={`font-bold ${
-                      supplier.creditRating?.rating === 'A' ? 'text-green-600' :
-                      supplier.creditRating?.rating === 'B' ? 'text-yellow-600' :
-                      'text-red-600'
-                    }`}>
-                      {supplier.creditRating?.rating || 'N/A'}
-                    </span>
-                    <span className="text-sm text-gray-500">
-                      ({supplier.creditRating?.score || 'N/A'})
-                    </span>
-                  </div>
-                </TableCell>
-                <TableCell>
-                  <div className="flex items-center gap-2">
-                    <span className={`font-bold ${
-                      (supplier.performance?.overall || 0) >= 90 ? 'text-green-600' :
-                      (supplier.performance?.overall || 0) >= 70 ? 'text-yellow-600' :
-                      'text-red-600'
-                    }`}>
-                      {supplier.performance?.overall || 'N/A'}
-                    </span>
-                  </div>
-                </TableCell>
-                <TableCell>
-                  <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                    supplier.status === 'active' ? 'bg-green-100 text-green-800' :
-                    'bg-gray-100 text-gray-800'
-                  }`}>
-                    {supplier.status}
-                  </span>
-                </TableCell>
-                <TableCell>
-                  {supplier.updated_at ? formatDate(supplier.updated_at) : 'N/A'}
-                </TableCell>
+        <div className="mb-4 flex items-center gap-2">
+          <Search className="h-4 w-4 text-muted-foreground" />
+          <Input 
+            placeholder="Search suppliers..." 
+            className="max-w-sm"
+            value={searchTerm} 
+            onChange={e => setSearchTerm(e.target.value)}
+          />
+        </div>
+        
+        <div className="rounded-md border">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Supplier Code</TableHead>
+                <TableHead>Name</TableHead>
+                <TableHead>Contact</TableHead>
+                <TableHead>Email</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead className="w-[100px]">Actions</TableHead>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+            </TableHeader>
+            <TableBody>
+              {filteredSuppliers.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={6} className="text-center h-32 text-muted-foreground">
+                    {searchTerm ? "No suppliers match your search" : "No suppliers found"}
+                  </TableCell>
+                </TableRow>
+              ) : (
+                filteredSuppliers.map((supplier) => (
+                  <TableRow key={supplier.id}>
+                    <TableCell className="font-medium">{supplier.code}</TableCell>
+                    <TableCell>{supplier.name}</TableCell>
+                    <TableCell>{supplier.contact_name || "—"}</TableCell>
+                    <TableCell>{supplier.email || "—"}</TableCell>
+                    <TableCell>
+                      <Badge 
+                        variant={supplier.status === "active" ? "default" : "secondary"}
+                      >
+                        {supplier.status === "active" ? "Active" : "Inactive"}
+                      </Badge>
+                    </TableCell>
+                    <TableCell>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="ghost" className="h-8 w-8 p-0">
+                            <MoreHorizontal className="h-4 w-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                          <DropdownMenuItem onClick={() => handleEditSupplier(supplier.id)}>
+                            <Edit className="h-4 w-4 mr-2" />
+                            Edit Supplier
+                          </DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => handleViewCosts(supplier.id)}>
+                            <FileText className="h-4 w-4 mr-2" />
+                            View Costs
+                          </DropdownMenuItem>
+                          <DropdownMenuSeparator />
+                          <DropdownMenuItem
+                            className="text-red-600"
+                            onClick={() => handleDelete(supplier.id, supplier.name)}
+                          >
+                            <Trash2 className="h-4 w-4 mr-2" />
+                            Delete
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </TableCell>
+                  </TableRow>
+                ))
+              )}
+            </TableBody>
+          </Table>
+        </div>
       </CardContent>
     </Card>
   );
-};
+}

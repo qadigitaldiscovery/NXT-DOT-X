@@ -1,4 +1,5 @@
 
+import React from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { type StatusLog } from '@/hooks/useStatusLogs';
 import { format } from 'date-fns';
@@ -43,7 +44,7 @@ export default function StatusTimeline({ logs, loading = false }: StatusTimeline
       </CardHeader>
       <CardContent>
         <div className="relative pl-6 border-l-2 border-muted">
-          {logs.map((log) => (
+          {logs.map((log, index) => (
             <div key={log.id} className="mb-4 last:mb-0 relative">
               <div className="absolute -left-[21px] mt-1.5">
                 <StatusGauge status={log.status} size="sm" animate={false} />

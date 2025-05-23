@@ -1,101 +1,82 @@
 
-import React from 'react';
-import { Upload, File, X } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import React, { useState, useCallback } from 'react';
+import { Upload } from 'lucide-react';
+import { toast } from 'sonner';
 
-interface UploadAreaProps {
-  onFileSelected: (file: File | null) => void;
-  isUploading: boolean;
-  selectedFile: File | null;
+export interface UploadAreaProps {
+  onFileUpload: (fileContent: string) => void;
 }
 
-export function UploadArea({ onFileSelected, isUploading, selectedFile }: UploadAreaProps) {
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0] || null;
-    if (file && !file.name.toLowerCase().endsWith('.csv')) {
-      alert('Please select a CSV file');
+export const UploadArea: React.FC<UploadAreaProps> = ({ onFileUpload }) => {
+  const [isDragging, setIsDragging] = useState(false);
+
+  const handleDragOver = useCallback((e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    setIsDragging(true);
+  }, []);
+
+  const handleDragLeave = useCallback(() => {
+    setIsDragging(false);
+  }, []);
+
+  const handleDrop = useCallback((e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    setIsDragging(false);
+
+    const file = e.dataTransfer.files[0];
+    if (file) {
+      processFile(file);
+    }
+  }, []);
+
+  const handleFileInput = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      processFile(file);
+    }
+  }, []);
+
+  const processFile = (file: File) => {
+    if (!file.name.toLowerCase().endsWith('.csv')) {
+      toast.error('Please upload a CSV file');
       return;
     }
-    onFileSelected(file);
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const content = e.target?.result as string;
+      onFileUpload(content);
+    };
+    reader.onerror = () => {
+      toast.error('Failed to read the file');
+    };
+    reader.readAsText(file);
   };
-  
-  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    e.stopPropagation();
-    
-    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-      const file = e.dataTransfer.files[0];
-      if (!file.name.toLowerCase().endsWith('.csv')) {
-        alert('Please select a CSV file');
-        return;
-      }
-      onFileSelected(file);
-    }
-  };
-  
-  const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    e.stopPropagation();
-  };
-  
+
   return (
-    <div 
-      className={`border-2 border-dashed rounded-lg p-8 text-center ${
-        isUploading ? 'opacity-50 cursor-not-allowed' : 'hover:border-primary cursor-pointer'
+    <div
+      className={`border-2 border-dashed rounded-lg p-8 flex flex-col items-center justify-center cursor-pointer transition-colors ${
+        isDragging ? 'border-blue-500 bg-blue-50' : 'border-gray-300 hover:border-gray-400'
       }`}
-      onDrop={handleDrop}
       onDragOver={handleDragOver}
-      onClick={() => {
-        if (!isUploading && !selectedFile) {
-          document.getElementById('file-upload')?.click();
-        }
-      }}
+      onDragLeave={handleDragLeave}
+      onDrop={handleDrop}
+      onClick={() => document.getElementById('file-input')?.click()}
     >
+      <Upload className="h-12 w-12 text-gray-400 mb-4" />
+      <p className="text-gray-600 text-center mb-2">
+        {isDragging ? 'Drop your CSV file here' : 'Drag & drop your CSV file here'}
+      </p>
+      <p className="text-gray-500 text-sm text-center">or click to browse</p>
       <input
+        id="file-input"
         type="file"
-        id="file-upload"
-        accept=".csv"
         className="hidden"
-        onChange={handleFileChange}
-        disabled={isUploading}
+        accept=".csv"
+        onChange={handleFileInput}
       />
-      
-      {selectedFile ? (
-        <div className="flex flex-col items-center gap-2">
-          <div className="flex items-center gap-2 p-2 bg-secondary/20 rounded-md">
-            <File className="h-6 w-6 text-primary" />
-            <span className="font-medium">{selectedFile.name}</span>
-            <Button
-              type="button"
-              variant="ghost"
-              size="icon"
-              className="h-7 w-7 rounded-full"
-              onClick={(e) => {
-                e.stopPropagation();
-                onFileSelected(null);
-              }}
-              disabled={isUploading}
-            >
-              <X className="h-4 w-4" />
-            </Button>
-          </div>
-          <p className="text-sm text-muted-foreground">
-            {(selectedFile.size / 1024).toFixed(1)} KB
-          </p>
-        </div>
-      ) : (
-        <div className="flex flex-col items-center gap-2">
-          <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center">
-            <Upload className="h-6 w-6 text-primary" />
-          </div>
-          <p className="font-medium">
-            Drag & drop your CSV file here or click to browse
-          </p>
-          <p className="text-sm text-muted-foreground">
-            File should be a CSV with required headers
-          </p>
-        </div>
-      )}
     </div>
   );
-}
+};
+
+export default UploadArea;

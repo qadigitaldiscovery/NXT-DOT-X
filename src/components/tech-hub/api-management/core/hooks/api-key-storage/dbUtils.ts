@@ -6,22 +6,23 @@ import { supabase } from '@/integrations/supabase/client';
  */
 export const columnExists = async (table: string, column: string): Promise<boolean> => {
   try {
-    // Don't use information_schema direct query through the client as it's not in the generated types
-    // Instead use a simpler approach with error handling
+    // Instead of directly querying information_schema, try a safer approach
+    // by attempting to select the column and catching the error
     try {
-      const { error: queryError } = await supabase
+      // Use a type assertion to bypass TypeScript's type checking for dynamic table access
+      const { error } = await (supabase
         .from(table as any)
         .select(`${column}`)
-        .limit(1);
+        .limit(1) as any);
       
       // If there's an error about the column not existing, return false
-      if (queryError && queryError.message.includes(`column "${column}" does not exist`)) {
+      if (error && error.message.includes(`column "${column}" does not exist`)) {
         console.info(`Column ${column} does not exist in ${table}.`);
         return false;
       }
       
       // If no error related to column not existing, assume it exists
-      console.info(`Column ${column} already exists.`);
+      console.info(`Column ${column} exists in ${table}.`);
       return true;
     } catch (queryError) {
       console.error(`Error in column check method:`, queryError);

@@ -10,20 +10,16 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
-import { useAuth } from "@/context/AuthContext";
-import { UserCircle } from "lucide-react";
+import { useAuth } from "@/context/auth";
+import { UserCircle, LogOut, Settings, UserPlus, ShieldCheck, Database } from "lucide-react";
 
 export function UserMenu() {
-  const { user, signOut } = useAuth();
+  const { user, logout } = useAuth();
   const navigate = useNavigate();
 
-  const handleLogout = async () => {
-    try {
-      await signOut();
-      // Navigation is handled in AuthContext
-    } catch (error) {
-      console.error("Error during logout:", error);
-    }
+  const handleLogout = () => {
+    logout();
+    navigate('/landing');
   };
 
   return (
@@ -33,20 +29,41 @@ export function UserMenu() {
           <UserCircle className="h-6 w-6" />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
-        <DropdownMenuLabel>
-          {user?.name || user?.email || "Guest"} 
-          {user?.role && <span className="text-xs ml-1 text-muted-foreground">({user.role})</span>}
+      <DropdownMenuContent align="end" className="w-56">
+        <DropdownMenuLabel className="font-normal">
+          <div className="flex flex-col space-y-1">
+            <p className="text-sm font-medium leading-none">{user?.username || "Guest"}</p>
+            <p className="text-xs leading-none text-muted-foreground">{user?.email}</p>
+            {user?.role && <p className="text-xs text-muted-foreground mt-1 flex items-center">
+              <ShieldCheck className="h-3 w-3 mr-1" />
+              {user.role}
+            </p>}
+          </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={() => navigate("/settings")}>Settings</DropdownMenuItem>
+        <DropdownMenuItem onClick={() => navigate("/settings")}>
+          <Settings className="h-4 w-4 mr-2" />
+          <span>Settings</span>
+        </DropdownMenuItem>
+        
         {user?.role === "admin" && (
-          <DropdownMenuItem onClick={() => navigate("/admin/users")}>
-            User Management
-          </DropdownMenuItem>
+          <>
+            <DropdownMenuItem onClick={() => navigate("/admin/users")}>
+              <UserPlus className="h-4 w-4 mr-2" />
+              <span>User Management</span>
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => navigate("/admin/database")}>
+              <Database className="h-4 w-4 mr-2" />
+              <span>Database Admin</span>
+            </DropdownMenuItem>
+          </>
         )}
+        
         <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={handleLogout} className="text-red-500">Logout</DropdownMenuItem>
+        <DropdownMenuItem onClick={handleLogout} className="text-red-500">
+          <LogOut className="h-4 w-4 mr-2" />
+          <span>Logout</span>
+        </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );

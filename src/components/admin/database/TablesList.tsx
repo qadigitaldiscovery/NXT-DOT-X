@@ -2,11 +2,11 @@
 import React, { useState } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { toast } from "sonner";
-import { TableItem } from './TableItem';
-import { SearchBar } from './SearchBar';
-import { RefreshButton } from './RefreshButton';
-import { LoadingState } from './LoadingState';
-import { EmptyState } from './EmptyState';
+import TableItem from './TableItem';
+import SearchBar from './SearchBar';
+import RefreshButton from './RefreshButton';
+import LoadingState from './LoadingState';
+import EmptyState from './EmptyState';
 
 interface TableData {
   name: string;
@@ -49,12 +49,7 @@ const TablesList: React.FC<TablesListProps> = ({
     <Card>
       <CardContent className="p-4">
         <div className="flex justify-between items-center pb-4">
-          <SearchBar 
-            value={searchTerm} 
-            onChange={setSearchTerm} 
-            searchTerm={searchTerm} 
-            setSearchTerm={setSearchTerm}
-          />
+          <SearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
           <RefreshButton isRefreshing={isRefreshing} onRefresh={handleRefreshTables} />
         </div>
         

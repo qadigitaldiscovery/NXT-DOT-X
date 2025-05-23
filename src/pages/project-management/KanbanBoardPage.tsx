@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { ProjectManagementLayout } from '@/components/layout/ProjectManagementLayout';
+import ProjectManagementLayout from '@/components/layout/ProjectManagementLayout';
 import KanbanBoard from '@/components/project-management/KanbanBoard';
 import TaskForm from '@/components/project-management/TaskForm';
 import TaskDetailDialog from '@/components/project-management/TaskDetailDialog';

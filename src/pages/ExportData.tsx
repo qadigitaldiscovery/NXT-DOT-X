@@ -1,7 +1,8 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { useToast } from '@/hooks/use-toast';
+import { useToast } from '@/components/ui/use-toast';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import { 
@@ -101,9 +102,10 @@ const ExportData = () => {
 
   const handleExport = () => {
     if (selectedFields.length === 0) {
-      toast.error({
+      toast({
         title: "Export Error",
-        description: "Please select at least one field to export."
+        description: "Please select at least one field to export.",
+        variant: "destructive",
       });
       return;
     }
@@ -120,9 +122,9 @@ const ExportData = () => {
           clearInterval(interval);
           setTimeout(() => {
             setIsExporting(false);
-            toast.success({
+            toast({
               title: "Export Complete",
-              description: `Your export "${exportName}" has been completed successfully.`
+              description: `Your export "${exportName}" has been completed successfully.`,
             });
           }, 500);
         }

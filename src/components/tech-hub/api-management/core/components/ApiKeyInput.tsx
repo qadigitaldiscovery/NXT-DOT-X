@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
-export interface ApiKeyInputProps {
+interface ApiKeyInputProps {
   apiKey: string;
   isVerifying: boolean;
   keyStatus: 'unknown' | 'valid' | 'invalid' | 'quota_exceeded';
@@ -75,5 +75,3 @@ export const ApiKeyInput: React.FC<ApiKeyInputProps> = ({
     </div>
   );
 };
-
-export default ApiKeyInput;

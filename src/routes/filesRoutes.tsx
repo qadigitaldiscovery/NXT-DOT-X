@@ -1,5 +1,4 @@
 
-import React from "react";
 import { Route } from "react-router-dom";
 import { PlatformLayout } from '@/components/layouts/PlatformLayout';
 import FilesPage from "@/pages/auto/FilesPage";
@@ -21,8 +20,8 @@ export const FilesNavCategories: NavCategory[] = [
 ];
 
 export const FilesRoutes = () => {
-  return [
-    <Route key="files-index" path="/files">
+  return (
+    <Route path="/files">
       <Route index element={
         <PlatformLayout
           moduleTitle="Files"
@@ -64,5 +63,5 @@ export const FilesRoutes = () => {
         </PlatformLayout>
       } />
     </Route>
-  ];
+  );
 };

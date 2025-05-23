@@ -1,5 +1,6 @@
 
-import { useState } from 'react';
+import React, { useState } from 'react';
+import RAGDashboardGrid from './RAGDashboardGrid';
 import { useModules } from '@/hooks/useModules';
 import { useAlerts } from '@/hooks/useAlerts';
 import { useDashboardState } from './hooks/useDashboardState';
@@ -10,14 +11,11 @@ import { useStatusLogs } from '@/hooks/useStatusLogs';
 import { useThresholdRules } from '@/hooks/useThresholdRules';
 import { useCustomerImpacts } from '@/hooks/useCustomerImpacts';
 import { DashboardFilters } from './dashboard/DashboardFilters';
-import { RefreshCw, Settings } from 'lucide-react';
-import { cn } from '@/lib/utils';
-import { Module as ContextModule } from '@/context/ModulesContext';
 
 const RAGDashboardGridContainer: React.FC = () => {
-  const { modules, loading: modulesLoading, error: modulesError } = useModules();
-  const { alerts, loading: alertsLoading, resolveAlert } = useAlerts();
-  const { getLogsByModuleId, loading: logsLoading } = useStatusLogs();
+  const { modules, loading: modulesLoading, error: modulesError, refreshModules } = useModules();
+  const { alerts, loading: alertsLoading, error: alertsError, resolveAlert } = useAlerts();
+  const { logs, getLogsByModuleId, loading: logsLoading } = useStatusLogs();
   const { rules, loading: rulesLoading, addRule, deleteRule } = useThresholdRules();
   const { impacts, loading: impactsLoading } = useCustomerImpacts();
 
@@ -33,7 +31,8 @@ const RAGDashboardGridContainer: React.FC = () => {
     isDetailsOpen,
     setIsDetailsOpen,
     isBatchOperationsOpen,
-    setIsBatchOperationsOpen
+    setIsBatchOperationsOpen,
+    handleViewDetails
   } = useDashboardState(modules || [], alerts || []);
 
   // State for module-specific data
@@ -62,47 +61,23 @@ const RAGDashboardGridContainer: React.FC = () => {
     setIsBatchOperationsOpen(true);
   };
 
-  const handleRefresh = () => {
-    // Check if we can refresh modules using console log
-    console.log('Attempting to refresh modules data');
-  };
-
-  // Convert modules to be compatible with ModulesContext.Module type
-  const compatibleModules: ContextModule[] = Array.isArray(modules) ? modules.map(m => ({
-    ...m,
-    isEnabled: m.status === 'green', 
-    isVisible: m.status !== 'red'
-  })) : [];
-
   return (
     <div className="container mx-auto py-6 max-w-7xl">
       <div className="mb-6 flex justify-between items-center">
         <h1 className="text-2xl font-bold">System Status Dashboard</h1>
         <div className="flex items-center space-x-3">
-          <a 
-            href="#"
-            className="inline-flex items-center text-sm font-medium text-primary hover:text-primary/80 hover:underline"
-            onClick={(e) => {
-              e.preventDefault();
-              handleRefresh();
-            }}
-            aria-label="Refresh data"
+          <button 
+            className="px-4 py-2 border rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+            onClick={refreshModules}
           >
-            <RefreshCw className={cn("h-4 w-4 mr-2", modulesLoading && "animate-spin")} aria-hidden="true" />
             Refresh
-          </a>
-          <a 
-            href="#"
-            className="inline-flex items-center text-sm font-medium text-primary hover:text-primary/80 hover:underline"
-            onClick={(e) => {
-              e.preventDefault();
-              handleBatchOperationsOpen();
-            }}
-            aria-label="Batch Operations"
+          </button>
+          <button 
+            className="px-4 py-2 bg-primary text-primary-foreground hover:bg-primary/90 rounded-md"
+            onClick={handleBatchOperationsOpen}
           >
-            <Settings className="h-4 w-4 mr-2" aria-hidden="true" />
             Batch Operations
-          </a>
+          </button>
         </div>
       </div>
 
@@ -115,7 +90,7 @@ const RAGDashboardGridContainer: React.FC = () => {
       />
 
       {/* Stats Overview */}
-      <OverviewStats modules={compatibleModules} alerts={alerts || []} />
+      <OverviewStats modules={modules || []} alerts={alerts || []} />
 
       {/* Modules Grid */}
       <h2 className="text-lg font-semibold mb-4">Monitored Services</h2>
@@ -145,7 +120,7 @@ const RAGDashboardGridContainer: React.FC = () => {
         onDeleteRule={deleteRule}
         isBatchOperationsOpen={isBatchOperationsOpen}
         onBatchOperationsClose={() => setIsBatchOperationsOpen(false)}
-        modules={compatibleModules}
+        modules={modules || []}
       />
     </div>
   );

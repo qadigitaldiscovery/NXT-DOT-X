@@ -1,9 +1,12 @@
-
 import React from 'react';
-import PersonasHub from '@/components/tech-hub/PersonasHub';
 
-const TechHubPersonas = () => {
-  return <PersonasHub />;
+const PersonasPage: React.FC = () => {
+  return (
+    <div className="module-container">
+      <h1>AI Personas</h1>
+      <p>Manage AI personas and their configurations.</p>
+    </div>
+  );
 };
 
-export default TechHubPersonas;
+export default PersonasPage;

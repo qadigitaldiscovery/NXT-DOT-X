@@ -1,5 +1,7 @@
 
+import React from 'react';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 import { AlertTriangle, ChevronRight } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { type Module } from '@/hooks/useModules';
@@ -31,10 +33,10 @@ const ModuleCard: React.FC<ModuleCardProps> = ({ module, alertCount, onViewDetai
   };
   
   return (
-    <Card className="border rounded-lg shadow-sm bg-white">      
+    <Card className="shadow-md hover:shadow-lg transition-shadow">
       <CardHeader className="pb-2">
         <div className="flex justify-between items-start">
-          <CardTitle className="text-xl font-bold">{module.name}</CardTitle>
+          <CardTitle>{module.name}</CardTitle>
           <Badge className={getStatusColor(module.status)}>
             {getStatusText(module.status)}
           </Badge>
@@ -51,7 +53,7 @@ const ModuleCard: React.FC<ModuleCardProps> = ({ module, alertCount, onViewDetai
           <StatusGauge status={module.status} size="md" />
           
           {alertCount > 0 && (
-            <div className="flex items-center text-amber-700 bg-amber-50 px-3 py-1 rounded-full">
+            <div className="flex items-center text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-900/20 px-3 py-1 rounded-full">
               <AlertTriangle className="mr-1 h-4 w-4" />
               <span className="text-sm font-medium">{alertCount} alert{alertCount !== 1 ? 's' : ''}</span>
             </div>
@@ -60,17 +62,14 @@ const ModuleCard: React.FC<ModuleCardProps> = ({ module, alertCount, onViewDetai
       </CardContent>
       
       <CardFooter className="pt-4">
-        <a 
-          href="#" 
-          onClick={(e) => {
-            e.preventDefault();
-            onViewDetails(module);
-          }}
-          className="text-blue-600 hover:text-blue-800 hover:underline flex items-center"
+        <Button 
+          variant="outline" 
+          onClick={() => onViewDetails(module)}
+          className="w-full flex items-center justify-between"
         >
           View Details
-          <ChevronRight className="h-4 w-4 ml-1" />
-        </a>
+          <ChevronRight className="h-4 w-4" />
+        </Button>
       </CardFooter>
     </Card>
   );

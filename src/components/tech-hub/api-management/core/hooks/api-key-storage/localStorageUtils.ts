@@ -1,38 +1,67 @@
 
-export const saveToLocalStorage = (key: string, apiKey: string, model: string, additionalConfig: Record<string, any> = {}) => {
-  localStorage.setItem(key, JSON.stringify({
-    key: apiKey,
-    model,
-    config: additionalConfig,
-    timestamp: Date.now()
-  }));
-};
+import { useUserPreferences } from '@/hooks/useUserPreferences';
 
-export const loadFromLocalStorage = (key: string, defaultModel: string, defaultConfig: Record<string, any> = {}) => {
-  const storedData = localStorage.getItem(key);
-  
-  if (!storedData) {
-    return { key: '', model: defaultModel, config: defaultConfig };
-  }
-  
+/**
+ * Save API key data to localStorage
+ */
+export const saveToLocalStorage = (
+  localStorageKey: string,
+  apiKey: string, 
+  preferredModel: string, 
+  additionalConfig: Record<string, any> = {}
+): boolean => {
   try {
-    const parsed = JSON.parse(storedData);
-    return {
-      key: parsed.key || '',
-      model: parsed.model || defaultModel,
-      config: parsed.config || defaultConfig
-    };
+    localStorage.setItem(localStorageKey, JSON.stringify({
+      key: apiKey,
+      model: preferredModel,
+      config: additionalConfig,
+      timestamp: Date.now()
+    }));
+    return true;
   } catch (error) {
-    console.error('Error parsing stored API key data:', error);
-    return { key: '', model: defaultModel, config: defaultConfig };
+    console.error('Error saving to localStorage:', error);
+    return false;
   }
 };
 
-export const clearFromLocalStorage = (key: string) => {
-  localStorage.removeItem(key);
+/**
+ * Load API key data from localStorage
+ */
+export const loadFromLocalStorage = (
+  localStorageKey: string,
+  defaultModel: string,
+  defaultConfig: Record<string, any> = {}
+): { 
+  key: string | null; 
+  model: string; 
+  config: Record<string, any>;
+} => {
+  try {
+    const data = localStorage.getItem(localStorageKey);
+    if (data) {
+      const parsed = JSON.parse(data);
+      return { 
+        key: parsed.key || null, 
+        model: parsed.model || defaultModel,
+        config: parsed.config || defaultConfig
+      };
+    }
+  } catch (error) {
+    console.error('Error loading from localStorage:', error);
+  }
+  
+  return { key: null, model: defaultModel, config: defaultConfig };
 };
 
-// Add aliases for the functions to support the API used in useApiKey.ts
-export const storeApiKey = saveToLocalStorage;
-export const retrieveApiKey = loadFromLocalStorage;
-export const removeApiKey = clearFromLocalStorage;
+/**
+ * Clear API key data from localStorage
+ */
+export const clearFromLocalStorage = (localStorageKey: string): boolean => {
+  try {
+    localStorage.removeItem(localStorageKey);
+    return true;
+  } catch (error) {
+    console.error('Error clearing localStorage:', error);
+    return false;
+  }
+};

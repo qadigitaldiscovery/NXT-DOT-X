@@ -2,95 +2,71 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { SupplierData } from '@/utils/supplier-helpers';
 
-export function useCreateBulkSuppliers() {
+/**
+ * React Query hook for bulk creating suppliers
+ */
+export function useBulkCreateSuppliers() {
   const queryClient = useQueryClient();
   
   return useMutation({
-    mutationFn: async ({ csvData }: { csvData: string }) => {
-      // Parse CSV data
-      const lines = csvData.split('\n');
-      if (lines.length < 2) {
-        throw new Error('CSV file must contain at least a header row and one data row');
+    mutationFn: async (suppliers: SupplierData[]) => {
+      if (!suppliers.length) {
+        throw new Error('No suppliers to create');
       }
       
-      const headers = lines[0].toLowerCase().split(',').map(h => h.trim().replace(/"/g, ''));
-      
-      // Validate required headers
-      const requiredHeaders = ['name', 'code'];
-      const missingHeaders = requiredHeaders.filter(h => !headers.includes(h));
-      
-      if (missingHeaders.length > 0) {
-        throw new Error(`Missing required headers: ${missingHeaders.join(', ')}`);
+      // Validate required fields
+      for (const supplier of suppliers) {
+        if (!supplier.name) {
+          throw new Error('Supplier name is required');
+        }
+        
+        if (!supplier.code) {
+          throw new Error('Supplier code is required');
+        }
       }
       
-      // Parse rows and create suppliers
-      const suppliers: Record<string, any>[] = [];
-      for (let i = 1; i < lines.length; i++) {
-        const line = lines[i].trim();
-        if (!line) continue;
-        
-        // Handle quoted values correctly
-        const values: string[] = [];
-        let inQuotes = false;
-        let currentValue = '';
-        
-        for (let j = 0; j < line.length; j++) {
-          const char = line[j];
-          
-          if (char === '"' && (j === 0 || line[j-1] !== '\\')) {
-            inQuotes = !inQuotes;
-          } else if (char === ',' && !inQuotes) {
-            values.push(currentValue.replace(/"/g, '').trim());
-            currentValue = '';
-          } else {
-            currentValue += char;
-          }
-        }
-        
-        values.push(currentValue.replace(/"/g, '').trim());
-        
-        // Create supplier object
-        const supplier: Record<string, any> = {};
-        headers.forEach((header, index) => {
-          if (index < values.length) {
-            supplier[header] = values[index];
-          }
-        });
-        
-        // Validate required fields in each row
-        const missingFields = requiredHeaders.filter(field => !supplier[field]);
-        if (missingFields.length > 0) {
-          // Skip rows with missing required fields
-          console.warn(`Row ${i} skipped: Missing required fields: ${missingFields.join(', ')}`);
-          continue;
-        }
-        
-        suppliers.push(supplier);
+      // Check for duplicate codes
+      const codes = suppliers.map(s => s.code);
+      const uniqueCodes = new Set(codes);
+      
+      if (codes.length !== uniqueCodes.size) {
+        throw new Error('Duplicate supplier codes found. Each supplier must have a unique code.');
+      }
+      
+      // Check if any codes already exist in the database
+      const { data: existingSuppliers, error: existingError } = await supabase
+        .from('suppliers')
+        .select('code')
+        .in('code', codes);
+      
+      if (existingError) {
+        throw new Error(`Database error: ${existingError.message}`);
+      }
+      
+      if (existingSuppliers && existingSuppliers.length > 0) {
+        const existingCodes = existingSuppliers.map(s => s.code);
+        throw new Error(`These supplier codes already exist: ${existingCodes.join(', ')}`);
       }
       
       // Insert suppliers
-      if (suppliers.length === 0) {
-        throw new Error('No valid suppliers found in CSV');
-      }
-      
-      console.log('Inserting suppliers:', suppliers);
-      
-      // Type assertion to match the expected schema
-      const { data, error } = await supabase
+      const { error: insertError } = await supabase
         .from('suppliers')
-        .insert(suppliers as any[])
-        .select('id');
+        .insert(suppliers);
       
-      if (error) {
-        console.error('Error creating suppliers:', error);
-        throw new Error(`Failed to create suppliers: ${error.message}`);
+      if (insertError) {
+        throw new Error(`Failed to insert suppliers: ${insertError.message}`);
       }
       
-      return { count: suppliers.length, ids: data };
+      return { count: suppliers.length };
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
+      toast.success(`Successfully imported ${data.count} suppliers`);
       queryClient.invalidateQueries({ queryKey: ['suppliers'] });
+    },
+    onError: (error: Error) => {
+      toast.error(`Import failed: ${error.message}`);
     }
   });
 }

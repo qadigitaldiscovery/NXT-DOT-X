@@ -1,82 +1,111 @@
-import { useState } from 'react';
+
+import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { EditUserDialog } from './EditUserDialog';
+import { Input } from '@/components/ui/input';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { 
+  Table, 
+  TableBody, 
+  TableCell, 
+  TableHead, 
+  TableHeader, 
+  TableRow 
+} from '@/components/ui/table';
+import { Badge } from '@/components/ui/badge';
+import { Search, UserPlus } from 'lucide-react';
+import { toast } from 'sonner';
 import { useAuth } from '@/context/AuthContext';
-import { toast } from '@/components/ui/toast';
+import AddUserDialog from './AddUserDialog';
+import { useUserManagement } from '@/context/UserManagementContext';
 
-interface User {
-  id: string;
-  username: string;
-  email: string;
-  role: string;
-  status: string;
-}
+const UsersTab: React.FC = () => {
+  const { hasPermission } = useAuth();
+  const { users, roles: rolesData, addUser } = useUserManagement();
+  const [searchTerm, setSearchTerm] = useState('');
+  const [dialogOpen, setDialogOpen] = useState(false);
 
-export function UsersTab() {
-  const [selectedUser, setSelectedUser] = useState<User | undefined>(undefined);
-  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
-  const { user: currentUser } = useAuth();
+  // Filter users based on search term
+  const filteredUsers = users.filter(user => 
+    user.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    user.role.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
-  const handleEditUser = (user: User) => {
-    setSelectedUser(user);
-    setIsEditDialogOpen(true);
-  };
-
-  const handleUserUpdated = async (
-    id: string,
-    updatedUser: { username: string; email: string; role: string; status: string }
-  ) => {
-    try {
-      // Update user logic here
-      const response = await fetch(`/api/users/${id}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(updatedUser),
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to update user');
-      }
-
-      toast.success('User updated successfully');
-      setIsEditDialogOpen(false);
-      setSelectedUser(undefined);
-    } catch (error) {
-      toast.error('Failed to update user');
-    }
+  const handleAddUser = (newUser: any) => {
+    addUser(newUser);
+    toast.success(`User ${newUser.username} created successfully`);
+    setDialogOpen(false);
   };
 
   return (
-    <div className="space-y-4">
-      <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-bold">Users Management</h2>
-        {currentUser?.role === 'admin' && (
-          <Button
-            onClick={() =>
-              handleEditUser({
-                id: 'new',
-                username: '',
-                email: '',
-                role: 'viewer',
-                status: 'Active'
-              })
-            }
-          >
-            Add User
-          </Button>
+    <Card>
+      <CardHeader className="pb-2">
+        <div className="flex justify-between items-center">
+          <CardTitle>All Users</CardTitle>
+          <div className="relative w-64">
+            <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+            <Input
+              placeholder="Search users..."
+              className="pl-8"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </div>
+        </div>
+        <CardDescription>
+          Manage user accounts and access permissions.
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        {hasPermission('users.create') && (
+          <div className="mb-4 flex justify-end">
+            <AddUserDialog 
+              open={dialogOpen} 
+              onOpenChange={setDialogOpen} 
+              onAddUser={handleAddUser} 
+              rolesData={rolesData}
+            />
+          </div>
         )}
-      </div>
-
-      {/* User list would go here */}
-      
-      <EditUserDialog
-        user={selectedUser}
-        open={isEditDialogOpen}
-        onOpenChange={setIsEditDialogOpen}
-        onUserUpdated={handleUserUpdated}
-      />
-    </div>
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Username</TableHead>
+              <TableHead>Email</TableHead>
+              <TableHead>Role</TableHead>
+              <TableHead>Status</TableHead>
+              <TableHead>Created</TableHead>
+              <TableHead className="text-right">Actions</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {filteredUsers.map((user) => (
+              <TableRow key={user.id}>
+                <TableCell className="font-medium">{user.username}</TableCell>
+                <TableCell>{user.email}</TableCell>
+                <TableCell>
+                  <Badge variant={user.role === 'admin' ? 'destructive' : user.role === 'manager' ? 'default' : 'secondary'}>
+                    {user.role}
+                  </Badge>
+                </TableCell>
+                <TableCell>
+                  <Badge variant={user.status === 'active' ? 'default' : 'outline'}>
+                    {user.status}
+                  </Badge>
+                </TableCell>
+                <TableCell>{user.created}</TableCell>
+                <TableCell className="text-right">
+                  <Button size="sm" variant="outline" onClick={() => toast.info("Edit feature coming soon")}>
+                    Edit
+                  </Button>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </CardContent>
+    </Card>
   );
-}
+};
+
+export default UsersTab;

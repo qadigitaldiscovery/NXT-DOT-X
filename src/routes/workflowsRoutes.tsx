@@ -1,5 +1,4 @@
 
-import React from "react";
 import { Route } from "react-router-dom";
 import { PlatformLayout } from '@/components/layouts/PlatformLayout';
 import WorkflowsPage from "@/pages/auto/WorkflowsPage";
@@ -21,8 +20,8 @@ export const WorkflowsNavCategories: NavCategory[] = [
 ];
 
 export const WorkflowsRoutes = () => {
-  return [
-    <Route key="workflows-index" path="/workflows">
+  return (
+    <Route path="/workflows">
       <Route index element={
         <PlatformLayout
           moduleTitle="Workflows"
@@ -64,5 +63,5 @@ export const WorkflowsRoutes = () => {
         </PlatformLayout>
       } />
     </Route>
-  ];
+  );
 };

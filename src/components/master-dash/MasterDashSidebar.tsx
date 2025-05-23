@@ -1,5 +1,5 @@
 import React from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { 
   Layout, 
   Key, 
@@ -14,20 +14,12 @@ import {
   Building,
   UserCog,
   ClipboardList,
-  CalendarClock,
-  Menu
+  CalendarClock
 } from 'lucide-react';
-import { Button } from '../ui/button';
+import { SidebarProvider } from '@/components/ui/sidebar';
 
 // Sidebar Item Component
-interface SidebarIconProps {
-  icon: React.ReactNode;
-  label: string;
-  onClick: () => void;
-  active?: boolean;
-}
-
-const SidebarItem: React.FC<SidebarIconProps> = ({ icon, label, active = false, onClick }) => {
+const SidebarItem = ({ icon, label, active = false, onClick }) => {
   return (
     <div 
       className={`flex items-center p-2 rounded-md ${active ? 'bg-blue-500/10' : 'hover:bg-slate-800'} cursor-pointer`}
@@ -50,148 +42,118 @@ const SidebarItem: React.FC<SidebarIconProps> = ({ icon, label, active = false, 
 
 interface MasterDashSidebarProps {
   activePath: string;
-  open?: boolean;
-  onToggle?: () => void;
 }
 
-const MasterDashSidebar: React.FC<MasterDashSidebarProps> = ({ activePath, open = true, onToggle }) => {
+const MasterDashSidebar: React.FC<MasterDashSidebarProps> = ({ activePath }) => {
   const navigate = useNavigate();
-  const location = useLocation();
-  
-  // Check if the current location matches a path or starts with it
-  const isActive = (path: string) => {
-    return location.pathname === path || location.pathname.startsWith(path);
-  };
 
-  // Navigation handler for sidebar items with console logging for debugging
+  // Navigation handler for sidebar items
   const handleNavigation = (path: string) => {
-    console.log("Navigating to:", path);
     navigate(path);
   };
 
   return (
-    <div 
-      className={`h-full transition-all duration-300 ${open ? 'w-64' : 'w-0 md:w-16'} overflow-hidden bg-gray-900`}
-    >
-      <div className="h-14 flex items-center justify-between border-b border-slate-800 px-4">
-        <h2 className={`text-lg font-semibold text-slate-300 ${!open && 'hidden md:hidden'}`}>Business Platform</h2>
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={onToggle}
-          className="h-8 w-8 p-0 text-slate-300 hover:bg-slate-800 md:flex"
-        >
-          <Menu className="h-4 w-4" />
-          <span className="sr-only">Toggle Sidebar</span>
-        </Button>
+    <div className="h-full bg-[#15171f] dark:bg-[#12141d] w-64 p-4 flex flex-col">
+      <div className="py-4 border-b border-slate-800">
+        <h2 className="text-lg font-semibold text-white">All Modules</h2>
       </div>
       
-      <nav className={`flex-1 p-4 space-y-1 overflow-y-auto ${!open && 'hidden md:block'}`}>
+      <nav className="flex-1 mt-4 space-y-1">
+        <SidebarItem 
+          icon={<Layout className="w-5 h-5" />} 
+          label="All Modules" 
+          active={activePath === '/'} 
+          onClick={() => handleNavigation('/')}
+        />
+        <SidebarItem 
+          icon={<Key className="w-5 h-5" />} 
+          label="API Keys" 
+          active={activePath === '/tech-hub/api-management'}
+          onClick={() => handleNavigation('/tech-hub/api-management')}
+        />
+        <SidebarItem 
+          icon={<ClipboardList className="w-5 h-5" />} 
+          label="Project Management"
+          active={activePath === '/projects'} 
+          onClick={() => handleNavigation('/projects')}
+        />
+        <SidebarItem 
+          icon={<CalendarClock className="w-5 h-5" />} 
+          label="Events"
+          active={activePath === '/events'} 
+          onClick={() => handleNavigation('/events')}
+        />
+        
         {/* Administration Section */}
         <div className="py-2 mt-4">
-          <h3 className="px-2 text-xs uppercase tracking-wider text-slate-600 font-semibold mb-2">Administration</h3>
+          <h3 className="px-2 text-xs uppercase tracking-wider text-slate-500 font-semibold mb-2">Administration</h3>
           <SidebarItem 
             icon={<Users className="w-5 h-5" />} 
             label="User Management" 
-            active={isActive('/admin/users')}
+            active={activePath === '/admin/users'}
             onClick={() => handleNavigation('/admin/users')}
           />
           <SidebarItem 
             icon={<Building className="w-5 h-5" />} 
             label="Customer Management" 
-            active={isActive('/customer-management')}
-            onClick={() => handleNavigation('/customer-management/directory')}
+            active={activePath === '/data-management/customers'}
+            onClick={() => handleNavigation('/data-management/customers')}
           />
           <SidebarItem 
             icon={<UserCog className="w-5 h-5" />} 
             label="Roles & Permissions" 
-            active={isActive('/admin/roles')}
+            active={activePath === '/admin/roles'}
             onClick={() => handleNavigation('/admin/roles')}
           />
           <SidebarItem 
             icon={<Shield className="w-5 h-5" />} 
             label="Security" 
-            active={isActive('/admin/security')}
+            active={activePath === '/admin/security'}
             onClick={() => handleNavigation('/admin/security')}
           />
           <SidebarItem 
             icon={<BarChart3 className="w-5 h-5" />} 
             label="Reporting" 
-            active={isActive('/admin/reporting')}
+            active={activePath === '/admin/reporting'}
             onClick={() => handleNavigation('/admin/reporting')}
           />
           <SidebarItem 
             icon={<Globe className="w-5 h-5" />} 
             label="Localization" 
-            active={isActive('/admin/localization')}
+            active={activePath === '/admin/localization'}
             onClick={() => handleNavigation('/admin/localization')}
           />
           <SidebarItem 
             icon={<FileText className="w-5 h-5" />} 
             label="Documentation" 
-            active={isActive('/admin/documentation')}
+            active={activePath === '/admin/documentation'}
             onClick={() => handleNavigation('/admin/documentation')}
           />
           <SidebarItem 
             icon={<Database className="w-5 h-5" />} 
             label="Database Admin" 
-            active={isActive('/admin/database')}
+            active={activePath === '/admin/database'}
             onClick={() => handleNavigation('/admin/database')}
           />
           <SidebarItem 
             icon={<Settings className="w-5 h-5" />} 
             label="System Settings" 
-            active={isActive('/admin/system-settings')}
+            active={activePath === '/admin/system-settings'}
             onClick={() => handleNavigation('/admin/system-settings')}
           />
         </div>
         
         {/* Other sections */}
         <div className="py-2 mt-4">
-          <h3 className="px-2 text-xs uppercase tracking-wider text-slate-600 font-semibold mb-2">Account</h3>
+          <h3 className="px-2 text-xs uppercase tracking-wider text-slate-500 font-semibold mb-2">Account</h3>
           <SidebarItem 
             icon={<CreditCard className="w-5 h-5" />} 
             label="Billing" 
-            active={isActive('/settings/billing')}
+            active={activePath === '/settings/billing'}
             onClick={() => handleNavigation('/settings/billing')}
           />
         </div>
       </nav>
-      
-      {/* Collapsed sidebar with only icons */}
-      {!open && (
-        <nav className="hidden md:flex flex-col items-center p-2 space-y-4">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => handleNavigation('/admin/users')}
-            className={`${isActive('/admin/users') ? 'bg-blue-500/10 text-blue-400' : 'text-slate-600 hover:text-slate-800 hover:bg-slate-800'}`}
-          >
-            <Users className="h-5 w-5" />
-            <span className="sr-only">User Management</span>
-          </Button>
-          
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => handleNavigation('/customer-management/directory')}
-            className={`${isActive('/customer-management') ? 'bg-blue-500/10 text-blue-400' : 'text-slate-600 hover:text-slate-800 hover:bg-slate-800'}`}
-          >
-            <Building className="h-5 w-5" />
-            <span className="sr-only">Customer Management</span>
-          </Button>
-          
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => handleNavigation('/settings/billing')}
-            className={`${isActive('/settings/billing') ? 'bg-blue-500/10 text-blue-400' : 'text-slate-600 hover:text-slate-800 hover:bg-slate-800'}`}
-          >
-            <CreditCard className="h-5 w-5" />
-            <span className="sr-only">Billing</span>
-          </Button>
-        </nav>
-      )}
     </div>
   );
 };

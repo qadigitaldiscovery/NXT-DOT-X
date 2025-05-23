@@ -1,54 +1,59 @@
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { ResponsiveContainer, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, Legend } from 'recharts';
+import React from 'react';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  BarChart,
+  Bar,
+  Cell,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer
+} from 'recharts';
 
-interface CategoryVariationChartProps {
-  data: {
-    category: string;
-    value: number;
-    average?: number;
-  }[];
+type CategoryData = {
+  category: string;
+  variance: number;
+};
+
+type CategoryVariationChartProps = {
+  data: CategoryData[];
   title: string;
-  description?: string;
-}
+  description: string;
+  className?: string;
+};
 
-export const CategoryVariationChart = ({ data, title, description }: CategoryVariationChartProps) => {
+export const CategoryVariationChart = ({ data, title, description, className }: CategoryVariationChartProps) => {
   return (
-    <Card className="w-full">
+    <Card className={`backdrop-blur-md bg-white/30 border border-white/10 ${className}`}>
       <CardHeader>
         <CardTitle>{title}</CardTitle>
-        {description && <CardDescription>{description}</CardDescription>}
+        <CardDescription>
+          {description}
+        </CardDescription>
       </CardHeader>
-      <CardContent>
-        <div className="h-[350px]">
-          <ResponsiveContainer width="100%" height="100%">
-            <RadarChart cx="50%" cy="50%" outerRadius="80%" data={data}>
-              <PolarGrid />
-              <PolarAngleAxis dataKey="category" />
-              <PolarRadiusAxis />
-              <Radar
-                name="Actual"
-                dataKey="value"
-                stroke="#8884d8"
-                fill="#8884d8"
-                fillOpacity={0.6}
-              />
-              {data.some(d => d.average !== undefined) && (
-                <Radar
-                  name="Average"
-                  dataKey="average"
-                  stroke="#82ca9d"
-                  fill="#82ca9d"
-                  fillOpacity={0.6}
+      <CardContent className="h-80">
+        <ResponsiveContainer width="100%" height="100%">
+          <BarChart
+            data={data}
+            margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+          >
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="category" />
+            <YAxis label={{ value: 'Variance %', angle: -90, position: 'insideLeft' }} />
+            <Tooltip formatter={(value) => `${value}%`} />
+            <Bar dataKey="variance" fill="#8884d8">
+              {data.map((entry, index) => (
+                <Cell 
+                  key={`cell-${index}`} 
+                  fill={entry.variance > 10 ? '#FF8042' : entry.variance > 5 ? '#FFBB28' : '#00C49F'} 
                 />
-              )}
-              <Legend />
-            </RadarChart>
-          </ResponsiveContainer>
-        </div>
+              ))}
+            </Bar>
+          </BarChart>
+        </ResponsiveContainer>
       </CardContent>
     </Card>
   );
 };
-
-export default CategoryVariationChart;

@@ -2,7 +2,7 @@
 import React from 'react';
 import { useUserPermissions } from '@/hooks/useUserPermissions';
 import { AlertOctagon } from 'lucide-react';
-import { useAuth } from '@/context/AuthContext';
+import { useAuth } from '@/context/auth';
 
 interface PermissionGuardProps {
   requiredPermission: string | string[];

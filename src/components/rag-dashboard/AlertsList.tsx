@@ -1,4 +1,5 @@
 
+import React from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -38,6 +39,19 @@ export default function AlertsList({ alerts, onResolve, loading = false }: Alert
       </Card>
     );
   }
+
+  const getSeverityClass = (severity: string) => {
+    switch (severity) {
+      case 'info':
+        return 'bg-blue-500';
+      case 'warning':
+        return 'bg-amber-500';
+      case 'destructive':
+        return 'bg-red-500';
+      default:
+        return 'bg-gray-500';
+    }
+  };
 
   const getSeverityVariant = (severity: string): "default" | "destructive" | "outline" | "secondary" => {
     switch (severity) {

@@ -3,42 +3,16 @@ import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useUserManagement } from '@/context/UserManagementContext';
 
-// Sample permission data structure
-const samplePermissions = {
-  "User Management": [
-    { id: "users.view", name: "View Users" },
-    { id: "users.create", name: "Create Users" },
-    { id: "users.edit", name: "Edit Users" },
-    { id: "users.delete", name: "Delete Users" }
-  ],
-  "Content Management": [
-    { id: "content.view", name: "View Content" },
-    { id: "content.create", name: "Create Content" },
-    { id: "content.edit", name: "Edit Content" },
-    { id: "content.delete", name: "Delete Content" }
-  ],
-  "System": [
-    { id: "system.settings", name: "System Settings" },
-    { id: "system.logs", name: "View Logs" }
-  ]
-};
-
-type Permission = {
-  id: string;
-  name: string;
-};
-
-type PermissionsByCategory = {
-  [category: string]: Permission[];
-};
-
 const PermissionsTab: React.FC = () => {
-  // Get permissions from context
   const { permissions } = useUserManagement();
   
-  // Use sample data if no permissions are available
-  const permissionsByCategory: PermissionsByCategory = 
-    Object.keys(permissions || {}).length > 0 ? (permissions as PermissionsByCategory) : samplePermissions;
+  // Group permissions by category
+  const permissionsByCategory = permissions.reduce((acc, permission) => {
+    const { category } = permission;
+    if (!acc[category]) acc[category] = [];
+    acc[category].push(permission);
+    return acc;
+  }, {} as Record<string, typeof permissions>);
 
   return (
     <Card>

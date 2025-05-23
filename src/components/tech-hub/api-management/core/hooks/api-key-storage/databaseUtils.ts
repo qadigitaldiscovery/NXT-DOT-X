@@ -18,13 +18,14 @@ export const saveToDatabase = async (
       throw new Error('User is not authenticated');
     }
     
-    // Check if record exists
-    const { data: existingData, error: queryError } = await supabase
-      .from('api_provider_settings')
+    // Check if record exists - use the any type to work around type safety issues
+    // until Supabase types are regenerated
+    const { data: existingData, error: queryError } = await (supabase
+      .from('api_provider_settings' as any)
       .select('id')
       .eq('provider_name', providerName)
       .eq('user_id', session.user.id)
-      .maybeSingle();
+      .maybeSingle() as any);
     
     if (queryError && !queryError.message.includes('column')) {
       throw new Error(`Database query error: ${queryError.message}`);
@@ -45,10 +46,10 @@ export const saveToDatabase = async (
         updateData.config = additionalConfig;
       }
       
-      const { error } = await supabase
-        .from('api_provider_settings')
+      const { error } = await (supabase
+        .from('api_provider_settings' as any)
         .update(updateData)
-        .eq('id', existingData.id);
+        .eq('id', existingData.id) as any);
       
       if (error) throw new Error(`Database update error: ${error.message}`);
     } else {
@@ -65,9 +66,9 @@ export const saveToDatabase = async (
         insertData.config = additionalConfig;
       }
       
-      const { error } = await supabase
-        .from('api_provider_settings')
-        .insert(insertData);
+      const { error } = await (supabase
+        .from('api_provider_settings' as any)
+        .insert(insertData) as any);
       
       if (error) throw new Error(`Database insert error: ${error.message}`);
     }
@@ -106,12 +107,13 @@ export const loadFromDatabase = async (
       ? 'api_key, preferred_model, config' 
       : 'api_key, preferred_model';
     
-    const { data, error } = await supabase
-      .from('api_provider_settings')
+    // Use the any type to work around type safety issues until Supabase types are regenerated
+    const { data, error } = await (supabase
+      .from('api_provider_settings' as any)
       .select(selectQuery)
       .eq('provider_name', providerName)
       .eq('user_id', session.user.id)
-      .maybeSingle();
+      .maybeSingle() as any);
     
     if (error && !error.message.includes('column')) {
       console.error('Error loading from database:', error);
@@ -162,12 +164,12 @@ export const deleteFromDatabase = async (providerName: string): Promise<boolean>
       return false;
     }
     
-    // Delete from database
-    const { error } = await supabase
-      .from('api_provider_settings')
+    // Delete from database - use any type for now
+    const { error } = await (supabase
+      .from('api_provider_settings' as any)
       .delete()
       .eq('provider_name', providerName)
-      .eq('user_id', session.user.id);
+      .eq('user_id', session.user.id) as any);
     
     if (error) {
       console.error('Error deleting from database:', error);

@@ -2,11 +2,9 @@ import React from 'react';
 
 const DocumentationPage: React.FC = () => {
   return (
-    <div className="p-6">
-      <h1 className="text-2xl font-bold mb-4">Documentation</h1>
-      <div className="bg-white rounded-lg shadow p-4">
-        <p>System documentation and guides will be displayed here.</p>
-      </div>
+    <div className="documentation-page">
+      <h1>Documentation</h1>
+      <p>Access technical and user documentation here.</p>
     </div>
   );
 };

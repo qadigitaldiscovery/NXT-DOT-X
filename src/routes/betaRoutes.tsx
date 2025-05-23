@@ -1,40 +1,56 @@
-import React from "react";
-import Beta1Dashboard from "../pages/Beta1Dashboard";
-import Beta2Dashboard from "../pages/Beta2Dashboard";
-import Beta2Analytics from "../pages/Beta2Analytics";
-import ModuleAutoPage from "../pages/auto/ModuleAutoPage";
+import React from 'react';
+import { Route, Routes } from 'react-router-dom';
+import { RouteGuard } from '../utils/rbac/RouteGuard';
+import { Permission } from '../utils/rbac/permissions';
 
-export const BetaRoutes = [
-  {
-    path: "/beta1/dashboard",
-    element: <Beta1Dashboard />,
-  },
-  {
-    path: "/beta1/*",
-    element: <ModuleAutoPage />,
-  },
-  {
-    path: "/beta2/dashboard",
-    element: <Beta2Dashboard />,
-  },
-  {
-    path: "/beta2/analytics",
-    element: <Beta2Analytics />,
-  },
-  {
-    path: "/beta2/members",
-    element: <ModuleAutoPage />,
-  },
-  {
-    path: "/beta2/rewards",
-    element: <ModuleAutoPage />,
-  },
-  {
-    path: "/beta2/settings",
-    element: <ModuleAutoPage />,
-  },
-  {
-    path: "/beta2/*",
-    element: <ModuleAutoPage />,
-  },
-];
+// Placeholder components - to be replaced with actual implementations
+const Beta1Dashboard = () => (
+  <div className="module-container">
+    <h1>Beta1 Dashboard</h1>
+    <p>Beta feature preview and testing environment.</p>
+  </div>
+);
+
+const Beta2Dashboard = () => (
+  <div className="module-container">
+    <h1>Beta2 Dashboard</h1>
+    <p>Advanced beta features and testing environment.</p>
+  </div>
+);
+
+const Beta2Analytics = () => (
+  <div className="module-container">
+    <h1>Beta2 Analytics</h1>
+    <p>Experimental analytics features in beta.</p>
+  </div>
+);
+
+/**
+ * Beta Features routes
+ * For early access and testing of upcoming features
+ */
+export const BetaRoutes: React.FC = () => {
+  return (
+    <Routes>
+      <Route path="/" element={
+        <RouteGuard requiredPermissions={Permission.BETA_ACCESS}>
+          <Beta1Dashboard />
+        </RouteGuard>
+      } />
+      
+      <Route path="/dashboard" element={
+        <RouteGuard requiredPermissions={Permission.BETA_ACCESS}>
+          <Beta1Dashboard />
+        </RouteGuard>
+      } />
+      
+      <Route path="/analytics" element={
+        <RouteGuard requiredPermissions={Permission.BETA_ACCESS}>
+          <Beta2Analytics />
+        </RouteGuard>
+      } />
+    </Routes>
+  );
+};
+
+export default BetaRoutes;

@@ -1,20 +1,20 @@
 
 export interface OdooConfig {
-  id?: string;
-  name: string;
+  id: string;
+  name?: string;
   integration_type: string;
   config: {
     url: string;
-    db_name: string;
-    username?: string;
+    username: string;
     password?: string;
     api_key?: string;
-    auth_method: 'credentials' | 'api_key';
+    database: string; // Always required for compatibility
+    db_name?: string; // Optional alias
+    auth_method?: 'credentials' | 'api_key';
   };
-  is_active: boolean;
-  created_at?: string;
-  updated_at?: string;
-  created_by?: string;
+  created_at: string;
+  updated_at: string;
+  is_active?: boolean;
 }
 
 export interface SyncSetting {
@@ -24,4 +24,6 @@ export interface SyncSetting {
   is_enabled: boolean;
   sync_frequency: string;
   last_synced_at?: string;
+  created_at?: string;
+  updated_at?: string;
 }

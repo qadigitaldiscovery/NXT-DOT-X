@@ -5,7 +5,7 @@ import {
   useSuppliers,
   useSupplier,
   useCreateSupplier,
-  useCreateBulkSuppliers,
+  useBulkCreateSuppliers,
   useUpdateSupplier,
   useDeleteSupplier
 } from './suppliers';
@@ -16,7 +16,7 @@ export {
   useSuppliers,
   useSupplier,
   useCreateSupplier,
-  useCreateBulkSuppliers,
+  useBulkCreateSuppliers,
   useUpdateSupplier,
   useDeleteSupplier
 };

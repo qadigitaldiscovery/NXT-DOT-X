@@ -2,12 +2,12 @@
 import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 
-export interface PersonaTrait {
+interface PersonaTrait {
   name: string;
   description?: string;
 }
 
-export interface PersonaResponsibility {
+interface PersonaResponsibility {
   text: string;
 }
 
@@ -27,7 +27,7 @@ interface PersonaCardProps {
   onClick: () => void;
 }
 
-export const PersonaCard: React.FC<PersonaCardProps> = ({ persona, isSelected, onClick }) => {
+const PersonaCard: React.FC<PersonaCardProps> = ({ persona, isSelected, onClick }) => {
   return (
     <Card 
       className={`cursor-pointer transition-all hover:shadow-md ${

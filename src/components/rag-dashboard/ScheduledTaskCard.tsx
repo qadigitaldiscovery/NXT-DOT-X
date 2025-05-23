@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
-import { Clock, PlayCircle, AlertCircle, Loader2 } from 'lucide-react';
+import { Clock, PlayCircle, AlertCircle } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 
 interface ScheduledTaskCardProps {
@@ -68,15 +68,11 @@ const ScheduledTaskCard: React.FC<ScheduledTaskCardProps> = ({
             <Button 
               size="sm"
               onClick={handleRunNow}
-              disabled={running}
+              loading={running}
               className="flex items-center gap-1"
             >
-              {running ? (
-                <Loader2 className="h-4 w-4 animate-spin" />
-              ) : (
-                <PlayCircle className="h-4 w-4" />
-              )}
-              {running ? 'Running...' : 'Run Now'}
+              <PlayCircle className="h-4 w-4" />
+              Run Now
             </Button>
           </div>
         </div>

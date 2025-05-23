@@ -1,19 +1,15 @@
 
 import { useState, useMemo, useEffect } from 'react';
 import { Module } from '@/hooks/useModules';
+import { useAlerts } from '@/hooks/useAlerts';
 import { useUserPreferences } from '@/hooks/useUserPreferences';
 import { useAuth } from '@/context/AuthContext';
-
-interface DashboardPreferences {
-  selectedStatus: string | null;
-  searchQuery: string;
-}
 
 export const useDashboardState = (modules: Module[], alerts: any[]) => {
   const { user } = useAuth();
   
   // Get preferences from database with fallback to local state
-  const { preferences, setPreferences } = useUserPreferences<DashboardPreferences>({
+  const { preferences, setPreferences } = useUserPreferences({
     module: 'rag_dashboard',
     key: 'filters',
     defaultValue: {
@@ -24,11 +20,11 @@ export const useDashboardState = (modules: Module[], alerts: any[]) => {
   
   // Local state for UI
   const [selectedStatus, setSelectedStatus] = useState<string | null>(
-    (preferences as DashboardPreferences)?.selectedStatus || null
+    (preferences as any)?.selectedStatus || null
   );
   
   const [searchQuery, setSearchQuery] = useState<string>(
-    (preferences as DashboardPreferences)?.searchQuery || ''
+    (preferences as any)?.searchQuery || ''
   );
   
   // State for module details dialog
@@ -100,11 +96,6 @@ export const useDashboardState = (modules: Module[], alerts: any[]) => {
     }
   };
 
-  const handleViewDetails = (module: Module) => {
-    setSelectedModule(module);
-    setIsDetailsOpen(true);
-  };
-
   return {
     // State
     selectedStatus,
@@ -123,6 +114,9 @@ export const useDashboardState = (modules: Module[], alerts: any[]) => {
     alertCountByModule,
 
     // Actions
-    handleViewDetails
+    handleViewDetails: (module: Module) => {
+      setSelectedModule(module);
+      setIsDetailsOpen(true);
+    }
   };
 };

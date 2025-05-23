@@ -1,55 +1,59 @@
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
+import React from 'react';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  PieChart,
+  Pie,
+  Cell,
+  Tooltip,
+  Legend,
+  ResponsiveContainer
+} from 'recharts';
 
-interface SupplierComparisonChartProps {
-  data: {
-    supplier: string;
-    cost: number;
-    marketAverage?: number;
-  }[];
+type SupplierData = {
+  name: string;
+  value: number;
+};
+
+type SupplierComparisonChartProps = {
+  data: SupplierData[];
   title: string;
-  description?: string;
-}
+  description: string;
+  colors: string[];
+  className?: string;
+};
 
-export const SupplierComparisonChart = ({ data, title, description }: SupplierComparisonChartProps) => {
-  // Format the data for display
-  const chartData = data.map(item => ({
-    supplier: item.supplier,
-    'Supplier Cost': item.cost,
-    'Market Average': item.marketAverage || 0,
-  }));
-
-  // Calculate chart dimensions based on data length
-  const chartHeight = Math.max(300, data.length * 50);
-
+export const SupplierComparisonChart = ({ data, title, description, colors, className }: SupplierComparisonChartProps) => {
   return (
-    <Card className="w-full">
+    <Card className={`backdrop-blur-md bg-white/30 border border-white/10 ${className}`}>
       <CardHeader>
         <CardTitle>{title}</CardTitle>
-        {description && <CardDescription>{description}</CardDescription>}
+        <CardDescription>
+          {description}
+        </CardDescription>
       </CardHeader>
-      <CardContent>
-        <div className="h-[350px]">
-          <ResponsiveContainer width="100%" height={chartHeight}>
-            <BarChart
-              layout="vertical"
-              data={chartData}
-              margin={{ top: 20, right: 30, left: 80, bottom: 5 }}
+      <CardContent className="h-80">
+        <ResponsiveContainer width="100%" height="100%">
+          <PieChart>
+            <Pie
+              data={data}
+              cx="50%"
+              cy="50%"
+              labelLine={false}
+              outerRadius={80}
+              fill="#8884d8"
+              dataKey="value"
+              label={({name, percent}) => `${name} ${(percent * 100).toFixed(0)}%`}
             >
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis type="number" />
-              <YAxis type="category" dataKey="supplier" />
-              <Tooltip formatter={(value) => `$${value}`} />
-              <Legend />
-              <Bar dataKey="Supplier Cost" fill="#8884d8" />
-              <Bar dataKey="Market Average" fill="#82ca9d" />
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
+              {data.map((entry, index) => (
+                <Cell key={`cell-${index}`} fill={colors[index % colors.length]} />
+              ))}
+            </Pie>
+            <Tooltip formatter={(value) => `${value}%`} />
+            <Legend />
+          </PieChart>
+        </ResponsiveContainer>
       </CardContent>
     </Card>
   );
 };
-
-export default SupplierComparisonChart;

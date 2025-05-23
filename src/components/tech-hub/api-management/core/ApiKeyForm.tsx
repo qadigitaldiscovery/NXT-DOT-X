@@ -1,186 +1,149 @@
+import React from 'react';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useApiKey } from './useApiKey';
+import { ApiKeyInput } from './components/ApiKeyInput';
+import { ModelSelector } from './components/ModelSelector';
+import { AdvancedConfigSection } from './components/AdvancedConfigSection';
 
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { EyeIcon, EyeOffIcon, ExternalLink } from 'lucide-react';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-
-interface ApiKeyFormProps {
+export interface ApiKeyFormProps {
   providerName: string;
-  apiKey: string;
-  isVisible: boolean;
-  config: Record<string, any>;
   apiKeyPlaceholder?: string;
-  docsLink?: { text: string; url: string };
-  footerText?: string;
-  preferredModelOptions?: Array<{ value: string; label: string }>;
+  docsLink?: {
+    text: string;
+    url: string;
+  };
+  onVerify: (apiKey: string) => Promise<boolean>;
+  preferredModelOptions: {
+    value: string;
+    label: string;
+  }[];
   initialModel?: string;
-  onApiKeyChange: (apiKey: string) => void;
-  onVisibilityToggle: () => void;
-  onConfigUpdate: (key: string, value: any) => void;
-  onVerify?: (apiKey: string) => Promise<boolean>;
+  footerText?: string;
+  additionalConfig?: Record<string, any>;
 }
 
-export default function ApiKeyForm({
+const ApiKeyForm: React.FC<ApiKeyFormProps> = ({
   providerName,
-  apiKey,
-  isVisible,
-  config,
-  apiKeyPlaceholder = "API key...",
+  apiKeyPlaceholder = "API Key...",
   docsLink,
-  footerText,
+  onVerify,
   preferredModelOptions,
-  initialModel,
-  onApiKeyChange,
-  onVisibilityToggle,
-  onConfigUpdate,
-}: ApiKeyFormProps) {
-
-  const handleApiKeyChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    onApiKeyChange(e.target.value);
+  initialModel = '',
+  footerText,
+  additionalConfig = {}
+}) => {
+  const {
+    apiKey,
+    setApiKey,
+    savedKey,
+    isVerifying,
+    isLoading,
+    keyStatus,
+    model,
+    activeTab, 
+    setActiveTab,
+    advancedConfig,
+    verifyApiKey,
+    clearApiKey,
+    handleModelChange,
+    updateAdvancedConfig
+  } = useApiKey({
+    providerName,
+    initialModel: initialModel || preferredModelOptions[0]?.value || '',
+    preferredModelOptions,
+    additionalConfig,
+    onVerify
+  });
+  
+  if (isLoading) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle>{providerName} API Configuration</CardTitle>
+          <CardDescription>Loading...</CardDescription>
+        </CardHeader>
+      </Card>
+    );
+  }
+  
+  // Bridge function to handle the parameter type mismatch
+  const handleConfigUpdate = (key: string, value: any) => {
+    // Create a new config object with the updated value
+    const updatedConfig = {
+      ...advancedConfig,
+      [key]: value
+    };
+    
+    // Call the updateAdvancedConfig with the full config object
+    updateAdvancedConfig(updatedConfig);
   };
-
-  const handleSaveApiKey = async () => {
-    // We need to validate and save the API key
-    if (apiKey.trim() === '') return;
-    onApiKeyChange(apiKey.trim());
-  };
-
-  const handleClearApiKey = () => {
-    onApiKeyChange('');
-  };
-
-  const isApiKeySaved = apiKey && apiKey.trim() !== '';
-
+  
   return (
-    <Card className="w-full">
+    <Card>
       <CardHeader>
-        <CardTitle className="text-lg">{providerName} API Configuration</CardTitle>
+        <CardTitle>{providerName} API Configuration</CardTitle>
+        <CardDescription>
+          Configure your {providerName} API key for AI features across the platform
+        </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
-        <div className="space-y-2">
-          <label className="text-sm font-medium">API Key</label>
-          <div className="flex">
-            <div className="relative flex-1">
-              <Input
-                type={isVisible ? "text" : "password"}
-                value={apiKey}
-                onChange={handleApiKeyChange}
-                placeholder={apiKeyPlaceholder}
-                className="pr-10"
-              />
-              <Button
-                type="button"
-                variant="ghost"
-                size="icon"
-                className="absolute right-0 top-0 h-full"
-                onClick={onVisibilityToggle}
-              >
-                {isVisible ? <EyeOffIcon className="h-4 w-4" /> : <EyeIcon className="h-4 w-4" />}
-              </Button>
-            </div>
-            {isApiKeySaved ? (
-              <Button
-                className="ml-2"
-                variant="outline"
-                onClick={handleClearApiKey}
-              >
-                Clear
-              </Button>
-            ) : (
-              <Button
-                className="ml-2"
-                onClick={handleSaveApiKey}
-              >
-                Save
-              </Button>
-            )}
-          </div>
-          {docsLink && (
-            <p className="text-xs text-muted-foreground mt-1">
-              Need a key? Visit{" "}
-              <a
-                href={docsLink.url}
-                target="_blank"
-                rel="noreferrer"
-                className="text-primary hover:underline inline-flex items-center"
-              >
-                {docsLink.text}
-                <ExternalLink className="ml-1 h-3 w-3" />
-              </a>
-            </p>
-          )}
-        </div>
-
-        {preferredModelOptions && preferredModelOptions.length > 0 && (
-          <div className="space-y-2">
-            <label className="text-sm font-medium">Preferred Model</label>
-            <Select
-              value={config.model || initialModel}
-              onValueChange={(value) => onConfigUpdate('model', value)}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Select model" />
-              </SelectTrigger>
-              <SelectContent>
-                {preferredModelOptions.map((option) => (
-                  <SelectItem key={option.value} value={option.value}>
-                    {option.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+        <ApiKeyInput
+          apiKey={apiKey}
+          isVerifying={isVerifying}
+          keyStatus={keyStatus}
+          placeholder={apiKeyPlaceholder}
+          docsLink={docsLink}
+          onApiKeyChange={setApiKey}
+          onVerify={verifyApiKey}
+        />
+        
+        <Tabs value={activeTab} onValueChange={setActiveTab}>
+          <TabsList className="grid grid-cols-2">
+            <TabsTrigger value="basic">Basic Settings</TabsTrigger>
+            <TabsTrigger value="advanced">Advanced Settings</TabsTrigger>
+          </TabsList>
+          
+          <TabsContent value="basic">
+            <ModelSelector 
+              modelOptions={preferredModelOptions} 
+              selectedModel={model} 
+              onModelChange={handleModelChange} 
+            />
+          </TabsContent>
+          
+          <TabsContent value="advanced">
+            <AdvancedConfigSection 
+              config={advancedConfig} 
+              onConfigUpdate={handleConfigUpdate}
+            />
+          </TabsContent>
+        </Tabs>
+        
+        {savedKey && (
+          <div className="pt-2">
+            <Button variant="outline" size="sm" onClick={clearApiKey}>
+              Remove API Key
+            </Button>
           </div>
         )}
-
-        <div className="space-y-2">
-          <div className="flex justify-between">
-            <label className="text-sm font-medium">Temperature</label>
-            <span className="text-xs text-muted-foreground">
-              {config.temperature ?? 0.7}
-            </span>
-          </div>
-          <Input
-            type="range"
-            min={0}
-            max={2}
-            step={0.1}
-            value={config.temperature ?? 0.7}
-            onChange={(e) => onConfigUpdate('temperature', parseFloat(e.target.value))}
-          />
-          <p className="text-xs text-muted-foreground">
-            Higher values produce more creative outputs, lower values more deterministic.
-          </p>
-        </div>
-
-        <div className="space-y-2">
-          <div className="flex justify-between">
-            <label className="text-sm font-medium">Max Tokens</label>
-            <span className="text-xs text-muted-foreground">
-              {config.max_tokens ?? 2048}
-            </span>
-          </div>
-          <Input
-            type="range"
-            min={1}
-            max={4096}
-            step={1}
-            value={config.max_tokens ?? 2048}
-            onChange={(e) => onConfigUpdate('max_tokens', parseInt(e.target.value))}
-          />
-          <p className="text-xs text-muted-foreground">
-            The maximum number of tokens to generate in the completion.
-          </p>
-        </div>
       </CardContent>
-      {footerText && (
-        <CardFooter>
-          <Alert>
-            <AlertDescription className="text-xs">{footerText}</AlertDescription>
-          </Alert>
-        </CardFooter>
-      )}
+      <CardFooter className="flex flex-col items-start border-t p-4">
+        <p className="text-sm text-gray-500">
+          {footerText || `Your API key is stored securely and never exposed to the browser.
+          Visit the ${docsLink ? 
+            docsLink.text : 
+            `${providerName} website`} to create a new key if needed.`}
+        </p>
+        {docsLink && (
+          <a href={docsLink.url} className="text-blue-500 hover:underline" target="_blank" rel="noopener noreferrer">
+            {docsLink.text}
+          </a>
+        )}
+      </CardFooter>
     </Card>
   );
-}
+};
+
+export default ApiKeyForm;

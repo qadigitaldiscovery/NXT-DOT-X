@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -110,35 +109,16 @@ const DashboardHome = () => {
       
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {modules.map((module) => (
-          <Card key={module.id} className="bg-gradient-to-br from-redmetal-600 to-black border-blue-800/40 backdrop-blur-sm relative overflow-hidden">
-            {/* Background pattern */}
-            <div 
-              className="absolute inset-0 opacity-10"
-              style={{ 
-                backgroundImage: "url('/lovable-uploads/f591cd6e-de49-44cf-bfb9-207fcd31b3ce.png')",
-                backgroundSize: "cover",
-                backgroundPosition: "center",
-              }}
-            />
-            
-            {/* Neon blue splash */}
-            <div 
-              className="absolute -top-4 -right-4 w-24 h-24 rounded-full blur-xl"
-              style={{
-                background: "radial-gradient(circle at center, rgba(56,189,248,0.6) 0%, rgba(59,130,246,0.3) 40%, transparent 70%)",
-                zIndex: 0
-              }}
-            />
-            
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 relative z-10">
-              <CardTitle className="text-lg font-medium text-white">{module.title}</CardTitle>
-              <module.icon className="h-5 w-5 text-blue-400" />
+          <Card key={module.id}>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-lg font-medium">{module.title}</CardTitle>
+              <module.icon className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
-            <CardContent className="relative z-10">
-              <p className="text-sm text-gray-300 mb-4">{module.description}</p>
+            <CardContent>
+              <p className="text-sm text-muted-foreground mb-4">{module.description}</p>
               <Button 
                 variant="outline" 
-                className="w-full border-gray-600 bg-black/30 hover:bg-black/50 text-white" 
+                className="w-full" 
                 onClick={() => handleNavigate(module.path)}
               >
                 {module.action} <ArrowRight className="h-4 w-4 ml-2" />

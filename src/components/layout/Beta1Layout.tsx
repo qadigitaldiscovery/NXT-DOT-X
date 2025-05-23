@@ -1,40 +1,39 @@
-
-import { Outlet } from 'react-router-dom';
-import { SharedNavbar } from './SharedNavbar';
-import { SidebarProvider } from '@/context/SidebarContext';
-import { UnifiedSidebar } from './UnifiedSidebar';
+import React from 'react';
+import { Navbar } from './Navbar';
+import { Sidebar } from './sidebar/Sidebar';
 import { useIsMobile } from '@/hooks/use-mobile';
-import { Home } from 'lucide-react';
-import { NavItem } from './sidebar/types';
+import { useNavigate } from 'react-router-dom';
 
-const homeItem: NavItem = {
-  label: 'Back to Dashboard',
-  href: '/dashboard',
-  icon: Home
-};
-
-export function Beta1Layout() {
-  const isMobile = useIsMobile();
-
-  return (
-    <SidebarProvider defaultOpen={!isMobile}>
-      <div className="flex min-h-screen flex-col">
-        <div className="flex flex-1">
-          <UnifiedSidebar
-            homeItem={homeItem}
-            moduleTitle="Beta 1"
-            useGlobalNavigation={true}
-          />
-          <div className="flex-1 flex flex-col">
-            <SharedNavbar moduleTitle="Beta 1" />
-            <main className="flex-1 overflow-auto p-4">
-              <Outlet />
-            </main>
-          </div>
-        </div>
-      </div>
-    </SidebarProvider>
-  );
+interface Beta1LayoutProps {
+  children: React.ReactNode;
 }
 
-export default Beta1Layout;
+export const Beta1Layout = ({ children }: Beta1LayoutProps) => {
+  const [sidebarOpen, setSidebarOpen] = React.useState(true);
+  const isMobile = useIsMobile();
+
+  React.useEffect(() => {
+    // Close sidebar by default on mobile
+    if (isMobile) {
+      setSidebarOpen(false);
+    } else {
+      setSidebarOpen(true);
+    }
+  }, [isMobile]);
+
+  const toggleSidebar = () => {
+    setSidebarOpen(!sidebarOpen);
+  };
+
+  return (
+    <div className="flex h-screen overflow-hidden bg-background">
+      <Sidebar open={sidebarOpen} onToggle={toggleSidebar} />
+      <div className="flex flex-col flex-1 overflow-hidden">
+        <Navbar onMenuClick={toggleSidebar} />
+        <main className="flex-1 overflow-y-auto p-4 md:p-6">
+          {children}
+        </main>
+      </div>
+    </div>
+  );
+};

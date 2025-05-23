@@ -12,13 +12,13 @@ import {
   SidebarMenuButton,
   SidebarGroup,
   SidebarGroupLabel
-} from '../ui/sidebar';
-import { Button } from '../ui/button';
+} from '@/components/ui/sidebar';
+import { Button } from '@/components/ui/button';
 import { MenuIcon, Home } from 'lucide-react';
 import { SharedNavbar } from './SharedNavbar';
 import { navCategories, masterDashItem } from './sidebar/NavigationConfig';
 import { useNavigate } from 'react-router-dom';
-import { cn } from '../../lib/utils';
+import { cn } from '@/lib/utils';
 
 interface TradingSystemLayoutProps {
   moduleTitle?: string;
@@ -28,7 +28,7 @@ interface TradingSystemLayoutProps {
 // Separate the inner content that uses the sidebar hook
 const TradingSystemContent: React.FC<TradingSystemLayoutProps> = ({ moduleTitle, children }) => {
   const navigate = useNavigate();
-  const { toggle } = useSidebar();
+  const { toggleSidebar } = useSidebar();
   const location = useLocation();
   
   const handleNavigate = (path?: string) => {
@@ -46,7 +46,7 @@ const TradingSystemContent: React.FC<TradingSystemLayoutProps> = ({ moduleTitle,
             <Button 
               variant="ghost" 
               size="icon" 
-              onClick={toggle}
+              onClick={toggleSidebar}
               className="text-gray-500 hover:bg-gray-100"
             >
               <MenuIcon className="h-5 w-5" />
@@ -100,7 +100,7 @@ const TradingSystemContent: React.FC<TradingSystemLayoutProps> = ({ moduleTitle,
         "md:rounded-tl-xl"
       )}>
         <SharedNavbar 
-          onMenuClick={toggle} 
+          onMenuClick={toggleSidebar} 
           moduleTitle={moduleTitle || "Data Management"}
         />
         <main className="flex-1 overflow-y-auto p-4 md:p-6 bg-gray-50">
@@ -119,5 +119,3 @@ export const TradingSystemLayout: React.FC<TradingSystemLayoutProps> = (props) =
     </SidebarProvider>
   );
 };
-
-export default TradingSystemLayout;

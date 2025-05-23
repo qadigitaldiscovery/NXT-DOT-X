@@ -1,40 +1,98 @@
 
-import { Outlet } from 'react-router-dom';
-import { UnifiedSidebar } from './UnifiedSidebar';
-import MasterDashNavbar from '../master-dash/MasterDashNavbar';
-import MasterDashFooter from '../master-dash/MasterDashFooter';
-import { useIsMobile } from '../../hooks/use-mobile';
-import { Home } from 'lucide-react';
-import { NavItem } from './sidebar/types';
-import { SidebarProvider } from '@/context/SidebarContext';
+import React from 'react';
+import { cn } from '@/lib/utils';
+import { SharedSidebar } from './SharedSidebar';
+import { SharedNavbar } from './SharedNavbar';
+import { useIsMobile } from '@/hooks/use-mobile';
+import { Home, FileUp, BarChart3, LineChart, ArrowDownUp, FileDown, Settings, FileCode } from 'lucide-react';
+import { NavCategory, NavItem } from './sidebar/types';
 
-const homeItem: NavItem = {
-  label: 'Dashboard',
-  href: '/dashboard',
-  icon: Home
-};
-
-export function DashboardLayout() {
-  const isMobile = useIsMobile();
-
-  return (
-    <SidebarProvider defaultOpen={!isMobile}>
-      <div className="flex min-h-screen bg-gradient-to-br from-gray-900 to-gray-950">
-        <UnifiedSidebar 
-          homeItem={homeItem}
-          moduleTitle="Data Management"
-          useGlobalNavigation={true}
-        />
-        <div className="flex flex-col flex-1">
-          <MasterDashNavbar />
-          <main className="flex-1 p-6 overflow-y-auto bg-gray-200">
-            <Outlet />
-          </main>
-          <MasterDashFooter />
-        </div>
-      </div>
-    </SidebarProvider>
-  );
+interface DashboardLayoutProps {
+  children: React.ReactNode;
+  fullWidth?: boolean;
 }
 
-export default DashboardLayout;
+// Dashboard navigation items
+const dashboardNavItems: NavCategory[] = [
+  {
+    name: "Navigation",
+    label: "Navigation",
+    items: [
+      { label: 'Home', icon: Home, path: '/' }
+    ]
+  },
+  {
+    name: "Dashboard",
+    label: "Dashboard",
+    items: [
+      { label: 'Dashboard Home', icon: Home, path: '/dashboard' }
+    ]
+  },
+  {
+    name: "Cost Management",
+    label: "Cost Management",
+    items: [
+      { label: 'Supplier Costing', icon: FileUp, path: '/supplier-costing' },
+      { label: 'Cost Analysis', icon: BarChart3, path: '/cost-analysis' }
+    ]
+  },
+  {
+    name: "Pricing",
+    label: "Pricing",
+    items: [
+      { label: 'Competitor Pricing', icon: LineChart, path: '/competitor-pricing' },
+      { label: 'Price Management', icon: ArrowDownUp, path: '/price-management' }
+    ]
+  },
+  {
+    name: "Data",
+    label: "Data",
+    items: [
+      { label: 'Export Data', icon: FileDown, path: '/export-data' },
+      { label: 'APIs', icon: FileCode, path: '/data-management/apis' }
+    ]
+  }
+];
+
+export const DashboardLayout = ({ children, fullWidth = false }: DashboardLayoutProps) => {
+  const [sidebarOpen, setSidebarOpen] = React.useState(true);
+  const isMobile = useIsMobile();
+
+  React.useEffect(() => {
+    if (isMobile) {
+      setSidebarOpen(false);
+    } else {
+      setSidebarOpen(true);
+    }
+  }, [isMobile]);
+
+  const toggleSidebar = () => {
+    setSidebarOpen(!sidebarOpen);
+  };
+
+  return (
+    <div className="flex h-screen overflow-hidden bg-gray-50">
+      <SharedSidebar 
+        open={sidebarOpen} 
+        onToggle={toggleSidebar}
+        navItems={dashboardNavItems}
+      />
+      <div className={cn(
+          "flex flex-col flex-1 overflow-hidden transition-all duration-300 ease-in-out",
+          sidebarOpen ? "md:ml-0" : "md:ml-0",
+          "md:rounded-tl-xl"
+        )}>
+        <SharedNavbar 
+          onMenuClick={toggleSidebar} 
+          moduleTitle="Dashboard"
+        />
+        <main className={cn(
+          "flex-1 overflow-y-auto p-4 md:p-6 bg-gray-50",
+          fullWidth ? "container-fluid" : "container mx-auto"
+        )}>
+          {children}
+        </main>
+      </div>
+    </div>
+  );
+};

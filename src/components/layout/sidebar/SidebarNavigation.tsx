@@ -1,72 +1,141 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
-import { NavCategory, NavItem } from './types';
 import { cn } from '@/lib/utils';
+import { NavCategory, NavItem } from './types';
+import { ChevronDown } from 'lucide-react';
 
 interface SidebarNavigationProps {
   categories: NavCategory[];
   userRole?: string;
 }
 
-export const SidebarNavigation: React.FC<SidebarNavigationProps> = ({
-  categories,
-  userRole
-}) => {
+export function SidebarNavigation({ categories, userRole }: SidebarNavigationProps) {
   const location = useLocation();
+  // Initialize with all categories expanded
+  const [expandedCategories, setExpandedCategories] = useState<string[]>(
+    categories.map(cat => cat.name || cat.label || '')
+  );
 
-  // Check if an item or any of its children has the active path
-  const isItemActive = (item: NavItem): boolean => {
-    const path = item.href || item.path || '';
-    if (item.activeMatchPattern) {
-      if (typeof item.activeMatchPattern === 'string') {
-        return location.pathname.includes(item.activeMatchPattern);
-      } else if (item.activeMatchPattern instanceof RegExp) {
-        return item.activeMatchPattern.test(location.pathname);
-      }
+  // Toggle a category's expanded state
+  const toggleCategory = (categoryName: string) => {
+    setExpandedCategories(prev => 
+      prev.includes(categoryName) 
+        ? prev.filter(name => name !== categoryName) 
+        : [...prev, categoryName]
+    );
+  };
+
+  // Filter items based on user role
+  const filterItemsByRole = (items: NavItem[], role?: string): NavItem[] => {
+    if (!role) return items;
+    
+    return items.filter(item => {
+      // If no roles specified, everyone can see it
+      if (!item.roles || item.roles.length === 0) return true;
+      
+      // Otherwise, check if user role is in the allowed roles
+      return item.roles.includes(role);
+    });
+  };
+
+  // Process categories, filtering by role
+  const visibleCategories = categories
+    .map(category => ({
+      ...category,
+      items: filterItemsByRole(category.items, userRole)
+    }))
+    .filter(category => category.items.length > 0);
+
+  console.log('SidebarNavigation - Visible Categories:', visibleCategories);
+  console.log('SidebarNavigation - Current Location:', location.pathname);
+
+  // Improved function to check if a route is active
+  const isRouteActive = (href: string): boolean => {
+    // Exact match
+    if (location.pathname === href) return true;
+    
+    // Special case for root path
+    if (href === '/' && location.pathname === '/') return true;
+    
+    // Prefix match for non-root paths with proper path boundary checking
+    if (href !== '/' && href !== '#') {
+      // Check if location pathname starts with href AND
+      // either ends with href or continues with a slash
+      // This prevents "/data" from matching "/data-management"
+      const isPrefix = location.pathname.startsWith(href);
+      const isBoundaryCorrect = 
+        location.pathname.length === href.length || 
+        location.pathname.charAt(href.length) === '/';
+      
+      return isPrefix && isBoundaryCorrect;
     }
-
-    // Check if current path matches or is a child of the item path
-    return location.pathname === path || path !== '/' && path !== '' && location.pathname.startsWith(path);
+    
+    return false;
   };
 
-  // Filter items that the user has access to based on their role
-  const canAccessItem = (item: NavItem): boolean => {
-    if (!item.roles || item.roles.length === 0) return true;
-    if (!userRole) return false;
-    return item.roles.includes(userRole);
-  };
-
-  // Render categories and items
-  return <div className="space-y-6">
-      {categories.map(category => {
-      // Filter items based on user role
-      const accessibleItems = category.items.filter(canAccessItem);
-
-      // Skip rendering empty categories
-      if (accessibleItems.length === 0) return null;
-      return <div key={category.name || category.label} className="space-y-2 py-0 my-0">
+  return (
+    <div className="space-y-1">
+      {visibleCategories.map((category) => {
+        const categoryName = category.name || category.label || '';
+        const isExpanded = expandedCategories.includes(categoryName);
+        
+        return (
+          <div key={categoryName} className="mb-4">
             {/* Category Header */}
-            <h3 className="font-bold text-sm uppercase tracking-wider text-blue-100 py-0 my-0 px-[17px]">
-              {category.label || category.name}
-            </h3>
-            
-            {/* Category Items */}
-            <div className="space-y-1 pl-2">
-              {accessibleItems.map(item => {
-            const isActive = isItemActive(item);
-            const itemPath = item.href || item.path || '#';
-
-            // Get icon component if available
-            const IconComponent = item.icon;
-            return <NavLink key={`${category.label}-${item.label}`} to={itemPath} className={({
-              isActive: linkActive
-            }) => cn("flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition-colors", isActive || linkActive ? "bg-blue-800/50 text-white" : "text-blue-100 hover:bg-blue-900/50 hover:text-white")}>
-                    {IconComponent && <IconComponent className="h-5 w-5" />}
-                    <span className="font-thin">{item.label}</span>
-                  </NavLink>;
-          })}
+            <div className="flex w-full items-center justify-between px-3 py-2 text-sm font-medium text-blue-200 hover:text-blue-100 rounded-md">
+              <span>{category.label || category.name}</span>
             </div>
-          </div>;
-    })}
-    </div>;
-};
+            
+            {/* Category Items - Always visible */}
+            <div className="mt-1 ml-2 pl-2 border-l border-indigo-800">
+              {category.items.map((item) => {
+                const Icon = item.icon;
+                const href = item.href || item.path || '#';
+                
+                // Use the improved active route detection
+                const isActive = isRouteActive(href);
+                console.log(`Checking item ${item.label} (${href}): ${isActive ? 'ACTIVE' : 'inactive'}`);
+                
+                if (href === '#') {
+                  return (
+                    <div
+                      key={item.label}
+                      className={cn(
+                        "flex items-center px-3 py-2 text-sm rounded-md my-1 cursor-pointer",
+                        "text-blue-200 hover:text-white hover:bg-indigo-900/50"
+                      )}
+                    >
+                      {Icon && <Icon className="mr-2 h-4 w-4" />}
+                      <span>{item.label}</span>
+                    </div>
+                  );
+                }
+                
+                return (
+                  <NavLink
+                    key={item.label}
+                    to={href}
+                    className={({ isActive: routeActive }) => {
+                      // Use either our custom detection or React Router's
+                      const active = isActive || routeActive;
+                      console.log(`NavLink for ${item.label}: ${active ? 'ACTIVE' : 'inactive'}`);
+                      return cn(
+                        "flex items-center px-3 py-2 text-sm rounded-md my-1",
+                        active
+                          ? "bg-gradient-to-r from-blue-800 to-indigo-700 text-white font-medium"
+                          : "text-blue-200 hover:text-white hover:bg-indigo-900/50"
+                      );
+                    }}
+                  >
+                    {Icon && <Icon className="mr-2 h-4 w-4" />}
+                    <span>{item.label}</span>
+                  </NavLink>
+                );
+              })}
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+} 

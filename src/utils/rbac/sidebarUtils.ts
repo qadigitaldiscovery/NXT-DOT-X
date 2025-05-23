@@ -1,80 +1,223 @@
-import { NavCategory, NavItem } from "@/components/layout/sidebar/types";
-import { ModulePermission } from "@/types/rbac";
-import { Users, Shield, Database, FileText } from 'lucide-react';
+import { Permission, hasPermission, hasAnyPermission } from './permissions';
+import { IconMap } from '../icons'; // Corrected import path
 
 /**
- * Filters sidebar items based on the user's roles and permissions
- * @param items The sidebar items configuration
- * @param userRoles The user's roles
- * @param userPermissions The user's permissions
- * @returns Filtered sidebar items
+ * Interface for navigation items in the sidebar
  */
-export const filterSidebarItems = (
-  items: NavCategory[],
-  userRoles: string[] = [],
-  userPermissions: string[] = []
-): NavCategory[] => {
-  // If user is admin, return all items
-  if (userRoles.includes('admin')) {
-    return items;
-  }
+export interface NavItem {
+  id: string;
+  label: string;
+  path: string;
+  icon?: keyof typeof IconMap; // Use keys of IconMap for type safety
+  children?: NavItem[];
+  requiredPermissions: Permission[];
+}
+
+/**
+ * The complete navigation structure following the hierarchical design
+ */
+export const FULL_NAVIGATION: NavItem[] = [
+  // A. Global Landing
+  {
+    id: 'dashboard',
+    label: 'Dashboard',
+    path: '/',
+    icon: 'dashboard',
+    requiredPermissions: [Permission.VIEW_DASHBOARD]
+  },
   
-  // Otherwise, filter based on permissions
-  return items.filter(() => {
-    // For now, just return all items since we're adapting the function
-    return true;
-  });
-};
-
-/**
- * Generates sidebar items for admin section based on user access
- * @param userRoles The user's roles
- * @param userPermissions The user's permissions
- * @returns An array of sidebar group configurations
- */
-export const generateAdminSidebarItems = (
-  userRoles: string[] = [],
-  userPermissions: string[] = []
-): NavCategory[] => {
-  // Define admin sidebar structure
-  const adminSidebarGroups: NavCategory = {
-    name: 'Administration',
-    label: 'Administration', // Added the required label property
-    items: [
+  // B. Global Technology Management
+  {
+    id: 'tech-hub',
+    label: 'Technology Hub',
+    path: '/tech-hub',
+    icon: 'settings',
+    requiredPermissions: [Permission.ADMIN_ACCESS, Permission.SYSTEM_CONFIG],
+    children: [
       {
-        label: 'User Management',
-        path: '/admin/users',
-        icon: Users,
-        roles: ['admin']
+        id: 'admin',
+        label: 'System Administration',
+        path: '/admin',
+        requiredPermissions: [Permission.ADMIN_ACCESS]
       },
       {
-        label: 'Module Access',
-        path: '/admin/module-access',
-        icon: Shield,
-        roles: ['admin']
+        id: 'access-control',
+        label: 'Access Control',
+        path: '/tech-hub/access',
+        requiredPermissions: [Permission.ADMIN_ACCESS]
       },
       {
-        label: 'Database Admin',
-        path: '/admin/database',
-        icon: Database,
-        roles: ['admin']
+        id: 'integration',
+        label: 'Platform Integration',
+        path: '/tech-hub/integration',
+        requiredPermissions: [Permission.INTEGRATION_MANAGE]
       },
       {
+        id: 'ai-intelligence',
+        label: 'AI & Intelligence',
+        path: '/tech-hub/ai',
+        requiredPermissions: [Permission.ADMIN_ACCESS]
+      },
+      {
+        id: 'documentation',
         label: 'Documentation',
-        path: '/admin/documentation',
-        icon: FileText,
-        roles: ['admin', 'manager']
+        path: '/tech-hub/docs',
+        requiredPermissions: [Permission.VIEW_DASHBOARD]
       }
     ]
-  };
-
-  // If user is not admin, return empty array
-  if (!userRoles.includes('admin')) {
-    return [];
+  },
+  
+  // C. Global Modules
+  {
+    id: 'global-modules',
+    label: 'Global Modules',
+    path: '',
+    icon: 'folder', // Example icon for global modules
+    requiredPermissions: [
+      Permission.CUSTOMER_VIEW, 
+      Permission.SUPPLIER_VIEW, 
+      Permission.FILE_VIEW, 
+      Permission.COMMUNICATION_ACCESS
+    ],
+    children: [
+      {
+        id: 'customer-management',
+        label: 'Customer Management',
+        path: '/customer-management',
+        requiredPermissions: [Permission.CUSTOMER_VIEW]
+      },
+      {
+        id: 'supplier-management',
+        label: 'Supplier Management',
+        path: '/supplier-management',
+        requiredPermissions: [Permission.SUPPLIER_VIEW]
+      },
+      {
+        id: 'vendors',
+        label: 'Vendors',
+        path: '/vendors',
+        requiredPermissions: [Permission.SUPPLIER_VIEW]
+      },
+      {
+        id: 'files',
+        label: 'Document & File Management',
+        path: '/files',
+        requiredPermissions: [Permission.FILE_VIEW]
+      },
+      {
+        id: 'communications',
+        label: 'Communications Hub',
+        path: '/communications',
+        requiredPermissions: [Permission.COMMUNICATION_ACCESS]
+      }
+    ]
+  },
+  
+  // D. Business Modules
+  {
+    id: 'business-modules',
+    label: 'Business Modules',
+    path: '',
+    icon: 'briefcase', // Example icon for business modules
+    requiredPermissions: [
+      Permission.DATA_MANAGEMENT_ACCESS,
+      Permission.PROJECT_VIEW,
+      Permission.SOCIAL_MEDIA_ACCESS,
+      Permission.OPERATIONS_ACCESS,
+      Permission.MARKETING_ACCESS,
+      Permission.LOYALTY_ACCESS
+    ],
+    children: [
+      {
+        id: 'data-management',
+        label: 'Data Management',
+        path: '/data-management',
+        requiredPermissions: [Permission.DATA_MANAGEMENT_ACCESS]
+      },
+      {
+        id: 'projects',
+        label: 'Project Management',
+        path: '/projects',
+        requiredPermissions: [Permission.PROJECT_VIEW]
+      },
+      {
+        id: 'social-media',
+        label: 'Social Media Management',
+        path: '/social-media',
+        requiredPermissions: [Permission.SOCIAL_MEDIA_ACCESS]
+      },
+      {
+        id: 'operations',
+        label: 'Operations & Monitoring',
+        path: '/operations',
+        requiredPermissions: [Permission.OPERATIONS_ACCESS]
+      },
+      {
+        id: 'brand-marketing',
+        label: 'Marketing & Brand Management',
+        path: '/brand-marketing',
+        requiredPermissions: [Permission.MARKETING_ACCESS]
+      },
+      {
+        id: 'loyalty-rewards',
+        label: 'Loyalty Program',
+        path: '/loyalty-rewards',
+        requiredPermissions: [Permission.LOYALTY_ACCESS]
+      }
+    ]
+  },
+  
+  // E. Automation & Workflows
+  {
+    id: 'automation',
+    label: 'Automation & Workflows',
+    path: '/automation',
+    icon: 'zap', // Example icon for automation
+    requiredPermissions: [Permission.AUTOMATION_ACCESS]
+  },
+  
+  // F. Web Services
+  {
+    id: 'web-services',
+    label: 'Web Services',
+    path: '/web-services',
+    icon: 'globe', // Example icon for web services
+    requiredPermissions: [Permission.API_ACCESS]
   }
+];
 
-  return [adminSidebarGroups];
-};
+/**
+ * Filter navigation items based on user role permissions
+ * @param navItems Array of navigation items to filter
+ * @param userRole The user's role in the system
+ * @returns Filtered navigation items the user has permission to see
+ */
+export function filterNavItemsByPermission(navItems: NavItem[], userRole: string): NavItem[] {
+  return navItems
+    .filter(item => {
+      // Check if user has any of the required permissions for this item
+      const hasItemPermission = hasAnyPermission(userRole, item.requiredPermissions);
+      
+      // Filter children recursively if they exist
+      if (item.children) {
+        item.children = filterNavItemsByPermission(item.children, userRole);
+      }
+      
+      // Include this item if user has permission OR if it has children with permissions
+      return hasItemPermission || (item.children && item.children.length > 0);
+    })
+    .map(item => ({
+      ...item,
+      // Remove empty children arrays
+      children: item.children && item.children.length > 0 ? item.children : undefined
+    }));
+}
 
-// Add an alias for generateAdminSidebarItems to match the import in sidebar/index.tsx
-export const getAdminSidebarItems = generateAdminSidebarItems;
+/**
+ * Get navigation items for a specific user role
+ * @param userRole The user's role in the system
+ * @returns Navigation items the user has permission to see
+ */
+export function getNavigationForUserRole(userRole: string): NavItem[] {
+  return filterNavItemsByPermission(FULL_NAVIGATION, userRole);
+}

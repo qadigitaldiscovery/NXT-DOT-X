@@ -1,92 +1,74 @@
 
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Textarea } from '@/components/ui/textarea';
-import { ApiEndpoint } from './types';
+import React from 'react';
+import { z } from "zod";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { toast } from "sonner";
 
-const endpointFormSchema = z.object({
-  name: z.string().min(1, { message: 'Name is required' }),
-  url: z.string().url({ message: 'Valid URL is required' }),
-  method: z.enum(['GET', 'POST', 'PUT', 'DELETE', 'PATCH']),
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+
+import { ApiEndpoint, EndpointFormValues } from "./types";
+
+// Create a schema for adding new endpoints
+const endpointSchema = z.object({
+  name: z.string().min(1, "Name is required"),
+  url: z.string().url("Please enter a valid URL"),
   apiKey: z.string().optional(),
-  status: z.enum(['active', 'inactive']).default('active'),
-  description: z.string().optional(),
+  method: z.enum(["GET", "POST", "PUT", "DELETE"]),
+  status: z.enum(["active", "inactive"])
 });
 
-export type EndpointFormValues = z.infer<typeof endpointFormSchema>;
-
 interface AddEndpointDialogProps {
-  open?: boolean;
-  onOpenChange?: (open: boolean) => void;
-  onSubmit: (values: EndpointFormValues) => void;
-  endpoint?: ApiEndpoint | null;
-  onClose?: () => void;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  onSubmit: (data: EndpointFormValues) => void;
 }
 
-function AddEndpointDialog({ 
+const AddEndpointDialog: React.FC<AddEndpointDialogProps> = ({ 
   open, 
   onOpenChange, 
-  onSubmit, 
-  endpoint,
-  onClose
-}: AddEndpointDialogProps) {
+  onSubmit 
+}) => {
   const form = useForm<EndpointFormValues>({
-    resolver: zodResolver(endpointFormSchema),
+    resolver: zodResolver(endpointSchema),
     defaultValues: {
-      name: endpoint?.name || '',
-      url: endpoint?.url || '',
-      method: endpoint?.method || 'GET',
-      apiKey: endpoint?.apiKey || '',
-      status: endpoint?.status || 'active',
-      description: endpoint?.description || '',
-    },
+      name: "",
+      url: "",
+      apiKey: "",
+      method: "GET",
+      status: "active"
+    }
   });
 
-  const handleSubmit = (values: EndpointFormValues) => {
-    onSubmit(values);
-    if (!endpoint) {
-      form.reset();
-    }
-  };
-
-  const handleDialogClose = () => {
-    if (onClose) {
-      onClose();
-    }
-    if (!endpoint) {
-      form.reset();
-    }
+  const handleSubmit = (data: EndpointFormValues) => {
+    onSubmit(data);
+    form.reset();
   };
 
   return (
-    <Dialog open={open} onOpenChange={(newOpen) => {
-      if (!newOpen) {
-        handleDialogClose();
-      }
-      if (onOpenChange) {
-        onOpenChange(newOpen);
-      }
-    }}>
-      <DialogContent className="sm:max-w-[550px]">
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>{endpoint ? 'Edit Endpoint' : 'Add New Endpoint'}</DialogTitle>
+          <DialogTitle>Add API Endpoint</DialogTitle>
+          <DialogDescription>
+            Add a new API endpoint to your Tech Hub. Fill in the details below.
+          </DialogDescription>
         </DialogHeader>
+        
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
+          <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4 pt-4">
             <FormField
               control={form.control}
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Endpoint Name</FormLabel>
+                  <FormLabel>Name</FormLabel>
                   <FormControl>
-                    <Input placeholder="Get User Profile" {...field} />
+                    <Input placeholder="Analytics API" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -100,7 +82,21 @@ function AddEndpointDialog({
                 <FormItem>
                   <FormLabel>URL</FormLabel>
                   <FormControl>
-                    <Input placeholder="https://api.example.com/users/{id}" {...field} />
+                    <Input placeholder="https://api.example.com/v1/data" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            
+            <FormField
+              control={form.control}
+              name="apiKey"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>API Key</FormLabel>
+                  <FormControl>
+                    <Input placeholder="sk_live_..." type="password" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -114,7 +110,10 @@ function AddEndpointDialog({
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Method</FormLabel>
-                    <Select onValueChange={field.onChange} value={field.value}>
+                    <Select 
+                      onValueChange={field.onChange} 
+                      defaultValue={field.value}
+                    >
                       <FormControl>
                         <SelectTrigger>
                           <SelectValue placeholder="Select method" />
@@ -125,7 +124,6 @@ function AddEndpointDialog({
                         <SelectItem value="POST">POST</SelectItem>
                         <SelectItem value="PUT">PUT</SelectItem>
                         <SelectItem value="DELETE">DELETE</SelectItem>
-                        <SelectItem value="PATCH">PATCH</SelectItem>
                       </SelectContent>
                     </Select>
                     <FormMessage />
@@ -139,7 +137,10 @@ function AddEndpointDialog({
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Status</FormLabel>
-                    <Select onValueChange={field.onChange} value={field.value}>
+                    <Select 
+                      onValueChange={field.onChange} 
+                      defaultValue={field.value}
+                    >
                       <FormControl>
                         <SelectTrigger>
                           <SelectValue placeholder="Select status" />
@@ -156,52 +157,21 @@ function AddEndpointDialog({
               />
             </div>
             
-            <FormField
-              control={form.control}
-              name="apiKey"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>API Key (Optional)</FormLabel>
-                  <FormControl>
-                    <Input type="password" placeholder="Enter API key" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            
-            <FormField
-              control={form.control}
-              name="description"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Description (Optional)</FormLabel>
-                  <FormControl>
-                    <Textarea 
-                      placeholder="Describe what this endpoint does" 
-                      className="resize-none" 
-                      {...field} 
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            
-            <div className="flex justify-end space-x-2 pt-4">
-              <Button type="button" variant="outline" onClick={handleDialogClose}>
+            <DialogFooter className="pt-4">
+              <Button 
+                type="button" 
+                variant="outline" 
+                onClick={() => onOpenChange(false)}
+              >
                 Cancel
               </Button>
-              <Button type="submit">
-                {endpoint ? 'Update' : 'Add'} Endpoint
-              </Button>
-            </div>
+              <Button type="submit">Add Endpoint</Button>
+            </DialogFooter>
           </form>
         </Form>
       </DialogContent>
     </Dialog>
   );
-}
+};
 
-// Add a default export
 export default AddEndpointDialog;

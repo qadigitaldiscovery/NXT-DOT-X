@@ -1,7 +1,9 @@
 
 import * as React from "react"
 import { cva } from "class-variance-authority"
+import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
+import { ChevronLeft, ChevronRight, Menu } from "lucide-react"
 import { useSidebar } from "./sidebar-context"
 
 const sidebarVariants = cva(
@@ -66,17 +68,18 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
   ) => {
     const {
       state,
+      open,
+      setOpen,
       isMobile,
       openMobile,
       setOpenMobile,
+      toggleSidebar,
     } = useSidebar()
 
     React.useEffect(() => {
       const handleResize = () => {
         if (collapsible === "auto" && !isMobile) {
-          // Handle responsive behavior
-          const shouldBeOpen = window.innerWidth > 1024;
-          useSidebar().setOpen(shouldBeOpen);
+          setOpen(window.innerWidth > 1024)
         }
       }
 
@@ -90,7 +93,7 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
           window.removeEventListener("resize", handleResize)
         }
       }
-    }, [collapsible, isMobile])
+    }, [collapsible, setOpen, isMobile])
 
     return (
       <>

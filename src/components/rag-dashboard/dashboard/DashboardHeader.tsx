@@ -1,49 +1,34 @@
-
 import React from 'react';
+import { Button } from '@/components/ui/button';
 import { RefreshCw, Settings } from 'lucide-react';
-import { useDashboard } from '../providers/DashboardProvider';
-import { cn } from '@/lib/utils';
+import { useDashboardContext } from '../providers/DashboardProvider';
 
 interface DashboardHeaderProps {
   onBatchOperationsOpen: () => void;
 }
 
+// Change to named export to match how it's being imported in RAGDashboardPage
 export const DashboardHeader: React.FC<DashboardHeaderProps> = ({
   onBatchOperationsOpen
 }) => {
-  const { refreshData: handleRefresh, loading: isRefreshing } = useDashboard();
+  const { handleRefresh, isRefreshing } = useDashboardContext();
 
   return (
     <div className="flex items-center justify-between mb-8">
       <h1 className="text-2xl font-bold">System Status Dashboard</h1>
       <div className="flex items-center space-x-3">
-        <a 
-          href="#"
-          onClick={(e) => {
-            e.preventDefault();
-            if (!isRefreshing) handleRefresh();
-          }}
-          className={cn(
-            "inline-flex items-center text-sm font-medium text-primary hover:text-primary/80 hover:underline",
-            isRefreshing && "opacity-50 pointer-events-none"
-          )}
-          aria-label="Refresh dashboard data"
+        <Button 
+          variant="outline" 
+          onClick={handleRefresh}
+          disabled={isRefreshing}
         >
-          <RefreshCw className={`mr-2 h-4 w-4 ${isRefreshing ? 'animate-spin' : ''}`} aria-hidden="true" />
+          <RefreshCw className={`mr-2 h-4 w-4 ${isRefreshing ? 'animate-spin' : ''}`} />
           Refresh
-        </a>
-        <a 
-          href="#"
-          onClick={(e) => {
-            e.preventDefault();
-            onBatchOperationsOpen();
-          }}
-          className="inline-flex items-center text-sm font-medium text-primary hover:text-primary/80 hover:underline"
-          aria-label="Open batch operations"
-        >
-          <Settings className="mr-2 h-4 w-4" aria-hidden="true" />
+        </Button>
+        <Button onClick={onBatchOperationsOpen}>
+          <Settings className="mr-2 h-4 w-4" />
           Batch Operations
-        </a>
+        </Button>
       </div>
     </div>
   );

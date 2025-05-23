@@ -1,4 +1,3 @@
-
 import { Supplier as LocalSupplier } from './supplier';
 import { Vendor } from './vendor';
 import { Supplier as ApiSupplier } from '@/hooks/suppliers/types';
@@ -32,7 +31,7 @@ export function vendorToPartner(vendor: Vendor): Partner {
     id: vendor.id || '',
     type: 'vendor',
     name: vendor.name || vendor.company_name || '',
-    credit_rating: vendor.creditRating as 'A' | 'B' | 'C' | 'D' | 'F' || 'B',
+    credit_rating: vendor.credit_rating || 'B',
     status: vendor.status || 'active'
   };
 }

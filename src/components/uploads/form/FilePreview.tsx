@@ -1,91 +1,18 @@
 
-import { useState, useEffect } from 'react';
-import { Card, CardContent } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
+import React, { useState, useEffect } from 'react';
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { FileTypeIcon } from "../FileTypeIcon";
 import { FileSize } from "../FileSize";
-import { ExcelService } from '@/utils/excel';
 
 type FilePreviewProps = {
   file: File | null;
   onDetectedSupplier?: (supplierName: string) => void;
 };
 
-type ExcelData = Array<{[key: string]: string | number | boolean | Date | null}>;
-
 export function FilePreview({ file, onDetectedSupplier }: FilePreviewProps) {
   const [previewContent, setPreviewContent] = useState<string | null>(null);
   const [extractedSupplier, setExtractedSupplier] = useState<string | null>(null);
-
-  const extractSupplierFromExcel = (jsonData: ExcelData): boolean => {
-    if (jsonData.length > 0) {
-      const firstRow = jsonData[0];
-      const headers = Object.keys(firstRow);
-      
-      // Look for supplier information in headers
-      const supplierHeaderIndex = headers ? 
-        headers.findIndex(header => 
-          String(header).toLowerCase().includes('supplier') ||
-          String(header).toLowerCase().includes('vendor') ||
-          String(header).toLowerCase().includes('manufacturer')
-        ) : -1;
-      
-      if (supplierHeaderIndex !== -1 && firstRow) {
-        const headerName = headers[supplierHeaderIndex];
-        const supplierName = firstRow[headerName];
-        if (supplierName) {
-          setExtractedSupplier(String(supplierName));
-          if (onDetectedSupplier) onDetectedSupplier(String(supplierName));
-          return true;
-        }
-      }
-    }
-    return false;
-  };
-
-  const extractSupplierFromFilename = (filename: string): boolean => {
-    const possibleName = filename
-      .replace(/\.(xlsx|xls|pdf|csv)$/, '')
-      .replace(/[_-]cost[_-]?list/i, '')
-      .replace(/[_-]price[_-]?list/i, '')
-      .replace(/[_-]catalog/i, '');
-    
-    if (possibleName && possibleName !== filename) {
-      setExtractedSupplier(possibleName);
-      if (onDetectedSupplier) onDetectedSupplier(possibleName);
-      return true;
-    }
-    return false;
-  };
-
-  const extractSupplierFromText = (lines: string[]): boolean => {
-    const supplierIndicators = [
-      /supplier\s*:\s*(.*)/i,
-      /vendor\s*:\s*(.*)/i,
-      /company\s*:\s*(.*)/i,
-      /from\s*:\s*(.*)/i,
-      /manufacturer\s*:\s*(.*)/i
-    ];
-    
-    for (const line of lines) {
-      for (const pattern of supplierIndicators) {
-        const match = line.match(pattern);
-        if (match && match[1] && match[1].trim()) {
-          setExtractedSupplier(match[1].trim());
-          if (onDetectedSupplier) onDetectedSupplier(match[1].trim());
-          return true;
-        }
-      }
-    }
-    
-    if (lines.length > 0 && lines[0].trim()) {
-      const firstLine = lines[0].trim();
-      setExtractedSupplier(firstLine);
-      if (onDetectedSupplier) onDetectedSupplier(firstLine);
-      return true;
-    }
-    return false;
-  };
   
   useEffect(() => {
     if (!file) {
@@ -101,43 +28,76 @@ export function FilePreview({ file, onDetectedSupplier }: FilePreviewProps) {
         const content = e.target?.result?.toString() || '';
         setPreviewContent(content.slice(0, 500) + (content.length > 500 ? '...' : ''));
         
+        // Simple extraction of potential supplier name from first few lines
         const lines = content.split('\n').slice(0, 10);
-        if (!extractSupplierFromText(lines)) {
-          extractSupplierFromFilename(file.name);
-        }
+        extractSupplierInfo(lines);
       };
       reader.readAsText(file);
     } 
-    // For Excel files - use ExcelJS to extract and preview content
+    // For Excel files - we can't preview content, but can show file info
     else if (file.name.endsWith('.xlsx') || file.name.endsWith('.xls')) {
-      const processExcelFile = async () => {
-        try {
-          const jsonData = await ExcelService.readExcelFile(file);
-          
-          // Create preview from the first few rows
-          const previewRows = jsonData.slice(0, 5).map(row => 
-            Object.values(row).join('\t')
-          );
-          setPreviewContent(previewRows.join('\n'));
-          
-          if (!extractSupplierFromExcel(jsonData)) {
-            extractSupplierFromFilename(file.name);
-          }
-        } catch (err) {
-          console.error('Error parsing Excel file:', err);
-          setPreviewContent('Error reading Excel file');
-          extractSupplierFromFilename(file.name);
-        }
-      };
+      setPreviewContent('Excel file preview not available');
+      // TODO: In a real implementation, we would use a library like SheetJS to extract data
+      // For now, let's try to extract from filename
+      const possibleName = file.name
+        .replace(/\.(xlsx|xls)$/, '')
+        .replace(/[_-]cost[_-]?list/i, '')
+        .replace(/[_-]price[_-]?list/i, '')
+        .replace(/[_-]catalog/i, '');
       
-      processExcelFile();
+      if (possibleName && possibleName !== file.name) {
+        setExtractedSupplier(possibleName);
+        if (onDetectedSupplier) onDetectedSupplier(possibleName);
+      }
     }
     // For PDFs - we can't easily extract content in the browser
     else if (file.type === 'application/pdf' || file.name.endsWith('.pdf')) {
       setPreviewContent('PDF preview not available');
-      extractSupplierFromFilename(file.name);
+      // Try to extract from filename
+      const possibleName = file.name
+        .replace(/\.pdf$/, '')
+        .replace(/[_-]cost[_-]?list/i, '')
+        .replace(/[_-]price[_-]?list/i, '')
+        .replace(/[_-]catalog/i, '');
+      
+      if (possibleName && possibleName !== file.name) {
+        setExtractedSupplier(possibleName);
+        if (onDetectedSupplier) onDetectedSupplier(possibleName);
+      }
     }
   }, [file, onDetectedSupplier]);
+  
+  const extractSupplierInfo = (lines: string[]) => {
+    // Look for common patterns that might indicate supplier information
+    // This is a simplified approach - a real system would be more sophisticated
+    
+    const supplierIndicators = [
+      /supplier\s*:\s*(.*)/i,
+      /vendor\s*:\s*(.*)/i,
+      /company\s*:\s*(.*)/i,
+      /from\s*:\s*(.*)/i,
+      /manufacturer\s*:\s*(.*)/i
+    ];
+    
+    for (const line of lines) {
+      for (const pattern of supplierIndicators) {
+        const match = line.match(pattern);
+        if (match && match[1] && match[1].trim()) {
+          setExtractedSupplier(match[1].trim());
+          if (onDetectedSupplier) onDetectedSupplier(match[1].trim());
+          return;
+        }
+      }
+    }
+    
+    // If we couldn't find a specific supplier indicator, try the first line
+    // which often contains the company name in cost files
+    if (lines.length > 0 && lines[0].trim()) {
+      const firstLine = lines[0].trim();
+      setExtractedSupplier(firstLine);
+      if (onDetectedSupplier) onDetectedSupplier(firstLine);
+    }
+  };
   
   if (!file) return null;
   

@@ -8,13 +8,13 @@ import { useSidebar } from "./sidebar-context"
 import { SidebarMenuButtonProps } from "./types"
 
 export const sidebarMenuButtonVariants = cva(
-  "peer/menu-button flex w-full items-center gap-2 overflow-hidden rounded-md p-2 text-left text-sm outline-none transition-[width,height,padding] hover:text-sidebar-accent-foreground hover:underline focus-visible:ring-2 active:text-sidebar-accent-foreground disabled:pointer-events-none disabled:opacity-50 group-has-[[data-sidebar=menu-action]]/menu-item:pr-8 aria-disabled:pointer-events-none aria-disabled:opacity-50 data-[active=true]:font-medium data-[active=true]:text-sidebar-accent-foreground data-[state=open]:hover:text-sidebar-accent-foreground group-data-[collapsible=icon]:!size-8 group-data-[collapsible=icon]:!p-2 [&>span:last-child]:truncate [&>svg]:size-4 [&>svg]:shrink-0",
+  "peer/menu-button flex w-full items-center gap-2 overflow-hidden rounded-md p-2 text-left text-sm outline-none ring-sidebar-ring transition-[width,height,padding] hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:ring-2 active:bg-sidebar-accent active:text-sidebar-accent-foreground disabled:pointer-events-none disabled:opacity-50 group-has-[[data-sidebar=menu-action]]/menu-item:pr-8 aria-disabled:pointer-events-none aria-disabled:opacity-50 data-[active=true]:bg-sidebar-accent data-[active=true]:font-medium data-[active=true]:text-sidebar-accent-foreground data-[state=open]:hover:bg-sidebar-accent data-[state=open]:hover:text-sidebar-accent-foreground group-data-[collapsible=icon]:!size-8 group-data-[collapsible=icon]:!p-2 [&>span:last-child]:truncate [&>svg]:size-4 [&>svg]:shrink-0",
   {
     variants: {
       variant: {
-        default: "hover:text-sidebar-accent-foreground",
+        default: "hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
         outline:
-          "bg-background hover:text-sidebar-accent-foreground hover:underline",
+          "bg-background shadow-[0_0_0_1px_hsl(var(--sidebar-border))] hover:bg-sidebar-accent hover:text-sidebar-accent-foreground hover:shadow-[0_0_0_1px_hsl(var(--sidebar-accent))]",
       },
       size: {
         default: "h-8 text-sm",
@@ -30,8 +30,8 @@ export const sidebarMenuButtonVariants = cva(
 )
 
 const SidebarMenuButton = React.forwardRef<
-  HTMLAnchorElement,
-  Omit<SidebarMenuButtonProps, 'ref'> & React.AnchorHTMLAttributes<HTMLAnchorElement>
+  HTMLButtonElement,
+  SidebarMenuButtonProps
 >(
   (
     {
@@ -45,28 +45,12 @@ const SidebarMenuButton = React.forwardRef<
     },
     ref
   ) => {
-    const Comp = asChild ? Slot : "a"
-    
-    // Safely access sidebar context, providing fallback values if not in a SidebarProvider
-    let sidebarContext;
-    try {
-      sidebarContext = useSidebar();
-    } catch (error) {
-      // If the context isn't available, provide default values
-      sidebarContext = { isMobile: false, state: "expanded" };
-      console.warn("SidebarMenuButton used outside of SidebarProvider - using default values");
-    }
-    
-    const { isMobile, state } = sidebarContext;
+    const Comp = asChild ? Slot : "button"
+    const { isMobile, state } = useSidebar()
 
     const button = (
       <Comp
         ref={ref}
-        href="#"
-        onClick={(e: React.MouseEvent<HTMLAnchorElement>) => {
-          e.preventDefault();
-          if (props.onClick) props.onClick(e);
-        }}
         data-sidebar="menu-button"
         data-size={size}
         data-active={isActive}
@@ -85,23 +69,17 @@ const SidebarMenuButton = React.forwardRef<
       }
     }
 
-    // Only show tooltip if we have it and the sidebar is collapsed
-    const showTooltip = tooltip && state === "collapsed" && !isMobile;
-
-    if (showTooltip) {
-      return (
-        <Tooltip>
-          <TooltipTrigger asChild>{button}</TooltipTrigger>
-          <TooltipContent
-            side="right"
-            align="center"
-            {...tooltip}
-          />
-        </Tooltip>
-      );
-    }
-
-    return button;
+    return (
+      <Tooltip>
+        <TooltipTrigger asChild>{button}</TooltipTrigger>
+        <TooltipContent
+          side="right"
+          align="center"
+          hidden={state !== "collapsed" || isMobile}
+          {...tooltip}
+        />
+      </Tooltip>
+    )
   }
 )
 SidebarMenuButton.displayName = "SidebarMenuButton"

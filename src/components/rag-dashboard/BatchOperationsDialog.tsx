@@ -1,5 +1,5 @@
 
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { 
   Dialog, 
   DialogContent, 
@@ -81,14 +81,6 @@ const BatchOperationsDialog: React.FC<BatchOperationsDialogProps> = ({
     }
   };
   
-  // Helper function to get status display color
-  const getStatusDisplayColor = (status: string) => {
-    if (status === 'green') return 'bg-green-500';
-    if (status === 'orange') return 'bg-amber-500';
-    if (status === 'red') return 'bg-red-500';
-    return 'bg-gray-500';
-  };
-  
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogContent className="max-w-md">
@@ -159,7 +151,11 @@ const BatchOperationsDialog: React.FC<BatchOperationsDialogProps> = ({
                   >
                     {module.name}
                   </label>
-                  <span className={`h-2 w-2 rounded-full ml-2 ${getStatusDisplayColor(module.status)}`} />
+                  <span className={`h-2 w-2 rounded-full ml-2 ${
+                    module.status === 'green' ? 'bg-green-500' : 
+                    module.status === 'orange' ? 'bg-amber-500' : 
+                    module.status === 'red' ? 'bg-red-500' : 'bg-gray-500'
+                  }`} />
                 </div>
               ))}
               

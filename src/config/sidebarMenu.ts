@@ -1,48 +1,94 @@
 
 import { 
-  LayoutDashboard, 
-  Building2, 
-  FileText, 
-  FolderKanban,
-  Briefcase, 
-  Users, 
-  Building, 
-  LineChart, 
-  GitCompareArrows,
-  FileCode, 
-  Files, 
-  CalendarClock, 
-  AlertCircle,
-  FileInput,
-  Settings
+  Home, Users, FileText, BarChart3, Settings, 
+  Box, Truck, Building, ShoppingCart, Layers,
+  Clock, Shield, AlertTriangle, FileCheck
 } from 'lucide-react';
-import { SidebarItem } from '@/types/vendor';
+import type { SidebarItem } from '@/types/vendor';
 
 export const sidebarMenu: SidebarItem[] = [
-  { key: 'dashboards', label: 'Dashboards', path: '/dashboards', icon: LayoutDashboard },
-  { key: 'vendors', label: 'Vendors', path: '/vendors', icon: Building2 },
-  { key: 'contracts', label: 'Contracts', path: '/contracts', icon: FileText },
-  { key: 'categories', label: 'Categories', path: '/categories', icon: FolderKanban },
-  { key: 'projects', label: 'Projects', path: '/projects', icon: Briefcase },
-  { key: 'teams', label: 'Teams', path: '/teams', icon: Users },
-  { key: 'entities', label: 'Entities', path: '/entities', icon: Building },
-  { key: 'scorecards', label: 'Scorecards', path: '/scorecards', icon: LineChart },
-  { key: 'workflows', label: 'Workflows', path: '/workflows', icon: GitCompareArrows },
-  { key: 'ai-extract', label: 'AI Extract', path: '/ai-extract', icon: FileCode },
-  { key: 'files', label: 'Files', path: '/files', icon: Files },
-  { key: 'events', label: 'Events', path: '/events', icon: CalendarClock },
-  { key: 'risk-register', label: 'Risk Register', path: '/risk-register', icon: AlertCircle },
-  { key: 'requests', label: 'Submit Requests', path: '/requests', icon: FileInput },
   {
-    key: 'admin',
-    label: 'Admin Panel',
-    path: '/admin',
+    id: "dashboard",
+    title: "Dashboard",
+    icon: Home,
+    path: "/vendors/dashboard",
+  },
+  {
+    id: "suppliers",
+    title: "Suppliers",
+    icon: Truck,
+    path: "/vendors/suppliers",
+  },
+  {
+    id: "customers",
+    title: "Customers",
+    icon: Users,
+    path: "/vendors/customers",
+  },
+  {
+    id: "contracts",
+    title: "Contracts",
+    icon: FileText,
+    path: "/vendors/contracts",
+  },
+  {
+    id: "spend",
+    title: "Spend Analysis",
+    icon: BarChart3,
+    path: "/vendors/spend",
+  },
+  {
+    id: "products",
+    title: "Products",
+    icon: Box,
+    path: "/vendors/products",
+  },
+  {
+    id: "inventory",
+    title: "Inventory",
+    icon: Layers,
+    path: "/vendors/inventory",
+  },
+  {
+    id: "orders",
+    title: "Orders",
+    icon: ShoppingCart,
+    path: "/vendors/orders",
+  },
+  {
+    id: "organizations",
+    title: "Organizations",
+    icon: Building,
+    path: "/vendors/organizations",
+  },
+  {
+    id: "history",
+    title: "History",
+    icon: Clock,
+    path: "/vendors/history",
+  },
+  {
+    id: "risk",
+    title: "Risk Management",
+    icon: AlertTriangle,
+    path: "/vendors/risk",
+  },
+  {
+    id: "compliance",
+    title: "Compliance",
+    icon: Shield,
+    path: "/vendors/compliance",
+  },
+  {
+    id: "reports",
+    title: "Reports",
+    icon: FileCheck,
+    path: "/vendors/reports",
+  },
+  {
+    id: "settings",
+    title: "Settings",
     icon: Settings,
-    permissions: ['admin'],
-    children: [
-      { key: 'api-settings', label: 'API Settings', path: '/admin/api', icon: FileCode },
-      { key: 'user-roles', label: 'User & Roles', path: '/admin/users', icon: Users },
-      { key: 'logs', label: 'Audit Logs', path: '/admin/logs', icon: CalendarClock },
-    ]
+    path: "/vendors/settings",
   }
 ];

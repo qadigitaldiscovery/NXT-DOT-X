@@ -1,38 +1,26 @@
 
-import { RefreshCw } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import React from 'react';
+import { Button } from "@/components/ui/button";
+import { RefreshCw } from "lucide-react";
 
 interface RefreshButtonProps {
+  isRefreshing: boolean;
   onRefresh: () => void;
-  isLoading?: boolean;
-  isRefreshing?: boolean; // For backward compatibility
 }
 
-export function RefreshButton({ 
-  onRefresh, 
-  isLoading = false,
-  isRefreshing = false 
-}: RefreshButtonProps) {
-  // Use either isLoading or isRefreshing (for backward compatibility)
-  const loading = isLoading || isRefreshing;
-  
+const RefreshButton = ({ isRefreshing, onRefresh }: RefreshButtonProps) => {
   return (
-    <a 
-      href="#"
-      onClick={(e) => {
-        e.preventDefault();
-        if (!loading) {
-          onRefresh();
-        }
-      }}
-      className={cn(
-        "inline-flex items-center text-sm font-medium text-primary hover:text-primary/80 hover:underline",
-        loading ? "opacity-50 pointer-events-none" : ""
-      )}
-      aria-label="Refresh data"
+    <Button 
+      variant="outline" 
+      size="sm"
+      onClick={onRefresh} 
+      disabled={isRefreshing}
+      className="flex items-center gap-1"
     >
-      <RefreshCw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} aria-hidden="true" />
-      Refresh
-    </a>
+      <RefreshCw className={`h-4 w-4 ${isRefreshing ? 'animate-spin' : ''}`} />
+      {isRefreshing ? 'Refreshing...' : 'Refresh Tables'}
+    </Button>
   );
-}
+};
+
+export default RefreshButton;

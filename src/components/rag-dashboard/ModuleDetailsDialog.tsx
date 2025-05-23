@@ -1,5 +1,4 @@
-
-import { useState } from 'react';
+import React, { useState } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -58,6 +57,7 @@ export default function ModuleDetailsDialog({
   if (!module) return null;
 
   const unresolved = alerts.filter(a => !a.resolved);
+  const resolvedCount = alerts.length - unresolved.length;
   
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>

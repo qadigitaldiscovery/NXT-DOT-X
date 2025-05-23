@@ -1,62 +1,48 @@
 
 import React from 'react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Plus } from 'lucide-react';
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Users } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
-const CustomerManagement = () => {
+export default function CustomerManagement() {
+  const navigate = useNavigate();
+
   return (
-    <div className="p-6 space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-3xl font-bold tracking-tight">Customer Management</h2>
-          <p className="text-muted-foreground">
-            Manage your customer relationships and data.
-          </p>
+    <Card className="col-span-1">
+      <CardHeader className="pb-2">
+        <CardTitle className="flex items-center space-x-2">
+          <Users className="w-5 h-5 text-teal-500" />
+          <span>Customer Management</span>
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="pb-2">
+        <p className="text-sm text-gray-500">
+          Manage customer relationships, track interactions, and analyze customer data.
+        </p>
+        <div className="mt-4 space-y-3">
+          <div className="flex items-center gap-2">
+            <div className="w-2 h-2 rounded-full bg-green-500"></div>
+            <span className="text-sm">Customer directory</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="w-2 h-2 rounded-full bg-green-500"></div>
+            <span className="text-sm">Interaction history</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="w-2 h-2 rounded-full bg-green-500"></div>
+            <span className="text-sm">Analytics</span>
+          </div>
         </div>
-        <Button className="flex items-center gap-2">
-          <Plus className="h-4 w-4" /> Add Customer
+      </CardContent>
+      <CardFooter>
+        <Button 
+          onClick={() => navigate('/customer-management')} 
+          className="w-full"
+        >
+          Open Customer Management
         </Button>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <Card>
-          <CardHeader>
-            <CardTitle>Total Customers</CardTitle>
-            <CardDescription>Active accounts in your system</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <p className="text-4xl font-bold">287</p>
-            <p className="text-sm text-muted-foreground mt-2">+12% from last month</p>
-          </CardContent>
-        </Card>
-        
-        <Card>
-          <CardHeader>
-            <CardTitle>Pending Approvals</CardTitle>
-            <CardDescription>Accounts requiring verification</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <p className="text-4xl font-bold">24</p>
-            <p className="text-sm text-muted-foreground mt-2">-3% from last month</p>
-          </CardContent>
-        </Card>
-        
-        <Card>
-          <CardHeader>
-            <CardTitle>Recent Activity</CardTitle>
-            <CardDescription>Last 30 days</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <p className="text-4xl font-bold">152</p>
-            <p className="text-sm text-muted-foreground mt-2">+8% from previous period</p>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Additional content would go here */}
-    </div>
+      </CardFooter>
+    </Card>
   );
-};
-
-export default CustomerManagement;
+}

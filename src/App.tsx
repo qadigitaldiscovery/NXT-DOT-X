@@ -1,17 +1,29 @@
+import React, { Suspense } from 'react';
+import { BrowserRouter } from 'react-router-dom';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'; // Import QueryClient and QueryClientProvider
+import IndexRouter from './routes/IndexRouter';
+import MainLayout from './layouts/MainLayout';
+import './App.css'; // This should likely be relative to src, or configured via CSS imports
 
-import { BrowserRouter as Router, Routes } from "react-router-dom";
-import AppRoutes from "@/routes/appRoutes_vFinal";
-import { ErrorBoundary } from "@/components/ErrorBoundary";
-import { AuthProvider } from "@/context/AuthContext";
+// Create a client
+const queryClient = new QueryClient();
 
-export default function App() {
+/**
+ * Root application component
+ * Provides routing and layout structure
+ */
+const App: React.FC = () => {
   return (
-    <AuthProvider>
-      <Router>
-        <ErrorBoundary>
-          <AppRoutes />
-        </ErrorBoundary>
-      </Router>
-    </AuthProvider>
+    <BrowserRouter>
+      <QueryClientProvider client={queryClient}> {/* Wrap with QueryClientProvider */}
+        <Suspense fallback={<div className="loading-app">Loading application...</div>}>
+          <MainLayout>
+            <IndexRouter />
+          </MainLayout>
+        </Suspense>
+      </QueryClientProvider>
+    </BrowserRouter>
   );
-}
+};
+
+export default App;

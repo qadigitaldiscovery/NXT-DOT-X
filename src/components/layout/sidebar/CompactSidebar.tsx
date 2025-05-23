@@ -1,48 +1,71 @@
 
 import React from 'react';
-import { useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
-import { NavItem } from './types';
+import { NavLink } from 'react-router-dom';
+import { NavItem, NavCategory } from './types';
 
 interface CompactSidebarProps {
-  navItems: NavItem[];
+  categories?: NavCategory[];
+  navItems?: NavItem[];
+  userRole?: string;
+  homeItem?: NavItem;
+  textColor?: string;
+  activeBgColor?: string;
+  activeTextColor?: string;
+  hoverBgColor?: string;
 }
 
-export const CompactSidebar: React.FC<CompactSidebarProps> = ({
+export const CompactSidebar = ({ 
+  categories,
   navItems,
-}) => {
-  const location = useLocation();
+  homeItem,
+  textColor = "text-gray-300",
+  activeBgColor = "bg-indigo-500",
+  activeTextColor = "text-white",
+  hoverBgColor = "hover:bg-indigo-900/50"
+}: CompactSidebarProps) => {
+  // Prepare items for display
+  const allItems = [...(navItems || [])];
   
-  return (
-    <div className="flex flex-col items-center space-y-4 py-2">
-      {navItems.map((item) => {
-        const isActive = location.pathname === item.path || location.pathname.startsWith(`${item.path}/`);
-        const Icon = item.icon;
+  // If we have categories, flatten their items
+  if (categories && categories.length > 0) {
+    categories.forEach(category => {
+      allItems.push(...category.items);
+    });
+  }
 
-        return (
-          <div 
-            key={item.path || item.label} 
-            className="relative group"
-            aria-label={item.label}
-          >
-            <a
-              href={item.path}
-              className={cn(
-                "flex flex-col items-center justify-center w-10 h-10 rounded-md",
-                isActive ? "bg-indigo-500 text-white" : "text-gray-300 hover:bg-indigo-900/50 hover:text-white",
-                "transition-colors"
-              )}
-            >
-              {Icon && <Icon className="h-5 w-5" />}
-            </a>
-            
-            {/* Tooltip */}
-            <div className="absolute left-12 px-2 py-1 bg-gray-800 text-xs text-white rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
-              {item.label}
-            </div>
-          </div>
-        );
-      })}
+  return (
+    <div className="flex flex-col items-center py-4 space-y-4">
+      {allItems.map((item) => (
+        <NavLink
+          key={item.path || item.href || item.label}
+          to={item.path || item.href || '#'}
+          className={({ isActive }) => cn(
+            "w-10 h-10 flex items-center justify-center rounded-md",
+            isActive 
+              ? `${activeBgColor} ${activeTextColor}` 
+              : `${textColor} ${hoverBgColor}`
+          )}
+          title={item.label}
+        >
+          {item.icon && typeof item.icon === 'function' && <item.icon className="h-5 w-5" />}
+        </NavLink>
+      ))}
+      
+      {homeItem && (
+        <NavLink
+          to={homeItem.path || homeItem.href || '/'}
+          className={({ isActive }) => cn(
+            "mt-auto w-10 h-10 flex items-center justify-center rounded-md",
+            isActive 
+              ? `${activeBgColor} ${activeTextColor}` 
+              : `${textColor} ${hoverBgColor}`
+          )}
+          title={homeItem.label}
+        >
+          {homeItem.icon && typeof homeItem.icon === 'function' && <homeItem.icon className="h-5 w-5" />}
+        </NavLink>
+      )}
     </div>
   );
 };

@@ -1,9 +1,8 @@
 
-import React from "react";
 import { Route } from "react-router-dom";
 import { PlatformLayout } from '@/components/layouts/PlatformLayout';
 import ContractsPage from "@/pages/auto/ContractsPage";
-import { FileText, ClipboardCheck, Calendar, AlertCircle, Plus } from 'lucide-react';
+import { FileText, ClipboardCheck, Calendar, AlertCircle, Plus, Upload } from 'lucide-react';
 import { NavCategory } from '@/components/layout/sidebar/types';
 
 export const ContractsNavCategories: NavCategory[] = [
@@ -14,6 +13,7 @@ export const ContractsNavCategories: NavCategory[] = [
       { label: "Dashboard", path: "/contracts", icon: FileText },
       { label: "All Contracts", path: "/contracts/list", icon: ClipboardCheck },
       { label: "Create Contract", path: "/contracts/new", icon: Plus },
+      { label: "Bulk Upload", path: "/contracts/bulk-upload", icon: Upload },
       { label: "Calendar View", path: "/contracts/calendar", icon: Calendar },
       { label: "Expiring Soon", path: "/contracts/expiring", icon: AlertCircle }
     ]
@@ -21,8 +21,8 @@ export const ContractsNavCategories: NavCategory[] = [
 ];
 
 export const ContractsRoutes = () => {
-  return [
-    <Route key="contracts-index" path="/contracts">
+  return (
+    <Route path="/contracts">
       <Route index element={
         <PlatformLayout
           moduleTitle="Contracts Dashboard"
@@ -47,6 +47,14 @@ export const ContractsRoutes = () => {
           <ContractsPage />
         </PlatformLayout>
       } />
+      <Route path="bulk-upload" element={
+        <PlatformLayout
+          moduleTitle="Bulk Upload Contracts"
+          navCategories={ContractsNavCategories}
+        >
+          <ContractsPage />
+        </PlatformLayout>
+      } />
       <Route path="calendar" element={
         <PlatformLayout
           moduleTitle="Contracts Calendar"
@@ -64,5 +72,5 @@ export const ContractsRoutes = () => {
         </PlatformLayout>
       } />
     </Route>
-  ];
+  );
 };

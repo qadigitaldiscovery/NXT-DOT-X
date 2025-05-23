@@ -1,62 +1,75 @@
 
-import { toast } from '@/hooks/use-toast';
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
+import { createOpenAIClient } from './client';
+import { useToast } from '@/components/ui/use-toast';
 
+// Main hook for using OpenAI in components
 export const useOpenAI = () => {
-  const [isLoading, setIsLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const { toast } = useToast();
 
-  const sendMessage = async (
-    message: string,
+  // Get API key - in a real app, this would be fetched securely
+  const getApiKey = () => {
+    // This is a simplified version; in production, you'd use a more secure method
+    const apiKey = localStorage.getItem('openai_api_key');
+    if (!apiKey) {
+      throw new Error('OpenAI API key not found');
+    }
+    return apiKey;
+  };
+
+  const sendMessage = useCallback(async (
+    userMessage: string,
     model: string = 'gpt-4o-mini',
     options: {
-      systemPrompt?: string;
-      temperature?: number;
+      systemPrompt?: string,
+      temperature?: number,
+      maxTokens?: number
     } = {}
-  ): Promise<string> => {
-    setIsLoading(true);
-    
+  ) => {
+    const {
+      systemPrompt = 'You are a helpful assistant.',
+      temperature = 0.7,
+      maxTokens = 1000
+    } = options;
+
+    setLoading(true);
+    setError(null);
+
     try {
-      // This is a mock implementation
-      // In a real app, this would make an API call to OpenAI
-      
-      // Simulate API call delay
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // Mock response based on input
-      let response = '';
-      
-      if (message.toLowerCase().includes('error')) {
-        throw new Error('Simulated API error');
-      }
-      
-      if (options.systemPrompt?.includes('BrandGPT')) {
-        response = `Brand Analysis for your query: "${message}"\n\n` +
-          "## Brand Perception\n" +
-          "- Your brand is currently perceived as innovative but not accessible\n" +
-          "- Competitors are outperforming in customer engagement metrics\n\n" +
-          "## Recommendations\n" +
-          "1. Increase social media engagement with more interactive content\n" +
-          "2. Consider price-point adjustments for broader market appeal\n" +
-          "3. Highlight your sustainability initiatives which resonate with your target demographic";
-      } else {
-        response = `I've analyzed your message: "${message}"\n\n` +
-          "Here are my thoughts:\n" +
-          "1. This is a simulated response\n" +
-          "2. In a real implementation, this would connect to an AI service\n" +
-          "3. The temperature setting you chose was: " + (options.temperature || 'default');
-      }
-      
-      return response;
-    } catch (error) {
-      toast.error(`AI Error: ${error instanceof Error ? error.message : "Unknown error occurred"}`);
-      throw error;
+      const apiKey = getApiKey();
+      const client = createOpenAIClient(apiKey);
+
+      const response = await client.createChatCompletion({
+        model,
+        messages: [
+          { role: 'system', content: systemPrompt },
+          { role: 'user', content: userMessage }
+        ],
+        temperature,
+        max_tokens: maxTokens
+      });
+
+      return response.choices[0].message.content;
+    } catch (err: any) {
+      console.error('OpenAI API error:', err);
+      const errorMessage = err.message || 'Failed to get response from AI';
+      setError(errorMessage);
+      toast({
+        title: 'AI Request Failed',
+        description: errorMessage,
+        variant: 'destructive',
+      });
+      throw err;
     } finally {
-      setIsLoading(false);
+      setLoading(false);
     }
-  };
-  
+  }, [toast]);
+
   return {
     sendMessage,
-    isLoading
+    loading,
+    error
   };
 };

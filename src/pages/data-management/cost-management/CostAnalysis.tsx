@@ -11,7 +11,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
-import { toast } from "../../../components/ui/toast";
+import { toast } from "sonner";
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { 
   Dialog,
@@ -32,7 +32,7 @@ const filterSchema = z.object({
   categories: z.array(z.string()).optional(),
   minCost: z.string().optional(),
   maxCost: z.string().optional(),
-  includeInactive: z.boolean(),
+  includeInactive: z.boolean().default(false),
   dateFrom: z.string().optional(),
   dateTo: z.string().optional()
 });
@@ -64,15 +64,9 @@ export default function CostAnalysis() {
   const handleTimeRangeChange = (value: CostAnalysisOptions['timeRange']) => {
     try {
       setTimeRange(value);
-      toast.default({
-        title: "Success",
-        description: `Updated time range to ${getTimeRangeLabel(value)}`
-      });
+      toast.success(`Updated time range to ${getTimeRangeLabel(value)}`);
     } catch (err) {
-      toast.error({
-        title: "Error",
-        description: 'Failed to update time range'
-      });
+      toast.error('Failed to update time range');
       console.error('Error updating time range:', err);
     }
   };
@@ -80,16 +74,10 @@ export default function CostAnalysis() {
   // Handle export action
   const handleExport = () => {
     try {
-      toast.default({
-        title: "Success",
-        description: 'Exporting cost analysis data...'
-      });
+      toast.success('Exporting cost analysis data...');
       // In a real app, trigger actual export functionality
     } catch (err) {
-      toast.error({
-        title: "Error",
-        description: 'Failed to export data'
-      });
+      toast.error('Failed to export data');
       console.error('Error exporting data:', err);
     }
   };
@@ -99,10 +87,7 @@ export default function CostAnalysis() {
     try {
       setShowFilterDialog(true);
     } catch (err) {
-      toast.error({
-        title: "Error",
-        description: 'Failed to open filter dialog'
-      });
+      toast.error('Failed to open filter dialog');
       console.error('Error opening filter:', err);
     }
   };
@@ -111,18 +96,12 @@ export default function CostAnalysis() {
   const onSubmitFilter = (data: FilterFormData) => {
     try {
       console.log('Applied filters:', data);
-      toast.default({
-        title: "Success",
-        description: 'Filters applied successfully'
-      });
+      toast.success('Filters applied successfully');
       setShowFilterDialog(false);
       
       // In a real app, we'd apply these filters to the query
     } catch (err) {
-      toast.error({
-        title: "Error",
-        description: 'Failed to apply filters'
-      });
+      toast.error('Failed to apply filters');
       console.error('Error applying filters:', err);
     }
   };
@@ -133,16 +112,10 @@ export default function CostAnalysis() {
       setIsRefreshing(true);
       setError(null);
       await refetch();
-      toast.default({
-        title: "Success",
-        description: 'Data refreshed successfully'
-      });
+      toast.success('Data refreshed successfully');
     } catch (err) {
       setError('Failed to refresh data. Please try again.');
-      toast.error({
-        title: "Error",
-        description: 'Failed to refresh data'
-      });
+      toast.error('Failed to refresh data');
       console.error('Error refreshing data:', err);
     } finally {
       setIsRefreshing(false);
@@ -231,44 +204,28 @@ export default function CostAnalysis() {
           title="Average Cost Change"
           icon={<BarChart3 className="h-4 w-4 text-muted-foreground" />}
           value={data?.averageCostChange.value || 0}
-          change={data?.averageCostChange.change || {
-            value: 0,
-            isPositive: true,
-            text: 'no change'
-          }}
+          change={data?.averageCostChange.change || 0}
         />
         
         <CostMetricCard
           title="Cost Savings Identified"
           icon={<DollarSign className="h-4 w-4 text-muted-foreground" />}
           value={data?.costSavings.value || 0}
-          change={data?.costSavings.change || {
-            value: 0,
-            isPositive: true,
-            text: 'no change'
-          }}
+          change={data?.costSavings.change || 0}
         />
         
         <CostMetricCard
           title="Suppliers with Price Increases"
           icon={<BarChart3 className="h-4 w-4 text-muted-foreground" />}
           value={data?.suppliersWithIncreases.value || 0}
-          change={data?.suppliersWithIncreases.change || {
-            value: 0,
-            isPositive: true,
-            text: 'no change'
-          }}
+          change={data?.suppliersWithIncreases.change || 0}
         />
         
         <CostMetricCard
           title="Products with Price Alerts"
           icon={<BarChart3 className="h-4 w-4 text-muted-foreground" />}
           value={data?.productsWithAlerts.value || 0}
-          change={data?.productsWithAlerts.change || {
-            value: 0,
-            isPositive: true,
-            text: 'no change'
-          }}
+          change={data?.productsWithAlerts.change || 0}
         />
       </div>
       

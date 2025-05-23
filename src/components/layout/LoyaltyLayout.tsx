@@ -1,28 +1,19 @@
-import { Outlet } from 'react-router-dom';
-import { SharedNavbar } from './SharedNavbar';
-import { Sidebar } from '@/components/ui/sidebar';
+import React from 'react';
 
-export function LoyaltyLayout() {
-  const handleMenuClick = () => {
-    console.log('Menu clicked');
-    // Implement menu toggle functionality if needed
-  };
+interface LoyaltyLayoutProps {
+  children: React.ReactNode;
+}
 
+const LoyaltyLayout: React.FC<LoyaltyLayoutProps> = ({ children }) => {
   return (
-    <div className="flex min-h-screen flex-col bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
-      <div className="flex flex-1">
-        <Sidebar className="border-r bg-white/80 backdrop-blur-sm">
-          {/* Sidebar content can be added here if needed */}
-        </Sidebar>
-        <div className="flex-1 flex flex-col">
-          <SharedNavbar onMenuClick={handleMenuClick} moduleTitle="Loyalty Rewards" />
-          <main className="flex-1 overflow-auto p-6">
-            <div className="max-w-7xl mx-auto">
-              <Outlet />
-            </div>
-          </main>
-        </div>
-      </div>
+    <div className="loyalty-layout">
+      {/* Placeholder for Loyalty-specific header/navigation */}
+      <main className="loyalty-content">
+        {children}
+      </main>
+      {/* Placeholder for Loyalty-specific footer */}
     </div>
   );
-}
+};
+
+export { LoyaltyLayout };

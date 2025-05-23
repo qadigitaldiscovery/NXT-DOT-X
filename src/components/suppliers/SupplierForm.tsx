@@ -12,6 +12,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import {
   Select,
   SelectContent,
@@ -19,7 +20,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { ArrowLeft, Trash2 } from "lucide-react";
+import { ArrowLeft, Save, Trash2 } from "lucide-react";
 import { Supplier, useCreateSupplier, useUpdateSupplier } from '@/hooks/use-suppliers';
 
 type SupplierFormProps = {
@@ -49,7 +50,7 @@ export function SupplierForm({ initialData, isEditing = false, onDelete }: Suppl
     setFormData(prev => ({ ...prev, [name]: value }));
   };
   
-  const handleStatusChange = (value: "active" | "inactive") => {
+  const handleStatusChange = (value: string) => {
     setFormData(prev => ({ ...prev, status: value }));
   };
   
@@ -206,7 +207,8 @@ export function SupplierForm({ initialData, isEditing = false, onDelete }: Suppl
               type="submit"
               disabled={isCreating || isUpdating}
             >
-              {isCreating || isUpdating ? 'Saving...' : 'Save Supplier'}
+              <Save className="h-4 w-4 mr-2" />
+              {isEditing ? 'Update' : 'Save'}
             </Button>
           </div>
         </CardFooter>

@@ -1,27 +1,10 @@
-
 import React from 'react';
-import { DashboardHeader } from '@/components/beta2/dashboard/DashboardHeader';
-import { LoyaltyStatusCard } from '@/components/beta2/dashboard/LoyaltyStatusCard';
-import { QuickNavSection } from '@/components/beta2/dashboard/QuickNavSection';
-import { GettingStartedGuide } from '@/components/beta2/dashboard/GettingStartedGuide';
 
-const LoyaltyDashboard = () => {
+const LoyaltyDashboard: React.FC = () => {
   return (
-    <div className="space-y-8">
-      {/* Header */}
-      <DashboardHeader 
-        title="Loyalty Rewards Module" 
-        description="Welcome to the loyalty program management platform."
-      />
-      
-      {/* Account status card */}
-      <LoyaltyStatusCard />
-      
-      {/* Quick navigation cards */}
-      <QuickNavSection />
-      
-      {/* Getting Started Guide */}
-      <GettingStartedGuide />
+    <div className="module-container">
+      <h1>Loyalty Program Dashboard</h1>
+      <p>Overview of the loyalty program and key metrics.</p>
     </div>
   );
 };

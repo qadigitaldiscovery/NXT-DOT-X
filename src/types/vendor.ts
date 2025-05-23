@@ -1,59 +1,41 @@
 
-import { LucideIcon } from 'lucide-react';
-
 export interface SidebarItem {
-  key: string;
-  label: string;
+  id: string;
+  title: string;
+  icon?: React.ComponentType<any>;
   path: string;
-  icon: LucideIcon;
-  permissions?: string[];
   children?: SidebarItem[];
 }
 
 export interface TabItem {
-  key: string;
+  id: string;
   label: string;
-  icon?: LucideIcon;
+  content: React.ReactNode;
 }
 
 export interface Vendor {
   id: string;
   name: string;
-  company_name?: string;
-  type: 'supplier' | 'vendor';
-  creditRating?: string;
-  creditRisk?: string;
-  creditLimit?: string;
-  localScore?: number;
-  local_score?: number;  // Support both naming conventions
-  status: 'active' | 'inactive';
-  address?: string;
-  phone?: string;
   email?: string;
+  phone?: string;
+  rating?: number;
+  status?: string;
+  createdAt?: string;
+  updatedAt?: string;
+  localScore?: number;
   website?: string;
-  contact?: string;
-  description?: string;
-  created_at?: string;
+}
+
+export interface VendorTab {
+  id: string;
+  label: string;
+  content: React.ReactNode;
 }
 
 export interface VendorReport {
   id: string;
-  vendor_id: string;
-  file_path: string;
-  fetched_at: string;
-}
-
-export interface SubScore {
-  name: string;
-  value: number;
-  color: string;
-  paymentTimeliness?: number;
-  financialHealth?: number;
-  operationalStability?: number;
-}
-
-export interface VendorWithDetails extends Vendor {
-  credit_ratings?: any[];
-  vendor_reports?: VendorReport[];
-  vendor_performance?: any[];
+  title: string;
+  description: string;
+  createdAt: string;
+  fileUrl: string;
 }

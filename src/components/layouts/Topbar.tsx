@@ -1,10 +1,9 @@
-
 import React, { memo } from 'react';
 import { ThemeToggle } from '@/components/theme-toggle';
 import { UserMenu } from '@/components/user-menu';
 import { NavLink } from 'react-router-dom';
 import { cn } from '@/lib/utils';
-import { navCategories } from '@/components/layout/sidebar/NavigationConfig';
+import { navCategories } from '../layout/sidebar/NavigationConfig';
 import { Search, Bell, HelpCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
@@ -16,8 +15,8 @@ interface TopbarProps {
 const Topbar: React.FC<TopbarProps> = memo(({ moduleTitle = '' }) => {
   // Get top-level navigation items from all categories
   const mainNavLinks = navCategories.map(category => ({
-    name: category.label || '',
-    href: `/${category.label?.toLowerCase().replace(/\s+/g, '-') || ''}`,
+    name: category.label,
+    href: `/${category.label.toLowerCase().replace(/\s+/g, '-')}`,
   }));
 
   return (
