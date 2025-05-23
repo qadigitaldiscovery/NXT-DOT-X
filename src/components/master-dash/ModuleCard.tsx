@@ -1,63 +1,79 @@
 
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { ArrowRight } from 'lucide-react';
 
-interface ModuleCardProps {
+export interface ModuleCardProps {
   title: string;
   description: string;
-  icon?: React.ReactNode;
+  icon: React.ReactNode;
+  features: Array<{
+    name: string;
+    path: string;
+  }>;
+  onClick: () => void;
   variant?: 'default' | 'premium';
-  features?: Array<{ name: string; path: string }>;
-  onClick?: () => void;
+  className?: string;
 }
 
 export const ModuleCard: React.FC<ModuleCardProps> = ({
   title,
   description,
   icon,
+  features,
+  onClick,
   variant = 'default',
-  features = [],
-  onClick
+  className = ''
 }) => {
-  const navigate = useNavigate();
-
-  const handleClick = () => {
-    if (onClick) {
-      onClick();
-    } else {
-      // Convert title to route path
-      const route = title.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
-      navigate(`/${route}`);
-    }
-  };
-
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
-      <div className="flex items-center mb-4">
-        {icon && <div className="mr-3 text-blue-500">{icon}</div>}
-        <h3 className="text-xl font-semibold text-gray-900 dark:text-white">{title}</h3>
-      </div>
-      
-      <p className="text-gray-600 dark:text-gray-300 mb-4">{description}</p>
-      
-      {features.length > 0 && (
-        <div className="mb-4">
-          <ul className="text-sm text-gray-500 dark:text-gray-400">
-            {features.map((feature, index) => (
-              <li key={index}>• {feature.name}</li>
-            ))}
-          </ul>
+    <Card 
+      className={`
+        group cursor-pointer transition-all duration-300 hover:shadow-xl hover:scale-105
+        ${variant === 'premium' ? 'border-gold bg-gradient-to-br from-amber-50 to-yellow-50' : 'border-gray-200 hover:border-blue-300'}
+        ${className}
+      `}
+      onClick={onClick}
+    >
+      <CardHeader className="pb-3">
+        <div className="flex items-center gap-3 mb-2">
+          <div className={`
+            p-2 rounded-lg
+            ${variant === 'premium' ? 'bg-gradient-to-br from-amber-100 to-yellow-100 text-amber-600' : 'bg-blue-100 text-blue-600'}
+          `}>
+            {icon}
+          </div>
+          <CardTitle className="text-xl">{title}</CardTitle>
         </div>
-      )}
+        <CardDescription className="text-gray-600">
+          {description}
+        </CardDescription>
+      </CardHeader>
       
-      <Button 
-        onClick={handleClick}
-        className="w-full"
-        variant={variant === 'premium' ? 'default' : 'outline'}
-      >
-        Open Module
-      </Button>
-    </div>
+      <CardContent className="pt-0">
+        <div className="space-y-2 mb-4">
+          {features.slice(0, 4).map((feature, index) => (
+            <div key={index} className="flex items-center text-sm text-gray-600">
+              <ArrowRight className="h-3 w-3 mr-2 text-gray-400" />
+              {feature.name}
+            </div>
+          ))}
+        </div>
+        
+        <Button 
+          className={`
+            w-full group-hover:translate-x-1 transition-transform
+            ${variant === 'premium' ? 'bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-600 hover:to-yellow-600' : ''}
+          `}
+          onClick={(e) => {
+            e.stopPropagation();
+            onClick();
+          }}
+        >
+          Open Module
+          <ArrowRight className="ml-2 h-4 w-4" />
+        </Button>
+      </CardContent>
+    </Card>
   );
 };

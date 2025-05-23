@@ -1,7 +1,6 @@
 
 import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
-import SimpleLayout from '@/components/layout/SimpleLayout';
 
 // Pages
 import Landing from '@/pages/Landing';
@@ -22,24 +21,22 @@ export const AppRoutes = () => {
       <Route path="/unauthorized" element={<Unauthorized />} />
       
       {/* Main Application Routes */}
-      <Route path="/" element={<SimpleLayout />}>
-        <Route path="master" element={<MasterDash />} />
-        <Route path="rag-dashboard" element={<RAGDashboard />} />
-        <Route path="settings" element={<Settings />} />
-        
-        {/* Module Routes - Simple pages for now */}
-        <Route path="data-management" element={<div className="text-center py-8"><h1 className="text-2xl font-bold">Data Management Module</h1><p className="mt-4">Coming Soon</p></div>} />
-        <Route path="loyalty-rewards" element={<div className="text-center py-8"><h1 className="text-2xl font-bold">Loyalty & Rewards Module</h1><p className="mt-4">Coming Soon</p></div>} />
-        <Route path="trading-system" element={<div className="text-center py-8"><h1 className="text-2xl font-bold">Trading System Module</h1><p className="mt-4">Coming Soon</p></div>} />
-        <Route path="social-media" element={<div className="text-center py-8"><h1 className="text-2xl font-bold">Social Media Module</h1><p className="mt-4">Coming Soon</p></div>} />
-        <Route path="tech-hub" element={<div className="text-center py-8"><h1 className="text-2xl font-bold">Tech Hub Module</h1><p className="mt-4">Coming Soon</p></div>} />
-        <Route path="dot-x" element={<div className="text-center py-8"><h1 className="text-2xl font-bold">DOT-X Module</h1><p className="mt-4">Coming Soon</p></div>} />
-        <Route path="brand-marketing" element={<div className="text-center py-8"><h1 className="text-2xl font-bold">Brand Marketing Module</h1><p className="mt-4">Coming Soon</p></div>} />
-        <Route path="projects" element={<div className="text-center py-8"><h1 className="text-2xl font-bold">Project Management Module</h1><p className="mt-4">Coming Soon</p></div>} />
-        
-        {/* 404 Page */}
-        <Route path="*" element={<NotFound />} />
-      </Route>
+      <Route path="/master" element={<MasterDash />} />
+      <Route path="/rag-dashboard" element={<RAGDashboard />} />
+      <Route path="/settings" element={<Settings />} />
+      
+      {/* Module Routes - Simple pages for now */}
+      <Route path="/data-management/*" element={<div className="p-8"><h1 className="text-2xl">Data Management Module</h1></div>} />
+      <Route path="/dot-x/*" element={<div className="p-8"><h1 className="text-2xl">DOT-X Operations Module</h1></div>} />
+      <Route path="/tech-hub/*" element={<div className="p-8"><h1 className="text-2xl">Tech Hub Module</h1></div>} />
+      <Route path="/brand-marketing/*" element={<div className="p-8"><h1 className="text-2xl">Brand Marketing Module</h1></div>} />
+      <Route path="/projects/*" element={<div className="p-8"><h1 className="text-2xl">Project Management Module</h1></div>} />
+      <Route path="/loyalty-rewards/*" element={<div className="p-8"><h1 className="text-2xl">Loyalty & Rewards Module</h1></div>} />
+      <Route path="/trading-system/*" element={<div className="p-8"><h1 className="text-2xl">Trading System Module</h1></div>} />
+      <Route path="/social-media/*" element={<div className="p-8"><h1 className="text-2xl">Social Media Marketing Module</h1></div>} />
+      
+      {/* Catch all route */}
+      <Route path="*" element={<NotFound />} />
     </Routes>
   );
 };
