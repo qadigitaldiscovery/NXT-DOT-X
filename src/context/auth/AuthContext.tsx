@@ -18,7 +18,13 @@ const mockAdminUser = {
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user] = useState(mockAdminUser);
-  const [session] = useState({ user: mockAdminUser, access_token: 'mock-token' });
+  const [session] = useState({ 
+    user: mockAdminUser, 
+    access_token: 'mock-token',
+    refresh_token: 'mock-refresh',
+    expires_in: 3600,
+    token_type: 'bearer'
+  });
   const [loading] = useState(false);
 
   // Mock login function - always succeeds

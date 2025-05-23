@@ -1,17 +1,19 @@
 
 import React from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Download } from "lucide-react";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Download } from 'lucide-react';
 
-export const SampleCsvSection = () => {
-  const sampleData = `name,email,phone,address,category
-Acme Corporation,contact@acme.com,555-0123,123 Main St,Technology
-Beta Industries,info@beta.com,555-0456,456 Oak Ave,Manufacturing
-Gamma Solutions,sales@gamma.com,555-0789,789 Pine Rd,Services`;
+export function SampleCsvSection() {
+  const downloadSampleCsv = () => {
+    const sampleData = [
+      ['name', 'code', 'email', 'phone', 'website', 'status', 'contact_name', 'payment_terms'],
+      ['Acme Corp', 'ACM001', 'contact@acme.com', '+1234567890', 'https://acme.com', 'active', 'John Doe', 'Net 30'],
+      ['Beta Industries', 'BET002', 'info@beta.com', '+1987654321', 'https://beta.com', 'active', 'Jane Smith', 'Net 60']
+    ];
 
-  const downloadSample = () => {
-    const blob = new Blob([sampleData], { type: 'text/csv' });
+    const csvContent = sampleData.map(row => row.join(',')).join('\n');
+    const blob = new Blob([csvContent], { type: 'text/csv' });
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
@@ -23,19 +25,38 @@ Gamma Solutions,sales@gamma.com,555-0789,789 Pine Rd,Services`;
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Sample CSV Format</CardTitle>
+        <CardTitle>CSV Format Requirements</CardTitle>
         <CardDescription>
-          Download a sample CSV file to see the expected format for bulk supplier uploads.
+          Your CSV file should include the following columns
         </CardDescription>
       </CardHeader>
-      <CardContent>
-        <Button onClick={downloadSample} variant="outline" className="w-full">
-          <Download className="mr-2 h-4 w-4" />
+      <CardContent className="space-y-4">
+        <div className="grid grid-cols-2 gap-4 text-sm">
+          <div>
+            <strong>Required columns:</strong>
+            <ul className="list-disc list-inside mt-2 space-y-1">
+              <li>name</li>
+              <li>code</li>
+            </ul>
+          </div>
+          <div>
+            <strong>Optional columns:</strong>
+            <ul className="list-disc list-inside mt-2 space-y-1">
+              <li>email</li>
+              <li>phone</li>
+              <li>website</li>
+              <li>status</li>
+              <li>contact_name</li>
+              <li>payment_terms</li>
+            </ul>
+          </div>
+        </div>
+
+        <Button onClick={downloadSampleCsv} variant="outline" className="w-full">
+          <Download className="h-4 w-4 mr-2" />
           Download Sample CSV
         </Button>
       </CardContent>
     </Card>
   );
-};
-
-export default SampleCsvSection;
+}

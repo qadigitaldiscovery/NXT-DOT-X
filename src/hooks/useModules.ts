@@ -26,7 +26,10 @@ export const useModules = () => {
         
       if (error) throw error;
       
-      setModules(data || []);
+      setModules(data?.map(item => ({
+        ...item,
+        description: item.description || undefined
+      })) || []);
     } catch (err) {
       console.error('Error fetching modules:', err);
       setError(err instanceof Error ? err : new Error('Unknown error fetching modules'));

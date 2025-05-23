@@ -1,12 +1,15 @@
 
-export type Supplier = {
+export interface Supplier {
   id: string;
   name: string;
   code: string;
-  contact_name: string | null;
-  email: string | null;
-  phone: string | null;
-  website: string | null;
-  payment_terms: string | null;
+  email?: string | null;
+  phone?: string | null;
+  website?: string | null;
   status: string;
-};
+  contact_name?: string | null;
+  payment_terms?: string | null;
+  discount_structure?: any;
+  created_at?: string | null;
+  updated_at?: string | null;
+}

@@ -1,40 +1,34 @@
 
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useState } from 'react';
 import { toast } from 'sonner';
+import { supabase } from '@/integrations/supabase/client';
+import { Supplier } from './types';
 
-export interface BulkSupplierData {
-  name: string;
-  email?: string;
-  phone?: string;
-  address?: string;
-  category?: string;
-}
+export function useBulkCreateSuppliers() {
+  const [isLoading, setIsLoading] = useState(false);
 
-export const useBulkCreateSuppliers = () => {
-  const queryClient = useQueryClient();
+  const bulkCreateSuppliers = async (suppliers: Omit<Supplier, 'id'>[]) => {
+    setIsLoading(true);
+    try {
+      const { data, error } = await supabase
+        .from('suppliers')
+        .insert(suppliers)
+        .select();
 
-  return useMutation({
-    mutationFn: async (suppliers: BulkSupplierData[]) => {
-      // Mock implementation for bulk supplier creation
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // Simulate processing each supplier
-      const results = suppliers.map((supplier, index) => ({
-        ...supplier,
-        id: `supplier-${Date.now()}-${index}`,
-        created_at: new Date().toISOString(),
-        status: 'active'
-      }));
+      if (error) {
+        throw error;
+      }
 
-      return results;
-    },
-    onSuccess: (data) => {
       toast.success(`Successfully created ${data.length} suppliers`);
-      queryClient.invalidateQueries({ queryKey: ['suppliers'] });
-    },
-    onError: (error) => {
-      console.error('Error creating suppliers:', error);
+      return { data, error: null };
+    } catch (error) {
+      console.error('Error bulk creating suppliers:', error);
       toast.error('Failed to create suppliers');
+      return { data: null, error };
+    } finally {
+      setIsLoading(false);
     }
-  });
-};
+  };
+
+  return { bulkCreateSuppliers, isLoading };
+}

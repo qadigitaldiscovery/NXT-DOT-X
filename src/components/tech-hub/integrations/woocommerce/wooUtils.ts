@@ -34,7 +34,7 @@ export async function fetchWooConfig(): Promise<WooCommerceConfig | null> {
       return {
         id: configData.id,
         integration_type: 'woocommerce',
-        ...(configData.config as any)
+        ...configData.config
       } as WooCommerceConfig;
     }
 
@@ -74,7 +74,7 @@ export async function saveWooConfig(
       const { error } = await supabase
         .from('integration_configs')
         .update({
-          config: config as any,
+          config: config,
           updated_at: new Date().toISOString()
         })
         .eq('id', existingConfig.id);
@@ -93,7 +93,7 @@ export async function saveWooConfig(
         .insert({
           name: 'WooCommerce Integration',
           integration_type: 'woocommerce',
-          config: config as any,
+          config: config,
           is_active: true,
           created_by: 'admin'
         })
