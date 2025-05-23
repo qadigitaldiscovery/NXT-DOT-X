@@ -34,3 +34,10 @@ export interface VendorDetail {
   created_at: string;
   sub_scores?: SubScore[];
 }
+
+export interface Vendor extends VendorDetail {
+  status?: string;
+  contact_email?: string;
+  phone?: string;
+  address?: string;
+}

@@ -1,9 +1,15 @@
 
 import React, { useState } from 'react';
-import { Chart, FilePlus, Search, Package, FileSpreadsheet, Settings } from 'lucide-react';
+import { BarChart3, FilePlus, Search, Package, FileSpreadsheet, Settings } from 'lucide-react';
 import { SharedSidebar } from './SharedSidebar';
 import { SharedNavbar } from './SharedNavbar';
-import { SidebarItem } from './sidebar/types';
+
+interface SidebarItem {
+  id: string;
+  label: string;
+  icon: any;
+  path: string;
+}
 
 export const VendorLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -12,7 +18,7 @@ export const VendorLayout: React.FC<{ children: React.ReactNode }> = ({ children
     {
       id: 'overview',
       label: 'Overview',
-      icon: Chart,
+      icon: BarChart3,
       path: '/vendors'
     },
     {
@@ -60,7 +66,8 @@ export const VendorLayout: React.FC<{ children: React.ReactNode }> = ({ children
           id: item.id,
           label: item.label,
           icon: item.icon,
-          path: item.path
+          path: item.path,
+          items: []
         }))}
       />
       <div className="flex flex-col flex-1 overflow-hidden">

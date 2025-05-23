@@ -1,19 +1,28 @@
 
 import * as React from "react"
 
-import {
-  type ToastActionElement,
-  type ToastProps,
-} from "@/components/ui/toast"
+type ToastVariant = "default" | "destructive"
+
+type ToastAction = {
+  altText: string
+  action: React.ReactElement
+}
+
+interface Toast {
+  id: string
+  title?: React.ReactNode
+  description?: React.ReactNode
+  action?: ToastAction
+  variant?: ToastVariant
+  open?: boolean
+  onOpenChange?: (open: boolean) => void
+}
 
 const TOAST_LIMIT = 1
 const TOAST_REMOVE_DELAY = 1000000
 
-type ToasterToast = ToastProps & {
+type ToasterToast = Toast & {
   id: string
-  title?: React.ReactNode
-  description?: React.ReactNode
-  action?: ToastActionElement
 }
 
 const actionTypes = {
@@ -91,8 +100,6 @@ export const reducer = (state: State, action: Action): State => {
     case "DISMISS_TOAST": {
       const { toastId } = action
 
-      // ! Side effects ! - This could be extracted into a dismissToast() action,
-      // but I'll keep it here for simplicity
       if (toastId) {
         addToRemoveQueue(toastId)
       } else {
@@ -138,15 +145,9 @@ function dispatch(action: Action) {
   })
 }
 
-type ToastType = Omit<ToasterToast, "id">
+type Toast2 = Omit<ToasterToast, "id">
 
-interface ToastReturnType {
-  id: string
-  dismiss: () => void
-  update: (props: ToasterToast) => void
-}
-
-function toast(props: ToastType): ToastReturnType {
+function toast({ ...props }: Toast2) {
   const id = genId()
 
   const update = (props: ToasterToast) =>
@@ -174,23 +175,6 @@ function toast(props: ToastType): ToastReturnType {
     update,
   }
 }
-
-// Add success and error methods to toast
-toast.success = (message: string) => {
-  return toast({
-    title: "Success",
-    description: message,
-    variant: "default",
-  });
-};
-
-toast.error = (message: string) => {
-  return toast({
-    title: "Error",
-    description: message,
-    variant: "destructive",
-  });
-};
 
 function useToast() {
   const [state, setState] = React.useState<State>(memoryState)

@@ -1,32 +1,41 @@
+
 import { useState, useEffect } from 'react';
-import { supabase } from '../lib/supabase';
+
+interface VendorSupplierData {
+  id: string;
+  name: string;
+  type: 'vendor' | 'supplier';
+  status: string;
+}
 
 export const useVendorSupplierIntegration = () => {
-  const [vendors, setVendors] = useState([]);
-  const [suppliers, setSuppliers] = useState([]);
+  const [vendors, setVendors] = useState<VendorSupplierData[]>([]);
+  const [suppliers, setSuppliers] = useState<VendorSupplierData[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
-      setLoading(true);
       try {
-        const { data: vendorData, error: vendorError } = await supabase
-          .from('vendors')
-          .select('*')
-          .eq('type', 'vendor');
-        if (vendorError) throw vendorError;
-
-        const { data: supplierData, error: supplierError } = await supabase
-          .from('vendors')
-          .select('*')
-          .eq('type', 'supplier');
-        if (supplierError) throw supplierError;
-
-        setVendors(vendorData || []);
-        setSuppliers(supplierData || []);
+        setLoading(true);
+        
+        // Mock data
+        const mockVendors: VendorSupplierData[] = [
+          { id: '1', name: 'Vendor A', type: 'vendor', status: 'active' },
+          { id: '2', name: 'Vendor B', type: 'vendor', status: 'inactive' }
+        ];
+        
+        const mockSuppliers: VendorSupplierData[] = [
+          { id: '1', name: 'Supplier A', type: 'supplier', status: 'active' },
+          { id: '2', name: 'Supplier B', type: 'supplier', status: 'active' }
+        ];
+        
+        setVendors(mockVendors);
+        setSuppliers(mockSuppliers);
+        setError(null);
       } catch (err) {
-        setError(err);
+        console.error('Error fetching vendor/supplier data:', err);
+        setError('Failed to fetch data');
       } finally {
         setLoading(false);
       }
@@ -35,5 +44,10 @@ export const useVendorSupplierIntegration = () => {
     fetchData();
   }, []);
 
-  return { vendors, suppliers, loading, error };
+  return {
+    vendors,
+    suppliers,
+    loading,
+    error
+  };
 };

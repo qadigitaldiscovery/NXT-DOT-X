@@ -1,94 +1,105 @@
 
-import { 
-  Home, Users, FileText, BarChart3, Settings, 
-  Box, Truck, Building, ShoppingCart, Layers,
-  Clock, Shield, AlertTriangle, FileCheck
+import {
+  LayoutDashboard,
+  Users,
+  Package,
+  TrendingUp,
+  Settings,
+  FileText,
+  Calendar,
+  BarChart3,
+  Briefcase,
+  UserCheck,
+  Building,
+  ShoppingCart,
+  Globe
 } from 'lucide-react';
-import type { SidebarItem } from '@/types/vendor';
 
-export const sidebarMenu: SidebarItem[] = [
+export interface SidebarItem {
+  id: string;
+  label: string;
+  icon?: any;
+  path?: string;
+  items?: SidebarItem[];
+}
+
+export const sidebarMenuItems: SidebarItem[] = [
   {
-    id: "dashboard",
-    title: "Dashboard",
-    icon: Home,
-    path: "/vendors/dashboard",
+    id: 'dashboard',
+    label: 'Dashboard',
+    icon: LayoutDashboard,
+    path: '/dashboard'
   },
   {
-    id: "suppliers",
-    title: "Suppliers",
-    icon: Truck,
-    path: "/vendors/suppliers",
-  },
-  {
-    id: "customers",
-    title: "Customers",
-    icon: Users,
-    path: "/vendors/customers",
-  },
-  {
-    id: "contracts",
-    title: "Contracts",
-    icon: FileText,
-    path: "/vendors/contracts",
-  },
-  {
-    id: "spend",
-    title: "Spend Analysis",
+    id: 'data-management',
+    label: 'Data Management',
     icon: BarChart3,
-    path: "/vendors/spend",
+    path: '/data-management'
   },
   {
-    id: "products",
-    title: "Products",
-    icon: Box,
-    path: "/vendors/products",
-  },
-  {
-    id: "inventory",
-    title: "Inventory",
-    icon: Layers,
-    path: "/vendors/inventory",
-  },
-  {
-    id: "orders",
-    title: "Orders",
-    icon: ShoppingCart,
-    path: "/vendors/orders",
-  },
-  {
-    id: "organizations",
-    title: "Organizations",
+    id: 'suppliers',
+    label: 'Supplier Management',
     icon: Building,
-    path: "/vendors/organizations",
+    path: '/suppliers'
   },
   {
-    id: "history",
-    title: "History",
-    icon: Clock,
-    path: "/vendors/history",
+    id: 'customers',
+    label: 'Customer Management',
+    icon: Users,
+    path: '/customers'
   },
   {
-    id: "risk",
-    title: "Risk Management",
-    icon: AlertTriangle,
-    path: "/vendors/risk",
+    id: 'vendors',
+    label: 'Vendor Management',
+    icon: Briefcase,
+    path: '/vendors'
   },
   {
-    id: "compliance",
-    title: "Compliance",
-    icon: Shield,
-    path: "/vendors/compliance",
+    id: 'projects',
+    label: 'Project Management',
+    icon: Calendar,
+    path: '/projects'
   },
   {
-    id: "reports",
-    title: "Reports",
-    icon: FileCheck,
-    path: "/vendors/reports",
+    id: 'trading-system',
+    label: 'Trading System',
+    icon: TrendingUp,
+    path: '/trading-system'
   },
   {
-    id: "settings",
-    title: "Settings",
+    id: 'loyalty-rewards',
+    label: 'Loyalty & Rewards',
+    icon: UserCheck,
+    path: '/loyalty-rewards'
+  },
+  {
+    id: 'social-media',
+    label: 'Social Media',
+    icon: Globe,
+    path: '/social-media'
+  },
+  {
+    id: 'brand-marketing',
+    label: 'Brand Marketing',
+    icon: Package,
+    path: '/brand-marketing'
+  },
+  {
+    id: 'tech-hub',
+    label: 'Tech Hub',
     icon: Settings,
-    path: "/vendors/settings",
+    path: '/tech-hub'
+  },
+  {
+    id: 'dot-x',
+    label: 'DOT-X',
+    icon: ShoppingCart,
+    path: '/dot-x'
+  },
+  {
+    id: 'admin',
+    label: 'Administration',
+    icon: Settings,
+    path: '/admin'
   }
 ];

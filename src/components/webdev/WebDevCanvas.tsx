@@ -1,145 +1,102 @@
 
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
 import {
   ReactFlow,
-  Background,
-  Controls,
-  MiniMap,
-  Node,
-  Edge,
-  NodeTypes,
-  ReactFlowProvider,
+  addEdge,
   useNodesState,
   useEdgesState,
+  Controls,
+  Background,
+  Node,
+  Edge,
   Connection,
 } from '@xyflow/react';
-import { useWebDev } from '@/context/WebDevContext';
+import '@xyflow/react/dist/style.css';
+import { useModules } from '@/hooks/useModules';
 import ModuleNode from './nodes/ModuleNode';
 import MenuNode from './nodes/MenuNode';
 import PageNode from './nodes/PageNode';
-import InspectorPanel from './InspectorPanel';
-import '@xyflow/react/dist/style.css';
 
-// Define custom node types
-const nodeTypes: NodeTypes = {
-  module: ModuleNode as any,
-  menu: MenuNode as any,
-  page: PageNode as any,
+const nodeTypes = {
+  module: ModuleNode,
+  menu: MenuNode,
+  page: PageNode,
 };
 
-// The inner component that uses ReactFlow hooks
-const InnerFlow = () => {
-  const { 
-    nodes, 
-    edges, 
-    addEdge: addContextEdge, 
-    removeNode, 
-    removeEdge, 
-    selectNode, 
-    selectEdge 
-  } = useWebDev();
-  
-  const [reactFlowNodes, setReactFlowNodes] = useNodesState([]);
-  const [reactFlowEdges, setReactFlowEdges] = useEdgesState([]);
-  const [selectedElements, setSelectedElements] = useState<any[]>([]);
+interface CanvasNode extends Node {
+  type: 'module' | 'menu' | 'page';
+  data: {
+    label: string;
+    path?: string;
+    module?: any;
+    feature?: any;
+  };
+}
 
-  // Convert context nodes/edges to ReactFlow format
-  useEffect(() => {
-    const formattedNodes = nodes.map((node) => ({
-      id: node.id,
-      type: node.type,
-      data: node.data,
-      position: node.position,
-    }));
-    setReactFlowNodes(formattedNodes);
-    
-    const formattedEdges = edges.map((edge) => ({
-      id: edge.id,
-      source: edge.source,
-      target: edge.target,
-      type: edge.type || 'default',
-      label: edge.label,
-      data: edge.data,
-    }));
-    setReactFlowEdges(formattedEdges);
-  }, [nodes, edges, setReactFlowNodes, setReactFlowEdges]);
+interface CanvasEdge extends Edge {
+  data: any;
+}
 
-  // Handle new connections
-  const onConnect = useCallback(
-    (connection: Connection) => {
-      // Create a new edge in the context
-      if (connection.source && connection.target) {
-        addContextEdge({
-          source: connection.source,
-          target: connection.target,
-          type: 'default',
-        });
-      }
-    },
-    [addContextEdge]
-  );
-
-  // Handle node deletion
-  const onNodesDelete = useCallback(
-    (deleted: Node[]) => {
-      deleted.forEach((node) => removeNode(node.id));
-    },
-    [removeNode]
-  );
-
-  // Handle edge deletion
-  const onEdgesDelete = useCallback(
-    (deleted: Edge[]) => {
-      deleted.forEach((edge) => removeEdge(edge.id));
-    },
-    [removeEdge]
-  );
-
-  // Handle selection changes
-  const onSelectionChange = useCallback(
-    ({ nodes, edges }: { nodes: Node[]; edges: Edge[] }) => {
-      setSelectedElements([...nodes, ...edges]);
-      
-      if (nodes.length === 1) {
-        selectNode(nodes[0] as any);
-      } else if (nodes.length === 0 && edges.length === 1) {
-        selectEdge(edges[0] as any);
-      } else {
-        selectNode(null);
-        selectEdge(null);
-      }
-    },
-    [selectNode, selectEdge]
-  );
-
-  return (
-    <ReactFlow
-      nodes={reactFlowNodes}
-      edges={reactFlowEdges}
-      onNodesDelete={onNodesDelete}
-      onEdgesDelete={onEdgesDelete}
-      onConnect={onConnect}
-      onSelectionChange={onSelectionChange}
-      nodeTypes={nodeTypes}
-      fitView
-    >
-      <Background />
-      <Controls />
-      <MiniMap />
-    </ReactFlow>
-  );
-};
-
-// The outer component that provides ReactFlow context
 const WebDevCanvas: React.FC = () => {
+  const { modules } = useModules();
+  const [nodes, setNodes, onNodesChange] = useNodesState<CanvasNode>([]);
+  const [edges, setEdges, onEdgesChange] = useEdgesState<CanvasEdge>([]);
+
+  const onConnect = useCallback(
+    (params: Connection) => setEdges((eds) => addEdge(params, eds)),
+    [setEdges]
+  );
+
+  const generateNodes = useCallback(() => {
+    if (!modules || modules.length === 0) return;
+
+    const newNodes: CanvasNode[] = modules.map((module, index) => ({
+      id: `module-${module.id}`,
+      type: 'module' as const,
+      data: {
+        label: module.name,
+        path: module.path,
+        module: module,
+      },
+      position: { x: 100 + (index % 3) * 300, y: 100 + Math.floor(index / 3) * 200 },
+    }));
+
+    setNodes(newNodes);
+
+    const newEdges: CanvasEdge[] = modules.flatMap((module, moduleIndex) => {
+      if (!module.features) return [];
+      
+      return module.features.map((feature, featureIndex) => ({
+        id: `edge-${module.id}-${feature.name}`,
+        source: `module-${module.id}`,
+        target: `menu-${module.id}-${featureIndex}`,
+        type: 'default',
+        label: feature.name,
+        data: feature,
+      }));
+    });
+
+    setEdges(newEdges);
+  }, [modules, setNodes, setEdges]);
+
+  React.useEffect(() => {
+    generateNodes();
+  }, [generateNodes]);
+
   return (
-    <div className="flex h-[700px]">
-      <div className="flex-1">
-        <ReactFlowProvider>
-          <InnerFlow />
-        </ReactFlowProvider>
-      </div>
-      <InspectorPanel />
+    <div style={{ width: '100%', height: '600px' }}>
+      <ReactFlow
+        nodes={nodes}
+        edges={edges}
+        onNodesChange={onNodesChange}
+        onEdgesChange={onEdgesChange}
+        onConnect={onConnect}
+        nodeTypes={nodeTypes}
+        fitView
+      >
+        <Controls />
+        <Background />
+      </ReactFlow>
     </div>
   );
 };

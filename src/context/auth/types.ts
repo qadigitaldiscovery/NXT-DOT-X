@@ -30,3 +30,14 @@ export interface AuthContextType {
   hasPermission: (permission: string) => boolean;
   loading: boolean;
 }
+
+export interface AuthUser extends User {}
+
+export interface ProfileData {
+  id: string;
+  email: string;
+  username?: string;
+  role?: string;
+  permissions?: string[];
+  created_at: string;
+}
