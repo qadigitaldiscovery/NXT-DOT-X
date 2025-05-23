@@ -2,6 +2,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/context/AuthContext';
+import { toast } from 'sonner';
 
 export interface UserPreference {
   id: string;
@@ -20,7 +21,7 @@ interface UseUserPreferencesOptions {
 
 export const useUserPreferences = (options?: UseUserPreferencesOptions) => {
   const { user } = useAuth();
-  const [preferences, setPreferences] = useState<UserPreference[]>([]);
+  const [preferences, setPreferencesState] = useState<any>(options?.defaultValue || []);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 
@@ -32,16 +33,16 @@ export const useUserPreferences = (options?: UseUserPreferencesOptions) => {
 
     try {
       // Mock data instead of database call to avoid UUID errors
-      setPreferences([]);
+      setPreferencesState(options?.defaultValue || []);
       setError(null);
     } catch (err) {
       console.error('Error fetching preferences:', err);
       setError(err instanceof Error ? err : new Error('Unknown error'));
-      setPreferences([]);
+      setPreferencesState(options?.defaultValue || []);
     } finally {
       setLoading(false);
     }
-  }, [user?.id]);
+  }, [user?.id, options?.defaultValue]);
 
   useEffect(() => {
     fetchPreferences();
@@ -54,7 +55,7 @@ export const useUserPreferences = (options?: UseUserPreferencesOptions) => {
 
     try {
       // Mock update - just update local state
-      const newPreference: UserPreference = {
+      const newPreference = {
         id: `${module}-${key}`,
         user_id: user.id,
         module,
@@ -63,22 +64,21 @@ export const useUserPreferences = (options?: UseUserPreferencesOptions) => {
         updated_at: new Date().toISOString()
       };
 
-      setPreferences(prev => {
-        const filtered = prev.filter(p => !(p.module === module && p.key === key));
-        return [...filtered, newPreference];
-      });
+      setPreferencesState(value);
 
       return { success: true };
     } catch (err) {
       console.error('Error updating preference:', err);
-      return { success: false, error: err instanceof Error ? err : new Error('Unknown error') };
+      return { success: false, error: err instanceof Error ? err.message : 'Unknown error' };
     }
   };
 
   const setPreferences = async (newValue: any) => {
     if (options) {
-      return await updatePreference(options.module, options.key, newValue);
+      const result = await updatePreference(options.module, options.key, newValue);
+      return result;
     }
+    return { success: false, error: 'No options provided' };
   };
 
   const refetch = async () => {
@@ -87,19 +87,6 @@ export const useUserPreferences = (options?: UseUserPreferencesOptions) => {
   };
 
   // If options are provided, return the specific preference value
-  if (options) {
-    const preference = preferences.find(p => p.module === options.module && p.key === options.key);
-    return {
-      preferences: preference?.value ?? options.defaultValue,
-      loading,
-      isLoading: loading,
-      error,
-      updatePreference,
-      setPreferences,
-      refetch
-    };
-  }
-
   return {
     preferences,
     loading,

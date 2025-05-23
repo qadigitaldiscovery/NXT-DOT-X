@@ -8,7 +8,7 @@ import { Outlet, useNavigate } from 'react-router-dom';
 import { BarChart3, Bot, Shield, Users, Settings, Zap, Brain, Home, Code, Database } from 'lucide-react';
 import { NavCategory } from './sidebar/types';
 import { useAuth } from '@/context/AuthContext';
-import { toast } from '@/hooks/use-toast';
+import { toast } from 'sonner';
 
 const dotXNavItems: NavCategory[] = [
   {
@@ -39,7 +39,13 @@ export const DotXLayout = () => {
     if (!authLoading) {
       if (!isAuthenticated) {
         console.log("User not authenticated, redirecting to landing");
-        toast.error("Please log in to access this area");
+        toast("Please log in to access this area", {
+          description: "Authentication required",
+          action: {
+            label: "Login",
+            onClick: () => navigate('/login')
+          }
+        });
         navigate('/landing', { replace: true });
       } else {
         setIsLoading(false);

@@ -1,70 +1,46 @@
 
 import React from 'react';
-import { PlatformLayout } from '@/components/layouts/PlatformLayout';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { AlertTriangle, FileText } from "lucide-react";
-import { NavCategory } from '@/components/layout/sidebar/types';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { useNavigate } from 'react-router-dom';
+import { AlertCircle } from 'lucide-react';
 
-interface MissingPageTemplateProps {
-  moduleName: string;
-  moduleDescription?: string;
-  navCategories: NavCategory[];
-  docsLink?: string;
-}
+// Updated component that doesn't rely on PlatformLayout
+const MissingPageTemplate = () => {
+  const navigate = useNavigate();
 
-const MissingPageTemplate: React.FC<MissingPageTemplateProps> = ({
-  moduleName,
-  moduleDescription = "This module is currently under development.",
-  navCategories,
-  docsLink
-}) => {
   return (
-    <PlatformLayout 
-      moduleTitle={moduleName}
-      navCategories={navCategories}
-    >
-      <div className="container p-6 mx-auto">
-        <Card className="border-dashed border-2 border-yellow-300 dark:border-yellow-700 bg-yellow-50 dark:bg-yellow-900/20">
-          <CardHeader>
-            <div className="flex items-center gap-3">
-              <AlertTriangle className="h-6 w-6 text-yellow-600 dark:text-yellow-500" />
-              <CardTitle>{moduleName} Module</CardTitle>
-            </div>
-            <CardDescription>
-              {moduleDescription}
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              <p className="text-muted-foreground">
-                This page is a placeholder for the {moduleName} module functionality. The development team is actively working on implementing this feature.
-              </p>
-              <div className="p-4 bg-background rounded-md border">
-                <h3 className="font-medium mb-2">Expected Features:</h3>
-                <ul className="list-disc pl-5 space-y-1">
-                  <li>Data management and visualization</li>
-                  <li>User interaction capabilities</li>
-                  <li>Integration with other platform modules</li>
-                  <li>Analytics and reporting</li>
-                </ul>
-              </div>
-            </div>
-          </CardContent>
-          <CardFooter className="flex justify-between">
-            <Button variant="outline" onClick={() => window.history.back()}>
+    <div className="container mx-auto py-8">
+      <Card className="border-yellow-300 dark:border-yellow-700">
+        <CardHeader className="bg-yellow-50 dark:bg-yellow-900/20">
+          <CardTitle className="flex items-center">
+            <AlertCircle className="mr-2 h-5 w-5 text-yellow-600 dark:text-yellow-400" />
+            Module Under Construction
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="pt-6">
+          <p className="mb-6">
+            This module is currently being developed and will be available soon.
+          </p>
+          
+          <div className="flex gap-4">
+            <Button
+              variant="outline"
+              onClick={() => navigate(-1)}
+            >
               Go Back
             </Button>
-            {docsLink && (
-              <Button className="flex items-center gap-2" onClick={() => window.open(docsLink, '_blank')}>
-                <FileText className="h-4 w-4" />
-                View Documentation
-              </Button>
-            )}
-          </CardFooter>
-        </Card>
-      </div>
-    </PlatformLayout>
+            
+            <Button 
+              variant="default" 
+              onClick={() => navigate('/')}
+            >
+              Return to Dashboard
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
   );
 };
 

@@ -21,19 +21,25 @@ export const OpenAIKeyForm: React.FC = () => {
 
   useEffect(() => {
     if (preferences) {
-      if (typeof preferences === 'object' && preferences.apiKey) {
-        setApiKey(preferences.apiKey || '');
-      }
-      if (typeof preferences === 'object' && preferences.preferredModel) {
-        setPreferredModel(preferences.preferredModel || 'gpt-4');
+      if (typeof preferences === 'object') {
+        setApiKey((preferences as any).apiKey || '');
+        setPreferredModel((preferences as any).preferredModel || 'gpt-4');
       }
     }
   }, [preferences]);
 
   const handleSave = async () => {
     try {
-      await setPreferences({ apiKey, preferredModel });
-      toast.success('OpenAI settings saved successfully');
+      const result = await setPreferences({ 
+        apiKey, 
+        preferredModel 
+      });
+      
+      if (result.success) {
+        toast.success('OpenAI settings saved successfully');
+      } else {
+        toast.error(`Failed to save settings: ${result.error}`);
+      }
     } catch (error) {
       toast.error('Failed to save settings');
       console.error(error);

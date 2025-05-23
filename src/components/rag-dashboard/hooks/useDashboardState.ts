@@ -19,11 +19,11 @@ export const useDashboardState = (modules: Module[], alerts: any[]) => {
   });
   
   // Local state for UI
-  const [selectedStatus, setSelectedStatus] = useState<string | null>(
+  const [selectedStatus, setSelectedStatusState] = useState<string | null>(
     (preferences as any)?.selectedStatus || null
   );
   
-  const [searchQuery, setSearchQuery] = useState<string>(
+  const [searchQuery, setSearchQueryState] = useState<string>(
     (preferences as any)?.searchQuery || ''
   );
   
@@ -38,8 +38,8 @@ export const useDashboardState = (modules: Module[], alerts: any[]) => {
   useEffect(() => {
     if (user) {
       setPreferences({
-        selectedStatus,
-        searchQuery
+        selectedStatus: selectedStatus,
+        searchQuery: searchQuery
       });
     }
   }, [selectedStatus, searchQuery, user, setPreferences]);
@@ -76,21 +76,21 @@ export const useDashboardState = (modules: Module[], alerts: any[]) => {
 
   // Set status handler with persistence
   const setSelectedStatusWithPersistence = (status: string | null) => {
-    setSelectedStatus(status);
+    setSelectedStatusState(status);
     if (user) {
       setPreferences({
         selectedStatus: status,
-        searchQuery
+        searchQuery: searchQuery
       });
     }
   };
   
   // Set search handler with persistence
   const setSearchQueryWithPersistence = (query: string) => {
-    setSearchQuery(query);
+    setSearchQueryState(query);
     if (user) {
       setPreferences({
-        selectedStatus,
+        selectedStatus: selectedStatus,
         searchQuery: query
       });
     }

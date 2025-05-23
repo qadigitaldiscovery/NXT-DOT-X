@@ -14,7 +14,7 @@ export const createAuthUser = (
   // Create basic auth user with defaults
   const authUser: AuthUser = {
     id: user.id,
-    email: user.email || null,
+    email: user.email || '',  // Use empty string instead of null
     username: profileData?.username || user.email?.split('@')[0] || 'User',
     role: profileData?.role || 'user',
     permissions: profileData?.permissions || [],
