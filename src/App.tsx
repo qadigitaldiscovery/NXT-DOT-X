@@ -4,8 +4,8 @@ import { BrowserRouter as Router } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import { ThemeProvider } from './context/ThemeContext';
 import { Toaster } from 'sonner';
-import AppRoutes from '@/routes/AppRoutes';
-import ErrorBoundary from '@/components/ErrorBoundary';
+import AppRoutes from './routes/AppRoutes';
+import ErrorBoundary from './components/ErrorBoundary';
 
 export default function App() {
   return (
