@@ -14,12 +14,15 @@ export const createAuthUser = (
   // Create basic auth user with defaults
   const authUser: AuthUser = {
     id: user.id,
-    email: user.email || '',  // Use empty string instead of null
+    email: user.email || '',
     username: profileData?.username || user.email?.split('@')[0] || 'User',
     role: profileData?.role || 'user',
     permissions: profileData?.permissions || [],
     created_at: user.created_at,
-    provider: user.app_metadata?.provider || 'email'
+    provider: user.app_metadata?.provider || 'email',
+    app_metadata: user.app_metadata || {},
+    user_metadata: user.user_metadata || {},
+    aud: user.aud
   };
   
   return authUser;

@@ -11,8 +11,7 @@ import { useForm } from 'react-hook-form';
 import * as z from 'zod';
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { ToastAction } from '@/components/ui/toast';
-import { useToast } from '@/components/ui/use-toast';
+import { toast } from 'sonner';
 import { Building, Truck, FileUp } from 'lucide-react';
 
 const formSchema = z.object({
@@ -29,12 +28,13 @@ const formSchema = z.object({
   status: z.enum(['active', 'inactive']).default('active')
 });
 
+type FormData = z.infer<typeof formSchema>;
+
 export default function NewSupplierPage() {
   const navigate = useNavigate();
-  const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
   
-  const form = useForm<z.infer<typeof formSchema>>({
+  const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: '',
@@ -51,17 +51,15 @@ export default function NewSupplierPage() {
     },
   });
 
-  async function onSubmit(values: z.infer<typeof formSchema>) {
+  async function onSubmit(values: FormData) {
     setIsLoading(true);
     try {
       // Here you would normally submit to an API
       console.log(values);
       
       // Show success message
-      toast({
-        title: "Supplier created successfully",
-        description: `${values.name} has been added as a supplier.`,
-        action: <ToastAction>View</ToastAction>,
+      toast.success('Supplier created successfully', {
+        description: `${values.name} has been added as a supplier.`
       });
       
       // Navigate back to suppliers list
@@ -69,10 +67,8 @@ export default function NewSupplierPage() {
         navigate('/data-management/suppliers');
       }, 1500);
     } catch (error) {
-      toast({
-        title: "Error creating partner",
-        description: "There was an error creating the partner. Please try again.",
-        variant: "destructive",
+      toast.error('Error creating partner', {
+        description: 'There was an error creating the partner. Please try again.'
       });
     } finally {
       setIsLoading(false);
@@ -398,4 +394,4 @@ export default function NewSupplierPage() {
       </Tabs>
     </div>
   );
-} 
+}

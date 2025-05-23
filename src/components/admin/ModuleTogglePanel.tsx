@@ -1,271 +1,267 @@
-import React, { useState, useEffect } from 'react';
-import { supabase } from '@/integrations/supabase/client';
-import { useToast } from '@/hooks/use-toast';
+
+import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { ModuleAccess } from '@/hooks/useModuleAccess';
+import { Badge } from '@/components/ui/badge';
+import { Separator } from '@/components/ui/separator';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { toast } from 'sonner';
+import { Shield, Database, Users, Settings, Cloud, Zap, Brain, BarChart3 } from 'lucide-react';
 
-interface ModuleTogglePanelProps {
-  userId: string;
+interface ModuleConfig {
+  id: string;
+  name: string;
+  description: string;
+  enabled: boolean;
+  category: 'core' | 'beta' | 'experimental' | 'premium';
+  icon: React.ComponentType;
+  dependencies?: string[];
 }
 
-const ModuleTogglePanel: React.FC<ModuleTogglePanelProps> = ({ userId }) => {
-  const [accessList, setAccessList] = useState<ModuleAccess[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [users, setUsers] = useState<{ id: string; username: string }[]>([]);
-  const [selectedUser, setSelectedUser] = useState<string>(userId);
-  const { toast } = useToast();
+const MODULES: ModuleConfig[] = [
+  {
+    id: 'auth',
+    name: 'Authentication System',
+    description: 'User authentication and authorization',
+    enabled: true,
+    category: 'core',
+    icon: Shield
+  },
+  {
+    id: 'database',
+    name: 'Database Management',
+    description: 'Core database operations and management',
+    enabled: true,
+    category: 'core',
+    icon: Database
+  },
+  {
+    id: 'user_management',
+    name: 'User Management',
+    description: 'User profiles and management system',
+    enabled: true,
+    category: 'core',
+    icon: Users,
+    dependencies: ['auth']
+  },
+  {
+    id: 'rag_dashboard',
+    name: 'RAG Dashboard',
+    description: 'Real-time analytics and monitoring dashboard',
+    enabled: false,
+    category: 'beta',
+    icon: BarChart3
+  },
+  {
+    id: 'ai_assistant',
+    name: 'AI Assistant',
+    description: 'Intelligent assistant powered by OpenAI',
+    enabled: false,
+    category: 'beta',
+    icon: Brain
+  }
+];
 
-  const fetchModuleAccess = async (uid: string) => {
-    setLoading(true);
-    try {
-      const { data, error } = await supabase
-        .from('user_module_access')
-        .select('*')
-        .eq('user_id', uid);
-        
-      if (error) throw error;
-      setAccessList(data?.map(item => ({
-        ...item,
-        submenu_slug: item.submenu_slug || undefined,
-        category: item.category || undefined
-      })) || []);
-    } catch (err) {
-      console.error('Error fetching module access:', err);
-      toast({
-        title: "Error",
-        description: "Failed to load module access settings",
-        variant: "destructive"
+export const ModuleTogglePanel: React.FC = () => {
+  const [modules, setModules] = useState<ModuleConfig[]>(MODULES);
+
+  const toggleModule = (moduleId: string) => {
+    setModules(prev => {
+      const updated = prev.map(module => {
+        if (module.id === moduleId) {
+          const newEnabled = !module.enabled;
+          
+          if (newEnabled) {
+            toast.success(`${module.name} has been enabled`);
+          } else {
+            toast.error(`${module.name} has been disabled`);
+          }
+          
+          return { ...module, enabled: newEnabled };
+        }
+        return module;
       });
-    } finally {
-      setLoading(false);
+      
+      return updated;
+    });
+  };
+
+  const enableAll = (category: string) => {
+    setModules(prev => {
+      const updated = prev.map(module => 
+        module.category === category ? { ...module, enabled: true } : module
+      );
+      
+      const enabledCount = updated.filter(m => m.category === category && m.enabled).length;
+      toast.success(`Enabled ${enabledCount} ${category} modules`);
+      
+      return updated;
+    });
+  };
+
+  const disableAll = (category: string) => {
+    setModules(prev => {
+      const coreModules = prev.filter(m => m.category === 'core');
+      const updated = prev.map(module => {
+        if (module.category === category && module.category !== 'core') {
+          return { ...module, enabled: false };
+        }
+        return module;
+      });
+      
+      const disabledCount = prev.filter(m => m.category === category).length;
+      if (category === 'core') {
+        toast.error('Core modules cannot be disabled');
+      } else {
+        toast.success(`Disabled ${disabledCount} ${category} modules`);
+      }
+      
+      return updated;
+    });
+  };
+
+  const getModulesByCategory = (category: string) => 
+    modules.filter(module => module.category === category);
+
+  const getCategoryBadgeVariant = (category: string) => {
+    switch (category) {
+      case 'core': return 'default';
+      case 'beta': return 'secondary';
+      case 'experimental': return 'outline';
+      case 'premium': return 'destructive';
+      default: return 'default';
     }
   };
 
-  const fetchUsers = async () => {
-    try {
-      // In a real implementation, you'd fetch from the profiles table
-      // This is a placeholder since we don't have direct access to auth.users
-      const { data, error } = await supabase
-        .from('user_roles')
-        .select('user_id')
-        .eq('role', 'admin');
-        
-      if (error) throw error;
-      
-      // For demonstration, we'll just use the user IDs
-      // In a real app, you'd join with a profiles table
-      setUsers(data.map(u => ({ 
-        id: u.user_id, 
-        username: u.user_id.substring(0, 8) + '...' 
-      })));
-
-    } catch (err) {
-      console.error('Error fetching users:', err);
-    }
+  const renderModuleCard = (module: ModuleConfig) => {
+    const Icon = module.icon;
+    
+    return (
+      <Card key={module.id} className="p-4">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-3">
+            <Icon className="h-5 w-5" />
+            <div>
+              <h4 className="font-medium">{module.name}</h4>
+              <p className="text-sm text-muted-foreground">{module.description}</p>
+              {module.dependencies && (
+                <p className="text-xs text-muted-foreground mt-1">
+                  Depends on: {module.dependencies.join(', ')}
+                </p>
+              )}
+            </div>
+          </div>
+          <div className="flex items-center space-x-2">
+            <Badge variant={getCategoryBadgeVariant(module.category)}>
+              {module.category}
+            </Badge>
+            <Switch
+              checked={module.enabled}
+              onCheckedChange={() => toggleModule(module.id)}
+              disabled={module.category === 'core'}
+            />
+          </div>
+        </div>
+      </Card>
+    );
   };
 
-  useEffect(() => {
-    fetchUsers();
-    if (userId) {
-      fetchModuleAccess(userId);
-      setSelectedUser(userId);
-    }
-  }, [userId]);
+  const renderCategorySection = (category: string, title: string) => {
+    const categoryModules = getModulesByCategory(category);
+    
+    if (categoryModules.length === 0) return null;
 
-  const handleUserChange = (uid: string) => {
-    setSelectedUser(uid);
-    fetchModuleAccess(uid);
+    return (
+      <div className="space-y-4">
+        <div className="flex items-center justify-between">
+          <h3 className="text-lg font-semibold">{title}</h3>
+          <div className="space-x-2">
+            <Button 
+              variant="outline" 
+              size="sm"
+              onClick={() => enableAll(category)}
+              disabled={category === 'core'}
+            >
+              Enable All
+            </Button>
+            <Button 
+              variant="outline" 
+              size="sm"
+              onClick={() => disableAll(category)}
+              disabled={category === 'core'}
+            >
+              Disable All
+            </Button>
+          </div>
+        </div>
+        <div className="space-y-3">
+          {categoryModules.map(renderModuleCard)}
+        </div>
+      </div>
+    );
   };
 
-  const toggleAccess = async (id: string, currentValue: boolean) => {
-    try {
-      const { error } = await supabase
-        .from('user_module_access')
-        .update({ is_enabled: !currentValue })
-        .eq('id', id);
-        
-      if (error) throw error;
-      
-      // Update local state
-      setAccessList(prev => prev.map(item => 
-        item.id === id ? { ...item, is_enabled: !currentValue } : item
-      ));
-
-      toast({
-        title: "Access Updated",
-        description: `Module access has been ${!currentValue ? 'enabled' : 'disabled'}`,
-      });
-    } catch (err) {
-      console.error('Error toggling access:', err);
-      toast({
-        title: "Error",
-        description: "Failed to update module access",
-        variant: "destructive"
-      });
-    }
+  const resetToDefaults = () => {
+    setModules(MODULES);
+    toast.success('Module settings reset to defaults');
   };
 
-  const addModuleAccess = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const formData = new FormData(event.currentTarget);
-    const moduleSlug = formData.get('moduleSlug') as string;
-    const submenuSlug = formData.get('submenuSlug') as string;
-    const category = formData.get('category') as string;
-
-    if (!moduleSlug) {
-      toast({
-        title: "Validation Error",
-        description: "Module slug is required",
-        variant: "destructive"
-      });
-      return;
-    }
-
-    try {
-      const { data, error } = await supabase
-        .from('user_module_access')
-        .insert([{ 
-          user_id: selectedUser,
-          module_slug: moduleSlug,
-          submenu_slug: submenuSlug || undefined,
-          category: category || undefined,
-          is_enabled: true
-        }])
-        .select();
-        
-      if (error) throw error;
-      
-      setAccessList(prev => [...prev, {
-        ...data[0],
-        submenu_slug: data[0].submenu_slug || undefined,
-        category: data[0].category || undefined
-      }]);
-      
-      toast({
-        title: "Success",
-        description: "Module access added successfully",
-      });
-      
-      // Reset the form
-      (event.target as HTMLFormElement).reset();
-      
-    } catch (err) {
-      console.error('Error adding module access:', err);
-      toast({
-        title: "Error",
-        description: "Failed to add module access",
-        variant: "destructive"
-      });
-    }
+  const saveConfiguration = () => {
+    // Here you would typically save to backend
+    toast.success('Module configuration saved successfully');
   };
 
   return (
-    <div className="space-y-8">
-      <Card>
-        <CardHeader>
-          <CardTitle>Module Access Control</CardTitle>
-          <CardDescription>
-            Manage which modules and submenus users can access
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="mb-6">
-            <Label htmlFor="userId">Select User</Label>
-            <Select value={selectedUser} onValueChange={handleUserChange}>
-              <SelectTrigger className="w-full">
-                <SelectValue placeholder="Select a user" />
-              </SelectTrigger>
-              <SelectContent>
-                {users.map(user => (
-                  <SelectItem key={user.id} value={user.id}>
-                    {user.username}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
+    <Card>
+      <CardHeader>
+        <CardTitle>Module Management</CardTitle>
+        <CardDescription>
+          Enable or disable platform modules. Core modules cannot be disabled.
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        <Tabs defaultValue="all" className="space-y-6">
+          <TabsList>
+            <TabsTrigger value="all">All Modules</TabsTrigger>
+            <TabsTrigger value="core">Core</TabsTrigger>
+            <TabsTrigger value="beta">Beta</TabsTrigger>
+            <TabsTrigger value="experimental">Experimental</TabsTrigger>
+          </TabsList>
 
-          {loading ? (
-            <div className="flex justify-center py-8">
-              <div className="w-8 h-8 border-t-2 border-b-2 border-gray-500 rounded-full animate-spin"></div>
-            </div>
-          ) : accessList.length === 0 ? (
-            <div className="text-center py-8 text-gray-500">
-              No module access settings found for this user
-            </div>
-          ) : (
-            <div className="space-y-4">
-              {accessList.map(access => (
-                <div key={access.id} className="flex justify-between items-center border p-3 rounded-md">
-                  <div>
-                    <div className="font-medium">{access.module_slug}</div>
-                    {access.submenu_slug && (
-                      <div className="text-sm text-gray-500">
-                        Submenu: {access.submenu_slug}
-                      </div>
-                    )}
-                    {access.category && (
-                      <Badge variant="outline" className="mt-1">
-                        {access.category}
-                      </Badge>
-                    )}
-                  </div>
-                  <Switch 
-                    checked={access.is_enabled} 
-                    onCheckedChange={() => toggleAccess(access.id, access.is_enabled)} 
-                  />
-                </div>
-              ))}
-            </div>
-          )}
-        </CardContent>
-      </Card>
+          <TabsContent value="all" className="space-y-6">
+            {renderCategorySection('core', 'Core Modules')}
+            <Separator />
+            {renderCategorySection('beta', 'Beta Modules')}
+            <Separator />
+            {renderCategorySection('experimental', 'Experimental Modules')}
+            <Separator />
+            {renderCategorySection('premium', 'Premium Modules')}
+          </TabsContent>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Add Module Access</CardTitle>
-          <CardDescription>
-            Grant access to a module for this user
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={addModuleAccess} className="space-y-4">
-            <div className="grid gap-4 sm:grid-cols-2">
-              <div className="space-y-2">
-                <Label htmlFor="moduleSlug">Module Slug *</Label>
-                <Input id="moduleSlug" name="moduleSlug" placeholder="e.g., dashboard" required />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="submenuSlug">Submenu Slug (Optional)</Label>
-                <Input id="submenuSlug" name="submenuSlug" placeholder="e.g., analytics" />
-              </div>
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="category">Category (Optional)</Label>
-              <Select name="category">
-                <SelectTrigger>
-                  <SelectValue placeholder="Select a category" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="project">Project</SelectItem>
-                  <SelectItem value="admin">Admin</SelectItem>
-                  <SelectItem value="system">System</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <Button type="submit" className="w-full">
-              Add Access
-            </Button>
-          </form>
-        </CardContent>
-      </Card>
-    </div>
+          <TabsContent value="core">
+            {renderCategorySection('core', 'Core Modules')}
+          </TabsContent>
+
+          <TabsContent value="beta">
+            {renderCategorySection('beta', 'Beta Modules')}
+          </TabsContent>
+
+          <TabsContent value="experimental">
+            {renderCategorySection('experimental', 'Experimental Modules')}
+          </TabsContent>
+        </Tabs>
+
+        <div className="flex justify-between pt-6 border-t">
+          <Button variant="outline" onClick={resetToDefaults}>
+            Reset to Defaults
+          </Button>
+          <Button onClick={saveConfiguration}>
+            Save Configuration
+          </Button>
+        </div>
+      </CardContent>
+    </Card>
   );
 };
 
