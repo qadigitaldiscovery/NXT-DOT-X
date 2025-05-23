@@ -5,14 +5,13 @@ import {
   Background,
   Controls,
   MiniMap,
-  useNodesState,
-  useEdgesState,
-  addEdge,
-  Connection,
   Node,
   Edge,
   NodeTypes,
   ReactFlowProvider,
+  useNodesState,
+  useEdgesState,
+  Connection,
 } from '@xyflow/react';
 import { useWebDev } from '@/context/WebDevContext';
 import ModuleNode from './nodes/ModuleNode';
@@ -23,39 +22,46 @@ import '@xyflow/react/dist/style.css';
 
 // Define custom node types
 const nodeTypes: NodeTypes = {
-  module: ModuleNode,
-  menu: MenuNode,
-  page: PageNode,
+  module: ModuleNode as any,
+  menu: MenuNode as any,
+  page: PageNode as any,
 };
 
 // The inner component that uses ReactFlow hooks
 const InnerFlow = () => {
-  const { nodes, edges, addNode, addEdge: addContextEdge, removeNode, removeEdge, selectNode, selectEdge } = useWebDev();
+  const { 
+    nodes, 
+    edges, 
+    addEdge: addContextEdge, 
+    removeNode, 
+    removeEdge, 
+    selectNode, 
+    selectEdge 
+  } = useWebDev();
+  
   const [reactFlowNodes, setReactFlowNodes] = useNodesState([]);
   const [reactFlowEdges, setReactFlowEdges] = useEdgesState([]);
   const [selectedElements, setSelectedElements] = useState<any[]>([]);
 
   // Convert context nodes/edges to ReactFlow format
   useEffect(() => {
-    setReactFlowNodes(
-      nodes.map((node) => ({
-        id: node.id,
-        type: node.type,
-        data: node.data,
-        position: node.position,
-      }))
-    );
+    const formattedNodes = nodes.map((node) => ({
+      id: node.id,
+      type: node.type,
+      data: node.data,
+      position: node.position,
+    }));
+    setReactFlowNodes(formattedNodes);
     
-    setReactFlowEdges(
-      edges.map((edge) => ({
-        id: edge.id,
-        source: edge.source,
-        target: edge.target,
-        type: edge.type || 'default',
-        label: edge.label,
-        data: edge.data,
-      }))
-    );
+    const formattedEdges = edges.map((edge) => ({
+      id: edge.id,
+      source: edge.source,
+      target: edge.target,
+      type: edge.type || 'default',
+      label: edge.label,
+      data: edge.data,
+    }));
+    setReactFlowEdges(formattedEdges);
   }, [nodes, edges, setReactFlowNodes, setReactFlowEdges]);
 
   // Handle new connections

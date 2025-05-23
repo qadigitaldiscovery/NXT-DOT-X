@@ -1,32 +1,32 @@
 
-import { User, Session } from '@supabase/supabase-js';
-
-export interface ProfileData {
+export interface User {
   id: string;
-  username: string;
-  email: string | null;
-  role: string;
-  permissions: string[];
-  created_at?: string;
-  updated_at?: string;
+  email: string;
+  username?: string;
+  role?: string;
+  permissions?: string[];
+  created_at: string;
+  provider?: string;
+  app_metadata: Record<string, any>;
+  user_metadata: Record<string, any>;
+  aud: string;
 }
 
-export interface AuthUser {
-  id: string;
-  email: string | null;
-  username: string;
-  role: string;
-  permissions: string[];
-  created_at?: string;
-  provider?: string;
+export interface Session {
+  user: User;
+  access_token: string;
+  refresh_token: string;
+  expires_in: number;
+  token_type: string;
+  expires_at: number;
 }
 
 export interface AuthContextType {
-  user: AuthUser | null;
-  isAuthenticated: boolean;
-  loading: boolean;
+  user: User | null;
   session: Session | null;
+  isAuthenticated: boolean;
   login: (email: string, password: string) => Promise<boolean>;
   logout: () => Promise<void>;
   hasPermission: (permission: string) => boolean;
+  loading: boolean;
 }

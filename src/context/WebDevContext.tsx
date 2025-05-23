@@ -1,6 +1,12 @@
 
 import React, { createContext, useContext, useState, useCallback } from 'react';
-import { Feature } from '@/hooks/useModules';
+import { Module } from '@/hooks/useModules';
+
+export interface Feature {
+  name: string;
+  path: string;
+  description?: string;
+}
 
 interface WebDevNode {
   id: string;
@@ -34,6 +40,9 @@ interface WebDevContextType {
   removeEdge: (edgeId: string) => void;
   selectNode: (node: WebDevNode | null) => void;
   selectEdge: (edge: WebDevEdge | null) => void;
+  updateNode?: (nodeId: string, data: Partial<WebDevNode>) => void;
+  updateEdge?: (edgeId: string, data: Partial<WebDevEdge>) => void;
+  generateRoutes?: () => string;
 }
 
 const WebDevContext = createContext<WebDevContextType | undefined>(undefined);
@@ -78,6 +87,32 @@ export const WebDevProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     setSelectedEdge(edge);
     setSelectedNode(null);
   }, []);
+  
+  const updateNode = useCallback((nodeId: string, data: Partial<WebDevNode>) => {
+    setNodes(prev => 
+      prev.map(node => 
+        node.id === nodeId 
+          ? { ...node, ...data } 
+          : node
+      )
+    );
+  }, []);
+  
+  const updateEdge = useCallback((edgeId: string, data: Partial<WebDevEdge>) => {
+    setEdges(prev => 
+      prev.map(edge => 
+        edge.id === edgeId 
+          ? { ...edge, ...data } 
+          : edge
+      )
+    );
+  }, []);
+  
+  const generateRoutes = useCallback(() => {
+    const routes = nodes.filter(node => node.type === 'page')
+      .map(node => `Route path="${node.data.path}" element={<Page />}`).join('\n');
+    return routes;
+  }, [nodes]);
 
   const value: WebDevContextType = {
     nodes,
@@ -90,6 +125,9 @@ export const WebDevProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     removeEdge,
     selectNode,
     selectEdge,
+    updateNode,
+    updateEdge,
+    generateRoutes
   };
 
   return (

@@ -1,8 +1,9 @@
+
 import * as React from "react"
 
-import type {
-  ToastActionElement,
-  ToastProps,
+import {
+  type ToastActionElement,
+  type ToastProps,
 } from "@/components/ui/toast"
 
 const TOAST_LIMIT = 1
@@ -139,7 +140,13 @@ function dispatch(action: Action) {
 
 type ToastType = Omit<ToasterToast, "id">
 
-function toast({ ...props }: ToastType) {
+interface ToastReturnType {
+  id: string
+  dismiss: () => void
+  update: (props: ToasterToast) => void
+}
+
+function toast(props: ToastType): ToastReturnType {
   const id = genId()
 
   const update = (props: ToasterToast) =>
@@ -167,6 +174,23 @@ function toast({ ...props }: ToastType) {
     update,
   }
 }
+
+// Add success and error methods to toast
+toast.success = (message: string) => {
+  return toast({
+    title: "Success",
+    description: message,
+    variant: "default",
+  });
+};
+
+toast.error = (message: string) => {
+  return toast({
+    title: "Error",
+    description: message,
+    variant: "destructive",
+  });
+};
 
 function useToast() {
   const [state, setState] = React.useState<State>(memoryState)

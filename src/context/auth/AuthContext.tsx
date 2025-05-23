@@ -1,24 +1,27 @@
 
 import React, { createContext, useState, useEffect } from 'react';
-import { AuthContextType } from './types';
+import { AuthContextType, Session, User } from './types';
 
 // Create the context with undefined as initial value
 export const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 // Mock admin user with all permissions - no security restrictions
-const mockAdminUser = {
+const mockAdminUser: User = {
   id: 'admin-123',
   email: 'admin@admin.com',
   username: 'Admin',
   role: 'admin',
   permissions: ['*'], // All permissions
   created_at: new Date().toISOString(),
-  provider: 'mock'
+  provider: 'mock',
+  app_metadata: {},
+  user_metadata: {},
+  aud: 'authenticated'
 };
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user] = useState(mockAdminUser);
-  const [session] = useState({ 
+  const [session] = useState<Session>({ 
     user: mockAdminUser, 
     access_token: 'mock-token',
     refresh_token: 'mock-refresh',
