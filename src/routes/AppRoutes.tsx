@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
-import { SimpleLayout } from '@/components/layouts/SimpleLayout';
+import { SimpleLayout } from '@/components/layout/SimpleLayout';
 
 // Import pages
 import MasterDash from '@/pages/MasterDash';

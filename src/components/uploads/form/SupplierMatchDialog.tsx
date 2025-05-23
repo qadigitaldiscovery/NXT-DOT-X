@@ -1,167 +1,137 @@
 
 import React, { useState } from 'react';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Supplier, useCreateSupplier } from '@/hooks/use-suppliers';
-import { Check } from "lucide-react";
-import { toast } from "sonner";
-import { MatchOptionButtons } from './supplier-match/MatchOptionButtons';
-import { ExistingSupplierForm } from './supplier-match/ExistingSupplierForm';
-import { NewSupplierForm } from './supplier-match/NewSupplierForm';
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 interface SupplierMatchDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  detectedSupplier: string | null;
-  suppliers: Supplier[];
-  onSupplierSelected: (supplierId: string) => void;
+  fileName: string;
+  onMatch: (supplierId: string | null, createNew: boolean) => void;
 }
 
-export function SupplierMatchDialog({
+export const SupplierMatchDialog: React.FC<SupplierMatchDialogProps> = ({
   open,
   onOpenChange,
-  detectedSupplier,
-  suppliers,
-  onSupplierSelected
-}: SupplierMatchDialogProps) {
+  fileName,
+  onMatch
+}) => {
+  const [selectedSupplier, setSelectedSupplier] = useState<string>('');
+  const [newSupplierName, setNewSupplierName] = useState<string>('');
+  const [newSupplierEmail, setNewSupplierEmail] = useState<string>('');
+  const [newSupplierPhone, setNewSupplierPhone] = useState<string>('');
+  const [newSupplierAddress, setNewSupplierAddress] = useState<string>('');
+  const [newSupplierCategory, setNewSupplierCategory] = useState<string>('');
   const [matchOption, setMatchOption] = useState<'existing' | 'new'>('existing');
-  const [selectedSupplierId, setSelectedSupplierId] = useState<string>('');
-  const [newSupplierName, setNewSupplierName] = useState<string>(detectedSupplier || '');
-  const [newSupplierCode, setNewSupplierCode] = useState<string>('');
 
-  const { mutate: createSupplier, isPending } = useCreateSupplier();
-
-  // Reset form when dialog opens/closes
-  React.useEffect(() => {
-    if (open) {
-      setNewSupplierName(detectedSupplier || '');
-      setNewSupplierCode('');
-      
-      // Auto-search for a match among existing suppliers
-      if (detectedSupplier) {
-        // Simple fuzzy match - in a real app would use a proper fuzzy search
-        const possibleMatch = suppliers.find(s => 
-          s.name.toLowerCase().includes(detectedSupplier.toLowerCase()) ||
-          detectedSupplier.toLowerCase().includes(s.name.toLowerCase())
-        );
-        if (possibleMatch) {
-          setSelectedSupplierId(possibleMatch.id);
-        }
-      }
-    }
-  }, [open, detectedSupplier, suppliers]);
-
-  const handleCreateSupplier = () => {
-    if (!newSupplierName || !newSupplierCode) {
-      toast.error("Please provide both supplier name and code");
-      return;
-    }
-
-    createSupplier({
-      name: newSupplierName,
-      code: newSupplierCode,
-      status: 'active',
-      // Add the missing properties with null values to match the Supplier type
-      email: null,
-      phone: null,
-      contact_name: null,
-      payment_terms: null,
-      website: null
-    }, {
-      onSuccess: (newSupplier) => {
-        toast.success(`Created supplier: ${newSupplier.name}`);
-        onSupplierSelected(newSupplier.id);
-        onOpenChange(false);
-      },
-      onError: (error) => {
-        toast.error(`Failed to create supplier: ${error.message || 'Unknown error'}`);
-      }
-    });
-  };
-
-  const handleConfirm = () => {
+  const handleSubmit = () => {
     if (matchOption === 'existing') {
-      if (!selectedSupplierId) {
-        toast.error("Please select a supplier");
-        return;
-      }
-      onSupplierSelected(selectedSupplierId);
+      onMatch(selectedSupplier || null, false);
     } else {
-      handleCreateSupplier();
-      return; // Don't close dialog yet, let the creation callback handle it
+      onMatch(null, true);
     }
     onOpenChange(false);
   };
 
-  // Generate a supplier code from the name
-  const generateSupplierCode = () => {
-    if (!newSupplierName) return;
-    
-    const code = newSupplierName
-      .replace(/[^a-zA-Z0-9]/g, '') // Remove non-alphanumeric
-      .substring(0, 6) // Take first 6 chars
-      .toUpperCase();
-    
-    setNewSupplierCode(code);
-  };
-
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="max-w-md">
         <DialogHeader>
-          <DialogTitle>Match Supplier</DialogTitle>
-          <DialogDescription>
-            {detectedSupplier 
-              ? `We detected "${detectedSupplier}" in this file. Match to an existing supplier or create a new one.` 
-              : "Match this file to a supplier or create a new one."}
-          </DialogDescription>
+          <DialogTitle>Match Supplier for {fileName}</DialogTitle>
         </DialogHeader>
         
-        <div className="grid gap-4 py-4">
-          <MatchOptionButtons 
-            matchOption={matchOption} 
-            setMatchOption={setMatchOption} 
-          />
-          
+        <div className="space-y-4">
+          <div className="space-y-2">
+            <Label>Match Option</Label>
+            <Select value={matchOption} onValueChange={(value: 'existing' | 'new') => setMatchOption(value)}>
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="existing">Match to Existing Supplier</SelectItem>
+                <SelectItem value="new">Create New Supplier</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
           {matchOption === 'existing' ? (
-            <ExistingSupplierForm
-              suppliers={suppliers}
-              selectedSupplierId={selectedSupplierId}
-              setSelectedSupplierId={setSelectedSupplierId}
-            />
+            <div className="space-y-2">
+              <Label>Select Supplier</Label>
+              <Select value={selectedSupplier} onValueChange={setSelectedSupplier}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Choose a supplier..." />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="supplier-1">Acme Corporation</SelectItem>
+                  <SelectItem value="supplier-2">Beta Industries</SelectItem>
+                  <SelectItem value="supplier-3">Gamma Solutions</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
           ) : (
-            <NewSupplierForm
-              newSupplierName={newSupplierName}
-              setNewSupplierName={setNewSupplierName}
-              newSupplierCode={newSupplierCode}
-              setNewSupplierCode={setNewSupplierCode}
-              generateSupplierCode={generateSupplierCode}
-            />
+            <div className="space-y-3">
+              <div>
+                <Label htmlFor="name">Supplier Name</Label>
+                <Input
+                  id="name"
+                  value={newSupplierName}
+                  onChange={(e) => setNewSupplierName(e.target.value)}
+                  placeholder="Enter supplier name"
+                />
+              </div>
+              <div>
+                <Label htmlFor="email">Email</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  value={newSupplierEmail}
+                  onChange={(e) => setNewSupplierEmail(e.target.value)}
+                  placeholder="Enter email address"
+                />
+              </div>
+              <div>
+                <Label htmlFor="phone">Phone</Label>
+                <Input
+                  id="phone"
+                  value={newSupplierPhone}
+                  onChange={(e) => setNewSupplierPhone(e.target.value)}
+                  placeholder="Enter phone number"
+                />
+              </div>
+              <div>
+                <Label htmlFor="address">Address</Label>
+                <Input
+                  id="address"
+                  value={newSupplierAddress}
+                  onChange={(e) => setNewSupplierAddress(e.target.value)}
+                  placeholder="Enter address"
+                />
+              </div>
+              <div>
+                <Label htmlFor="category">Category</Label>
+                <Input
+                  id="category"
+                  value={newSupplierCategory}
+                  onChange={(e) => setNewSupplierCategory(e.target.value)}
+                  placeholder="Enter category"
+                />
+              </div>
+            </div>
           )}
+
+          <div className="flex justify-end space-x-2">
+            <Button variant="outline" onClick={() => onOpenChange(false)}>
+              Cancel
+            </Button>
+            <Button onClick={handleSubmit}>
+              {matchOption === 'existing' ? 'Match Supplier' : 'Create Supplier'}
+            </Button>
+          </div>
         </div>
-        
-        <DialogFooter>
-          <Button variant="outline" onClick={() => onOpenChange(false)}>Cancel</Button>
-          <Button 
-            onClick={handleConfirm}
-            disabled={
-              (matchOption === 'existing' && !selectedSupplierId) ||
-              (matchOption === 'new' && (!newSupplierName || !newSupplierCode || isPending))
-            }
-            loading={matchOption === 'new' && isPending}
-          >
-            <Check className="h-4 w-4 mr-2" />
-            {matchOption === 'existing' ? 'Use Selected Supplier' : 'Create & Use'}
-          </Button>
-        </DialogFooter>
       </DialogContent>
     </Dialog>
   );
-}
+};

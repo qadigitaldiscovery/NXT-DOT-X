@@ -11,6 +11,7 @@ export interface WooCommerceConfig {
   url: string;
   consumer_key: string;
   consumer_secret: string;
+  [key: string]: any; // Allow additional properties for Json compatibility
 }
 
 // Fetch existing WooCommerce config from the database
@@ -35,15 +36,12 @@ export async function fetchWooConfig(): Promise<WooCommerceConfig | null> {
       return null;
     }
 
-    if (configData) {
-      // config is stored in a "config" field
-      if (configData.config) {
-        return {
-          id: configData.id,
-          integration_type: 'woocommerce',
-          ...configData.config
-        } as WooCommerceConfig;
-      }
+    if (configData && configData.config) {
+      return {
+        id: configData.id,
+        integration_type: 'woocommerce',
+        ...(configData.config as any)
+      } as WooCommerceConfig;
     }
 
     return null;
@@ -55,15 +53,11 @@ export async function fetchWooConfig(): Promise<WooCommerceConfig | null> {
 }
 
 // Test the WooCommerce connection by making a sample request
-// This function can be expanded to call an edge function or direct fetch
 export async function testWooConnection(config: WooCommerceConfig): Promise<boolean> {
   try {
     // Example mock: call a local edge function or external endpoint
     // For now, just simulating a success response after 1 second
     await new Promise(resolve => setTimeout(resolve, 1000));
-
-    // If it fails, throw an error to see the effect
-    // throw new Error("Unable to connect to WooCommerce store");
 
     toast.success("Successfully connected to WooCommerce!");
     return true;
@@ -92,7 +86,7 @@ export async function saveWooConfig(
       const { error } = await supabase
         .from('integration_configs')
         .update({
-          config,
+          config: config as any,
           updated_at: new Date().toISOString()
         })
         .eq('id', existingConfig.id);
@@ -109,9 +103,8 @@ export async function saveWooConfig(
       const { data: newConfig, error } = await supabase
         .from('integration_configs')
         .insert({
-          name: 'WooCommerce',
           integration_type: 'woocommerce',
-          config,
+          config: config as any,
           is_active: true,
           created_by: session.session.user.id
         })
@@ -139,7 +132,6 @@ export async function saveWooConfig(
 }
 
 // Placeholder for synchronization logic
-// In a real scenario, this might call an edge function or an external endpoint
 export async function syncWooData(config: WooCommerceConfig) {
   try {
     // Example: making a fetch call to a local edge function
