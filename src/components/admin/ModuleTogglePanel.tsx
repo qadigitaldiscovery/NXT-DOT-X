@@ -102,7 +102,6 @@ export const ModuleTogglePanel: React.FC = () => {
 
   const disableAll = (category: string) => {
     setModules(prev => {
-      const coreModules = prev.filter(m => m.category === 'core');
       const updated = prev.map(module => {
         if (module.category === category && module.category !== 'core') {
           return { ...module, enabled: false };
@@ -153,7 +152,7 @@ export const ModuleTogglePanel: React.FC = () => {
             </div>
           </div>
           <div className="flex items-center space-x-2">
-            <Badge variant={getCategoryBadgeVariant(module.category)}>
+            <Badge variant={getCategoryBadgeVariant(module.category) as any}>
               {module.category}
             </Badge>
             <Switch

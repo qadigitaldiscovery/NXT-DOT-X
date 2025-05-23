@@ -1,3 +1,4 @@
+
 import { useState, useCallback, useEffect } from 'react';
 import OpenAI from 'openai';
 import { toast } from 'sonner';
@@ -51,9 +52,7 @@ export const useOpenAIClient = (apiKey?: string) => {
       setClient(null);
       setIsValid(false);
       
-      toast.error('OpenAI API key validation failed', {
-        description: errorMessage
-      });
+      toast.error(`OpenAI API key validation failed: ${errorMessage}`);
       return false;
     } finally {
       setIsValidating(false);
@@ -68,3 +67,6 @@ export const useOpenAIClient = (apiKey?: string) => {
     validateKey
   };
 };
+
+// Also export as useOpenAI for backward compatibility
+export const useOpenAI = useOpenAIClient;

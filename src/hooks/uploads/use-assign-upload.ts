@@ -1,3 +1,4 @@
+
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
@@ -5,6 +6,7 @@ import { useState } from 'react';
 
 export const useAssignUpload = () => {
   const [isLoading, setIsLoading] = useState(false);
+  const { toast } = useToast();
 
   const assignUpload = async (uploadId: string, supplierId: string) => {
     setIsLoading(true);
@@ -23,9 +25,7 @@ export const useAssignUpload = () => {
       console.error('Error assigning upload:', error);
       const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
       
-      toast.error('Failed to assign upload', {
-        description: errorMessage
-      });
+      toast.error(`Failed to assign upload: ${errorMessage}`);
       
       return { success: false, error: errorMessage };
     } finally {
@@ -71,15 +71,10 @@ export const useAssignUploadToSupplier = () => {
     },
     onSuccess: (result, variables) => {
       queryClient.invalidateQueries({ queryKey: ['supplier-uploads'] });
-      toast({
-        description: `File ${result.fileName} has been successfully assigned to a supplier.`
-      });
+      toast.success(`File ${result.fileName} has been successfully assigned to a supplier.`);
     },
     onError: (error) => {
-      toast({
-        description: `Error: ${error instanceof Error ? error.message : 'Unknown error occurred'}`,
-        variant: 'destructive'
-      });
+      toast.error(`Error: ${error instanceof Error ? error.message : 'Unknown error occurred'}`);
     }
   });
 };

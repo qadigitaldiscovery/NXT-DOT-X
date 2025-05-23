@@ -58,18 +58,14 @@ export default function NewSupplierPage() {
       console.log(values);
       
       // Show success message
-      toast.success('Supplier created successfully', {
-        description: `${values.name} has been added as a supplier.`
-      });
+      toast.success(`${values.name} has been added as a supplier.`);
       
       // Navigate back to suppliers list
       setTimeout(() => {
         navigate('/data-management/suppliers');
       }, 1500);
     } catch (error) {
-      toast.error('Error creating partner', {
-        description: 'There was an error creating the partner. Please try again.'
-      });
+      toast.error('There was an error creating the partner. Please try again.');
     } finally {
       setIsLoading(false);
     }
