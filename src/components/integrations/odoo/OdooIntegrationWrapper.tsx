@@ -1,15 +1,19 @@
 
 import React from 'react';
-import OdooIntegration from '@/components/tech-hub/integrations/odoo/OdooIntegration';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 const OdooIntegrationWrapper: React.FC = () => {
-  const handleSaveConfig = (config: any) => {
-    console.log("Config saved:", config);
-    return Promise.resolve();
-  };
-  
   return (
-    <OdooIntegration onSaveConfig={handleSaveConfig} />
+    <Card>
+      <CardHeader>
+        <CardTitle>Odoo Integration</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <p className="text-gray-600">
+          Odoo integration functionality (Security disabled - all access granted)
+        </p>
+      </CardContent>
+    </Card>
   );
 };
 

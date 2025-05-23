@@ -1,130 +1,46 @@
-import { useState } from 'react';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
+
+import React from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { FileText, Download, Eye, Trash2 } from 'lucide-react';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { Badge } from '@/components/ui/badge';
-import { format } from 'date-fns';
-import { Document } from '@/types/document';
+import { FileText, Download, Eye } from 'lucide-react';
 
-interface DocumentsTableProps {
-  documents: Document[];
-  onView: (document: Document) => void;
-  onDownload: (document: Document) => void;
-  onDelete: (documentId: string) => void;
-}
-
-export function DocumentsTable({ documents, onView, onDownload, onDelete }: DocumentsTableProps) {
-  const [sortColumn, setSortColumn] = useState<keyof Document>('uploadDate');
-  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
-
-  const handleSort = (column: keyof Document) => {
-    if (sortColumn === column) {
-      setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
-    } else {
-      setSortColumn(column);
-      setSortDirection('asc');
-    }
-  };
-
-  const sortedDocuments = [...documents].sort((a, b) => {
-    const columnA = a[sortColumn];
-    const columnB = b[sortColumn];
-
-    if (columnA === undefined || columnB === undefined) {
-      return 0;
-    }
-
-    let comparison = 0;
-
-    if (typeof columnA === 'string' && typeof columnB === 'string') {
-      comparison = columnA.localeCompare(columnB);
-    } else if (typeof columnA === 'number' && typeof columnB === 'number') {
-      comparison = columnA - columnB;
-    } else if (columnA instanceof Date && columnB instanceof Date) {
-      comparison = columnA.getTime() - columnB.getTime();
-    }
-
-    return sortDirection === 'asc' ? comparison : -comparison;
-  });
-
-  const renderSortIndicator = (column: keyof Document) => {
-    if (sortColumn === column) {
-      return sortDirection === 'asc' ? '▲' : '▼';
-    }
-    return null;
-  };
+const DocumentsTable: React.FC = () => {
+  const mockDocuments = [
+    { id: '1', name: 'Contract_ABC.pdf', size: '2.5 MB', uploadedAt: '2024-01-15', type: 'PDF' },
+    { id: '2', name: 'Invoice_123.xlsx', size: '1.2 MB', uploadedAt: '2024-01-14', type: 'Excel' },
+    { id: '3', name: 'Report_Q1.docx', size: '856 KB', uploadedAt: '2024-01-13', type: 'Word' },
+  ];
 
   return (
-    <div className="rounded-md border">
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead className="w-[250px] cursor-pointer" onClick={() => handleSort('name')}>
-              Document Name
-              {renderSortIndicator('name')}
-            </TableHead>
-            <TableHead className="cursor-pointer" onClick={() => handleSort('type')}>
-              Type
-              {renderSortIndicator('type')}
-            </TableHead>
-            <TableHead className="cursor-pointer" onClick={() => handleSort('uploadDate')}>
-              Uploaded
-              {renderSortIndicator('uploadDate')}
-            </TableHead>
-            <TableHead className="cursor-pointer" onClick={() => handleSort('size')}>
-              Size
-              {renderSortIndicator('size')}
-            </TableHead>
-            <TableHead className="text-right">Actions</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {sortedDocuments.map((document) => (
-            <TableRow key={document.id}>
-              <TableCell className="font-medium">{document.name}</TableCell>
-              <TableCell>
-                <Badge variant="secondary">{document.type}</Badge>
-              </TableCell>
-              <TableCell>{format(new Date(document.uploadDate), 'MMM dd, yyyy')}</TableCell>
-              <TableCell>{document.size}</TableCell>
-              <TableCell className="text-right">
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" className="h-8 w-8 p-0">
-                      <span className="sr-only">Open menu</span>
-                      <FileText className="h-4 w-4" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end">
-                    <DropdownMenuItem onClick={() => onView(document)}>
-                      <Eye className="mr-2 h-4 w-4" /> View
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => onDownload(document)}>
-                      <Download className="mr-2 h-4 w-4" /> Download
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => onDelete(document.id)}>
-                      <Trash2 className="mr-2 h-4 w-4" /> Delete
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </TableCell>
-            </TableRow>
+    <Card>
+      <CardHeader>
+        <CardTitle>Documents</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <div className="space-y-4">
+          {mockDocuments.map((doc) => (
+            <div key={doc.id} className="flex items-center justify-between p-4 border rounded-lg">
+              <div className="flex items-center gap-3">
+                <FileText className="h-8 w-8 text-blue-500" />
+                <div>
+                  <p className="font-medium">{doc.name}</p>
+                  <p className="text-sm text-gray-500">{doc.size} • {doc.uploadedAt}</p>
+                </div>
+              </div>
+              <div className="flex gap-2">
+                <Button variant="outline" size="sm">
+                  <Eye className="h-4 w-4" />
+                </Button>
+                <Button variant="outline" size="sm">
+                  <Download className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
           ))}
-        </TableBody>
-      </Table>
-    </div>
+        </div>
+      </CardContent>
+    </Card>
   );
-}
+};
+
+export default DocumentsTable;

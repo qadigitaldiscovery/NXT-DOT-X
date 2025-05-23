@@ -1,21 +1,26 @@
 
+import React from 'react';
+import { Zap } from 'lucide-react';
 import { ModuleCard } from '../ModuleCard';
+import { useNavigate } from 'react-router-dom';
 
 const AutomationWorkflow = () => {
+  const navigate = useNavigate();
+
   return (
-    <div className="col-span-1">
-      <ModuleCard
-        title="AUTOMATION + WORKFLOW"
-        path="/automation"
-        variant="default"
-        features={[
-          { name: 'Workflow Builder', path: '/automation/workflows' },
-          { name: 'Task Automation', path: '/automation/tasks' },
-          { name: 'Triggers', path: '/automation/triggers' },
-          { name: 'Analytics', path: '/automation/analytics' }
-        ]}
-      />
-    </div>
+    <ModuleCard
+      title="Automation & Workflows"
+      description="Streamline business processes with intelligent automation"
+      icon={<Zap size={24} />}
+      features={[
+        { name: 'Process Automation', path: '/workflows/automation' },
+        { name: 'Workflow Designer', path: '/workflows/designer' },
+        { name: 'Task Scheduling', path: '/workflows/scheduler' },
+        { name: 'Integration Hub', path: '/workflows/integrations' }
+      ]}
+      onClick={() => navigate('/workflows')}
+      variant="default"
+    />
   );
 };
 

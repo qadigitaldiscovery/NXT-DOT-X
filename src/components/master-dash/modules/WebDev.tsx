@@ -1,23 +1,24 @@
 
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Code2 } from 'lucide-react';
 import { ModuleCard } from '../ModuleCard';
-import { FileCode } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
-const WebDev: React.FC = () => {
+const WebDev = () => {
   const navigate = useNavigate();
-  
+
   return (
     <ModuleCard
-      title="WebDev Module"
-      path="/webdev"
-      description="Route mapping and web development tools"
-      variant="default"
-      icon={FileCode}
+      title="Web Development"
+      description="Web development tools and deployment management"
+      icon={<Code2 size={24} />}
       features={[
-        { name: 'Visual Route Editor', path: '/webdev' },
-        { name: 'Route Preview', path: '/webdev' }
+        { name: 'Code Repository', path: '/web-dev/repository' },
+        { name: 'Deployment Pipeline', path: '/web-dev/deployment' },
+        { name: 'Version Control', path: '/web-dev/version' },
+        { name: 'Testing Suite', path: '/web-dev/testing' }
       ]}
+      onClick={() => navigate('/web-dev')}
     />
   );
 };

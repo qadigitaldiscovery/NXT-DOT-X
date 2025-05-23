@@ -1,178 +1,117 @@
 
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-  CardFooter
-} from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { ArrowLeft, Save, Trash2 } from "lucide-react";
-import { Supplier, useCreateSupplier, useUpdateSupplier } from '@/hooks/use-suppliers';
+import React, { useState } from 'react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
-type SupplierFormProps = {
-  initialData?: Supplier;
-  isEditing?: boolean;
-  onDelete?: () => void;
-};
+interface Supplier {
+  id?: string;
+  name?: string;
+  code?: string;
+  contact_name?: string;
+  email?: string;
+  phone?: string;
+  address?: string;
+  city?: string;
+  country?: string;
+  status?: 'active' | 'inactive';
+  credit_rating?: string;
+  payment_terms?: string;
+  reports?: any[];
+}
 
-export function SupplierForm({ initialData, isEditing = false, onDelete }: SupplierFormProps) {
-  const navigate = useNavigate();
-  const { mutate: createSupplier, isPending: isCreating } = useCreateSupplier();
-  const { mutate: updateSupplier, isPending: isUpdating } = useUpdateSupplier();
-  
-  const [formData, setFormData] = React.useState<Partial<Supplier>>({
-    name: initialData?.name || '',
-    code: initialData?.code || '',
-    contact_name: initialData?.contact_name || '',
-    email: initialData?.email || '',
-    phone: initialData?.phone || '',
-    website: initialData?.website || '',
-    payment_terms: initialData?.payment_terms || '',
-    status: initialData?.status || 'active'
-  });
-  
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+interface SupplierFormProps {
+  supplier?: Partial<Supplier>;
+  onSave: (supplier: Partial<Supplier>) => void;
+  onCancel: () => void;
+}
+
+const SupplierForm: React.FC<SupplierFormProps> = ({ supplier, onSave, onCancel }) => {
+  const [formData, setFormData] = useState<Partial<Supplier>>(supplier || {});
+
+  const handleInputChange = (field: keyof Supplier, value: string) => {
+    setFormData(prev => ({
+      ...prev,
+      [field]: value
+    }));
   };
-  
+
   const handleStatusChange = (value: string) => {
-    setFormData(prev => ({ ...prev, status: value }));
+    setFormData(prev => ({
+      ...prev,
+      status: value as 'active' | 'inactive'
+    }));
   };
-  
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
-    if (isEditing && initialData) {
-      updateSupplier({ ...initialData, ...formData }, {
-        onSuccess: () => {
-          navigate('/beta1/suppliers');
-        }
-      });
-    } else {
-      createSupplier(formData as Omit<Supplier, 'id'>, {
-        onSuccess: () => {
-          navigate('/beta1/suppliers');
-        }
-      });
-    }
+    onSave(formData);
   };
-  
+
   return (
-    <form onSubmit={handleSubmit}>
-      <Card>
-        <CardHeader>
-          <CardTitle>{isEditing ? 'Edit Supplier' : 'New Supplier'}</CardTitle>
-          <CardDescription>
-            {isEditing 
-              ? 'Update supplier information' 
-              : 'Enter information to add a new supplier'}
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="space-y-2">
+    <Card className="max-w-2xl mx-auto">
+      <CardHeader>
+        <CardTitle>
+          {supplier?.id ? 'Edit Supplier' : 'Add New Supplier'}
+        </CardTitle>
+      </CardHeader>
+      <CardContent>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="grid grid-cols-2 gap-4">
+            <div>
               <Label htmlFor="name">Supplier Name</Label>
-              <Input 
+              <Input
                 id="name"
-                name="name"
-                value={formData.name}
-                onChange={handleChange}
-                placeholder="Enter supplier name"
+                value={formData.name || ''}
+                onChange={(e) => handleInputChange('name', e.target.value)}
                 required
               />
             </div>
-            
-            <div className="space-y-2">
+            <div>
               <Label htmlFor="code">Supplier Code</Label>
-              <Input 
+              <Input
                 id="code"
-                name="code"
-                value={formData.code}
-                onChange={handleChange}
-                placeholder="Enter supplier code"
-                required
-                disabled={isEditing} // Cannot change code if editing
+                value={formData.code || ''}
+                onChange={(e) => handleInputChange('code', e.target.value)}
               />
             </div>
-            
-            <div className="space-y-2">
-              <Label htmlFor="contact_name">Contact Person</Label>
-              <Input 
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <Label htmlFor="contact_name">Contact Name</Label>
+              <Input
                 id="contact_name"
-                name="contact_name"
                 value={formData.contact_name || ''}
-                onChange={handleChange}
-                placeholder="Enter contact person name"
+                onChange={(e) => handleInputChange('contact_name', e.target.value)}
               />
             </div>
-            
-            <div className="space-y-2">
+            <div>
               <Label htmlFor="email">Email</Label>
-              <Input 
+              <Input
                 id="email"
-                name="email"
                 type="email"
                 value={formData.email || ''}
-                onChange={handleChange}
-                placeholder="Enter email address"
+                onChange={(e) => handleInputChange('email', e.target.value)}
               />
             </div>
-            
-            <div className="space-y-2">
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div>
               <Label htmlFor="phone">Phone</Label>
-              <Input 
+              <Input
                 id="phone"
-                name="phone"
                 value={formData.phone || ''}
-                onChange={handleChange}
-                placeholder="Enter phone number"
+                onChange={(e) => handleInputChange('phone', e.target.value)}
               />
             </div>
-            
-            <div className="space-y-2">
-              <Label htmlFor="website">Website</Label>
-              <Input 
-                id="website"
-                name="website"
-                value={formData.website || ''}
-                onChange={handleChange}
-                placeholder="Enter website URL"
-              />
-            </div>
-            
-            <div className="space-y-2">
-              <Label htmlFor="payment_terms">Payment Terms</Label>
-              <Input 
-                id="payment_terms"
-                name="payment_terms"
-                value={formData.payment_terms || ''}
-                onChange={handleChange}
-                placeholder="e.g., Net 30"
-              />
-            </div>
-            
-            <div className="space-y-2">
+            <div>
               <Label htmlFor="status">Status</Label>
-              <Select 
-                value={formData.status} 
-                onValueChange={handleStatusChange}
-              >
-                <SelectTrigger id="status">
+              <Select value={formData.status || 'active'} onValueChange={handleStatusChange}>
+                <SelectTrigger>
                   <SelectValue placeholder="Select status" />
                 </SelectTrigger>
                 <SelectContent>
@@ -182,37 +121,45 @@ export function SupplierForm({ initialData, isEditing = false, onDelete }: Suppl
               </Select>
             </div>
           </div>
-        </CardContent>
-        <CardFooter className="flex justify-between">
-          <Button 
-            type="button"
-            variant="ghost"
-            onClick={() => navigate('/beta1/suppliers')}
-          >
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            Back
-          </Button>
-          <div className="flex gap-2">
-            {isEditing && onDelete && (
-              <Button 
-                type="button"
-                variant="destructive"
-                onClick={onDelete}
-              >
-                <Trash2 className="h-4 w-4 mr-2" />
-                Delete
-              </Button>
-            )}
-            <Button 
-              type="submit"
-              disabled={isCreating || isUpdating}
-            >
-              <Save className="h-4 w-4 mr-2" />
-              {isEditing ? 'Update' : 'Save'}
+
+          <div>
+            <Label htmlFor="address">Address</Label>
+            <Input
+              id="address"
+              value={formData.address || ''}
+              onChange={(e) => handleInputChange('address', e.target.value)}
+            />
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <Label htmlFor="city">City</Label>
+              <Input
+                id="city"
+                value={formData.city || ''}
+                onChange={(e) => handleInputChange('city', e.target.value)}
+              />
+            </div>
+            <div>
+              <Label htmlFor="country">Country</Label>
+              <Input
+                id="country"
+                value={formData.country || ''}
+                onChange={(e) => handleInputChange('country', e.target.value)}
+              />
+            </div>
+          </div>
+
+          <div className="flex gap-4 pt-4">
+            <Button type="submit">Save Supplier</Button>
+            <Button type="button" variant="outline" onClick={onCancel}>
+              Cancel
             </Button>
           </div>
-        </CardFooter>
-      </Card>
-    </form>
+        </form>
+      </CardContent>
+    </Card>
   );
-}
+};
+
+export default SupplierForm;
