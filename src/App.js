@@ -1,25 +1,13 @@
 
+import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
 import { Suspense } from "react";
 import { BrowserRouter as Router } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
 import { ThemeProvider } from "./context/ThemeContext";
 import { Toaster } from "sonner";
-import AppRoutes from "./routes/appRoutes_vFinal";
-import { ErrorBoundary } from "./components/ErrorBoundary";
+import AppRoutes from "./routes/AppRoutes";
+import ErrorBoundary from "./components/ErrorBoundary";
 
 export default function App() {
-  return (
-    <Router>
-      <ErrorBoundary>
-        <AuthProvider>
-          <ThemeProvider>
-            <Suspense fallback={<p className="p-4">Loading…</p>}>
-              <Toaster position="top-right" richColors />
-              <AppRoutes />
-            </Suspense>
-          </ThemeProvider>
-        </AuthProvider>
-      </ErrorBoundary>
-    </Router>
-  );
+    return (_jsx(Router, { children: _jsx(ErrorBoundary, { children: _jsx(AuthProvider, { children: _jsx(ThemeProvider, { children: _jsxs(Suspense, { fallback: _jsx("p", { className: "p-4", children: "Loading…" }), children: [_jsx(Toaster, { position: "top-right", richColors: true }), _jsx(AppRoutes, {})] }) }) }) }) }));
 }
