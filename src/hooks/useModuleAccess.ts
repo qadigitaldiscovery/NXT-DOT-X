@@ -1,6 +1,5 @@
+
 import { useState, useEffect } from 'react';
-import { useAuth } from '@/context/AuthContext';
-import { supabase } from '@/integrations/supabase/client';
 
 export interface ModuleAccess {
   id: string;
@@ -24,129 +23,29 @@ export function useModuleAccess(): {
   refreshAccess: () => Promise<void>;
   toggleModuleAccess: (id: string, isEnabled: boolean) => Promise<void>;
 } {
-  const { user } = useAuth();
-  const [moduleAccess, setModuleAccess] = useState<UserRoleInfo | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<Error | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [error] = useState<Error | null>(null);
 
-  const loadUserAccess = async () => {
-    try {
-      setLoading(true);
-      if (!user) {
-        setModuleAccess(null);
-        return;
-      }
-
-      // Fetch user roles
-      const { data: rolesData, error: rolesError } = await supabase
-        .from('user_roles')
-        .select('role')
-        .eq('user_id', user.id);
-
-      if (rolesError) throw rolesError;
-
-      // Determine roles, defaulting to admin for the pre-defined admin user
-      let roles = rolesData?.map(r => r.role) || [];
-      const isAdmin = roles.includes('admin') || user.role === 'admin';
-      
-      // If user is admin in AuthContext but not in database, add admin role
-      if (user.role === 'admin' && !roles.includes('admin')) {
-        roles.push('admin');
-      }
-
-      // Fetch user module access
-      const { data: modulesData, error: modulesError } = await supabase
-        .from('user_module_access')
-        .select('*')
-        .eq('user_id', user.id);
-
-      if (modulesError) throw modulesError;
-
-      // Convert database result to ModuleAccess[] format
-      const modules: ModuleAccess[] = modulesData?.map(item => ({
-        id: item.id,
-        module_slug: item.module_slug,
-        submenu_slug: item.submenu_slug || undefined,
-        category: item.category || undefined,
-        is_enabled: item.is_enabled
-      })) || [];
-
-      const userAccess: UserRoleInfo = {
-        roles,
-        modules,
-        isAdmin,
-        hasAccess: (moduleSlug, submenuSlug) => {
-          if (isAdmin) return true; // Admins have access to everything
-          
-          // Check if the module is enabled for this user
-          const module = modules?.find(m => 
-            m.module_slug === moduleSlug && 
-            (submenuSlug ? m.submenu_slug === submenuSlug : true)
-          );
-          
-          return module ? module.is_enabled : false;
-        }
-      };
-
-      setModuleAccess(userAccess);
-    } catch (err) {
-      console.error('Error loading module access:', err);
-      setError(err instanceof Error ? err : new Error('Unknown error loading module access'));
-    } finally {
-      setLoading(false);
-    }
+  // Always return admin access with all modules enabled
+  const moduleAccess: UserRoleInfo = {
+    roles: ['admin'],
+    modules: [],
+    isAdmin: true,
+    hasAccess: () => true // Always allow access
   };
 
   const refreshAccess = async () => {
-    await loadUserAccess();
+    // No-op since security is disabled
   };
 
   const toggleModuleAccess = async (id: string, isEnabled: boolean) => {
-    try {
-      const { error: updateError } = await supabase
-        .from('user_module_access')
-        .update({ is_enabled: isEnabled })
-        .eq('id', id);
-
-      if (updateError) throw updateError;
-
-      // Update local state
-      setModuleAccess(prev => {
-        if (!prev) return prev;
-        
-        return {
-          ...prev,
-          modules: prev.modules.map(m =>
-            m.id === id ? { ...m, is_enabled: isEnabled } : m
-          )
-        };
-      });
-    } catch (err) {
-      console.error('Error toggling module access:', err);
-      throw err;
-    }
+    // No-op since security is disabled
   };
-
-  useEffect(() => {
-    if (user) {
-      loadUserAccess();
-    } else {
-      setModuleAccess(null);
-      setLoading(false);
-    }
-  }, [user]);
 
   return { moduleAccess, loading, error, refreshAccess, toggleModuleAccess };
 }
 
-// Add this explicit implementation of isModuleEnabled if not already present
+// Always return true since security is disabled
 export function isModuleEnabled(moduleSlug: string, userRoles?: string[]): boolean {
-  // Admin users have access to all modules
-  if (userRoles && userRoles.includes('admin')) {
-    return true;
-  }
-  
-  // The real implementation would check the user's module access
-  // For now, return true to enable all modules by default
   return true;
 }

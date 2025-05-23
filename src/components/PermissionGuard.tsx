@@ -3,6 +3,7 @@ import React from 'react';
 
 interface PermissionGuardProps {
   requiredPermissions?: string[];
+  requiredPermission?: string;
   children: React.ReactNode;
   requireAll?: boolean;
 }

@@ -17,12 +17,6 @@ export interface WooCommerceConfig {
 // Fetch existing WooCommerce config from the database
 export async function fetchWooConfig(): Promise<WooCommerceConfig | null> {
   try {
-    const { data: session } = await supabase.auth.getSession();
-    if (!session?.session) {
-      toast.error("You must be logged in to manage integrations");
-      return null;
-    }
-
     const { data: configData, error } = await supabase
       .from('integration_configs')
       .select('*')
@@ -73,12 +67,6 @@ export async function saveWooConfig(
   config: WooCommerceConfig
 ): Promise<WooCommerceConfig | null> {
   try {
-    const { data: session } = await supabase.auth.getSession();
-    if (!session?.session) {
-      toast.error("You must be logged in to save configurations");
-      return null;
-    }
-
     const existingConfig = await fetchWooConfig();
     const operation = existingConfig ? 'update' : 'insert';
 
@@ -103,10 +91,11 @@ export async function saveWooConfig(
       const { data: newConfig, error } = await supabase
         .from('integration_configs')
         .insert({
+          name: 'WooCommerce Integration',
           integration_type: 'woocommerce',
           config: config as any,
           is_active: true,
-          created_by: session.session.user.id
+          created_by: 'admin'
         })
         .select()
         .single();

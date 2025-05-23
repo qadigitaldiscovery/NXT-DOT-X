@@ -1,7 +1,9 @@
+
 export function usePermissions() {
-  const user = { role: 'admin' }; // Replace with actual logic from auth/session
+  // No security restrictions - everyone is admin
   return {
-    hasRole: (role: string) => user.role === role,
+    hasRole: (role: string) => true,
+    hasPermission: (permission: string) => true,
+    hasAnyPermission: (permissions: string[]) => true,
   };
 }
- 
