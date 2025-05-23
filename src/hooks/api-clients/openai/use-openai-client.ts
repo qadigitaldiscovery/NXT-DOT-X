@@ -1,75 +1,70 @@
+import { useState, useCallback, useEffect } from 'react';
+import OpenAI from 'openai';
+import { toast } from 'sonner';
 
-import { useState, useCallback } from 'react';
-import { createOpenAIClient } from './client';
-import { useToast } from '@/components/ui/use-toast';
+interface OpenAIClient {
+  client: OpenAI | null;
+  isValid: boolean;
+  isValidating: boolean;
+  error: string | null;
+  validateKey: (key: string) => Promise<boolean>;
+}
 
-// Main hook for using OpenAI in components
-export const useOpenAI = () => {
-  const [loading, setLoading] = useState(false);
+export const useOpenAIClient = (apiKey?: string) => {
+  const [client, setClient] = useState<OpenAI | null>(null);
+  const [isValid, setIsValid] = useState(false);
+  const [isValidating, setIsValidating] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const { toast } = useToast();
 
-  // Get API key - in a real app, this would be fetched securely
-  const getApiKey = () => {
-    // This is a simplified version; in production, you'd use a more secure method
-    const apiKey = localStorage.getItem('openai_api_key');
-    if (!apiKey) {
-      throw new Error('OpenAI API key not found');
+  useEffect(() => {
+    if (apiKey) {
+      validateKey(apiKey);
     }
-    return apiKey;
-  };
+  }, [apiKey]);
 
-  const sendMessage = useCallback(async (
-    userMessage: string,
-    model: string = 'gpt-4o-mini',
-    options: {
-      systemPrompt?: string,
-      temperature?: number,
-      maxTokens?: number
-    } = {}
-  ) => {
-    const {
-      systemPrompt = 'You are a helpful assistant.',
-      temperature = 0.7,
-      maxTokens = 1000
-    } = options;
+  const validateKey = useCallback(async (key: string): Promise<boolean> => {
+    if (!key || key.trim() === '') {
+      setError('API key is required');
+      return false;
+    }
 
-    setLoading(true);
+    setIsValidating(true);
     setError(null);
 
     try {
-      const apiKey = getApiKey();
-      const client = createOpenAIClient(apiKey);
-
-      const response = await client.createChatCompletion({
-        model,
-        messages: [
-          { role: 'system', content: systemPrompt },
-          { role: 'user', content: userMessage }
-        ],
-        temperature,
-        max_tokens: maxTokens
+      const testClient = new OpenAI({
+        apiKey: key,
+        dangerouslyAllowBrowser: true
       });
 
-      return response.choices[0].message.content;
+      await testClient.models.list();
+      
+      setClient(testClient);
+      setIsValid(true);
+      setError(null);
+      
+      toast.success('OpenAI API key validated successfully');
+      return true;
     } catch (err: any) {
-      console.error('OpenAI API error:', err);
-      const errorMessage = err.message || 'Failed to get response from AI';
+      const errorMessage = err?.message || 'Failed to validate API key';
       setError(errorMessage);
-      toast({
-        title: 'AI Request Failed',
-        description: errorMessage,
-        variant: 'destructive',
+      setClient(null);
+      setIsValid(false);
+      
+      toast.error('OpenAI API key validation failed', {
+        description: errorMessage
       });
-      throw err;
+      return false;
     } finally {
-      setLoading(false);
+      setIsValidating(false);
     }
-  }, [toast]);
+  }, []);
 
   return {
-    sendMessage,
-    loading,
-    error
+    client,
+    isValid,
+    isValidating,
+    error,
+    validateKey
   };
 };

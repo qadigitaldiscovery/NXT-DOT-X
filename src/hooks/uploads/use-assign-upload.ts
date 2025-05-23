@@ -1,7 +1,43 @@
-
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { useState } from 'react';
+
+export const useAssignUpload = () => {
+  const [isLoading, setIsLoading] = useState(false);
+
+  const assignUpload = async (uploadId: string, supplierId: string) => {
+    setIsLoading(true);
+    
+    try {
+      // Mock assignment logic
+      console.log(`Assigning upload ${uploadId} to supplier ${supplierId}`);
+      
+      // Simulate API delay
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      toast.success('Upload assigned successfully');
+      
+      return { success: true, data: { uploadId, supplierId } };
+    } catch (error) {
+      console.error('Error assigning upload:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+      
+      toast.error('Failed to assign upload', {
+        description: errorMessage
+      });
+      
+      return { success: false, error: errorMessage };
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return {
+    assignUpload,
+    isLoading
+  };
+};
 
 export const useAssignUploadToSupplier = () => {
   const queryClient = useQueryClient();
