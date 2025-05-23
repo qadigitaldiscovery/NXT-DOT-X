@@ -26,9 +26,14 @@ export const useModules = () => {
         
       if (error) throw error;
       
+      // Properly map the data with correct types
       setModules(data?.map(item => ({
-        ...item,
-        description: item.description || undefined
+        id: item.id,
+        name: item.name,
+        status: item.status,
+        description: item.description || undefined,
+        created_at: item.created_at || undefined,
+        updated_at: item.updated_at || undefined
       })) || []);
     } catch (err) {
       console.error('Error fetching modules:', err);

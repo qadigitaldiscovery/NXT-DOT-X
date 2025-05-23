@@ -23,7 +23,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     access_token: 'mock-token',
     refresh_token: 'mock-refresh',
     expires_in: 3600,
-    token_type: 'bearer'
+    token_type: 'bearer',
+    expires_at: Date.now() + 3600000
   });
   const [loading] = useState(false);
 

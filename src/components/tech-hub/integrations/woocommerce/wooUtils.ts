@@ -34,7 +34,7 @@ export async function fetchWooConfig(): Promise<WooCommerceConfig | null> {
       return {
         id: configData.id,
         integration_type: 'woocommerce',
-        ...configData.config
+        ...(typeof configData.config === 'object' ? configData.config : {})
       } as WooCommerceConfig;
     }
 
@@ -110,7 +110,7 @@ export async function saveWooConfig(
       return {
         id: newConfig.id,
         integration_type: newConfig.integration_type,
-        ...newConfig.config
+        ...(typeof newConfig.config === 'object' ? newConfig.config : {})
       };
     }
   } catch (err) {
