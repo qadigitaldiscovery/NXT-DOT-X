@@ -2,8 +2,11 @@
 import React from 'react';
 import { Gift } from 'lucide-react';
 import { ModuleCard } from '../ModuleCard';
+import { useNavigate } from 'react-router-dom';
 
 const LoyaltyProgram = () => {
+  const navigate = useNavigate();
+
   return (
     <ModuleCard
       title="Loyalty & Rewards"
@@ -15,7 +18,7 @@ const LoyaltyProgram = () => {
         { name: 'Program Analytics', path: '/loyalty/analytics' },
         { name: 'Campaign Management', path: '/loyalty/campaigns' }
       ]}
-      onClick={() => window.location.href = '/loyalty-rewards'}
+      onClick={() => navigate('/loyalty-rewards')}
     />
   );
 };

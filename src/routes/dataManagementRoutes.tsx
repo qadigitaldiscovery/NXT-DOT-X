@@ -1,274 +1,145 @@
-import { Route, Routes } from "react-router-dom"; // Ensure Routes is imported
+
+import { Route, Routes } from "react-router-dom";
 import ProtectedRoute from "@/components/ProtectedRoute";
-import { PlatformLayout } from "@/components/layouts/PlatformLayout";
-import { Users, Settings, BarChart3, FileUp, Home, Database, Truck, Building, Calculator, LineChart, ArrowDownUp, FileDown, FileArchive, BrainCircuit, Server } from 'lucide-react';
-import { NavCategory } from '@/components/layout/sidebar/types';
-import { navCategories as globalNavCategories } from '@/components/layout/sidebar/NavigationConfig';
-import { TradingSystemLayout } from '@/components/layout/TradingSystemLayout';
+import { SimpleLayout } from "@/components/layout/SimpleLayout";
 
 // Data Management Pages
 import DashboardHome from "@/pages/data-management/DashboardHome";
-import CostDashboard from "@/pages/data-management/cost-management/CostDashboard";
-import CostAnalysis from "@/pages/data-management/cost-management/CostAnalysis";
-import SupplierCosting from "@/pages/data-management/cost-management/SupplierCosting";
-import CompetitorPricing from "@/pages/data-management/pricing/CompetitorPricing";
-import PriceManagement from "@/pages/data-management/pricing/PriceManagement";
-import UploadsPage from "@/pages/UploadsPage";
-import NewUploadPage from "@/pages/NewUploadPage";
+import SupplierPage from "@/pages/data-management/SupplierPage";
+import CustomerPage from "@/pages/data-management/CustomerPage";
+import SupplierCosting from "@/pages/data-management/SupplierCosting";
+import CostAnalysisPage from "@/pages/data-management/CostAnalysisPage";
+import CostManagementPage from "@/pages/data-management/CostManagementPage";
+import CompetitorPricingPage from "@/pages/data-management/pricing/CompetitorPricingPage";
+import PriceManagementPage from "@/pages/data-management/pricing/PriceManagementPage";
+import UploadsPage from "@/pages/data-management/UploadsPage";
 import DocumentsPage from "@/pages/data-management/documents/DocumentsPage";
-import SuppliersPage from "@/pages/SuppliersPage";
+import ExportDataPage from "@/pages/data-management/ExportDataPage";
+import InsightsPage from "@/pages/data-management/InsightsPage";
+import ConnectionsPage from "@/pages/data-management/ConnectionsPage";
 import DataManagementSettings from "@/pages/DataManagementSettings";
 import NotFound from "@/pages/NotFound";
 
-// Import Beta pages that need to be integrated
-import DataInsights from "@/pages/data-management/insights/DataInsights";
-import DataConnections from "@/pages/data-management/connections/DataConnections";
-import ExportData from "@/pages/data-management/data/ExportData";
-import CustomersPage from "@/pages/data-management/customers/CustomersPage";
-import SupplierComparison from "@/pages/data-management/vendor-supplier-comparison";
-import Suppliers from "@/pages/data-management/SupplierVendorsPage";
-import NewSupplier from "@/pages/data-management/NewSupplierVendorPage";
-import DeploymentTest from "@/pages/data-management/DeploymentTest";
-
-// Filter the data management category from global navigation
-const dataManagementCategory = globalNavCategories.find(category => category.label === "Data Management");
-
-export const dataNavCategories: NavCategory[] = dataManagementCategory ? [dataManagementCategory] : [
-  {
-    name: "DATA MANAGEMENT",
-    label: "DATA MANAGEMENT",
-    items: [
-      { label: 'Dashboard', icon: Database, path: '/data-management' },
-      { label: 'Suppliers', icon: Building, path: '/data-management/suppliers' },
-      { label: 'Customer Directory', icon: Building, path: '/data-management/customers' },
-      { label: 'Supplier Costing', icon: Calculator, path: '/data-management/supplier-costing' },
-      { label: 'Cost Analysis', icon: BarChart3, path: '/data-management/cost-analysis' },
-      { label: 'Cost Management', icon: Database, path: '/data-management/cost-management' },
-      { label: 'Competitor Pricing', icon: LineChart, path: '/data-management/pricing/competitor-pricing' },
-      { label: 'Price Management', icon: ArrowDownUp, path: '/data-management/pricing/price-management' },
-      { label: 'File Uploads', icon: FileUp, path: '/data-management/uploads' },
-      { label: 'Document Repository', icon: FileArchive, path: '/data-management/documents' },
-      { label: 'Export Data', icon: FileDown, path: '/data-management/export-data' },
-      { label: 'Data Insights', icon: BrainCircuit, path: '/data-management/insights' },
-      { label: 'Data Connections', icon: Server, path: '/data-management/connections' },
-      { label: 'Settings', icon: Settings, path: '/data-management/settings' }
-    ]
-  }
-];
-
-export const customerNavCategories: NavCategory[] = [
-  {
-    name: "CUSTOMER MANAGEMENT",
-    label: "CUSTOMER MANAGEMENT",
-    items: [
-      { label: 'Dashboard', icon: Home, path: '/customer-management' },
-      { label: 'Customer Directory', icon: Users, path: '/customer-management/directory' },
-      { label: 'Customer Settings', icon: Settings, path: '/customer-management/settings' },
-      { label: 'Customer Analytics', icon: BarChart3, path: '/customer-analytics' },
-      { label: 'Upload Files', icon: FileUp, path: '/data-management/uploads' }
-    ]
-  }
-];
-
 export const DataManagementRoutes = () => {
   return (
-    <Routes> {/* Wrap the routes within a Routes component */}
-      {/* Data Management Module Routes */}
+    <Routes>
       <Route index element={
         <ProtectedRoute>
-          <PlatformLayout moduleTitle="Data Management Dashboard" useGlobalNavigation={true}>
+          <SimpleLayout>
             <DashboardHome />
-          </PlatformLayout>
+          </SimpleLayout>
         </ProtectedRoute>
       } />
       
-      {/* Deployment Test Page */}
-      <Route path="deployment-test" element={
-        <ProtectedRoute>
-          <PlatformLayout moduleTitle="Deployment Test" useGlobalNavigation={true}>
-            <DeploymentTest />
-          </PlatformLayout>
-        </ProtectedRoute>
-      } />
-      
-      {/* Settings Page */}
-      <Route path="settings" element={
-        <ProtectedRoute>
-          <PlatformLayout moduleTitle="Data Management Settings" useGlobalNavigation={true}>
-            <DataManagementSettings />
-          </PlatformLayout>
-        </ProtectedRoute>
-      } />
-      
-      {/* Supplier Management */}
       <Route path="suppliers" element={
         <ProtectedRoute>
-          <PlatformLayout moduleTitle="Suppliers" useGlobalNavigation={true}>
-            <Suppliers />
-          </PlatformLayout>
+          <SimpleLayout>
+            <SupplierPage />
+          </SimpleLayout>
         </ProtectedRoute>
       } />
       
-      <Route path="suppliers/new" element={
-        <ProtectedRoute>
-          <PlatformLayout moduleTitle="Add New Supplier" useGlobalNavigation={true}>
-            <NewSupplier />
-          </PlatformLayout>
-        </ProtectedRoute>
-      } />
-      
-      {/* Legacy routes for backward compatibility */}
-      <Route path="supplier-vendors" element={
-        <ProtectedRoute>
-          <PlatformLayout moduleTitle="Suppliers" useGlobalNavigation={true}>
-            <Suppliers />
-          </PlatformLayout>
-        </ProtectedRoute>
-      } />
-      
-      <Route path="supplier-vendors/new" element={
-        <ProtectedRoute>
-          <PlatformLayout moduleTitle="Add New Supplier" useGlobalNavigation={true}>
-            <NewSupplier />
-          </PlatformLayout>
-        </ProtectedRoute>
-      } />
-      
-      {/* Customer Management */}
       <Route path="customers" element={
         <ProtectedRoute>
-          <PlatformLayout moduleTitle="Customers" useGlobalNavigation={true}>
-            <CustomersPage />
-          </PlatformLayout>
+          <SimpleLayout>
+            <CustomerPage />
+          </SimpleLayout>
         </ProtectedRoute>
       } />
       
       <Route path="supplier-costing" element={
         <ProtectedRoute>
-          <PlatformLayout moduleTitle="Supplier Costing" useGlobalNavigation={true}>
+          <SimpleLayout>
             <SupplierCosting />
-          </PlatformLayout>
-        </ProtectedRoute>
-      } />
-      
-      {/* Cost Management */}
-      <Route path="cost-management" element={
-        <ProtectedRoute>
-          <PlatformLayout moduleTitle="Cost Management" useGlobalNavigation={true}>
-            <CostDashboard />
-          </PlatformLayout>
+          </SimpleLayout>
         </ProtectedRoute>
       } />
       
       <Route path="cost-analysis" element={
         <ProtectedRoute>
-          <PlatformLayout moduleTitle="Cost Analysis" useGlobalNavigation={true}>
-            <CostAnalysis />
-          </PlatformLayout>
+          <SimpleLayout>
+            <CostAnalysisPage />
+          </SimpleLayout>
         </ProtectedRoute>
       } />
       
-      {/* Pricing */}
+      <Route path="cost-management" element={
+        <ProtectedRoute>
+          <SimpleLayout>
+            <CostManagementPage />
+          </SimpleLayout>
+        </ProtectedRoute>
+      } />
+      
       <Route path="pricing/competitor-pricing" element={
         <ProtectedRoute>
-          <PlatformLayout moduleTitle="Competitor Pricing" useGlobalNavigation={true}>
-            <CompetitorPricing />
-          </PlatformLayout>
+          <SimpleLayout>
+            <CompetitorPricingPage />
+          </SimpleLayout>
         </ProtectedRoute>
       } />
       
       <Route path="pricing/price-management" element={
         <ProtectedRoute>
-          <PlatformLayout moduleTitle="Price Management" useGlobalNavigation={true}>
-            <PriceManagement />
-          </PlatformLayout>
+          <SimpleLayout>
+            <PriceManagementPage />
+          </SimpleLayout>
         </ProtectedRoute>
       } />
       
-      {/* File Uploads */}
       <Route path="uploads" element={
         <ProtectedRoute>
-          <PlatformLayout moduleTitle="File Uploads" useGlobalNavigation={true}>
+          <SimpleLayout>
             <UploadsPage />
-          </PlatformLayout>
+          </SimpleLayout>
         </ProtectedRoute>
       } />
       
-      <Route path="uploads/new" element={
-        <ProtectedRoute>
-          <PlatformLayout moduleTitle="New Upload" useGlobalNavigation={true}>
-            <NewUploadPage />
-          </PlatformLayout>
-        </ProtectedRoute>
-      } />
-      
-      <Route path="uploads/holding" element={
-        <ProtectedRoute>
-          <PlatformLayout moduleTitle="Upload Holding" useGlobalNavigation={true}>
-            <UploadsPage />
-          </PlatformLayout>
-        </ProtectedRoute>
-      } />
-      
-      <Route path="uploads/bulk-import" element={
-        <ProtectedRoute>
-          <PlatformLayout moduleTitle="Bulk Import" useGlobalNavigation={true}>
-            <UploadsPage />
-          </PlatformLayout>
-        </ProtectedRoute>
-      } />
-      
-      {/* Document Repository */}
       <Route path="documents" element={
         <ProtectedRoute>
-          <PlatformLayout moduleTitle="Documents" useGlobalNavigation={true}>
+          <SimpleLayout>
             <DocumentsPage />
-          </PlatformLayout>
+          </SimpleLayout>
         </ProtectedRoute>
       } />
       
-      {/* Export Data - New integrated route */}
       <Route path="export-data" element={
         <ProtectedRoute>
-          <PlatformLayout moduleTitle="Export Data" useGlobalNavigation={true}>
-            <ExportData />
-          </PlatformLayout>
+          <SimpleLayout>
+            <ExportDataPage />
+          </SimpleLayout>
         </ProtectedRoute>
       } />
       
-      {/* Data Insights - New integrated route */}
       <Route path="insights" element={
         <ProtectedRoute>
-          <PlatformLayout moduleTitle="Data Insights" useGlobalNavigation={true}>
-            <DataInsights />
-          </PlatformLayout>
+          <SimpleLayout>
+            <InsightsPage />
+          </SimpleLayout>
         </ProtectedRoute>
       } />
       
-      {/* Data Connections - New integrated route */}
       <Route path="connections" element={
         <ProtectedRoute>
-          <PlatformLayout moduleTitle="Data Connections" useGlobalNavigation={true}>
-            <DataConnections />
-          </PlatformLayout>
+          <SimpleLayout>
+            <ConnectionsPage />
+          </SimpleLayout>
         </ProtectedRoute>
       } />
       
-      {/* Supplier Comparison */}
-      <Route path="vendor-supplier-comparison" element={
+      <Route path="settings" element={
         <ProtectedRoute>
-          <PlatformLayout moduleTitle="Supplier Comparison" useGlobalNavigation={true}>
-            <SupplierComparison />
-          </PlatformLayout>
+          <SimpleLayout>
+            <DataManagementSettings />
+          </SimpleLayout>
         </ProtectedRoute>
       } />
       
-      {/* Catch-all for invalid Data Management routes */}
       <Route path="*" element={
         <ProtectedRoute>
-          <PlatformLayout moduleTitle="Not Found" useGlobalNavigation={true}>
+          <SimpleLayout>
             <NotFound />
-          </PlatformLayout>
+          </SimpleLayout>
         </ProtectedRoute>
       } />
     </Routes>

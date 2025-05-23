@@ -2,8 +2,11 @@
 import React from 'react';
 import { Zap } from 'lucide-react';
 import { ModuleCard } from '../ModuleCard';
+import { useNavigate } from 'react-router-dom';
 
 const DotX = () => {
+  const navigate = useNavigate();
+
   return (
     <ModuleCard
       title="DOT-X Operations"
@@ -15,7 +18,7 @@ const DotX = () => {
         { name: 'Quantum Processing', path: '/dot-x/quantum' },
         { name: 'Team Operations', path: '/dot-x/team' }
       ]}
-      onClick={() => window.location.href = '/dot-x'}
+      onClick={() => navigate('/dot-x')}
     />
   );
 };

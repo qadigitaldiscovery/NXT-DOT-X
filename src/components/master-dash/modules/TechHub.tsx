@@ -2,8 +2,11 @@
 import React from 'react';
 import { Code } from 'lucide-react';
 import { ModuleCard } from '../ModuleCard';
+import { useNavigate } from 'react-router-dom';
 
 const TechHub = () => {
+  const navigate = useNavigate();
+
   return (
     <ModuleCard
       title="Tech Hub"
@@ -15,7 +18,7 @@ const TechHub = () => {
         { name: 'Integrations', path: '/tech-hub/integrations' },
         { name: 'Technical Config', path: '/tech-hub/config' }
       ]}
-      onClick={() => window.location.href = '/tech-hub'}
+      onClick={() => navigate('/tech-hub')}
     />
   );
 };

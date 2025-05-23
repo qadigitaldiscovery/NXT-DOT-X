@@ -2,8 +2,11 @@
 import React from 'react';
 import { TrendingUp } from 'lucide-react';
 import { ModuleCard } from '../ModuleCard';
+import { useNavigate } from 'react-router-dom';
 
 const TradingSystem = () => {
+  const navigate = useNavigate();
+
   return (
     <ModuleCard
       title="Trading System"
@@ -15,7 +18,7 @@ const TradingSystem = () => {
         { name: 'Risk Management', path: '/trading/risk' },
         { name: 'Performance Analytics', path: '/trading/analytics' }
       ]}
-      onClick={() => window.location.href = '/trading-system'}
+      onClick={() => navigate('/trading-system')}
     />
   );
 };
