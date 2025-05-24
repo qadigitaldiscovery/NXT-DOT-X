@@ -1,13 +1,11 @@
 
 import React from 'react';
-import WidgetGrid from '@/components/widgets/WidgetGrid';
+import { DashboardWithSidebar } from '@/components/dashboard/DashboardWithSidebar';
 
 const Dashboard = () => {
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="container mx-auto">
-        <WidgetGrid />
-      </div>
+      <DashboardWithSidebar />
     </div>
   );
 };

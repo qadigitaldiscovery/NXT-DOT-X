@@ -1,3 +1,4 @@
+
 import React from 'react';
 
 export interface PageInfo {
@@ -13,8 +14,11 @@ export const getAvailablePages = (): PageInfo[] => {
     { name: 'Data Management Dashboard', path: '/data-management', component: React.lazy(() => import('../pages/data-management/DashboardHome')) },
     { name: 'Cost Analysis', path: '/data-management/cost-analysis', component: React.lazy(() => import('../pages/data-management/cost-management/CostAnalysis')) },
     { name: 'Suppliers Overview', path: '/data-management/suppliers', component: React.lazy(() => import('../pages/data-management/SuppliersOverviewPage')) },
+    { name: 'Enhanced Suppliers', path: '/data-management/enhanced-suppliers', component: React.lazy(() => import('../pages/data-management/enhanced-suppliers')) },
+    { name: 'New Supplier', path: '/data-management/suppliers-new', component: React.lazy(() => import('../pages/data-management/suppliers-new')) },
     { name: 'Documents', path: '/data-management/documents', component: React.lazy(() => import('../pages/data-management/documents/DocumentsPage')) },
     { name: 'Export Data', path: '/data-management/export', component: React.lazy(() => import('../pages/data-management/data/ExportData')) },
+    { name: 'Competitor Pricing', path: '/data-management/pricing/competitor-pricing', component: React.lazy(() => import('../pages/data-management/pricing/CompetitorPricing')) },
     
     // Brand Marketing Pages
     { name: 'Brand Dashboard', path: '/brand-marketing', component: React.lazy(() => import('../pages/brand-marketing/BrandDashboard')) },
@@ -73,7 +77,16 @@ export const getAvailablePages = (): PageInfo[] => {
     // Other Pages
     { name: 'Settings', path: '/settings', component: React.lazy(() => import('../pages/Settings')) },
     { name: 'WebDev Module', path: '/webdev', component: React.lazy(() => import('../pages/WebDevModule')) },
+    { name: 'Master Dashboard', path: '/master', component: React.lazy(() => import('../pages/MasterDash')) },
   ];
 
   return pages;
+};
+
+// Helper function for drag and drop
+export const createDragDataTransfer = (pageInfo: PageInfo): DataTransfer => {
+  const dataTransfer = new DataTransfer();
+  dataTransfer.setData('text/plain', pageInfo.name);
+  dataTransfer.setData('application/json', JSON.stringify(pageInfo));
+  return dataTransfer;
 };
