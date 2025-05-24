@@ -207,7 +207,6 @@ export const ModuleTogglePanel: React.FC = () => {
   };
 
   const saveConfiguration = () => {
-    // Here you would typically save to backend
     toast.success('Module configuration saved successfully');
   };
 

@@ -1,19 +1,19 @@
+
 import React from 'react';
 
 interface PlatformLayoutProps {
   children: React.ReactNode;
-  moduleTitle: string; // Added moduleTitle prop
-  useGlobalNavigation: boolean; // Added useGlobalNavigation prop
+  moduleTitle: string;
+  useGlobalNavigation?: boolean;
+  navCategories?: any[];
 }
 
-const PlatformLayout: React.FC<PlatformLayoutProps> = ({ children, moduleTitle, useGlobalNavigation }) => {
+const PlatformLayout: React.FC<PlatformLayoutProps> = ({ children }) => {
   return (
-    <div className="platform-layout">
-      {/* Placeholder for header/sidebar */}
-      <main className="platform-content">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+      <main className="w-full p-4">
         {children}
       </main>
-      {/* Placeholder for footer */}
     </div>
   );
 };
