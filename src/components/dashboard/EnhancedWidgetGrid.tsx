@@ -29,7 +29,20 @@ export const EnhancedWidgetGrid: React.FC<EnhancedWidgetGridProps> = ({ onWidget
     if (savedAllocations) {
       try {
         const parsed = JSON.parse(savedAllocations);
-        initialContainers = parsed;
+        // Convert saved data to include components
+        const availablePages = getAvailablePages();
+        initialContainers = parsed.map((saved: any) => {
+          if (saved.pageName && saved.pagePath) {
+            const matchingPage = availablePages.find(page => 
+              page.name === saved.pageName && page.path === saved.pagePath
+            );
+            return {
+              ...saved,
+              pageComponent: matchingPage?.component || null
+            };
+          }
+          return saved;
+        });
       } catch (error) {
         console.error('Failed to parse saved allocations:', error);
         initialContainers = createEmptyContainers();
@@ -63,18 +76,32 @@ export const EnhancedWidgetGrid: React.FC<EnhancedWidgetGridProps> = ({ onWidget
 
   const handleDrop = (e: React.DragEvent, containerId: string) => {
     e.preventDefault();
-    const availablePages = getAvailablePages();
-    const draggedPageName = e.dataTransfer.getData('text/plain');
-    const draggedPage = availablePages.find(page => page.name === draggedPageName);
+    
+    // Try to get page info from drag data
+    let pageInfo: PageInfo | null = null;
+    
+    try {
+      const jsonData = e.dataTransfer.getData('application/json');
+      if (jsonData) {
+        pageInfo = JSON.parse(jsonData);
+      }
+    } catch (error) {
+      // Fallback to text data
+      const pageName = e.dataTransfer.getData('text/plain');
+      if (pageName) {
+        const availablePages = getAvailablePages();
+        pageInfo = availablePages.find(page => page.name === pageName) || null;
+      }
+    }
 
-    if (draggedPage) {
+    if (pageInfo) {
       setContainers(prev => prev.map(container => 
         container.id === containerId 
           ? { 
               ...container, 
-              pageComponent: draggedPage.component, 
-              pageName: draggedPage.name,
-              pagePath: draggedPage.path
+              pageComponent: pageInfo!.component, 
+              pageName: pageInfo!.name,
+              pagePath: pageInfo!.path
             }
           : container
       ));

@@ -4,15 +4,18 @@ import { PageTreeSidebar } from './PageTreeSidebar';
 import { EnhancedWidgetGrid } from './EnhancedWidgetGrid';
 import { FullScreenPreview } from './FullScreenPreview';
 
-export const DashboardWithSidebar: React.FC = () => {
-  const [selectedWidgetForPreview, setSelectedWidgetForPreview] = useState<{
-    id: string;
-    component: React.ComponentType | null;
-    name: string | null;
-  } | null>(null);
+interface WidgetContainer {
+  id: string;
+  pageComponent: React.ComponentType | null;
+  pageName: string | null;
+  pagePath: string | null;
+}
 
-  const handleWidgetClick = (widget: { id: string; component: React.ComponentType | null; name: string | null }) => {
-    if (widget.component) {
+export const DashboardWithSidebar: React.FC = () => {
+  const [selectedWidgetForPreview, setSelectedWidgetForPreview] = useState<WidgetContainer | null>(null);
+
+  const handleWidgetClick = (widget: WidgetContainer) => {
+    if (widget.pageComponent) {
       setSelectedWidgetForPreview(widget);
     }
   };

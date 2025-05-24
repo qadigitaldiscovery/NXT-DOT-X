@@ -76,8 +76,12 @@ export const PageTreeSidebar: React.FC = () => {
     setExpandedFolders(newExpanded);
   };
 
-  const handleDragStart = (page: PageInfo) => {
+  const handleDragStart = (e: React.DragEvent, page: PageInfo) => {
     setDraggedPage(page);
+    
+    // Set both text and JSON data for compatibility
+    e.dataTransfer.setData('text/plain', page.name);
+    e.dataTransfer.setData('application/json', JSON.stringify(page));
   };
 
   const handleDragEnd = () => {
@@ -123,7 +127,7 @@ export const PageTreeSidebar: React.FC = () => {
         <div
           key={node.path}
           draggable
-          onDragStart={() => handleDragStart(pageInfo)}
+          onDragStart={(e) => handleDragStart(e, pageInfo)}
           onDragEnd={handleDragEnd}
           className="cursor-move"
         >
