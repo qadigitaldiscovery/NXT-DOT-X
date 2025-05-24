@@ -15,7 +15,7 @@ interface ModuleConfig {
   description: string;
   enabled: boolean;
   category: 'core' | 'beta' | 'experimental' | 'premium';
-  icon: React.ComponentType;
+  icon: React.ComponentType<any>;
   dependencies?: string[];
 }
 

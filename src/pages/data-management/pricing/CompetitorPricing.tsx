@@ -1,302 +1,100 @@
 
 import React, { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { useToast } from '@/components/ui/use-toast';
-import { 
-  Table, 
-  TableBody, 
-  TableCell, 
-  TableHead, 
-  TableHeader, 
-  TableRow 
-} from '@/components/ui/table';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Upload, LineChart, ArrowUpRight, ArrowDownRight } from 'lucide-react';
-import {
-  ResponsiveContainer,
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend,
-} from 'recharts';
-
-// Mock data for South African audio equipment competitors
-const competitors = [
-  { id: 1, name: "SoundWave SA" },
-  { id: 2, name: "AudioXpress" },
-  { id: 3, name: "MusicTech" },
-  { id: 4, name: "SoundGuru" },
-  { id: 5, name: "AudioPro SA" },
-];
-
-// Mock data for price comparison in ZAR
-const priceComparisonData = [
-  { category: 'Speakers', ourPrice: 4399, competitorAvg: 4699 },
-  { category: 'Displays', ourPrice: 9999, competitorAvg: 9499 },
-  { category: 'Amplifiers', ourPrice: 5699, competitorAvg: 6299 },
-  { category: 'Microphones', ourPrice: 2499, competitorAvg: 2699 },
-  { category: 'Accessories', ourPrice: 499, competitorAvg: 599 },
-];
-
-// Mock data for product competitor pricing in ZAR
-const competitorProductsData = [
-  { 
-    id: 1,
-    sku: 'AT-SPK-001',
-    name: 'Premium Bookshelf Speaker',
-    ourPrice: 4999.99,
-    competitor1: { name: 'SoundWave SA', price: 5299.99 },
-    competitor2: { name: 'AudioXpress', price: 5099.99 },
-    competitor3: { name: 'MusicTech', price: 4899.99 },
-  },
-  { 
-    id: 2,
-    sku: 'VE-DSP-120',
-    name: '4K HDR Display Monitor',
-    ourPrice: 11999.99,
-    competitor1: { name: 'SoundWave SA', price: 12499.99 },
-    competitor2: { name: 'AudioXpress', price: 11799.99 },
-    competitor3: { name: 'MusicTech', price: 11999.99 },
-  },
-  { 
-    id: 3,
-    sku: 'SV-AMP-220',
-    name: 'Multi-Channel Power Amplifier',
-    ourPrice: 7499.99,
-    competitor1: { name: 'SoundWave SA', price: 7299.99 },
-    competitor2: { name: 'AudioXpress', price: 7699.99 },
-    competitor3: { name: 'MusicTech', price: 7899.99 },
-  },
-  { 
-    id: 4,
-    sku: 'MM-MIC-320',
-    name: 'Studio Condenser Microphone',
-    ourPrice: 2499.99,
-    competitor1: { name: 'SoundWave SA', price: 2699.99 },
-    competitor2: { name: 'AudioXpress', price: 2499.99 },
-    competitor3: { name: 'SoundGuru', price: 2399.99 },
-  },
-  { 
-    id: 5,
-    sku: 'AT-CAB-105',
-    name: 'Premium HDMI Cable 3m',
-    ourPrice: 599.99,
-    competitor1: { name: 'AudioPro SA', price: 699.99 },
-    competitor2: { name: 'AudioXpress', price: 499.99 },
-    competitor3: { name: 'MusicTech', price: 599.99 },
-  },
-];
+import { Badge } from '@/components/ui/badge';
+import { toast } from 'sonner';
+import { Plus, Search, Eye, Edit, Trash2 } from 'lucide-react';
 
 const CompetitorPricing = () => {
-  const [selectedCompetitor, setSelectedCompetitor] = useState("");
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const { toast } = useToast();
+  const [searchTerm, setSearchTerm] = useState('');
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      setSelectedFile(e.target.files[0]);
-    }
+  const mockCompetitors = [
+    { id: '1', name: 'CompetitorA', product: 'Product X', price: '$99.99', lastUpdated: '2024-01-15', status: 'active' },
+    { id: '2', name: 'CompetitorB', product: 'Product Y', price: '$149.99', lastUpdated: '2024-01-14', status: 'active' },
+    { id: '3', name: 'CompetitorC', product: 'Product Z', price: '$79.99', lastUpdated: '2024-01-13', status: 'inactive' }
+  ];
+
+  const handleAddCompetitor = () => {
+    toast.success('Competitor pricing analysis started');
   };
 
-  const handleUpload = () => {
-    if (!selectedFile || !selectedCompetitor) {
-      toast({
-        title: "Upload Error",
-        description: "Please select both a competitor and a file.",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    // Simulate processing
-    toast({
-      title: "File Uploaded",
-      description: `${selectedFile.name} has been uploaded and is now processing.`,
-    });
-
-    // Reset form
-    setSelectedFile(null);
-    setSelectedCompetitor("");
-    
-    // Reset file input
-    const fileInput = document.getElementById('competitor-file-upload') as HTMLInputElement;
-    if (fileInput) fileInput.value = '';
-
-    // Simulate completion
-    setTimeout(() => {
-      toast({
-        title: "Processing Complete",
-        description: "Competitor pricing data has been processed successfully.",
-      });
-    }, 2000);
+  const handleViewDetails = (competitor: any) => {
+    toast.success('Opening competitor details');
   };
 
-  // Format currency in ZAR
-  const formatZAR = (value: number) => {
-    return `R${value.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')}`;
+  const handleEdit = (competitor: any) => {
+    toast.success('Opening edit form');
+  };
+
+  const handleDelete = (competitor: any) => {
+    toast.error('Competitor removed from analysis');
   };
 
   return (
-    <div className="space-y-6">
-      <h1 className="text-2xl font-bold tracking-tight">Competitor Pricing (ZAR)</h1>
-      
-      <Card className="backdrop-blur-md bg-white/30 border border-white/10">
+    <div className="container mx-auto p-6 space-y-6">
+      <div className="flex justify-between items-center">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">Competitor Pricing</h1>
+          <p className="text-muted-foreground">
+            Monitor and analyze competitor pricing strategies
+          </p>
+        </div>
+        <Button onClick={handleAddCompetitor}>
+          <Plus className="h-4 w-4 mr-2" />
+          Add Competitor
+        </Button>
+      </div>
+
+      <Card>
         <CardHeader>
-          <CardTitle>Upload Competitor Data</CardTitle>
-          <CardDescription>
-            Upload CSV or Excel files with competitor pricing data
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="grid gap-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="competitor">Select Competitor</Label>
-                <Select 
-                  value={selectedCompetitor} 
-                  onValueChange={setSelectedCompetitor}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select a competitor" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {competitors.map(competitor => (
-                      <SelectItem 
-                        key={competitor.id} 
-                        value={competitor.id.toString()}
-                      >
-                        {competitor.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              
-              <div className="space-y-2">
-                <Label htmlFor="competitor-file-upload">Upload File</Label>
-                <div className="flex items-center gap-2">
-                  <Input
-                    id="competitor-file-upload"
-                    type="file"
-                    accept=".csv,.xlsx,.xls"
-                    onChange={handleFileChange}
-                  />
-                </div>
-                {selectedFile && (
-                  <p className="text-sm text-muted-foreground">
-                    Selected: {selectedFile.name}
-                  </p>
-                )}
-              </div>
-            </div>
-            
-            <div className="flex justify-end">
-              <Button onClick={handleUpload} disabled={!selectedFile || !selectedCompetitor}>
-                <Upload className="mr-2 h-4 w-4" />
-                Upload File
-              </Button>
+          <div className="flex items-center space-x-4">
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+              <Input
+                placeholder="Search competitors..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-10"
+              />
             </div>
           </div>
-        </CardContent>
-      </Card>
-      
-      <Card className="backdrop-blur-md bg-white/30 border border-white/10">
-        <CardHeader>
-          <CardTitle>Price Comparison</CardTitle>
-          <CardDescription>
-            Our prices vs. competitor average by category (ZAR)
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="h-[350px]">
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart
-              data={priceComparisonData}
-              layout="vertical"
-              margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
-            >
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis type="number" />
-              <YAxis dataKey="category" type="category" />
-              <Tooltip formatter={(value) => formatZAR(value as number)} />
-              <Legend />
-              <Bar dataKey="ourPrice" name="Our Price" fill="#0EA5E9" />
-              <Bar dataKey="competitorAvg" name="Competitor Avg." fill="#64748B" />
-            </BarChart>
-          </ResponsiveContainer>
-        </CardContent>
-      </Card>
-      
-      <Card className="backdrop-blur-md bg-white/30 border border-white/10">
-        <CardHeader>
-          <CardTitle>Competitor Product Pricing</CardTitle>
-          <CardDescription>
-            Detailed competitor pricing by product (ZAR)
-          </CardDescription>
         </CardHeader>
         <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>SKU</TableHead>
-                <TableHead>Product</TableHead>
-                <TableHead>Our Price</TableHead>
-                <TableHead>{competitorProductsData[0].competitor1.name}</TableHead>
-                <TableHead>{competitorProductsData[0].competitor2.name}</TableHead>
-                <TableHead>{competitorProductsData[0].competitor3.name}</TableHead>
-                <TableHead>Avg. Diff</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {competitorProductsData.map((product) => {
-                const prices = [
-                  product.competitor1.price, 
-                  product.competitor2.price, 
-                  product.competitor3.price
-                ];
-                const avgCompetitorPrice = prices.reduce((a, b) => a + b, 0) / prices.length;
-                const priceDiff = ((product.ourPrice - avgCompetitorPrice) / avgCompetitorPrice) * 100;
-                
-                return (
-                  <TableRow key={product.id}>
-                    <TableCell className="font-mono">{product.sku}</TableCell>
-                    <TableCell className="font-medium">{product.name}</TableCell>
-                    <TableCell>{formatZAR(product.ourPrice)}</TableCell>
-                    <TableCell>{formatZAR(product.competitor1.price)}</TableCell>
-                    <TableCell>{formatZAR(product.competitor2.price)}</TableCell>
-                    <TableCell>{formatZAR(product.competitor3.price)}</TableCell>
-                    <TableCell>
-                      <div className="flex items-center">
-                        {priceDiff < 0 ? (
-                          <ArrowDownRight className="mr-1 h-4 w-4 text-green-500" />
-                        ) : (
-                          <ArrowUpRight className="mr-1 h-4 w-4 text-red-500" />
-                        )}
-                        <span className={priceDiff < 0 ? "text-green-500" : "text-red-500"}>
-                          {Math.abs(priceDiff).toFixed(2)}%
-                        </span>
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                );
-              })}
-            </TableBody>
-          </Table>
+          <div className="space-y-4">
+            {mockCompetitors.map((competitor) => (
+              <div key={competitor.id} className="flex items-center justify-between p-4 border rounded-lg">
+                <div className="flex items-center space-x-4">
+                  <div>
+                    <p className="font-medium">{competitor.name}</p>
+                    <p className="text-sm text-muted-foreground">{competitor.product}</p>
+                  </div>
+                </div>
+                <div className="flex items-center space-x-4">
+                  <span className="font-bold text-lg">{competitor.price}</span>
+                  <Badge variant={competitor.status === 'active' ? 'default' : 'secondary'}>
+                    {competitor.status}
+                  </Badge>
+                  <div className="flex items-center space-x-2">
+                    <Button variant="ghost" size="sm" onClick={() => handleViewDetails(competitor)}>
+                      <Eye className="h-4 w-4" />
+                    </Button>
+                    <Button variant="ghost" size="sm" onClick={() => handleEdit(competitor)}>
+                      <Edit className="h-4 w-4" />
+                    </Button>
+                    <Button variant="ghost" size="sm" onClick={() => handleDelete(competitor)}>
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
         </CardContent>
       </Card>
     </div>
   );
-}
+};
 
 export default CompetitorPricing;
