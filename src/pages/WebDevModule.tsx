@@ -1,65 +1,94 @@
 
 import React, { useState } from 'react';
-import WebDevCanvas from '@/components/webdev/WebDevCanvas';
-import ModulePalette from '@/components/webdev/ModulePalette';
-import { useModules } from '@/hooks/useModules';
-import { WebDevProvider } from '@/context/WebDevContext';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import RoutePreview from '@/components/webdev/RoutePreview';
-import { Loader2 } from 'lucide-react';
+import { PlusIcon, SaveIcon } from 'lucide-react';
+import { toast } from 'sonner';
+import ModulePalette from '@/components/webdev/ModulePalette';
+import WebDevCanvas from '@/components/webdev/WebDevCanvas';
+import InspectorPanel from '@/components/webdev/InspectorPanel';
 
-const WebDevModule: React.FC = () => {
-  const { modules, loading } = useModules();
-  const [activeTab, setActiveTab] = useState('canvas');
-  
-  if (loading) {
-    return (
-      <div className="flex h-screen items-center justify-center">
-        <Loader2 className="h-12 w-12 animate-spin text-primary" />
-        <span className="ml-2 text-lg">Loading module data...</span>
-      </div>
-    );
-  }
-  
+interface Module {
+  id: string;
+  name: string;
+  type: string;
+}
+
+const WebDevModule = () => {
+  const [selectedNode, setSelectedNode] = useState(null);
+  const [projectName, setProjectName] = useState('New Project');
+
+  const modules: Module[] = [
+    { id: '1', name: 'Authentication', type: 'auth' },
+    { id: '2', name: 'Database', type: 'data' },
+    { id: '3', name: 'API', type: 'service' },
+    { id: '4', name: 'UI Components', type: 'component' }
+  ];
+
+  const handleSaveProject = () => {
+    toast.success('Project saved successfully!');
+  };
+
+  const handleCreateNew = () => {
+    setProjectName('New Project');
+    toast.success('New project created!');
+  };
+
   return (
-    <WebDevProvider>
-      <div className="container mx-auto p-6">
-        <h1 className="text-3xl font-bold mb-6">WebDev Route Mapping Tool</h1>
-        <p className="text-muted-foreground mb-8">
-          Visually connect modules, menus, and pages to create application routes
-        </p>
-        
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="mb-4">
-            <TabsTrigger value="canvas">Visual Editor</TabsTrigger>
-            <TabsTrigger value="preview">Route Preview</TabsTrigger>
-          </TabsList>
-          
-          <TabsContent value="canvas" className="space-y-4">
-            <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-              <div className="lg:col-span-1">
-                <ModulePalette modules={modules} />
-              </div>
-              <div className="lg:col-span-3">
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Canvas</CardTitle>
-                  </CardHeader>
-                  <CardContent className="p-0">
-                    <WebDevCanvas />
-                  </CardContent>
-                </Card>
-              </div>
-            </div>
-          </TabsContent>
-          
-          <TabsContent value="preview">
-            <RoutePreview />
-          </TabsContent>
-        </Tabs>
+    <div className="h-screen bg-gray-50 flex flex-col">
+      {/* Header */}
+      <div className="border-b bg-white p-4 flex items-center justify-between">
+        <div className="flex items-center space-x-4">
+          <h1 className="text-xl font-semibold">WebDev Module</h1>
+          <div className="flex items-center space-x-2">
+            <Label htmlFor="project-name">Project:</Label>
+            <Input
+              id="project-name"
+              value={projectName}
+              onChange={(e) => setProjectName(e.target.value)}
+              className="w-48"
+            />
+          </div>
+        </div>
+        <div className="flex items-center space-x-2">
+          <Button variant="outline" onClick={handleCreateNew}>
+            <PlusIcon className="h-4 w-4 mr-2" />
+            New
+          </Button>
+          <Button onClick={handleSaveProject}>
+            <SaveIcon className="h-4 w-4 mr-2" />
+            Save
+          </Button>
+        </div>
       </div>
-    </WebDevProvider>
+
+      {/* Main Content */}
+      <div className="flex-1 flex">
+        {/* Left Sidebar */}
+        <div className="w-80 border-r bg-white">
+          <Tabs defaultValue="modules" className="h-full">
+            <TabsList className="grid w-full grid-cols-2">
+              <TabsTrigger value="modules">Modules</TabsTrigger>
+              <TabsTrigger value="inspector">Inspector</TabsTrigger>
+            </TabsList>
+            <TabsContent value="modules" className="p-4 h-full">
+              <ModulePalette modules={modules} />
+            </TabsContent>
+            <TabsContent value="inspector" className="p-4 h-full">
+              <InspectorPanel selectedNode={selectedNode} />
+            </TabsContent>
+          </Tabs>
+        </div>
+
+        {/* Canvas */}
+        <div className="flex-1">
+          <WebDevCanvas onNodeSelect={setSelectedNode} />
+        </div>
+      </div>
+    </div>
   );
 };
 

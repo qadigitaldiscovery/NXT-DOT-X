@@ -1,135 +1,175 @@
+
 import React, { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { useToast } from '@/components/ui/use-toast';
-import { Loader2, MessageSquare, BrainCircuit } from 'lucide-react';
-import { useOpenAI } from '@/hooks/api-clients/openai/use-openai-client';
+import { Badge } from '@/components/ui/badge';
+import { MessageSquare, Send, Zap } from 'lucide-react';
+import { useOpenAI } from '@/hooks/use-openai';
+import { toast } from 'sonner';
 
 const RequestyPage = () => {
-  const [query, setQuery] = useState('');
+  const { sendMessage, isValid } = useOpenAI();
+  const [message, setMessage] = useState('');
   const [response, setResponse] = useState('');
-  const [isProcessing, setIsProcessing] = useState(false);
-  const { sendMessage } = useOpenAI();
-  const { toast } = useToast();
+  const [isLoading, setIsLoading] = useState(false);
 
-  const brandMarketingSystemPrompt = `
-    You are BrandGPT, an expert brand marketing assistant specialized in:
-    1. Brand analytics and market trends
-    2. Trust analysis and reputation management
-    3. Market perception and sentiment analysis
-    4. SEO strategy and keyword opportunities
+  const handleSendMessage = async () => {
+    if (!message.trim()) return;
     
-    Provide detailed, actionable insights based on marketing best practices.
-    Include specific recommendations when possible.
-    Format your responses with clear headings and bullet points for readability.
-  `;
-
-  const handleQuerySubmit = async () => {
-    if (!query.trim()) {
-      toast.error("Please enter a question about brand marketing.");
+    if (!isValid) {
+      toast.error('Please configure your OpenAI API key first');
       return;
     }
 
-    setIsProcessing(true);
-    setResponse('');
-
+    setIsLoading(true);
     try {
-      const result = await sendMessage(query, 'gpt-4o-mini', {
-        systemPrompt: brandMarketingSystemPrompt,
-        temperature: 0.7
-      });
-      
+      const result = await sendMessage(message);
       setResponse(result);
+      toast.success('Message sent successfully');
     } catch (error) {
-      console.error('Error querying AI:', error);
-      toast.error("Failed to get a response. Please try again.");
+      toast.error('Failed to send message');
     } finally {
-      setIsProcessing(false);
+      setIsLoading(false);
     }
   };
 
+  const handleQuickAction = (action: string) => {
+    setMessage(action);
+  };
+
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold tracking-tight">Brand Marketing Assistant</h1>
-        <p className="text-muted-foreground mt-2">
-          Get AI-powered insights for your brand marketing strategy
-        </p>
+    <div className="container mx-auto p-6 space-y-6">
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">Requesty AI</h1>
+          <p className="text-muted-foreground">
+            AI-powered brand marketing assistant
+          </p>
+        </div>
+        <Badge variant="secondary" className="flex items-center gap-2">
+          <Zap className="h-4 w-4" />
+          AI Assistant
+        </Badge>
       </div>
 
-      <Card>
-        <CardHeader className="pb-3">
-          <CardTitle className="flex items-center">
-            <BrainCircuit className="mr-2 h-5 w-5" />
-            Ask Requesty about Brand Marketing
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <Textarea
-            placeholder="E.g., 'How can I improve my brand's trust score?' or 'Suggest keywords for a tech startup in AI space'"
-            className="min-h-[100px]"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-          />
-          
-          <Button 
-            onClick={handleQuerySubmit} 
-            disabled={isProcessing || !query.trim()} 
-            className="w-full"
-          >
-            {isProcessing ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Processing...
-              </>
-            ) : (
-              <>
-                <MessageSquare className="mr-2 h-4 w-4" />
-                Get Brand Insights
-              </>
-            )}
-          </Button>
+      <div className="grid gap-6 lg:grid-cols-2">
+        {/* Input Section */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <MessageSquare className="h-5 w-5" />
+              Send Message
+            </CardTitle>
+            <CardDescription>
+              Ask Requesty AI about your brand marketing needs
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div>
+              <label htmlFor="message" className="text-sm font-medium">
+                Your Message
+              </label>
+              <Textarea
+                id="message"
+                placeholder="Ask about brand strategy, market analysis, campaign ideas..."
+                value={message}
+                onChange={(e) => setMessage(e.target.value)}
+                rows={4}
+              />
+            </div>
 
-          {response && (
-            <div className="mt-6 border rounded-md p-4 bg-slate-50 dark:bg-slate-900">
-              <h3 className="font-medium mb-2">Requesty's Analysis:</h3>
-              <div className="whitespace-pre-wrap">
-                {response}
+            <div className="flex gap-2">
+              <Button 
+                onClick={handleSendMessage} 
+                disabled={!message.trim() || isLoading}
+                className="flex-1"
+              >
+                <Send className="h-4 w-4 mr-2" />
+                {isLoading ? 'Sending...' : 'Send Message'}
+              </Button>
+            </div>
+
+            <div className="space-y-2">
+              <p className="text-sm font-medium">Quick Actions:</p>
+              <div className="flex flex-wrap gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handleQuickAction('Analyze my brand positioning')}
+                >
+                  Brand Analysis
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handleQuickAction('Suggest marketing campaign ideas')}
+                >
+                  Campaign Ideas
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handleQuickAction('Help with competitor analysis')}
+                >
+                  Competitor Analysis
+                </Button>
               </div>
             </div>
-          )}
-        </CardContent>
-      </Card>
-      
-      <Card>
-        <CardHeader>
-          <CardTitle>Popular Brand Marketing Questions</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid gap-2">
-            {[
-              "How can I measure the ROI of brand marketing activities?",
-              "What metrics should I track for brand trust?",
-              "Suggest a content strategy to improve brand perception",
-              "How to interpret negative sentiment in social media mentions?",
-              "What SEO strategies work best for B2B brands?",
-            ].map((suggestion, index) => (
-              <Button 
-                key={index}
-                variant="outline" 
-                className="justify-start h-auto py-2 px-3 text-left"
-                onClick={() => {
-                  setQuery(suggestion);
-                  window.scrollTo(0, 0);
-                }}
-              >
-                {suggestion}
-              </Button>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
+
+        {/* Response Section */}
+        <Card>
+          <CardHeader>
+            <CardTitle>AI Response</CardTitle>
+            <CardDescription>
+              Requesty AI's insights and recommendations
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            {response ? (
+              <div className="p-4 bg-gray-50 rounded-lg">
+                <p className="text-sm whitespace-pre-wrap">{response}</p>
+              </div>
+            ) : (
+              <div className="p-4 text-center text-muted-foreground">
+                <MessageSquare className="h-12 w-12 mx-auto mb-2 opacity-50" />
+                <p>Send a message to see AI response here</p>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Features Overview */}
+      <div className="grid gap-4 md:grid-cols-3">
+        <Card>
+          <CardContent className="p-4">
+            <h3 className="font-semibold mb-2">Brand Strategy</h3>
+            <p className="text-sm text-muted-foreground">
+              Get insights on brand positioning, messaging, and market differentiation
+            </p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="p-4">
+            <h3 className="font-semibold mb-2">Campaign Planning</h3>
+            <p className="text-sm text-muted-foreground">
+              Generate creative campaign ideas and marketing strategies
+            </p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="p-4">
+            <h3 className="font-semibold mb-2">Market Analysis</h3>
+            <p className="text-sm text-muted-foreground">
+              Analyze market trends and competitive landscape
+            </p>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 };

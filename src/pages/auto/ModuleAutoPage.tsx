@@ -4,7 +4,7 @@ import { PlatformLayout } from '@/components/layouts/PlatformLayout';
 
 export default function ModuleAutoPage() {
   return (
-    <PlatformLayout moduleTitle="Module Auto" useGlobalNavigation={true}>
+    <PlatformLayout moduleTitle="Module Auto">
       <div className="space-y-6">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Module Auto</h1>
