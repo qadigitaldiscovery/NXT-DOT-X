@@ -27,7 +27,7 @@ const supplierSchema = z.object({
   address: z.string().min(1, 'Address is required'),
   email: z.string().email('Invalid email address'),
   phone: z.string().min(1, 'Phone is required'),
-  status: z.enum(['active', 'inactive']).optional().default('active'),
+  status: z.enum(['active', 'inactive']).default('active'),
   website: z.string().optional(),
   description: z.string().optional(),
   annual_spend: z.string().optional(),
