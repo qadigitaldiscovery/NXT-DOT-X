@@ -20,7 +20,7 @@ const Landing = () => {
         localStorage.removeItem('returnUrl');
         navigate(returnPath);
       } else {
-        navigate('/master');
+        navigate('/dashboard');
       }
     }
   }, [navigate, isAuthenticated, loading]);

@@ -4,6 +4,7 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import { SimpleLayout } from '@/components/layout/SimpleLayout';
 
 // Import pages
+import Dashboard from '@/pages/Dashboard';
 import MasterDash from '@/pages/MasterDash';
 import Landing from '@/pages/Landing';
 
@@ -35,13 +36,16 @@ import { RequestsRoutes } from './requestsRoutes';
 const AppRoutes = () => {
   return (
     <Routes>
-      {/* Root redirect to master dashboard */}
-      <Route path="/" element={<Navigate to="/master" replace />} />
+      {/* Root redirect to dashboard */}
+      <Route path="/" element={<Navigate to="/dashboard" replace />} />
       
       {/* Landing page (no security) */}
       <Route path="/landing" element={<Landing />} />
       
-      {/* Master Dashboard (no security) */}
+      {/* Main Dashboard with Widget Grid (first page after login) */}
+      <Route path="/dashboard" element={<Dashboard />} />
+      
+      {/* Master Dashboard (legacy route) */}
       <Route path="/master" element={
         <SimpleLayout>
           <MasterDash />
@@ -188,7 +192,7 @@ const AppRoutes = () => {
       } />
       
       {/* Catch all route */}
-      <Route path="*" element={<Navigate to="/master" replace />} />
+      <Route path="*" element={<Navigate to="/dashboard" replace />} />
     </Routes>
   );
 };

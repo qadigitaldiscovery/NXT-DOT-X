@@ -14,7 +14,7 @@ const RootHandler: React.FC = () => {
     }
     
     if (isAuthenticated) {
-      navigate('/master');
+      navigate('/dashboard');
     } else {
       navigate('/landing');
     }

@@ -1,10 +1,13 @@
-import React from 'react';
 
-const Dashboard: React.FC = () => {
+import React from 'react';
+import WidgetGrid from '@/components/widgets/WidgetGrid';
+
+const Dashboard = () => {
   return (
-    <div className="dashboard-container">
-      <h1>Dashboard</h1>
-      <p>Welcome to your central dashboard!</p>
+    <div className="min-h-screen bg-gray-50">
+      <div className="container mx-auto">
+        <WidgetGrid />
+      </div>
     </div>
   );
 };
