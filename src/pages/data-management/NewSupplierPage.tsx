@@ -25,7 +25,7 @@ const formSchema = z.object({
   annual_spend: z.string().optional(),
   credit_rating: z.enum(['A', 'B', 'C', 'D', 'F']).optional(),
   payment_terms: z.string().optional(),
-  status: z.enum(['active', 'inactive']).default('active')
+  status: z.enum(['active', 'inactive'])
 });
 
 type FormData = z.infer<typeof formSchema>;

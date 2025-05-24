@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -28,11 +27,7 @@ const RequestyPage = () => {
 
   const handleQuerySubmit = async () => {
     if (!query.trim()) {
-      toast({
-        title: "Empty query",
-        description: "Please enter a question about brand marketing.",
-        variant: "destructive"
-      });
+      toast.error("Please enter a question about brand marketing.");
       return;
     }
 
@@ -48,11 +43,7 @@ const RequestyPage = () => {
       setResponse(result);
     } catch (error) {
       console.error('Error querying AI:', error);
-      toast({
-        title: "Error",
-        description: "Failed to get a response. Please try again.",
-        variant: "destructive"
-      });
+      toast.error("Failed to get a response. Please try again.");
     } finally {
       setIsProcessing(false);
     }
