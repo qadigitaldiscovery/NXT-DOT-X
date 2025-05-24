@@ -25,9 +25,9 @@ export const DashboardWithSidebar: React.FC = () => {
   };
 
   return (
-    <div className="flex h-screen">
+    <div className="flex h-screen bg-gray-50">
       {/* Left Sidebar - Page Tree */}
-      <div className="w-80 bg-white border-r border-gray-200 flex-shrink-0">
+      <div className="w-80 bg-white border-r border-gray-200 flex-shrink-0 shadow-sm">
         <PageTreeSidebar />
       </div>
       

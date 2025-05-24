@@ -88,13 +88,15 @@ export const PageTreeSidebar: React.FC = () => {
     setDraggedPage(null);
   };
 
-  const renderTreeNode = (node: PageTreeNode, level: number = 0): React.ReactNode => {
+  const renderTreeNode = (node: PageTreeNode, level: number = 0, parentPath: string = ''): React.ReactNode => {
     const isExpanded = expandedFolders.has(node.path);
     const paddingLeft = level * 16;
+    // Create unique key using parentPath and node name to avoid duplicates
+    const nodeKey = `${parentPath}/${node.name}`;
 
     if (node.type === 'folder') {
       return (
-        <div key={node.path}>
+        <div key={nodeKey}>
           <Button
             variant="ghost"
             className="w-full justify-start h-8 px-2 hover:bg-gray-100"
@@ -111,7 +113,7 @@ export const PageTreeSidebar: React.FC = () => {
           </Button>
           {isExpanded && node.children && (
             <div>
-              {node.children.map(child => renderTreeNode(child, level + 1))}
+              {node.children.map(child => renderTreeNode(child, level + 1, node.path))}
             </div>
           )}
         </div>
@@ -125,7 +127,7 @@ export const PageTreeSidebar: React.FC = () => {
 
       return (
         <div
-          key={node.path}
+          key={nodeKey}
           draggable
           onDragStart={(e) => handleDragStart(e, pageInfo)}
           onDragEnd={handleDragEnd}
@@ -153,7 +155,7 @@ export const PageTreeSidebar: React.FC = () => {
       
       <ScrollArea className="flex-1">
         <div className="p-2">
-          {pageTree.map(node => renderTreeNode(node))}
+          {pageTree.map(node => renderTreeNode(node, 0, 'root'))}
         </div>
       </ScrollArea>
 
