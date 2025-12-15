@@ -60,10 +60,10 @@ class DocumentService {
   async getAllCategories(): Promise<DocumentCategory[]> {
     try {
       // Fetch categories from Supabase
-      const { data: categories, error: categoriesError } = await supabase
-        .from('document_categories')
+      const { data: categories, error: categoriesError } = await (supabase
+        .from('document_categories' as any)
         .select('*')
-        .order('name');
+        .order('name') as any);
       
       if (categoriesError) {
         console.error('Error fetching categories:', categoriesError);
@@ -74,11 +74,11 @@ class DocumentService {
       // For each category, fetch its documents
       const categoriesWithDocuments: DocumentCategory[] = await Promise.all(
         categories.map(async (category) => {
-          const { data: documents, error: documentsError } = await supabase
-            .from('documents')
+          const { data: documents, error: documentsError } = await (supabase
+            .from('documents' as any)
             .select('*')
             .eq('category_id', category.id)
-            .order('title');
+            .order('title') as any);
           
           if (documentsError) {
             console.error(`Error fetching documents for category ${category.id}:`, documentsError);
@@ -122,11 +122,11 @@ class DocumentService {
     try {
       // First, add categories
       for (const category of initialDocumentCategories) {
-        const { data: newCategory, error: categoryError } = await supabase
-          .from('document_categories')
+        const { data: newCategory, error: categoryError } = await (supabase
+          .from('document_categories' as any)
           .insert({ name: category.name })
           .select()
-          .single();
+          .single() as any);
         
         if (categoryError) {
           console.error('Error inserting mock category:', categoryError);
@@ -135,8 +135,8 @@ class DocumentService {
         
         // Then add documents for this category
         for (const doc of category.documents) {
-          await supabase
-            .from('documents')
+          await (supabase
+            .from('documents' as any)
             .insert({
               category_id: newCategory.id,
               title: doc.title,
@@ -145,7 +145,7 @@ class DocumentService {
               content: doc.content || '',
               url: doc.url || '',
               author: doc.author || 'System',
-            });
+            }) as any);
         }
       }
       
@@ -159,10 +159,10 @@ class DocumentService {
   // Get all documents across all categories
   async getAllDocuments(): Promise<DocumentItem[]> {
     try {
-      const { data, error } = await supabase
-        .from('documents')
+      const { data, error } = await (supabase
+        .from('documents' as any)
         .select('*')
-        .order('title');
+        .order('title') as any);
       
       if (error) {
         console.error('Error fetching all documents:', error);
@@ -185,10 +185,10 @@ class DocumentService {
       const lowercasedTerm = searchTerm.toLowerCase();
       
       // Search for documents that match the search term
-      const { data: matchingDocuments, error } = await supabase
-        .from('documents')
+      const { data: matchingDocuments, error } = await (supabase
+        .from('documents' as any)
         .select('*, document_categories!inner(id, name)')
-        .or(`title.ilike.%${lowercasedTerm}%,content.ilike.%${lowercasedTerm}%,description.ilike.%${lowercasedTerm}%`);
+        .or(`title.ilike.%${lowercasedTerm}%,content.ilike.%${lowercasedTerm}%,description.ilike.%${lowercasedTerm}%`) as any);
       
       if (error) {
         console.error('Error searching documents:', error);
@@ -224,11 +224,11 @@ class DocumentService {
   // Get document by ID
   async getDocumentById(id: string): Promise<DocumentItem | null> {
     try {
-      const { data, error } = await supabase
-        .from('documents')
+      const { data, error } = await (supabase
+        .from('documents' as any)
         .select('*')
         .eq('id', id)
-        .single();
+        .single() as any);
       
       if (error) {
         console.error('Error fetching document by ID:', error);
@@ -245,12 +245,12 @@ class DocumentService {
   // Get document by share ID
   async getDocumentByShareId(shareId: string): Promise<DocumentItem | null> {
     try {
-      const { data, error } = await supabase
-        .from('documents')
+      const { data, error } = await (supabase
+        .from('documents' as any)
         .select('*')
         .eq('share_id', shareId)
         .eq('is_public', true)
-        .single();
+        .single() as any);
       
       if (error) {
         console.error('Error fetching document by share ID:', error);
@@ -271,8 +271,8 @@ class DocumentService {
       const shareId = this.generateShareId();
       
       // Update the document with the share ID and make it public
-      const { data, error } = await supabase
-        .from('documents')
+      const { data, error } = await (supabase
+        .from('documents' as any)
         .update({
           share_id: shareId,
           is_public: true,
@@ -280,7 +280,7 @@ class DocumentService {
         })
         .eq('id', documentId)
         .select()
-        .single();
+        .single() as any);
       
       if (error) {
         console.error('Error creating shareable link:', error);
@@ -299,14 +299,14 @@ class DocumentService {
   // Remove the shareable link from a document
   async removeShareableLink(documentId: string): Promise<boolean> {
     try {
-      const { error } = await supabase
-        .from('documents')
+      const { error } = await (supabase
+        .from('documents' as any)
         .update({
           share_id: null,
           is_public: false,
           updated_at: new Date().toISOString()
         })
-        .eq('id', documentId);
+        .eq('id', documentId) as any);
       
       if (error) {
         console.error('Error removing shareable link:', error);
@@ -323,8 +323,8 @@ class DocumentService {
   // Add document
   async addDocument(categoryId: string, document: Omit<DocumentItem, 'id' | 'createdAt' | 'updatedAt'>): Promise<DocumentItem> {
     try {
-      const { data, error } = await supabase
-        .from('documents')
+      const { data, error } = await (supabase
+        .from('documents' as any)
         .insert({
           category_id: categoryId,
           title: document.title,
@@ -335,7 +335,7 @@ class DocumentService {
           author: document.author || 'Unknown',
         })
         .select()
-        .single();
+        .single() as any);
       
       if (error) {
         console.error('Error adding document:', error);
@@ -423,15 +423,15 @@ class DocumentService {
         ...(updates.type !== undefined && { type: updates.type }),
       };
       
-      const { data, error } = await supabase
-        .from('documents')
+      const { data, error } = await (supabase
+        .from('documents' as any)
         .update({
           ...dbUpdates,
           updated_at: new Date().toISOString(),
         })
         .eq('id', id)
         .select()
-        .single();
+        .single() as any);
       
       if (error) {
         console.error('Error updating document:', error);
@@ -448,10 +448,10 @@ class DocumentService {
   // Delete document
   async deleteDocument(id: string): Promise<boolean> {
     try {
-      const { error } = await supabase
-        .from('documents')
+      const { error } = await (supabase
+        .from('documents' as any)
         .delete()
-        .eq('id', id);
+        .eq('id', id) as any);
       
       if (error) {
         console.error('Error deleting document:', error);
@@ -468,11 +468,11 @@ class DocumentService {
   // Add category
   async addCategory(category: Omit<DocumentCategory, 'id' | 'documents'>): Promise<DocumentCategory> {
     try {
-      const { data, error } = await supabase
-        .from('document_categories')
+      const { data, error } = await (supabase
+        .from('document_categories' as any)
         .insert({ name: category.name })
         .select()
-        .single();
+        .single() as any);
       
       if (error) {
         console.error('Error adding category:', error);

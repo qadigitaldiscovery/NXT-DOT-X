@@ -8,10 +8,10 @@ export function useSuppliers() {
   return useQuery({
     queryKey: ['suppliers'],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from('suppliers')
+      const { data, error } = await (supabase
+        .from('suppliers' as any)
         .select('*')
-        .order('name');
+        .order('name') as any);
       
       if (error) {
         console.error('Error fetching suppliers:', error);
@@ -30,11 +30,11 @@ export function useSupplier(id: string | undefined) {
     queryFn: async () => {
       if (!id) return null;
       
-      const { data, error } = await supabase
-        .from('suppliers')
+      const { data, error } = await (supabase
+        .from('suppliers' as any)
         .select('*')
         .eq('id', id)
-        .single();
+        .single() as any);
       
       if (error) {
         console.error(`Error fetching supplier ${id}:`, error);
