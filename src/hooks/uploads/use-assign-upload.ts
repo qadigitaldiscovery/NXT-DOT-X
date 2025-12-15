@@ -52,14 +52,14 @@ export const useAssignUploadToSupplier = () => {
       supplierId: string;
     }) => {
       // Update the supplier_cost_uploads table
-      const { data, error } = await supabase
-        .from('supplier_cost_uploads')
+      const { data, error } = await (supabase
+        .from('supplier_cost_uploads' as any)
         .update({ 
           supplier_id: supplierId,
           for_allocation: false 
-        })
+        } as any)
         .eq('id', uploadId)
-        .select('file_path, file_name');
+        .select('file_path, file_name') as any);
 
       if (error) throw error;
 

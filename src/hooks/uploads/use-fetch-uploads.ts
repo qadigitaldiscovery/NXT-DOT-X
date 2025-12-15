@@ -11,15 +11,15 @@ import { SupplierUpload } from '@/types/supplier-uploads';
 const fetchSupplierUploads = async (
   options?: { forAllocation?: boolean; supplierId?: string }
 ): Promise<SupplierUpload[]> => {
-  // Build the base query
-  let query = supabase
-    .from('supplier_cost_uploads')
+  // Build the base query - use type assertion for tables not in generated types
+  let query = (supabase
+    .from('supplier_cost_uploads' as any)
     .select(`
       *,
       suppliers:supplier_id (
         name
       )
-    `);
+    `) as any);
   
   // Add filters based on options
   if (options?.supplierId) {
@@ -38,7 +38,7 @@ const fetchSupplierUploads = async (
   if (error) throw new Error(error.message);
   
   // Transform data to include supplier_name for easier access
-  return (data || []).map(item => ({
+  return (data || []).map((item: any) => ({
     ...item,
     supplier_name: item.suppliers?.name || null,
     // Add for_allocation property for backward compatibility

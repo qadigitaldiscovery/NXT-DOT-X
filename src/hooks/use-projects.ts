@@ -8,14 +8,14 @@ export const useProjects = (filters?: any) => {
   const queryClient = useQueryClient();
   
   const fetchProjects = useCallback(async (): Promise<ProjectWithMemberCount[]> => {
-    const { data, error } = await supabase
-      .from('projects')
+    const { data, error } = await (supabase
+      .from('projects' as any)
       .select(`
         *,
         member_count:project_members(count),
         task_count:tasks(count)
       `)
-      .order('created_at', { ascending: false });
+      .order('created_at', { ascending: false }) as any);
     
     if (error) {
       console.error('Error fetching projects:', error);
@@ -23,7 +23,7 @@ export const useProjects = (filters?: any) => {
     }
     
     // Transform the data to match the ProjectWithMemberCount type
-    return data.map(project => ({
+    return (data || []).map((project: any) => ({
       ...project,
       member_count: Array.isArray(project.member_count) && project.member_count.length > 0 
         ? project.member_count[0].count 
@@ -35,11 +35,11 @@ export const useProjects = (filters?: any) => {
   }, []);
 
   const fetchProjectById = useCallback(async (id: string): Promise<Project> => {
-    const { data, error } = await supabase
-      .from('projects')
+    const { data, error } = await (supabase
+      .from('projects' as any)
       .select('*')
       .eq('id', id)
-      .single();
+      .single() as any);
     
     if (error) {
       console.error('Error fetching project:', error);
@@ -51,11 +51,11 @@ export const useProjects = (filters?: any) => {
 
   const createProject = useMutation({
     mutationFn: async (newProject: Omit<Project, 'id' | 'created_at' | 'updated_at'>) => {
-      const { data, error } = await supabase
-        .from('projects')
-        .insert([newProject])
+      const { data, error } = await (supabase
+        .from('projects' as any)
+        .insert([newProject as any])
         .select()
-        .single();
+        .single() as any);
       
       if (error) {
         console.error('Error creating project:', error);
@@ -76,12 +76,12 @@ export const useProjects = (filters?: any) => {
   const updateProject = useMutation({
     mutationFn: async (updatedProject: Partial<Project> & { id: string }) => {
       const { id, ...rest } = updatedProject;
-      const { data, error } = await supabase
-        .from('projects')
-        .update(rest)
+      const { data, error } = await (supabase
+        .from('projects' as any)
+        .update(rest as any)
         .eq('id', id)
         .select()
-        .single();
+        .single() as any);
       
       if (error) {
         console.error('Error updating project:', error);
@@ -102,10 +102,10 @@ export const useProjects = (filters?: any) => {
 
   const deleteProject = useMutation({
     mutationFn: async (id: string) => {
-      const { error } = await supabase
-        .from('projects')
+      const { error } = await (supabase
+        .from('projects' as any)
         .delete()
-        .eq('id', id);
+        .eq('id', id) as any);
       
       if (error) {
         console.error('Error deleting project:', error);
