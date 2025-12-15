@@ -39,13 +39,13 @@ export function useSupplierCosts(filters: CostFilterOptions = {}) {
   return useQuery({
     queryKey: ['supplier-costs', filters],
     queryFn: async () => {
-      let query = supabase
-        .from('supplier_product_costs')
+      let query = (supabase
+        .from('supplier_product_costs' as any)
         .select(`
           *,
           products:product_id (name, sku),
           suppliers:supplier_id (name)
-        `);
+        `) as any);
 
       if (filters.supplierId) {
         query = query.eq('supplier_id', filters.supplierId);
@@ -84,7 +84,7 @@ export function useSupplierCosts(filters: CostFilterOptions = {}) {
       }
       
       // Transform the nested objects into flattened structure
-      const transformedData = data.map(item => ({
+      const transformedData = (data || []).map((item: any) => ({
         ...item,
         product_name: item.products?.name || 'Unknown Product',
         product_sku: item.products?.sku || 'Unknown SKU',
@@ -104,15 +104,15 @@ export function useSupplierCostHistory(costId: string | undefined) {
     queryFn: async () => {
       if (!costId) return [];
       
-      const { data, error } = await supabase
-        .from('supplier_cost_history')
+      const { data, error } = await (supabase
+        .from('supplier_cost_history' as any)
         .select(`
           *,
           products:product_id (name, sku),
           suppliers:supplier_id (name)
         `)
         .eq('cost_id', costId)
-        .order('created_at', { ascending: false });
+        .order('created_at', { ascending: false }) as any);
       
       if (error) {
         console.error(`Error fetching cost history for ${costId}:`, error);
@@ -120,7 +120,7 @@ export function useSupplierCostHistory(costId: string | undefined) {
         throw error;
       }
       
-      return data;
+      return data || [];
     },
     enabled: !!costId
   });
@@ -131,11 +131,11 @@ export function useCreateSupplierCost() {
   
   return useMutation({
     mutationFn: async (cost: Omit<SupplierCost, 'id' | 'product_name' | 'product_sku' | 'supplier_name'>) => {
-      const { data, error } = await supabase
-        .from('supplier_product_costs')
-        .insert(cost)
+      const { data, error } = await (supabase
+        .from('supplier_product_costs' as any)
+        .insert(cost as any)
         .select()
-        .single();
+        .single() as any);
       
       if (error) {
         console.error('Error creating supplier cost:', error);
@@ -158,11 +158,11 @@ export function useUpdateSupplierCost() {
   return useMutation({
     mutationFn: async ({ id, product_name, product_sku, supplier_name, ...cost }: SupplierCost) => {
       // First retrieve the current cost to create history record
-      const { data: currentCost, error: fetchError } = await supabase
-        .from('supplier_product_costs')
+      const { data: currentCost, error: fetchError } = await (supabase
+        .from('supplier_product_costs' as any)
         .select('*')
         .eq('id', id)
-        .single();
+        .single() as any);
       
       if (fetchError) {
         console.error(`Error fetching current cost for ${id}:`, fetchError);
@@ -174,7 +174,7 @@ export function useUpdateSupplierCost() {
       if (currentCost && currentCost.cost !== cost.cost) {
         const changePercentage = ((cost.cost - currentCost.cost) / currentCost.cost) * 100;
         
-        await supabase.from('supplier_cost_history').insert({
+        await (supabase.from('supplier_cost_history' as any).insert({
           cost_id: id,
           supplier_id: cost.supplier_id,
           product_id: cost.product_id,
@@ -183,16 +183,16 @@ export function useUpdateSupplierCost() {
           change_percentage: changePercentage,
           currency_code: cost.currency_code,
           change_reason: cost.notes || 'Manual update'
-        });
+        } as any) as any);
       }
       
       // Update the cost record
-      const { data, error } = await supabase
-        .from('supplier_product_costs')
-        .update(cost)
+      const { data, error } = await (supabase
+        .from('supplier_product_costs' as any)
+        .update(cost as any)
         .eq('id', id)
         .select()
-        .single();
+        .single() as any);
       
       if (error) {
         console.error(`Error updating supplier cost ${id}:`, error);
@@ -214,10 +214,10 @@ export function useDeleteSupplierCost() {
   
   return useMutation({
     mutationFn: async (id: string) => {
-      const { error } = await supabase
-        .from('supplier_product_costs')
+      const { error } = await (supabase
+        .from('supplier_product_costs' as any)
         .delete()
-        .eq('id', id);
+        .eq('id', id) as any);
       
       if (error) {
         console.error(`Error deleting supplier cost ${id}:`, error);

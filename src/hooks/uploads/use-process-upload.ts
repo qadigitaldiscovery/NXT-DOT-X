@@ -11,14 +11,14 @@ export function useProcessSupplierUpload() {
     mutationFn: async (upload: SupplierUpload) => {
       // In a real implementation, this would trigger a Supabase Edge Function
       // For now, we'll simulate processing by updating status
-      const { data, error } = await supabase
-        .from('supplier_cost_uploads')
+      const { data, error } = await (supabase
+        .from('supplier_cost_uploads' as any)
         .update({
           status: 'processing',
           processing_start: new Date().toISOString()
-        })
+        } as any)
         .eq('id', upload.id)
-        .select()
+        .select() as any)
         .single();
       
       if (error) {
@@ -31,17 +31,17 @@ export function useProcessSupplierUpload() {
       await new Promise(resolve => setTimeout(resolve, 2000));
       
       // Update with completed status
-      const { data: completedData, error: completedError } = await supabase
-        .from('supplier_cost_uploads')
+      const { data: completedData, error: completedError } = await (supabase
+        .from('supplier_cost_uploads' as any)
         .update({
           status: 'completed',
           processing_end: new Date().toISOString(),
           processed_rows: Math.floor(Math.random() * 500) + 50,
           error_rows: Math.floor(Math.random() * 10)
-        })
+        } as any)
         .eq('id', upload.id)
         .select()
-        .single();
+        .single() as any);
       
       if (completedError) {
         console.error(`Error completing upload ${upload.id}:`, completedError);

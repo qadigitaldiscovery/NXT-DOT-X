@@ -46,8 +46,8 @@ export function useCreateSupplierUpload() {
         }
         
         // Step 3: Create database record
-        const { data, error: dbError } = await supabase
-          .from('supplier_cost_uploads')
+        const { data, error: dbError } = await (supabase
+          .from('supplier_cost_uploads' as any)
           .insert({
             supplier_id: isHoldingBucket ? null : uploadData.supplier_id,
             file_name: file.name,
@@ -55,11 +55,9 @@ export function useCreateSupplierUpload() {
             file_type: file.type || file.name.split('.').pop() || 'unknown',
             file_size: file.size,
             source: uploadData.source,
-            // for_allocation column doesn't exist in the table
-            // We won't include it in the insert
-          } as any)  // Use type assertion to handle the nullable field
+          } as any)
           .select()
-          .single();
+          .single() as any);
         
         if (dbError) {
           console.error('Error creating upload record:', dbError);

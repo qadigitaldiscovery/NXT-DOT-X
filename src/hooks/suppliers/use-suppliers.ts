@@ -21,7 +21,7 @@ export function useSuppliers() {
       setSuppliers(data.map(item => ({
         ...item,
         status: item.status || 'active'
-      })));
+      })) as Supplier[]);
     } catch (err) {
       console.error('Error fetching suppliers:', err);
       setError(err instanceof Error ? err : new Error('Unknown error'));
@@ -38,16 +38,18 @@ export function useSuppliers() {
     try {
       const { data, error } = await supabase
         .from('suppliers')
-        .insert([supplier])
+        .insert([supplier as any])
         .select()
         .single();
 
       if (error) throw error;
 
-      setSuppliers(prev => [...prev, {
+      const newSupplier = {
         ...data,
         status: data.status || 'active'
-      }]);
+      } as Supplier;
+      
+      setSuppliers(prev => [...prev, newSupplier]);
       
       return data;
     } catch (err) {

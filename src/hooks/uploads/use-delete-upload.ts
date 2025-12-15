@@ -20,10 +20,10 @@ export function useDeleteSupplierUpload() {
       }
       
       // Step 2: Delete database record
-      const { error: dbError } = await supabase
-        .from('supplier_cost_uploads')
+      const { error: dbError } = await (supabase
+        .from('supplier_cost_uploads' as any)
         .delete()
-        .eq('id', upload.id);
+        .eq('id', upload.id) as any);
       
       if (dbError) {
         console.error(`Error deleting upload record ${upload.id}:`, dbError);

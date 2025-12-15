@@ -27,15 +27,15 @@ export const useModules = () => {
   const fetchModules = useCallback(async () => {
     try {
       setLoading(true);
-      const { data, error } = await supabase
-        .from('modules')
+      const { data, error } = await (supabase
+        .from('modules' as any)
         .select('*')
-        .order('name');
+        .order('name') as any);
         
       if (error) throw error;
       
       // Add mock features for data management module
-      const enhancedData = data?.map(item => ({
+      const enhancedData = (data || []).map((item: any) => ({
         id: item.id,
         name: item.name,
         status: item.status,
@@ -49,7 +49,7 @@ export const useModules = () => {
           { name: 'Documents', path: '/data-management/documents' },
           { name: 'Price Management', path: '/data-management/pricing' }
         ] : undefined
-      })) || [];
+      }));
       
       setModules(enhancedData);
     } catch (err) {
@@ -66,10 +66,10 @@ export const useModules = () => {
 
   const updateModuleStatus = async (id: string, status: string) => {
     try {
-      const { error } = await supabase
-        .from('modules')
-        .update({ status })
-        .eq('id', id);
+      const { error } = await (supabase
+        .from('modules' as any)
+        .update({ status } as any)
+        .eq('id', id) as any);
         
       if (error) throw error;
       

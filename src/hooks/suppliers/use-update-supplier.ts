@@ -11,7 +11,7 @@ export function useUpdateSupplier() {
     mutationFn: async ({ id, ...supplier }: Supplier) => {
       const { data, error } = await supabase
         .from('suppliers')
-        .update(supplier)
+        .update(supplier as any)
         .eq('id', id)
         .select()
         .single();
@@ -22,7 +22,7 @@ export function useUpdateSupplier() {
         throw error;
       }
       
-      return data as Supplier;
+      return data as unknown as Supplier;
     },
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['suppliers'] });

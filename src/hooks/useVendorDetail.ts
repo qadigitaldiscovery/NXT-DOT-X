@@ -35,12 +35,12 @@ export function useVendorPerformance(vendorId: string) {
 
   // Calculate EMA if we have data
   const emaScore = query.data 
-    ? calculatePerformanceEMA(query.data.map(p => ({ date: p.date, score: p.score })))
+    ? calculatePerformanceEMA(query.data.map((p: any) => ({ date: p.date, score: p.score })))
     : undefined;
   
   // Check for recent performance decline
   const hasPerformanceAlert = query.data && query.data.length >= 4 
-    ? emaScore! < query.data[query.data.length - 1].score * 0.9
+    ? emaScore! < (query.data[query.data.length - 1] as any).score * 0.9
     : false;
 
   return {

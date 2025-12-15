@@ -9,26 +9,26 @@ export const useTasks = () => {
   const queryClient = useQueryClient();
   
   const fetchTasksByProjectId = useCallback(async (projectId: string): Promise<Task[]> => {
-    const { data, error } = await supabase
-      .from('tasks')
+    const { data, error } = await (supabase
+      .from('tasks' as any)
       .select('*')
       .eq('project_id', projectId)
-      .order('created_at', { ascending: false });
+      .order('created_at', { ascending: false }) as any);
     
     if (error) {
       console.error('Error fetching tasks:', error);
       throw new Error(error.message);
     }
     
-    return data as Task[];
+    return (data || []) as Task[];
   }, []);
 
   const fetchTaskById = useCallback(async (id: string): Promise<Task> => {
-    const { data, error } = await supabase
-      .from('tasks')
+    const { data, error } = await (supabase
+      .from('tasks' as any)
       .select('*')
       .eq('id', id)
-      .single();
+      .single() as any);
     
     if (error) {
       console.error('Error fetching task:', error);
@@ -40,11 +40,11 @@ export const useTasks = () => {
 
   const createTask = useMutation({
     mutationFn: async (newTask: Omit<Task, 'id' | 'created_at' | 'updated_at'>) => {
-      const { data, error } = await supabase
-        .from('tasks')
-        .insert([newTask])
+      const { data, error } = await (supabase
+        .from('tasks' as any)
+        .insert([newTask as any])
         .select()
-        .single();
+        .single() as any);
       
       if (error) {
         console.error('Error creating task:', error);
@@ -65,12 +65,12 @@ export const useTasks = () => {
   const updateTask = useMutation({
     mutationFn: async (updatedTask: Partial<Task> & { id: string }) => {
       const { id, ...rest } = updatedTask;
-      const { data, error } = await supabase
-        .from('tasks')
-        .update(rest)
+      const { data, error } = await (supabase
+        .from('tasks' as any)
+        .update(rest as any)
         .eq('id', id)
         .select()
-        .single();
+        .single() as any);
       
       if (error) {
         console.error('Error updating task:', error);
@@ -91,10 +91,10 @@ export const useTasks = () => {
 
   const deleteTask = useMutation({
     mutationFn: async (task: Pick<Task, 'id' | 'project_id'>) => {
-      const { error } = await supabase
-        .from('tasks')
+      const { error } = await (supabase
+        .from('tasks' as any)
         .delete()
-        .eq('id', task.id);
+        .eq('id', task.id) as any);
       
       if (error) {
         console.error('Error deleting task:', error);
