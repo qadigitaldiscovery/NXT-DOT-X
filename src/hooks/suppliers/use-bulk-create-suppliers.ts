@@ -10,10 +10,10 @@ export function useBulkCreateSuppliers() {
   const bulkCreateSuppliers = async (suppliers: Omit<Supplier, 'id'>[]) => {
     setIsLoading(true);
     try {
-      const { data, error } = await supabase
-        .from('suppliers')
+      const { data, error } = await (supabase
+        .from('suppliers' as any)
         .insert(suppliers)
-        .select();
+        .select() as any);
 
       if (error) {
         throw error;

@@ -9,11 +9,11 @@ export function useCreateSupplier() {
   
   return useMutation({
     mutationFn: async (supplier: Omit<Supplier, 'id'>) => {
-      const { data, error } = await supabase
-        .from('suppliers')
+      const { data, error } = await (supabase
+        .from('suppliers' as any)
         .insert(supplier)
         .select()
-        .single();
+        .single() as any);
       
       if (error) {
         console.error('Error creating supplier:', error);

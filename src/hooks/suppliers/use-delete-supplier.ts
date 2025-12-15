@@ -8,10 +8,10 @@ export function useDeleteSupplier() {
   
   return useMutation({
     mutationFn: async (id: string) => {
-      const { error } = await supabase
-        .from('suppliers')
+      const { error } = await (supabase
+        .from('suppliers' as any)
         .delete()
-        .eq('id', id);
+        .eq('id', id) as any);
       
       if (error) {
         console.error(`Error deleting supplier ${id}:`, error);
