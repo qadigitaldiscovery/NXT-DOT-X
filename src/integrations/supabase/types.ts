@@ -175,51 +175,155 @@ export type Database = {
         }
         Relationships: []
       }
+      projects: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          end_date: string | null
+          id: string
+          name: string
+          owner_id: string
+          rag_status: string | null
+          start_date: string | null
+          status: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          end_date?: string | null
+          id?: string
+          name: string
+          owner_id: string
+          rag_status?: string | null
+          start_date?: string | null
+          status?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          end_date?: string | null
+          id?: string
+          name?: string
+          owner_id?: string
+          rag_status?: string | null
+          start_date?: string | null
+          status?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      supplier_cost_uploads: {
+        Row: {
+          created_at: string | null
+          error_message: string | null
+          file_name: string
+          file_path: string | null
+          file_size: number | null
+          id: string
+          processed_rows: number | null
+          status: string | null
+          supplier_id: string | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          error_message?: string | null
+          file_name: string
+          file_path?: string | null
+          file_size?: number | null
+          id?: string
+          processed_rows?: number | null
+          status?: string | null
+          supplier_id?: string | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          error_message?: string | null
+          file_name?: string
+          file_path?: string | null
+          file_size?: number | null
+          id?: string
+          processed_rows?: number | null
+          status?: string | null
+          supplier_id?: string | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "supplier_cost_uploads_supplier_id_fkey"
+            columns: ["supplier_id"]
+            isOneToOne: false
+            referencedRelation: "suppliers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       suppliers: {
         Row: {
           address: string | null
           city: string | null
+          code: string | null
+          contact_name: string | null
           country: string | null
           created_at: string | null
+          discount_structure: string | null
           email: string | null
           id: string
           name: string
           notes: string | null
+          payment_terms: string | null
           phone: string | null
           rating: number | null
           status: string | null
           updated_at: string | null
           user_id: string
+          website: string | null
         }
         Insert: {
           address?: string | null
           city?: string | null
+          code?: string | null
+          contact_name?: string | null
           country?: string | null
           created_at?: string | null
+          discount_structure?: string | null
           email?: string | null
           id?: string
           name: string
           notes?: string | null
+          payment_terms?: string | null
           phone?: string | null
           rating?: number | null
           status?: string | null
           updated_at?: string | null
           user_id: string
+          website?: string | null
         }
         Update: {
           address?: string | null
           city?: string | null
+          code?: string | null
+          contact_name?: string | null
           country?: string | null
           created_at?: string | null
+          discount_structure?: string | null
           email?: string | null
           id?: string
           name?: string
           notes?: string | null
+          payment_terms?: string | null
           phone?: string | null
           rating?: number | null
           status?: string | null
           updated_at?: string | null
           user_id?: string
+          website?: string | null
         }
         Relationships: []
       }
