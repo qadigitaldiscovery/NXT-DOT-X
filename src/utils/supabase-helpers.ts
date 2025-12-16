@@ -1,4 +1,5 @@
 import { supabase } from '@/integrations/supabase/client';
+import type { Tables, TablesInsert, TablesUpdate } from '@/integrations/supabase/types';
 
 /**
  * Helper function for type-safe access to Supabase tables
@@ -35,18 +36,15 @@ export async function checkColumnExists(tableName: string, columnName: string, s
 }
 
 /**
- * Helper function to access the profiles table in a type-safe way
+ * Type alias for profile data from database
  */
-export interface ProfileData {
-  id: string;
-  username?: string;
-  email?: string;
-  role?: 'admin' | 'manager' | 'user';
-  permissions?: string[];
-  created_at?: string;
-  updated_at?: string;
-}
+export type ProfileData = Tables<'profiles'>;
+export type ProfileInsert = TablesInsert<'profiles'>;
+export type ProfileUpdate = TablesUpdate<'profiles'>;
 
+/**
+ * Helper function to access the profiles table with proper typing
+ */
 export function profilesTable() {
-  return typedSupabaseQuery<ProfileData>("profiles");
+  return supabase.from('profiles');
 }
