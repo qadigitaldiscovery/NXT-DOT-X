@@ -7,10 +7,10 @@ import { calculateLocalScore } from '@/utils/vendorCalculations';
  * Fetch all vendors
  */
 export async function fetchVendors() {
-  const { data, error } = await (supabase
-    .from('vendors' as any)
+  const { data, error } = await supabase
+    .from('vendors')
     .select('*')
-    .order('created_at', { ascending: false }) as any);
+    .order('created_at', { ascending: false });
 
   if (error) throw error;
   
@@ -21,8 +21,8 @@ export async function fetchVendors() {
  * Fetch a vendor by ID with related credit ratings, reports and performance data
  */
 export async function fetchVendorDetails(vendorId: string) {
-  const { data, error } = await (supabase
-    .from('vendors' as any)
+  const { data, error } = await supabase
+    .from('vendors')
     .select(`
       *,
       credit_ratings(*),
@@ -30,25 +30,22 @@ export async function fetchVendorDetails(vendorId: string) {
       vendor_performance(*)
     `)
     .eq('id', vendorId)
-    .order('fetched_at', { foreignTable: 'credit_ratings', ascending: false })
-    .order('fetched_at', { foreignTable: 'vendor_reports', ascending: false })
-    .order('date', { foreignTable: 'vendor_performance', ascending: true })
-    .single() as any);
+    .single();
 
   if (error) throw error;
   
-  return data as VendorDetail;
+  return data as unknown as VendorDetail;
 }
 
 /**
  * Fetch performance data for a vendor
  */
 export async function fetchVendorPerformance(vendorId: string) {
-  const { data, error } = await (supabase
-    .from('vendor_performance' as any)
+  const { data, error } = await supabase
+    .from('vendor_performance')
     .select('*')
     .eq('vendor_id', vendorId)
-    .order('date', { ascending: true }) as any);
+    .order('date', { ascending: true });
 
   if (error) throw error;
   
@@ -72,17 +69,23 @@ export async function createVendor(
   // Generate vendor ID if not provided
   const id = vendor.id || nanoid(10);
   
-  // First, create the vendor
-  const { data: vendorData, error: vendorError } = await (supabase
-    .from('vendors' as any)
+  // Get current user for vendor ownership
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) {
+    throw new Error('You must be logged in to create a vendor');
+  }
+  
+  // Create the vendor
+  const { data: vendorData, error: vendorError } = await supabase
+    .from('vendors')
     .insert({
       id,
       company_name: vendor.company_name || 'Unnamed Vendor',
-      created_at: new Date().toISOString(),
-      local_score: localScore
+      local_score: localScore,
+      user_id: user.id,
     })
     .select()
-    .single() as any);
+    .single();
 
   if (vendorError) throw vendorError;
   
@@ -98,8 +101,6 @@ export async function getReportUrl(filePath: string) {
     .from('reports')
     .getPublicUrl(filePath);
   
-  // Supabase storage getPublicUrl doesn't return an error property
-  // It returns { data: { publicUrl: string } }
   return response.data.publicUrl;
 }
 

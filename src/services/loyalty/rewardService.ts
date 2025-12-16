@@ -6,11 +6,11 @@ export const rewardService = {
   // Get all active rewards
   async getActiveRewards(): Promise<LoyaltyReward[]> {
     try {
-      const { data, error } = await (supabase
-        .from('loyalty_rewards_v1' as any)
+      const { data, error } = await supabase
+        .from('loyalty_rewards_v1')
         .select('*')
         .eq('is_active', true)
-        .order('points_cost', { ascending: true }) as any);
+        .order('points_cost', { ascending: true });
         
       if (error) throw error;
       return (data || []) as LoyaltyReward[];
@@ -25,58 +25,58 @@ export const rewardService = {
   async redeemReward(loyaltyId: number, rewardId: number): Promise<{success: boolean, message: string}> {
     try {
       // 1. Get the account
-      const { data: account, error: accountError } = await (supabase
-        .from('loyalty_accounts' as any)
+      const { data: account, error: accountError } = await supabase
+        .from('loyalty_accounts')
         .select('*')
         .eq('loyalty_id', loyaltyId)
-        .single() as any);
+        .single();
       
       if (accountError || !account) {
         throw new Error('Failed to find loyalty account');
       }
       
       // 2. Get the reward
-      const { data: reward, error: rewardError } = await (supabase
-        .from('loyalty_rewards_v1' as any)
+      const { data: reward, error: rewardError } = await supabase
+        .from('loyalty_rewards_v1')
         .select('*')
         .eq('reward_id', rewardId)
-        .single() as any);
+        .single();
       
       if (rewardError || !reward) {
         throw new Error('Failed to find reward');
       }
       
       // 3. Check if user has enough points
-      if ((account as any).points_balance < (reward as any).points_cost) {
+      if (account.points_balance < reward.points_cost) {
         return { 
           success: false, 
-          message: `Not enough points. You need ${(reward as any).points_cost} points but have ${(account as any).points_balance}.`
+          message: `Not enough points. You need ${reward.points_cost} points but have ${account.points_balance}.`
         };
       }
       
       // 4. Create redemption transaction
-      const { error: transactionError } = await (supabase
-        .from('loyalty_transactions' as any)
+      const { error: transactionError } = await supabase
+        .from('loyalty_transactions')
         .insert({
           loyalty_id: loyaltyId,
           transaction_type: 'REDEMPTION',
-          points_amount: -(reward as any).points_cost, // Negative as points are being spent
-          description: `Redeemed: ${(reward as any).reward_name}`,
-        }) as any);
+          points_amount: -reward.points_cost, // Negative as points are being spent
+          description: `Redeemed: ${reward.reward_name}`,
+        });
       
       if (transactionError) {
         throw transactionError;
       }
       
       // 5. Update account balance
-      const newBalance = (account as any).points_balance - (reward as any).points_cost;
-      const { error: updateError } = await (supabase
-        .from('loyalty_accounts' as any)
+      const newBalance = account.points_balance - reward.points_cost;
+      const { error: updateError } = await supabase
+        .from('loyalty_accounts')
         .update({ 
           points_balance: newBalance,
           last_activity_date: new Date().toISOString()
         })
-        .eq('loyalty_id', loyaltyId) as any);
+        .eq('loyalty_id', loyaltyId);
       
       if (updateError) {
         throw updateError;
@@ -85,7 +85,7 @@ export const rewardService = {
       // 6. Return success with redemption instructions
       return { 
         success: true, 
-        message: (reward as any).redemption_instructions_v1 || 'Reward redeemed successfully!'
+        message: reward.redemption_instructions_v1 || 'Reward redeemed successfully!'
       };
     } catch (error) {
       console.error('Error in redeemReward:', error);

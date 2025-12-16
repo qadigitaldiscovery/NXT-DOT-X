@@ -55,14 +55,19 @@ export async function createVendor(vendor, subScores) {
     const localScore = calculateLocalScore(subScores.paymentTimeliness || 0, subScores.financialHealth || 0, subScores.operationalStability || 0);
     // Generate vendor ID if not provided
     const id = vendor.id || nanoid(10);
-    // First, create the vendor
+    // Get current user for vendor ownership
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
+        throw new Error('You must be logged in to create a vendor');
+    }
+    // Create the vendor
     const { data: vendorData, error: vendorError } = await supabase
         .from('vendors')
         .insert({
         id,
         company_name: vendor.company_name || 'Unnamed Vendor',
-        created_at: new Date().toISOString(),
-        local_score: localScore
+        local_score: localScore,
+        user_id: user.id,
     })
         .select()
         .single();

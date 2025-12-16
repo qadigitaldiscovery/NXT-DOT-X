@@ -50,6 +50,44 @@ export type Database = {
         }
         Relationships: []
       }
+      credit_ratings: {
+        Row: {
+          created_at: string | null
+          id: string
+          rating: string | null
+          report_date: string | null
+          score: number | null
+          updated_at: string | null
+          vendor_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          rating?: string | null
+          report_date?: string | null
+          score?: number | null
+          updated_at?: string | null
+          vendor_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          rating?: string | null
+          report_date?: string | null
+          score?: number | null
+          updated_at?: string | null
+          vendor_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "credit_ratings_vendor_id_fkey"
+            columns: ["vendor_id"]
+            isOneToOne: false
+            referencedRelation: "vendors"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       document_categories: {
         Row: {
           color: string | null
@@ -145,6 +183,161 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "document_categories"
             referencedColumns: ["id"]
+          },
+        ]
+      }
+      loyalty_accounts: {
+        Row: {
+          created_at: string | null
+          join_date: string | null
+          last_activity_date: string | null
+          loyalty_id: number
+          next_tier_evaluation_date: string | null
+          points_balance: number
+          tier_assigned_date: string | null
+          tier_level: string
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          join_date?: string | null
+          last_activity_date?: string | null
+          loyalty_id?: number
+          next_tier_evaluation_date?: string | null
+          points_balance?: number
+          tier_assigned_date?: string | null
+          tier_level?: string
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          join_date?: string | null
+          last_activity_date?: string | null
+          loyalty_id?: number
+          next_tier_evaluation_date?: string | null
+          points_balance?: number
+          tier_assigned_date?: string | null
+          tier_level?: string
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      loyalty_rewards_v1: {
+        Row: {
+          created_at: string | null
+          description_v1: string | null
+          is_active: boolean | null
+          points_cost: number
+          redemption_instructions_v1: string | null
+          reward_id: number
+          reward_name: string
+          reward_type: string
+          updated_at: string | null
+          value_monetary: number | null
+        }
+        Insert: {
+          created_at?: string | null
+          description_v1?: string | null
+          is_active?: boolean | null
+          points_cost: number
+          redemption_instructions_v1?: string | null
+          reward_id?: number
+          reward_name: string
+          reward_type: string
+          updated_at?: string | null
+          value_monetary?: number | null
+        }
+        Update: {
+          created_at?: string | null
+          description_v1?: string | null
+          is_active?: boolean | null
+          points_cost?: number
+          redemption_instructions_v1?: string | null
+          reward_id?: number
+          reward_name?: string
+          reward_type?: string
+          updated_at?: string | null
+          value_monetary?: number | null
+        }
+        Relationships: []
+      }
+      loyalty_tiers: {
+        Row: {
+          benefits_summary_v1: string | null
+          created_at: string | null
+          description_v1: string | null
+          min_points_required: number
+          tier_id: number
+          tier_name: string
+          updated_at: string | null
+        }
+        Insert: {
+          benefits_summary_v1?: string | null
+          created_at?: string | null
+          description_v1?: string | null
+          min_points_required?: number
+          tier_id?: number
+          tier_name: string
+          updated_at?: string | null
+        }
+        Update: {
+          benefits_summary_v1?: string | null
+          created_at?: string | null
+          description_v1?: string | null
+          min_points_required?: number
+          tier_id?: number
+          tier_name?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      loyalty_transactions: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          loyalty_id: number
+          points_amount: number
+          points_expiry_date: string | null
+          reference_id: string | null
+          related_order_value: number | null
+          transaction_date: string | null
+          transaction_id: number
+          transaction_type: string
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          loyalty_id: number
+          points_amount: number
+          points_expiry_date?: string | null
+          reference_id?: string | null
+          related_order_value?: number | null
+          transaction_date?: string | null
+          transaction_id?: number
+          transaction_type: string
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          loyalty_id?: number
+          points_amount?: number
+          points_expiry_date?: string | null
+          reference_id?: string | null
+          related_order_value?: number | null
+          transaction_date?: string | null
+          transaction_id?: number
+          transaction_type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "loyalty_transactions_loyalty_id_fkey"
+            columns: ["loyalty_id"]
+            isOneToOne: false
+            referencedRelation: "loyalty_accounts"
+            referencedColumns: ["loyalty_id"]
           },
         ]
       }
@@ -344,6 +537,115 @@ export type Database = {
           created_at?: string | null
           id?: string
           role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
+      vendor_performance: {
+        Row: {
+          created_at: string | null
+          date: string
+          id: string
+          score: number
+          vendor_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          date: string
+          id?: string
+          score: number
+          vendor_id: string
+        }
+        Update: {
+          created_at?: string | null
+          date?: string
+          id?: string
+          score?: number
+          vendor_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "vendor_performance_vendor_id_fkey"
+            columns: ["vendor_id"]
+            isOneToOne: false
+            referencedRelation: "vendors"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      vendor_reports: {
+        Row: {
+          created_at: string | null
+          file_url: string | null
+          id: string
+          title: string
+          type: string | null
+          updated_at: string | null
+          vendor_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          file_url?: string | null
+          id?: string
+          title: string
+          type?: string | null
+          updated_at?: string | null
+          vendor_id: string
+        }
+        Update: {
+          created_at?: string | null
+          file_url?: string | null
+          id?: string
+          title?: string
+          type?: string | null
+          updated_at?: string | null
+          vendor_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "vendor_reports_vendor_id_fkey"
+            columns: ["vendor_id"]
+            isOneToOne: false
+            referencedRelation: "vendors"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      vendors: {
+        Row: {
+          address: string | null
+          company_name: string
+          contact_email: string | null
+          created_at: string | null
+          id: string
+          local_score: number | null
+          phone: string | null
+          status: string | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          address?: string | null
+          company_name: string
+          contact_email?: string | null
+          created_at?: string | null
+          id?: string
+          local_score?: number | null
+          phone?: string | null
+          status?: string | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          address?: string | null
+          company_name?: string
+          contact_email?: string | null
+          created_at?: string | null
+          id?: string
+          local_score?: number | null
+          phone?: string | null
+          status?: string | null
+          updated_at?: string | null
           user_id?: string
         }
         Relationships: []

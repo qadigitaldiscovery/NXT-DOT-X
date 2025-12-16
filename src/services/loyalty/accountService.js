@@ -10,7 +10,7 @@ export const accountService = {
                 .from('loyalty_accounts')
                 .select('*')
                 .eq('user_id', userId)
-                .single();
+                .maybeSingle();
             if (existingAccount) {
                 return existingAccount;
             }
@@ -65,7 +65,7 @@ export const accountService = {
                 .from('loyalty_accounts')
                 .select('*')
                 .eq('user_id', userId)
-                .single();
+                .maybeSingle();
             if (error)
                 throw error;
             return data;
