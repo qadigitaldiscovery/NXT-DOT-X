@@ -38,7 +38,7 @@ export function SuppliersTable() {
 
   const filteredSuppliers = suppliers.filter(supplier => 
     supplier.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
-    supplier.code.toLowerCase().includes(searchTerm.toLowerCase())
+    (supplier.code && supplier.code.toLowerCase().includes(searchTerm.toLowerCase()))
   );
 
   const handleDelete = (id: string, name: string) => {
@@ -134,7 +134,7 @@ export function SuppliersTable() {
               ) : (
                 filteredSuppliers.map((supplier) => (
                   <TableRow key={supplier.id}>
-                    <TableCell className="font-medium">{supplier.code}</TableCell>
+                    <TableCell className="font-medium">{supplier.code || "—"}</TableCell>
                     <TableCell>{supplier.name}</TableCell>
                     <TableCell>{supplier.contact_name || "—"}</TableCell>
                     <TableCell>{supplier.email || "—"}</TableCell>

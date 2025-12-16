@@ -27,21 +27,29 @@ export interface Partner {
 // Helper functions to convert between types
 export function vendorToPartner(vendor: Vendor): Partner {
   return {
-    ...vendor,
     id: vendor.id || '',
     type: 'vendor',
-    name: vendor.name || vendor.company_name || '',
-    credit_rating: vendor.credit_rating || 'B',
-    status: vendor.status || 'active'
+    name: (vendor as any).name || vendor.company_name || '',
+    credit_rating: (vendor as any).credit_rating || 'B',
+    status: (vendor as any).status || 'active',
+    email: (vendor as any).email,
+    phone: (vendor as any).phone,
+    website: (vendor as any).website,
+    address: (vendor as any).address || undefined,
+    company_name: vendor.company_name,
   };
 }
 
 export function supplierToPartner(supplier: ApiSupplier | LocalSupplier): Partner {
   return {
-    ...supplier,
     id: supplier.id || '',
     type: 'supplier',
+    name: supplier.name || '',
     credit_rating: (supplier as any).credit_rating || 'B',
-    status: supplier.status || 'active'
+    status: supplier.status || 'active',
+    email: supplier.email || undefined,
+    phone: supplier.phone || undefined,
+    website: (supplier as any).website || undefined,
+    address: supplier.address || undefined,
   };
-} 
+}

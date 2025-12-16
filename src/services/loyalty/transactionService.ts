@@ -1,4 +1,3 @@
-
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { LoyaltyTransaction, TransactionParams } from "./types";
@@ -7,14 +6,14 @@ export const transactionService = {
   // Get transactions for a loyalty account
   async getTransactions(loyaltyId: number): Promise<LoyaltyTransaction[]> {
     try {
-      const { data, error } = await supabase
-        .from('loyalty_transactions')
+      const { data, error } = await (supabase
+        .from('loyalty_transactions' as any)
         .select('*')
         .eq('loyalty_id', loyaltyId)
-        .order('transaction_date', { ascending: false });
+        .order('transaction_date', { ascending: false }) as any);
         
       if (error) throw error;
-      return data || [];
+      return (data || []) as LoyaltyTransaction[];
     } catch (error) {
       console.error('Error in getTransactions:', error);
       toast.error('Failed to retrieve transactions');
@@ -25,9 +24,9 @@ export const transactionService = {
   // Add a transaction
   async addTransaction(transaction: TransactionParams): Promise<boolean> {
     try {
-      const { error } = await supabase
-        .from('loyalty_transactions')
-        .insert(transaction);
+      const { error } = await (supabase
+        .from('loyalty_transactions' as any)
+        .insert(transaction as any) as any);
         
       if (error) throw error;
       return true;

@@ -15,7 +15,7 @@ const SupplierDirectoryPage = () => {
   
   const filteredSuppliers = suppliers?.filter(supplier => 
     supplier.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    supplier.code.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    (supplier.code && supplier.code.toLowerCase().includes(searchQuery.toLowerCase())) ||
     (supplier.contact_name && supplier.contact_name.toLowerCase().includes(searchQuery.toLowerCase()))
   );
 

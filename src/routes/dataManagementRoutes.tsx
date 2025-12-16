@@ -25,121 +25,91 @@ export const DataManagementRoutes = () => {
     <Routes>
       <Route index element={
         <ProtectedRoute>
-          <SimpleLayout>
-            <DashboardHome />
-          </SimpleLayout>
+          <DashboardHome />
         </ProtectedRoute>
       } />
       
       <Route path="suppliers" element={
         <ProtectedRoute>
-          <SimpleLayout>
-            <SupplierPage />
-          </SimpleLayout>
+          <SupplierPage />
         </ProtectedRoute>
       } />
       
       <Route path="customers" element={
         <ProtectedRoute>
-          <SimpleLayout>
-            <CustomerPage />
-          </SimpleLayout>
+          <CustomerPage />
         </ProtectedRoute>
       } />
       
       <Route path="supplier-costing" element={
         <ProtectedRoute>
-          <SimpleLayout>
-            <SupplierCosting />
-          </SimpleLayout>
+          <SupplierCosting />
         </ProtectedRoute>
       } />
       
       <Route path="cost-analysis" element={
         <ProtectedRoute>
-          <SimpleLayout>
-            <CostAnalysisPage />
-          </SimpleLayout>
+          <CostAnalysisPage />
         </ProtectedRoute>
       } />
       
       <Route path="cost-management" element={
         <ProtectedRoute>
-          <SimpleLayout>
-            <CostManagementPage />
-          </SimpleLayout>
+          <CostManagementPage />
         </ProtectedRoute>
       } />
       
       <Route path="pricing/competitor-pricing" element={
         <ProtectedRoute>
-          <SimpleLayout>
-            <CompetitorPricingPage />
-          </SimpleLayout>
+          <CompetitorPricingPage />
         </ProtectedRoute>
       } />
       
       <Route path="pricing/price-management" element={
         <ProtectedRoute>
-          <SimpleLayout>
-            <PriceManagementPage />
-          </SimpleLayout>
+          <PriceManagementPage />
         </ProtectedRoute>
       } />
       
       <Route path="uploads" element={
         <ProtectedRoute>
-          <SimpleLayout>
-            <UploadsPage />
-          </SimpleLayout>
+          <UploadsPage />
         </ProtectedRoute>
       } />
       
       <Route path="documents" element={
         <ProtectedRoute>
-          <SimpleLayout>
-            <DocumentsPage />
-          </SimpleLayout>
+          <DocumentsPage />
         </ProtectedRoute>
       } />
       
       <Route path="export-data" element={
         <ProtectedRoute>
-          <SimpleLayout>
-            <ExportDataPage />
-          </SimpleLayout>
+          <ExportDataPage />
         </ProtectedRoute>
       } />
       
       <Route path="insights" element={
         <ProtectedRoute>
-          <SimpleLayout>
-            <InsightsPage />
-          </SimpleLayout>
+          <InsightsPage />
         </ProtectedRoute>
       } />
       
       <Route path="connections" element={
         <ProtectedRoute>
-          <SimpleLayout>
-            <ConnectionsPage />
-          </SimpleLayout>
+          <ConnectionsPage />
         </ProtectedRoute>
       } />
       
       <Route path="settings" element={
         <ProtectedRoute>
-          <SimpleLayout>
-            <DataManagementSettings />
-          </SimpleLayout>
+          <DataManagementSettings />
         </ProtectedRoute>
       } />
       
       <Route path="*" element={
         <ProtectedRoute>
-          <SimpleLayout>
-            <NotFound />
-          </SimpleLayout>
+          <NotFound />
         </ProtectedRoute>
       } />
     </Routes>

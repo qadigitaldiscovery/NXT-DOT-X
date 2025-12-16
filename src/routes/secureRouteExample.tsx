@@ -8,7 +8,7 @@ export const SecureRoute = () => {
   const { hasRole } = usePermissions();
   return hasRole('admin') ? (
     <Suspense fallback={<div>Loading dashboard...</div>}>
-      <PlatformLayout>
+      <PlatformLayout moduleTitle="Secure Dashboard">
         <DashboardV2 />
       </PlatformLayout>
     </Suspense>

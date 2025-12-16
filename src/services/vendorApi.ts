@@ -1,29 +1,28 @@
-
 import { supabase } from '@/integrations/supabase/client';
 import { nanoid } from 'nanoid';
-import { Vendor, SubScore, VendorWithDetails } from '@/types/vendor';
+import { Vendor, SubScore, VendorDetail } from '@/types/vendor';
 import { calculateLocalScore } from '@/utils/vendorCalculations';
 
 /**
  * Fetch all vendors
  */
 export async function fetchVendors() {
-  const { data, error } = await supabase
-    .from('vendors')
+  const { data, error } = await (supabase
+    .from('vendors' as any)
     .select('*')
-    .order('created_at', { ascending: false });
+    .order('created_at', { ascending: false }) as any);
 
   if (error) throw error;
   
-  return data as Vendor[];
+  return (data || []) as unknown as Vendor[];
 }
 
 /**
  * Fetch a vendor by ID with related credit ratings, reports and performance data
  */
 export async function fetchVendorDetails(vendorId: string) {
-  const { data, error } = await supabase
-    .from('vendors')
+  const { data, error } = await (supabase
+    .from('vendors' as any)
     .select(`
       *,
       credit_ratings(*),
@@ -34,22 +33,22 @@ export async function fetchVendorDetails(vendorId: string) {
     .order('fetched_at', { foreignTable: 'credit_ratings', ascending: false })
     .order('fetched_at', { foreignTable: 'vendor_reports', ascending: false })
     .order('date', { foreignTable: 'vendor_performance', ascending: true })
-    .single();
+    .single() as any);
 
   if (error) throw error;
   
-  return data as VendorWithDetails;
+  return data as VendorDetail;
 }
 
 /**
  * Fetch performance data for a vendor
  */
 export async function fetchVendorPerformance(vendorId: string) {
-  const { data, error } = await supabase
-    .from('vendor_performance')
+  const { data, error } = await (supabase
+    .from('vendor_performance' as any)
     .select('*')
     .eq('vendor_id', vendorId)
-    .order('date', { ascending: true });
+    .order('date', { ascending: true }) as any);
 
   if (error) throw error;
   
@@ -65,17 +64,17 @@ export async function createVendor(
 ) {
   // Calculate local score from sub-scores
   const localScore = calculateLocalScore(
-    subScores.paymentTimeliness,
-    subScores.financialHealth,
-    subScores.operationalStability
+    (subScores as any).paymentTimeliness || 0,
+    (subScores as any).financialHealth || 0,
+    (subScores as any).operationalStability || 0
   );
   
   // Generate vendor ID if not provided
   const id = vendor.id || nanoid(10);
   
   // First, create the vendor
-  const { data: vendorData, error: vendorError } = await supabase
-    .from('vendors')
+  const { data: vendorData, error: vendorError } = await (supabase
+    .from('vendors' as any)
     .insert({
       id,
       company_name: vendor.company_name || 'Unnamed Vendor',
@@ -83,7 +82,7 @@ export async function createVendor(
       local_score: localScore
     })
     .select()
-    .single();
+    .single() as any);
 
   if (vendorError) throw vendorError;
   

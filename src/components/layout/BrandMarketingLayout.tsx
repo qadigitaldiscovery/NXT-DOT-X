@@ -1,7 +1,8 @@
 import React from 'react';
+import { Outlet } from 'react-router-dom';
 
-interface BrandMarketingLayoutProps {
-  children: React.ReactNode;
+export interface BrandMarketingLayoutProps {
+  children?: React.ReactNode;
 }
 
 const BrandMarketingLayout: React.FC<BrandMarketingLayoutProps> = ({ children }) => {
@@ -9,7 +10,7 @@ const BrandMarketingLayout: React.FC<BrandMarketingLayoutProps> = ({ children })
     <div className="brand-marketing-layout">
       {/* Placeholder for Brand Marketing-specific header/navigation */}
       <main className="brand-marketing-content">
-        {children}
+        {children || <Outlet />}
       </main>
       {/* Placeholder for Brand Marketing-specific footer */}
     </div>

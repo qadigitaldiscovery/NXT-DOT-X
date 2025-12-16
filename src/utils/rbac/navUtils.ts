@@ -41,7 +41,7 @@ export const getNavItemsByPermission = (
     permittedNavItems.push({
       label: 'Customers',
       path: '/customers',
-      icon: () => import('lucide-react').then(mod => mod.Users),
+      icon: HomeIcon, // Using HomeIcon as fallback
     });
   }
 
