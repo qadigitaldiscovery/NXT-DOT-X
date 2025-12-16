@@ -1,8 +1,9 @@
-
 import React from 'react';
 
-interface PermissionGuardProps {
+export interface PermissionGuardProps {
   requiredPermissions?: string[];
+  requiredRole?: string;
+  moduleSlug?: string;
   children: React.ReactNode;
   requireAll?: boolean;
 }

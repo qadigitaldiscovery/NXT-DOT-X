@@ -1,12 +1,11 @@
-
 import { CommandoUnit, ShieldStatus, MissionStatus, QuantumCore, DataCore, TeamMember } from '../pages/dot-x/types';
-import { v4 as uuidv4 } from 'uuid';
+import { nanoid } from 'nanoid';
 
 // Mock data for DOT-X features
 export const getCommandoUnits = (): CommandoUnit[] => {
   return [
     {
-      id: uuidv4(),
+      id: nanoid(),
       name: "Alpha Strike",
       type: "Tactical",
       status: "active",
@@ -18,7 +17,7 @@ export const getCommandoUnits = (): CommandoUnit[] => {
       }
     },
     {
-      id: uuidv4(),
+      id: nanoid(),
       name: "Nexus Prime",
       type: "Strategic",
       status: "deployed",
@@ -30,7 +29,7 @@ export const getCommandoUnits = (): CommandoUnit[] => {
       }
     },
     {
-      id: uuidv4(),
+      id: nanoid(),
       name: "Cipher Echo",
       type: "Infiltration",
       status: "standby",
@@ -84,28 +83,28 @@ export const getDataCore = (): DataCore => {
 export const getTeamMembers = (): TeamMember[] => {
   return [
     {
-      id: uuidv4(),
+      id: nanoid(),
       name: "Commander Sarah Chen",
       role: "Field Commander",
       status: "active",
       specialization: ["Tactical Operations", "Team Leadership"]
     },
     {
-      id: uuidv4(),
+      id: nanoid(),
       name: "Dr. Marcus Reid",
       role: "Neural Specialist",
       status: "field",
       specialization: ["AI Integration", "Neural Networks"]
     },
     {
-      id: uuidv4(),
+      id: nanoid(),
       name: "Lt. Alex Mercer",
       role: "Security Specialist",
       status: "active",
       specialization: ["Threat Assessment", "Countermeasures"]
     },
     {
-      id: uuidv4(),
+      id: nanoid(),
       name: "Tech Specialist Maya Wong",
       role: "Systems Engineer",
       status: "field",

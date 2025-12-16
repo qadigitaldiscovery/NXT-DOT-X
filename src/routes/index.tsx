@@ -27,7 +27,7 @@ import { RiskRegisterRoutes } from "./riskRegisterRoutes";
 import { RequestsRoutes } from "./requestsRoutes";
 
 // Core app routes
-import { AppRoutes } from './AppRoutes';
+import AppRoutes from './AppRoutes';
 
 export { AppRoutes };
 

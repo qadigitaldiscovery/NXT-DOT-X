@@ -1,15 +1,10 @@
 import { AuthError, AuthResponse, Session, User, SupabaseClient } from '@supabase/supabase-js';
 
-class CustomAuthError extends Error implements AuthError {
-  name = 'AuthApiError';
-  status: number;
-  code: string;
-  __isAuthError = true;
-
+class CustomAuthError extends AuthError {
   constructor(message: string, status = 400, code = 'invalid_credentials') {
     super(message);
     this.status = status;
-    this.code = code;
+    (this as any).code = code;
   }
 }
 
@@ -29,9 +24,9 @@ const mockUser: User = {
   updated_at: new Date().toISOString(),
   confirmed_at: new Date().toISOString(),
   email_confirmed_at: new Date().toISOString(),
-  phone_confirmed_at: null,
+  phone_confirmed_at: undefined,
   last_sign_in_at: new Date().toISOString(),
-  factors: null,
+  factors: undefined,
   identities: []
 };
 

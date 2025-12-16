@@ -1,4 +1,3 @@
-
 /**
  * Formats a CSV string into a 2D array
  * @param csvText The CSV text to format
@@ -11,7 +10,7 @@ export function formatCSV(csvText: string): string[][] {
   // Parse each line into an array
   return lines.map(line => {
     // Handle quoted values (that may contain commas)
-    const result = [];
+    const result: string[] = [];
     let currentValue = '';
     let insideQuotes = false;
     

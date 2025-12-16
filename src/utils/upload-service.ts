@@ -261,17 +261,17 @@ export const uploadDocument = async ({
       onProcessingMessage?.("Processing document...");
       
       // Create database record for the document
-      const { data: docData, error: docError } = await supabase
-        .from('documents')
+      const { data: docData, error: docError } = await (supabase
+        .from('documents' as any)
         .insert({
           title: documentName,
           type: isZipFile(file) ? 'archive' : file.type,
           category_id: documentType,
           url: publicUrl,
           expiry_date: expiryDate || null
-        })
+        } as any)
         .select()
-        .single();
+        .single() as any);
       
       if (docError) {
         console.error('Error creating document record:', docError);

@@ -1,7 +1,11 @@
 import React from 'react';
 import { useParams, Outlet, Link } from 'react-router-dom';
 
-const VendorDetailPage: React.FC = () => {
+interface VendorDetailPageProps {
+  defaultTab?: string;
+}
+
+const VendorDetailPage: React.FC<VendorDetailPageProps> = ({ defaultTab = 'data' }) => {
   const { id } = useParams<{ id: string }>();
 
   return (

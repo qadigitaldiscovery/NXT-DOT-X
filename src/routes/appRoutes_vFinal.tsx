@@ -37,9 +37,7 @@ export default function AppRoutes() {
       </Route>
 
       {/* Dashboard Layout */}
-      <Route path="/dashboard" element={<DashboardLayout />}>
-        <Route index element={<MasterDash />} />
-      </Route>
+      <Route path="/dashboard" element={<DashboardLayout><MasterDash /></DashboardLayout>} />
       
       {/* Catch-all route for 404 */}
       <Route path="*" element={<NotFound />} />

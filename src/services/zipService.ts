@@ -1,5 +1,5 @@
 // zipService.ts
-import { supabase } from './supabaseClient';
+import { supabase } from '@/integrations/supabase/client';
 
 export async function uploadZipToStorage(file: File) {
   const { data, error } = await supabase.storage.from('documents').upload(`zips/${file.name}`, file);
@@ -17,11 +17,11 @@ export async function uploadZipToStorage(file: File) {
 export async function registerExtractedFiles(zipName: string) {
   const { data } = await supabase.storage.from('documents').list(`unzipped/${zipName}`);
   for (const file of data || []) {
-    await supabase.from('documents').insert({
+    await (supabase.from('documents' as any).insert({
       file_name: file.name,
       file_path: `unzipped/${zipName}/${file.name}`,
       size: file.metadata?.size,
       type: file.metadata?.mimetype,
-    });
+    }) as any);
   }
 }

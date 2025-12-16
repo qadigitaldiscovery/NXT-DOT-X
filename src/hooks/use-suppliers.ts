@@ -1,10 +1,11 @@
-
-import { useState, useEffect } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
 
 export interface Supplier {
   id: string;
   name: string;
-  code: string;
+  code?: string;
   email?: string;
   phone?: string;
   address?: string;
@@ -16,49 +17,47 @@ export interface Supplier {
 }
 
 export const useSuppliers = () => {
-  const [suppliers, setSuppliers] = useState<Supplier[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<Error | null>(null);
-
-  useEffect(() => {
-    // Mock data
-    const mockSuppliers: Supplier[] = [
-      {
-        id: '1',
-        name: 'Supplier One',
-        code: 'SUP001',
-        email: 'supplier1@example.com',
-        phone: '123-456-7890',
-        address: '123 Main St',
-        contact_name: 'John Doe',
-        website: 'https://supplier1.com',
-        payment_terms: 'Net 30',
-        status: 'active',
-        created_at: new Date().toISOString()
+  return useQuery({
+    queryKey: ['suppliers'],
+    queryFn: async () => {
+      const { data, error } = await (supabase
+        .from('suppliers' as any)
+        .select('*')
+        .order('name') as any);
+      
+      if (error) {
+        console.error('Error fetching suppliers:', error);
+        toast.error('Failed to load suppliers');
+        throw error;
       }
-    ];
-    
-    setSuppliers(mockSuppliers);
-    setLoading(false);
-  }, []);
-
-  return {
-    data: suppliers,
-    isLoading: loading,
-    error
-  };
+      
+      return (data || []) as Supplier[];
+    }
+  });
 };
 
 export const useSupplier = (id?: string) => {
-  const { data: suppliers, isLoading, error } = useSuppliers();
-  
-  const supplier = suppliers.find(s => s.id === id);
-  
-  return {
-    data: supplier,
-    isLoading,
-    error
-  };
+  return useQuery({
+    queryKey: ['suppliers', id],
+    queryFn: async () => {
+      if (!id) return null;
+      
+      const { data, error } = await (supabase
+        .from('suppliers' as any)
+        .select('*')
+        .eq('id', id)
+        .maybeSingle() as any);
+      
+      if (error) {
+        console.error(`Error fetching supplier ${id}:`, error);
+        toast.error('Failed to load supplier details');
+        throw error;
+      }
+      
+      return data as Supplier | null;
+    },
+    enabled: !!id
+  });
 };
 
 export const useCreateSupplier = () => {

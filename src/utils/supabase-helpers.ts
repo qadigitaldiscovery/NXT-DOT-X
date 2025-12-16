@@ -1,6 +1,4 @@
-
 import { supabase } from '@/integrations/supabase/client';
-import { PostgrestQueryBuilder } from '@supabase/supabase-js';
 
 /**
  * Helper function for type-safe access to Supabase tables
@@ -9,7 +7,7 @@ import { PostgrestQueryBuilder } from '@supabase/supabase-js';
  */
 export function typedSupabaseQuery<T = any>(tableName: string) {
   // Cast to any to bypass TypeScript's type checking for dynamic table access
-  return supabase.from(tableName) as unknown as PostgrestQueryBuilder<any, T>;
+  return supabase.from(tableName as any) as any;
 }
 
 /**
@@ -18,7 +16,7 @@ export function typedSupabaseQuery<T = any>(tableName: string) {
  */
 export async function checkColumnExists(tableName: string, columnName: string, schemaName = 'public') {
   try {
-    const { data, error } = await supabase.rpc('column_exists', {
+    const { data, error } = await (supabase.rpc as any)('column_exists', {
       _table_name: tableName,
       _column_name: columnName,
       _schema_name: schemaName
