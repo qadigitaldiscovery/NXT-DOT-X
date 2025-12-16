@@ -6,10 +6,10 @@ export const tierService = {
   // Get all loyalty tiers
   async getAllTiers(): Promise<LoyaltyTier[]> {
     try {
-      const { data, error } = await (supabase
-        .from('loyalty_tiers' as any)
+      const { data, error } = await supabase
+        .from('loyalty_tiers')
         .select('*')
-        .order('min_points_required', { ascending: true }) as any);
+        .order('min_points_required', { ascending: true });
         
       if (error) throw error;
       return (data || []) as LoyaltyTier[];
