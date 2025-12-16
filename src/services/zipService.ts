@@ -14,14 +14,15 @@ export async function uploadZipToStorage(file: File) {
   return true;
 }
 
-export async function registerExtractedFiles(zipName: string) {
+export async function registerExtractedFiles(zipName: string, userId: string) {
   const { data } = await supabase.storage.from('documents').list(`unzipped/${zipName}`);
   for (const file of data || []) {
-    await (supabase.from('documents' as any).insert({
-      file_name: file.name,
+    await supabase.from('documents').insert({
+      title: file.name,
       file_path: `unzipped/${zipName}/${file.name}`,
-      size: file.metadata?.size,
+      file_size: file.metadata?.size,
       type: file.metadata?.mimetype,
-    }) as any);
+      user_id: userId,
+    });
   }
 }

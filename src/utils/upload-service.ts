@@ -260,18 +260,24 @@ export const uploadDocument = async ({
       onProgress?.(60);
       onProcessingMessage?.("Processing document...");
       
+      // Get current user for document ownership
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        throw new Error('You must be logged in to upload documents');
+      }
+
       // Create database record for the document
-      const { data: docData, error: docError } = await (supabase
-        .from('documents' as any)
+      const { data: docData, error: docError } = await supabase
+        .from('documents')
         .insert({
           title: documentName,
           type: isZipFile(file) ? 'archive' : file.type,
           category_id: documentType,
           url: publicUrl,
-          expiry_date: expiryDate || null
-        } as any)
+          user_id: user.id,
+        })
         .select()
-        .single() as any);
+        .single();
       
       if (docError) {
         console.error('Error creating document record:', docError);
