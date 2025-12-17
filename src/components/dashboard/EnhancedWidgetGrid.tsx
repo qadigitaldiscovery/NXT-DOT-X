@@ -63,8 +63,10 @@ export const EnhancedWidgetGrid: React.FC<EnhancedWidgetGridProps> = ({ onWidget
     }));
   };
 
-  // Save allocations to localStorage whenever containers change
+  // Save allocations to localStorage whenever containers change (but not on initial empty state)
   useEffect(() => {
+    if (containers.length === 0) return; // Don't overwrite with empty state
+    
     const allocationsToSave = containers.map(container => ({
       id: container.id,
       pageName: container.pageName,
