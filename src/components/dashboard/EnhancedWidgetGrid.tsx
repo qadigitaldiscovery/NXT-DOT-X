@@ -77,31 +77,37 @@ export const EnhancedWidgetGrid: React.FC<EnhancedWidgetGridProps> = ({ onWidget
   const handleDrop = (e: React.DragEvent, containerId: string) => {
     e.preventDefault();
     
-    // Try to get page info from drag data
-    let pageInfo: PageInfo | null = null;
+    const availablePages = getAvailablePages();
+    let matchedPage: PageInfo | null = null;
     
     try {
       const jsonData = e.dataTransfer.getData('application/json');
       if (jsonData) {
-        pageInfo = JSON.parse(jsonData);
+        const parsed = JSON.parse(jsonData);
+        // Always look up the component from available pages - JSON parsing loses the component reference
+        matchedPage = availablePages.find(
+          page => page.name === parsed.name && page.path === parsed.path
+        ) || null;
       }
     } catch (error) {
       // Fallback to text data
+    }
+    
+    if (!matchedPage) {
       const pageName = e.dataTransfer.getData('text/plain');
       if (pageName) {
-        const availablePages = getAvailablePages();
-        pageInfo = availablePages.find(page => page.name === pageName) || null;
+        matchedPage = availablePages.find(page => page.name === pageName) || null;
       }
     }
 
-    if (pageInfo) {
+    if (matchedPage) {
       setContainers(prev => prev.map(container => 
         container.id === containerId 
           ? { 
               ...container, 
-              pageComponent: pageInfo!.component, 
-              pageName: pageInfo!.name,
-              pagePath: pageInfo!.path
+              pageComponent: matchedPage!.component, 
+              pageName: matchedPage!.name,
+              pagePath: matchedPage!.path
             }
           : container
       ));
